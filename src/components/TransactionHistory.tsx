@@ -271,20 +271,22 @@ export default function TransactionHistory({
             </p>
           </div>
           {!hasActiveFilters && (
-            <div className="flex justify-center gap-2 pt-1">
+            <div className="flex justify-center gap-2.5 pt-1">
               <button
                 type="button"
                 onClick={onAddIncome}
-                className="rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-2 text-xs font-bold text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#073B3A] via-[#087F73] to-[#0A8F82] px-4 py-2 text-xs sm:text-sm font-black text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-300/40"
               >
-                + {t('transactions.addIncome')}
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/20 text-[10px] font-black text-white">+</span>
+                <span>{t('transactions.addIncome')}</span>
               </button>
               <button
                 type="button"
                 onClick={onAddExpense}
-                className="rounded-full bg-white/60 backdrop-blur-md border border-danger/30 px-4 py-2 text-xs font-bold text-danger hover:bg-danger/10 shadow-xs active:scale-95 transition-all"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-white/95 backdrop-blur-xl border border-rose-300/80 px-4 py-2 text-xs sm:text-sm font-black text-black hover:bg-white shadow-glass active:scale-95 transition-all"
               >
-                + {t('transactions.addExpense')}
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-[10px] font-black text-rose-700 border border-rose-200">−</span>
+                <span>{t('transactions.addExpense')}</span>
               </button>
             </div>
           )}

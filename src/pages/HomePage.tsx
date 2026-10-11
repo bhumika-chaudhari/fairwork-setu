@@ -243,22 +243,30 @@ export default function HomePage() {
           </div>
 
           {/* Quick Action Buttons: Add Income and Add Expense */}
-          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/50">
+          <div className="grid grid-cols-2 gap-2.5 pt-1.5 border-t border-white/60">
             <button
               type="button"
               onClick={() => openAddModal('income')}
-              className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 py-2.5 px-3 text-xs font-bold text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-gradient-to-r from-[#073B3A] via-[#087F73] to-[#0A8F82] py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-300/40 group"
             >
-              <span className="text-sm font-black">+</span>
-              <span>{t('home.addIncome')}</span>
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-black text-white">
+                +
+              </span>
+              <span className="truncate text-xs sm:text-sm font-black text-white tracking-tight">
+                {t('home.addIncome')}
+              </span>
             </button>
             <button
               type="button"
               onClick={() => openAddModal('expense')}
-              className="flex items-center justify-center gap-1.5 rounded-full bg-white/60 backdrop-blur-md py-2.5 px-3 text-xs font-bold text-black border border-danger/30 shadow-xs hover:bg-danger/10 active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white/95 backdrop-blur-xl py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-glass hover:bg-white hover:shadow-glassHover active:scale-95 transition-all border border-rose-300/80 group"
             >
-              <span className="text-sm font-black text-black">−</span>
-              <span className="text-black font-bold">{t('home.addExpense')}</span>
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-xs font-black text-rose-700 border border-rose-200">
+                −
+              </span>
+              <span className="truncate text-xs sm:text-sm font-black text-black tracking-tight">
+                {t('home.addExpense')}
+              </span>
             </button>
           </div>
         </div>
