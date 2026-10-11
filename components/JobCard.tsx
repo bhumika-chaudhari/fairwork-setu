@@ -1,8 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import Card from './Card';
-import { Colors, Spacing, Typography, BorderRadius } from '../constants/theme';
+import Badge from './Badge';
+import { Colors, Spacing, Typography, BorderRadius, ButtonSizes } from '../constants/theme';
+import { formatInr } from '../src/localization';
 import type { Job } from '../data/mockData';
 
 interface JobCardProps {
@@ -11,39 +14,31 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job, onPress }: JobCardProps) {
-  const matchColor =
-    job.skillMatch >= 85 ? Colors.success : job.skillMatch >= 70 ? Colors.warning : Colors.textSecondary;
+  const { t } = useTranslation();
+  const tone = job.skillMatch >= 85 ? 'success' : job.skillMatch >= 70 ? 'warning' : 'primary';
 
   return (
     <Card>
-      <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{job.titleHi}</Text>
-          <View style={[styles.matchBadge, { backgroundColor: matchColor + '18' }]}>
-            <Text style={[styles.matchText, { color: matchColor }]}>{job.skillMatch}% मैच</Text>
-          </View>
+      <View style={styles.top}>
+        <View style={styles.iconWrap}>
+          <Ionicons name={job.workIcon as never} size={22} color={Colors.primary} />
         </View>
-        <Text style={styles.location}>
-          <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
-          {'  '}{job.location} · {job.distance}
-        </Text>
+        <View style={styles.titles}>
+          <Text style={styles.title}>{t(job.titleKey)}</Text>
+          <Text style={styles.employer}>{t(job.employerKey)}</Text>
+        </View>
+        <Badge label={t('kaam.skillMatch', { percent: job.skillMatch })} tone={tone} />
       </View>
 
-      <View style={styles.details}>
-        <View style={styles.payRow}>
-          <Text style={styles.pay}>₹{job.payMin.toLocaleString('en-IN')}–₹{job.payMax.toLocaleString('en-IN')}</Text>
-          <Text style={styles.payType}>{job.payTypeHi}</Text>
-        </View>
-        <View style={styles.tagsRow}>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>{job.workTypeHi}</Text>
-          </View>
-          <Text style={styles.posted}>{job.postedAgoHi}</Text>
-        </View>
-      </View>
+      <Text style={styles.meta}>
+        {job.distance} · {t('kaam.payRange', { min: formatInr(job.payMin), max: formatInr(job.payMax) })}
+      </Text>
+      <Text style={styles.submeta}>
+        {t(job.locationKey)} · {t(job.payTypeKey)} · {t(job.workTypeKey)}
+      </Text>
 
       <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
-        <Text style={styles.buttonText}>दिखाएं</Text>
+        <Text style={styles.buttonText}>{t('kaam.show')}</Text>
         <Ionicons name="arrow-forward" size={16} color={Colors.primary} />
       </TouchableOpacity>
     </Card>
@@ -51,86 +46,64 @@ export default function JobCard({ job, onPress }: JobCardProps) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: Spacing.md,
-  },
-  titleRow: {
+  top: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.md,
+    gap: Spacing.md,
+  },
+  iconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titles: {
+    flex: 1,
   },
   title: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-    flex: 1,
-    marginRight: Spacing.sm,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     lineHeight: Typography.cardTitleLineHeight,
   },
-  matchBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-  },
-  matchText: {
-    fontSize: 13,
-    fontWeight: Typography.bold,
-  },
-  location: {
+  employer: {
     fontSize: 14,
     color: Colors.textSecondary,
-    lineHeight: 20,
+    fontFamily: Typography.fontFamily,
+    marginTop: 2,
   },
-  details: {
-    marginBottom: Spacing.md,
-  },
-  payRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: Spacing.sm,
-  },
-  pay: {
-    fontSize: 20,
-    fontWeight: Typography.extraBold,
+  meta: {
+    fontSize: Typography.body,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
     color: Colors.primary,
+    marginBottom: 4,
   },
-  payType: {
+  submeta: {
     fontSize: 14,
     color: Colors.textSecondary,
-    marginLeft: Spacing.sm,
-  },
-  tagsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  tag: {
-    backgroundColor: Colors.primaryLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-  },
-  tagText: {
-    fontSize: 13,
-    fontWeight: Typography.medium,
-    color: Colors.primaryDark,
-  },
-  posted: {
-    fontSize: 13,
-    color: Colors.textTertiary,
+    fontFamily: Typography.fontFamily,
+    marginBottom: Spacing.md,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.md,
+    minHeight: ButtonSizes.minTouchTarget,
     borderTopWidth: 1,
-    borderTopColor: Colors.divider,
+    borderTopColor: Colors.border,
+    marginHorizontal: -Spacing.cardPaddingLarge,
+    marginBottom: -Spacing.cardPaddingLarge,
+    paddingHorizontal: Spacing.cardPaddingLarge,
   },
   buttonText: {
     fontSize: Typography.body,
     fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
     color: Colors.primary,
     marginRight: Spacing.sm,
   },

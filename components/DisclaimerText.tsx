@@ -16,7 +16,7 @@ export default function DisclaimerText({ text, variant = 'info' }: DisclaimerTex
   };
 
   const bgMap = {
-    info: Colors.background,
+    info: Colors.surface,
     warning: Colors.warningLight,
     health: Colors.healthLight,
   };
@@ -40,8 +40,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.md,
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.md,
     marginTop: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   icon: {
     marginRight: Spacing.sm,
@@ -51,6 +53,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     lineHeight: 19,
-    fontWeight: Typography.regular,
+    fontFamily: Typography.fontFamily,
   },
 });

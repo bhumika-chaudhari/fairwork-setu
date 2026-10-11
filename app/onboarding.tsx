@@ -1,239 +1,364 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import ScreenContainer from '../components/ScreenContainer';
 import PrimaryButton from '../components/PrimaryButton';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../constants/theme';
-import { workerTypeOptions, WorkerType } from '../data/mockData';
+import GhostButton from '../components/GhostButton';
+import LanguageSelector from '../components/LanguageSelector';
+import SkillChip from '../components/SkillChip';
+import Card from '../components/Card';
+import { Colors, Spacing, Typography, BorderRadius, Shadows, ButtonSizes } from '../constants/theme';
+import {
+  CITY_KEYS,
+  SUGGESTED_SKILL_KEYS,
+  workerTypeOptions,
+  WorkerType,
+} from '../data/mockData';
+import { useProfile } from '../context/ProfileContext';
+import { formatInr } from '../src/localization';
+
+type Step = 'intro' | 'language' | 'work' | 'money' | 'welcome';
+
+const CAROUSEL = [
+  { key: 'onboarding.carousel1', icon: 'wallet-outline' as const },
+  { key: 'onboarding.carousel2', icon: 'briefcase-outline' as const },
+  { key: 'onboarding.carousel3', icon: 'leaf-outline' as const },
+  { key: 'onboarding.carousel4', icon: 'heart-outline' as const },
+  { key: 'onboarding.carousel5', icon: 'ribbon-outline' as const },
+];
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const [language, setLanguage] = useState<'hi' | 'en'>('hi');
-  const [selectedType, setSelectedType] = useState<WorkerType | null>(null);
+  const { t } = useTranslation();
+  const { completeOnboarding } = useProfile();
+  const [step, setStep] = useState<Step>('intro');
+  const [slide, setSlide] = useState(0);
+  const [workType, setWorkType] = useState<WorkerType | null>('electrician');
+  const [cityKey, setCityKey] = useState('cities.pune');
+  const [skillKeys, setSkillKeys] = useState<string[]>(['skills.wiring']);
+  const [weeklySaveGoal, setWeeklySaveGoal] = useState(350);
 
-  const handleContinue = () => {
+  const finish = async (extra?: { weeklySaveGoal?: number }) => {
+    await completeOnboarding({
+      workType,
+      cityKey,
+      skillKeys,
+      weeklySaveGoal: extra?.weeklySaveGoal ?? weeklySaveGoal,
+      savingsGoal: (extra?.weeklySaveGoal ?? weeklySaveGoal) * 12,
+    });
     router.replace('/(tabs)');
   };
 
-  return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Logo area */}
-        <View style={styles.logoSection}>
-          <View style={styles.logoCircle}>
-            <Ionicons name="people" size={40} color={Colors.white} />
+  if (step === 'intro') {
+    const item = CAROUSEL[slide];
+    return (
+      <ScreenContainer>
+        <Text style={styles.kicker}>{t('onboarding.howHelps')}</Text>
+        <Card lifted style={styles.heroCard}>
+          <View style={styles.heroIcon}>
+            <Ionicons name={item.icon} size={36} color={Colors.primary} />
           </View>
-          <Text style={styles.appName}>सेतु</Text>
-          <Text style={styles.tagline}>
-            आपके काम, पैसा, सेहत और स्किल का साथी
-          </Text>
-        </View>
+          <Text style={styles.heroTitle}>{t(item.key)}</Text>
+          <View style={styles.dots}>
+            {CAROUSEL.map((_, i) => (
+              <View key={i} style={[styles.dot, i === slide && styles.dotOn]} />
+            ))}
+          </View>
+        </Card>
+        <PrimaryButton
+          title={slide < CAROUSEL.length - 1 ? t('common.next') : t('common.continue')}
+          onPress={() => (slide < CAROUSEL.length - 1 ? setSlide(slide + 1) : setStep('language'))}
+        />
+        <GhostButton title={t('common.skip')} onPress={() => setStep('language')} style={styles.skip} />
+      </ScreenContainer>
+    );
+  }
 
-        {/* Language Selection */}
-        <Text style={styles.sectionLabel}>भाषा चुनें / Choose Language</Text>
-        <View style={styles.langRow}>
-          <TouchableOpacity
-            style={[styles.langOption, language === 'hi' && styles.langSelected]}
-            onPress={() => setLanguage('hi')}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.langText, language === 'hi' && styles.langTextSelected]}>
-              हिंदी
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.langOption, language === 'en' && styles.langSelected]}
-            onPress={() => setLanguage('en')}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.langText, language === 'en' && styles.langTextSelected]}>
-              English
-            </Text>
-          </TouchableOpacity>
-        </View>
+  if (step === 'language') {
+    return (
+      <ScreenContainer>
+        <StepMark current={1} />
+        <Text style={styles.heading}>{t('onboarding.chooseLanguage')}</Text>
+        <Text style={styles.hint}>{t('onboarding.languageHint')}</Text>
+        <LanguageSelector variant="grid" />
+        <PrimaryButton title={t('common.continue')} onPress={() => setStep('work')} style={styles.cta} />
+      </ScreenContainer>
+    );
+  }
 
-        {/* Worker Type Selection */}
-        <Text style={styles.sectionLabel}>
-          {language === 'hi' ? 'आप क्या काम करते हैं?' : 'What work do you do?'}
-        </Text>
+  if (step === 'work') {
+    return (
+      <ScreenContainer>
+        <StepMark current={2} />
+        <Text style={styles.heading}>{t('onboarding.whatWork')}</Text>
+        <Text style={styles.hint}>{t('onboarding.workHint')}</Text>
         <View style={styles.typeGrid}>
           {workerTypeOptions.map((option) => (
             <TouchableOpacity
               key={option.type}
-              style={[
-                styles.typeCard,
-                selectedType === option.type && styles.typeCardSelected,
-              ]}
-              onPress={() => setSelectedType(option.type)}
-              activeOpacity={0.8}
+              style={[styles.typeCard, workType === option.type && styles.typeCardSelected]}
+              onPress={() => setWorkType(option.type)}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityState={{ selected: workType === option.type }}
             >
-              <View
-                style={[
-                  styles.typeIconCircle,
-                  selectedType === option.type && styles.typeIconCircleSelected,
-                ]}
-              >
-                <Ionicons
-                  name={option.icon as any}
-                  size={26}
-                  color={selectedType === option.type ? Colors.white : Colors.primary}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.typeLabel,
-                  selectedType === option.type && styles.typeLabelSelected,
-                ]}
-              >
-                {language === 'hi' ? option.labelHi : option.labelEn}
+              <Ionicons
+                name={option.icon as never}
+                size={24}
+                color={workType === option.type ? Colors.white : Colors.primary}
+              />
+              <Text style={[styles.typeLabel, workType === option.type && styles.typeLabelOn]}>
+                {t(option.labelKey)}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Continue Button */}
-        <PrimaryButton
-          title={language === 'hi' ? 'आगे बढ़ें' : 'Continue'}
-          onPress={handleContinue}
-          disabled={!selectedType}
-          icon={<Ionicons name="arrow-forward" size={20} color={Colors.white} />}
-          style={styles.continueButton}
+        <Text style={styles.section}>{t('onboarding.cityTitle')}</Text>
+        <Text style={styles.hint}>{t('onboarding.cityHint')}</Text>
+        <View style={styles.wrap}>
+          {CITY_KEYS.map((key) => (
+            <SkillChip key={key} label={t(key)} selected={cityKey === key} onPress={() => setCityKey(key)} />
+          ))}
+        </View>
+
+        <Text style={styles.section}>{t('onboarding.skillsTitle')}</Text>
+        <Text style={styles.hint}>{t('onboarding.skillsHint')}</Text>
+        <View style={styles.wrap}>
+          {SUGGESTED_SKILL_KEYS.map((key) => (
+            <SkillChip
+              key={key}
+              label={t(key)}
+              selected={skillKeys.includes(key)}
+              onPress={() =>
+                setSkillKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]))
+              }
+            />
+          ))}
+        </View>
+
+        <PrimaryButton title={t('common.continue')} onPress={() => setStep('money')} style={styles.cta} />
+        <GhostButton title={t('common.skip')} onPress={() => setStep('money')} style={styles.skip} />
+      </ScreenContainer>
+    );
+  }
+
+  if (step === 'money') {
+    return (
+      <ScreenContainer>
+        <StepMark current={3} />
+        <Text style={styles.heading}>{t('onboarding.moneyTitle')}</Text>
+        <Text style={styles.hint}>{t('onboarding.moneyHint')}</Text>
+        <Text style={styles.section}>{t('onboarding.weeklyGoal')}</Text>
+        <View style={styles.wrap}>
+          {[200, 350, 500].map((amt) => (
+            <SkillChip
+              key={amt}
+              label={t('common.currency', { amount: formatInr(amt) })}
+              selected={weeklySaveGoal === amt}
+              onPress={() => setWeeklySaveGoal(amt)}
+            />
+          ))}
+        </View>
+        <PrimaryButton title={t('common.continue')} onPress={() => setStep('welcome')} style={styles.cta} />
+        <GhostButton
+          title={t('common.skip')}
+          onPress={() => {
+            setWeeklySaveGoal(0);
+            setStep('welcome');
+          }}
+          style={styles.skip}
         />
-      </ScrollView>
-    </SafeAreaView>
+      </ScreenContainer>
+    );
+  }
+
+  return (
+    <ScreenContainer>
+      <View style={styles.welcomeIcon}>
+        <Ionicons name="checkmark-circle" size={64} color={Colors.success} />
+      </View>
+      <Text style={styles.heading}>{t('onboarding.welcomeTitle')}</Text>
+      <Text style={styles.hint}>{t('onboarding.welcomeBody')}</Text>
+      <PrimaryButton title={t('onboarding.start')} onPress={() => finish()} style={styles.cta} />
+    </ScreenContainer>
+  );
+}
+
+function StepMark({ current }: { current: number }) {
+  const { t } = useTranslation();
+  const labels = [t('onboarding.stepLanguage'), t('onboarding.stepWork'), t('onboarding.stepMoney')];
+  return (
+    <View style={styles.steps}>
+      {labels.map((label, i) => {
+        const n = i + 1;
+        const on = n === current;
+        const done = n < current;
+        return (
+          <View key={label} style={styles.stepItem}>
+            <View style={[styles.stepDot, (on || done) && styles.stepDotOn]}>
+              <Text style={styles.stepN}>{n}</Text>
+            </View>
+            <Text style={styles.stepLabel}>{label}</Text>
+          </View>
+        );
+      })}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: Colors.background,
+  kicker: {
+    fontSize: Typography.secondary,
+    color: Colors.primaryDark,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    marginBottom: Spacing.md,
   },
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: Spacing.screenPadding,
-    paddingBottom: Spacing.xxxl,
-  },
-
-  // Logo
-  logoSection: {
+  heroCard: {
     alignItems: 'center',
-    paddingTop: Spacing.xxxl,
-    paddingBottom: Spacing.xxl,
+    paddingVertical: Spacing.xxxl,
+    marginBottom: Spacing.xxl,
   },
-  logoCircle: {
+  heroIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.lg,
-    ...Shadows.button,
   },
-  appName: {
-    fontSize: 36,
-    fontWeight: Typography.extraBold,
-    color: Colors.primary,
+  heroTitle: {
+    fontSize: Typography.heading,
+    fontWeight: Typography.bold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    textAlign: 'center',
+    lineHeight: Typography.headingLineHeight,
+  },
+  dots: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: Spacing.xl,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.border,
+  },
+  dotOn: {
+    width: 22,
+    backgroundColor: Colors.primary,
+  },
+  heading: {
+    fontSize: Typography.headingLarge,
+    fontWeight: Typography.bold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.headingLineHeight,
     marginBottom: Spacing.sm,
   },
-  tagline: {
+  hint: {
     fontSize: Typography.body,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    fontFamily: Typography.fontFamily,
     lineHeight: Typography.bodyLineHeight,
-    paddingHorizontal: Spacing.xl,
-  },
-
-  // Language
-  sectionLabel: {
-    fontSize: Typography.body,
-    fontWeight: Typography.semibold,
-    color: Colors.text,
-    marginBottom: Spacing.md,
-    marginTop: Spacing.lg,
-  },
-  langRow: {
-    flexDirection: 'row',
-    gap: Spacing.md,
     marginBottom: Spacing.lg,
   },
-  langOption: {
-    flex: 1,
-    height: 54,
-    borderRadius: BorderRadius.md,
-    borderWidth: 2,
-    borderColor: Colors.divider,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.white,
-  },
-  langSelected: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primaryLight,
-  },
-  langText: {
+  section: {
     fontSize: Typography.cardTitle,
     fontWeight: Typography.semibold,
-    color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+    lineHeight: Typography.cardTitleLineHeight,
   },
-  langTextSelected: {
-    color: Colors.primary,
+  cta: {
+    marginTop: Spacing.xxl,
   },
-
-  // Worker types
+  skip: {
+    marginTop: Spacing.md,
+    height: ButtonSizes.secondaryHeight,
+  },
   typeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.md,
-    marginBottom: Spacing.xxl,
   },
   typeCard: {
     width: '30%',
-    aspectRatio: 0.9,
+    minHeight: 96,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.sm,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: Colors.border,
     ...Shadows.card,
   },
   typeCardSelected: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primaryLight,
-  },
-  typeIconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.sm,
-  },
-  typeIconCircleSelected: {
     backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
   typeLabel: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     fontWeight: Typography.semibold,
-    color: Colors.text,
+    color: Colors.textPrimary,
     textAlign: 'center',
+    marginTop: Spacing.sm,
+    fontFamily: Typography.fontFamily,
+    lineHeight: Typography.secondaryLineHeight,
   },
-  typeLabelSelected: {
-    color: Colors.primaryDark,
+  typeLabelOn: {
+    color: Colors.white,
   },
-
-  continueButton: {
-    marginTop: Spacing.md,
+  wrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+  },
+  welcomeIcon: {
+    alignSelf: 'center',
+    marginTop: Spacing.xxxl,
+    marginBottom: Spacing.lg,
+  },
+  steps: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.xl,
+  },
+  stepItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  stepDot: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  stepDotOn: {
+    backgroundColor: Colors.primary,
+  },
+  stepN: {
+    color: Colors.white,
+    fontWeight: Typography.bold,
+    fontFamily: Typography.fontFamily,
+    fontSize: 12,
+  },
+  stepLabel: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
+    textAlign: 'center',
   },
 });

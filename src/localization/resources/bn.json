@@ -1,0 +1,355 @@
+{
+  "common": {
+    "save": "সংরক্ষণ",
+    "cancel": "বাতিল",
+    "retry": "আবার চেষ্টা",
+    "close": "বন্ধ",
+    "continue": "এগোন",
+    "back": "পিছনে",
+    "search": "খুঁজুন",
+    "seeAll": "সব দেখুন",
+    "languageChanged": "ভাষা বদলেছে",
+    "chooseLanguage": "ভাষা বেছে নিন",
+    "currency": "₹{{amount}}",
+    "skip": "এখন না",
+    "next": "পরবর্তী",
+    "done": "হয়ে গেছে",
+    "edit": "সম্পাদনা",
+    "add": "যোগ",
+    "ok": "ঠিক আছে",
+    "language": "ভাষা"
+  },
+  "onboarding": {
+    "appName": "সেতু",
+    "tagline": "কাজ, টাকা, স্বাস্থ্য ও দক্ষতার সঙ্গী",
+    "chooseLanguage": "ভাষা বেছে নিন",
+    "whatWork": "আপনি কী কাজ করেন?",
+    "howHelps": "Setu কীভাবে সাহায্য করে",
+    "languageHint": "হোম থেকে যেকোনো সময় ভাষা বদলান।",
+    "workHint": "যা কাছাকাছি মনে হয় সেই কাজ বেছে নিন।",
+    "cityTitle": "আপনি কোন শহরে কাজ করেন?",
+    "cityHint": "কাছের কাজ দেখতে শহর বেছে নিন।",
+    "skillsTitle": "কিছু দক্ষতা যোগ করুন",
+    "skillsHint": "ওয়্যারিং, ফ্যান মেরামত, ড্রাইভিং।",
+    "moneyTitle": "ছোট সঞ্চয় লক্ষ্য রাখবেন?",
+    "moneyHint": "সাপ্তাহিক লক্ষ্য শুধু একটি নরম মনে করিয়ে দেওয়া।",
+    "weeklyGoal": "প্রস্তাবিত সাপ্তাহিক সঞ্চয়",
+    "welcomeTitle": "আপনার Setu প্রস্তুত ✅",
+    "welcomeBody": "কাজ খুঁজুন, আয় ট্র্যাক করুন, স্কিল প্রোফাইল তৈরি করুন।",
+    "start": "Setu শুরু করুন",
+    "stepLanguage": "ভাষা",
+    "stepWork": "কাজ",
+    "stepMoney": "সঞ্চয়",
+    "carousel1": "আয় বুঝুন",
+    "carousel2": "কাছের কাজ",
+    "carousel3": "ছোট সঞ্চয়",
+    "carousel4": "স্বাস্থ্য ও সহায়তা",
+    "carousel5": "Skill Passport"
+  },
+  "tabs": {
+    "home": "হোম",
+    "kaam": "কাজ",
+    "dhan": "টাকা",
+    "more": "সেবা"
+  },
+  "home": {
+    "greeting": "নমস্কার, {{name}} 👋",
+    "todayOverview": "আজকের সারসংক্ষেপ",
+    "todayIncome": "আজকের আয়",
+    "weekDeltaUp": "↑ ₹{{amount}} গত সপ্তাহের থেকে",
+    "weekDeltaDown": "↓ ₹{{amount}} গত সপ্তাহের থেকে",
+    "emergencySavings": "জরুরি সঞ্চয়",
+    "addByVoice": "কথা বলে যোগ করুন",
+    "addByVoiceHint": "আয় বা খরচ বলে নথিভুক্ত করুন",
+    "savingsSuggestion": "আজ ₹{{amount}} বাঁচাতে পারেন",
+    "jobSuggestions": "আজকের কাজের পরামর্শ",
+    "healthSupport": "স্বাস্থ্য ও সহায়তা",
+    "newUserBanner": "Setu আপনার সাথে হাঁটে।",
+    "completeProfile": "প্রোফাইল সম্পূর্ণ করুন",
+    "completeProfileHint": "ভালো কাজ পেতে দক্ষতা যোগ করুন।",
+    "profileReady": "প্রোফাইল প্রস্তুত: {{percent}}%",
+    "openProfile": "প্রোফাইল",
+    "voiceA11y": "কণ্ঠে আয় বা খরচ যোগ"
+  },
+  "kaam": {
+    "title": "কাজ",
+    "findWork": "কাজ খুঁজুন",
+    "searchPlaceholder": "কাজ, দক্ষতা বা এলাকা খুঁজুন",
+    "noJobs": "এখন আপনার শহরে মিলছে এমন কাজ নেই।",
+    "noJobsHint": "পরে দেখুন বা ফিল্টার বদলান",
+    "show": "দেখান",
+    "jobsFound": "{{count}} কাজ · {{city}}",
+    "sortDistance": "দূরত্ব",
+    "filterAll": "সব",
+    "filterWiring": "ওয়ায়ারিং",
+    "filterRepair": "মেরামত",
+    "filterInstallation": "ইনস্টলেশন",
+    "filterCity": "শহর",
+    "filterAvailability": "সময়",
+    "cityPune": "পুণে",
+    "availAll": "যেকোনো সময়",
+    "availToday": "আজ",
+    "availWeek": "এই সপ্তাহ",
+    "skillMatch": "{{percent}}% দক্ষতা মিল",
+    "updateProfile": "প্রোফাইল আপডেট",
+    "disclaimer": "কাজের পরামর্শ শুধু তথ্যের জন্য।",
+    "payRange": "₹{{min}}–₹{{max}}"
+  },
+  "dhan": {
+    "title": "টাকা",
+    "weeklyIncome": "এই সপ্তাহের আয়",
+    "income": "আয় ₹{{amount}}",
+    "expense": "খরচ ₹{{amount}}",
+    "last7Days": "গত ৭ দিন",
+    "expenseCategories": "খরচের ধরন",
+    "savingsGoal": "সঞ্চয় লক্ষ্য",
+    "expectedIncome": "আগামী সপ্তাহের সম্ভাব্য আয়",
+    "expectedRange": "₹{{min}} – ₹{{max}}",
+    "stabilityScore": "আর্থিক স্থিতিশীলতা স্কোর",
+    "stabilityHint": "টাকার স্থিতিশীলতার অনুমান",
+    "disclaimer": "এটি শুধু তথ্য, ঋণ সিদ্ধান্তের জন্য নয়।",
+    "remaining": "লক্ষ্যে পৌঁছাতে আরও ₹{{amount}} বাঁচাতে হবে",
+    "dash": "-",
+    "of100": "/100",
+    "expenseChip": "{{category}} · ₹{{amount}}"
+  },
+  "sehat": {
+    "title": "স্বাস্থ্য ও সহায়তা",
+    "searchPlaceholder": "হাসপাতাল, স্কিম বা সাহায্য খুঁজুন",
+    "emergency": "জরুরি",
+    "emergencyNumbers": "জরুরি নম্বর",
+    "ambulance": "অ্যাম্বুলেন্স",
+    "nearby": "কাছের স্বাস্থ্যসেবা",
+    "disclaimer": "সেতু চিকিৎসা পরামর্শ দেয় না। অফিসিয়াল সূত্রে নিশ্চিত করুন।",
+    "viewSource": "সূত্র দেখুন",
+    "schemes": "কল্যাণ সহায়তা"
+  },
+  "kaushal": {
+    "title": "দক্ষতা পাসপোর্ট",
+    "downloadPdf": "PDF ডাউনলোড",
+    "jobsDone": "শেষ কাজ",
+    "experience": "অভিজ্ঞতা",
+    "languages": "ভাষা",
+    "skills": "দক্ষতা",
+    "passportPreview": "দক্ষতা পাসপোর্ট",
+    "passportSub": "আপনার দক্ষতার ডিজিটাল প্রমাণ",
+    "recommended": "প্রস্তাবিত কোর্স",
+    "free": "ফ্রি",
+    "downloadStarted": "ডাউনলোড",
+    "downloadMessage": "PDF ডাউনলোড শুরু হচ্ছে...",
+    "disclaimer": "এটি দক্ষতার প্রোফাইল। সরকারি সনদ নয়।",
+    "emptySkills": "দক্ষতা যোগ করুন।",
+    "addSkills": "দক্ষতা",
+    "workHistory": "কাজের ইতিহাস"
+  },
+  "voice": {
+    "title": "কথা বলে যোগ করুন",
+    "listening": "শুনছি...",
+    "listeningHint": "আয় বা খরচ বলুন",
+    "youSaid": "আপনি বলেছেন:",
+    "transcript": "আজ ৮০০ টাকা রোজগার, ১৫০ পেট্রোলে গেছে।",
+    "understood": "বুঝেছি",
+    "income": "আয়",
+    "expense": "খরচ",
+    "category": "ধরন: যাতায়াত/জ্বালানি",
+    "savedTitle": "আজকের এন্ট্রি সেভ হয়েছে",
+    "savedSub": "আয় ₹{{income}} · খরচ ₹{{expense}}",
+    "speakAgain": "আবার বলুন",
+    "typeInstead": "টাইপ করে যোগ করুন",
+    "typePlaceholder": "যেমন: ৮০০ আয়, ১৫০ পেট্রল"
+  },
+  "more": {
+    "title": "সেবা",
+    "healthTitle": "স্বাস্থ্য ও সাহায্য",
+    "healthDesc": "হাসপাতাল, ওষুধ, জরুরি",
+    "skillTitle": "দক্ষতা পাসপোর্ট",
+    "skillDesc": "দক্ষতা, কোর্স, প্রোফাইল",
+    "schemes": "সরকারি প্রকল্প",
+    "quickLinks": "দ্রুত লিংক",
+    "help": "সাহায্য ও অভিযোগ",
+    "terms": "শর্তাবলি",
+    "about": "সেতু সম্পর্কে",
+    "profileTitle": "আমার প্রোফাইল",
+    "profileDesc": "নাম, শহর, দক্ষতা"
+  },
+  "workerTypes": {
+    "driver": "ড্রাইভার",
+    "delivery": "ডেলিভারি",
+    "construction": "নির্মাণ",
+    "domestic": "ঘরোয়া কাজ",
+    "vendor": "দোকানদার",
+    "electrician": "ইলেকট্রিশিয়ান",
+    "other": "অন্যান্য",
+    "plumber": "প্লাম্বার",
+    "tailor": "দর্জি"
+  },
+  "days": {
+    "mon": "সোম",
+    "tue": "মঙ্গল",
+    "wed": "বুধ",
+    "thu": "বৃহ",
+    "fri": "শুক্র",
+    "sat": "শনি",
+    "sun": "রবি"
+  },
+  "expenses": {
+    "travel": "যাতায়াত",
+    "food": "খাবার",
+    "rent": "ভাড়া",
+    "tools": "সরঞ্জাম",
+    "medical": "চিকিৎসা",
+    "other": "অন্যান্য"
+  },
+  "profile": {
+    "name": "রমেশ কুমার",
+    "occupation": "ইলেকট্রিশিয়ান",
+    "city": "পুণে",
+    "experience": "৮ বছর",
+    "langHindi": "হিন্দি",
+    "langMarathi": "মারাঠি"
+  },
+  "skills": {
+    "wiring": "ওয়ায়ারিং",
+    "fanRepair": "ফ্যান মেরামত",
+    "switchboard": "সুইচবোর্ড মেরামত",
+    "led": "LED বসানো",
+    "electrical": "ইলেকট্রিক্যাল",
+    "driving": "ড্রাইভিং",
+    "delivery": "ডেলিভারি"
+  },
+  "jobs": {
+    "j001": {
+      "title": "[EN] Electrician Helper",
+      "location": "[EN] Kothrud, Pune",
+      "payType": "[EN] per day",
+      "workType": "[EN] Contract",
+      "postedAgo": "[EN] 2 hours ago",
+      "employer": "[EN] Local contractor"
+    },
+    "j002": {
+      "title": "[EN] Fan Installation",
+      "location": "[EN] Hadapsar, Pune",
+      "payType": "[EN] per job",
+      "workType": "[EN] One-time",
+      "postedAgo": "[EN] 5 hours ago",
+      "employer": "[EN] Housing society"
+    },
+    "j003": {
+      "title": "[EN] Office Switchboard Repair",
+      "location": "[EN] Viman Nagar, Pune",
+      "payType": "[EN] per day",
+      "workType": "[EN] Contract",
+      "postedAgo": "[EN] 1 day ago",
+      "employer": "[EN] Office campus"
+    },
+    "j004": {
+      "title": "[EN] LED Light Installation",
+      "location": "[EN] Balewadi, Pune",
+      "payType": "[EN] per job",
+      "workType": "[EN] One-time",
+      "postedAgo": "[EN] 3 hours ago",
+      "employer": "[EN] Shop owner"
+    },
+    "j005": {
+      "title": "[EN] Construction Site Electrician",
+      "location": "[EN] Wakad, Pune",
+      "payType": "[EN] per day",
+      "workType": "[EN] Weekly",
+      "postedAgo": "[EN] 6 hours ago",
+      "employer": "[EN] Site contractor"
+    }
+  },
+  "healthResources": {
+    "h001": {
+      "name": "[EN] Sassoon Hospital",
+      "type": "[EN] Government hospital",
+      "services": "[EN] Emergency, OPD"
+    },
+    "h002": {
+      "name": "[EN] PHC Kothrud",
+      "type": "[EN] Primary health centre",
+      "services": "[EN] Checkup, Vaccination"
+    },
+    "h003": {
+      "name": "[EN] Jan Aushadhi Kendra",
+      "type": "[EN] Jan Aushadhi",
+      "services": "[EN] Affordable medicines"
+    }
+  },
+  "courses": {
+    "sc001": {
+      "title": "[EN] Solar Panel Installation",
+      "duration": "[EN] 2 weeks",
+      "level": "[EN] Intermediate"
+    },
+    "sc002": {
+      "title": "[EN] Smart Home Wiring",
+      "duration": "[EN] 1 month",
+      "level": "[EN] Advanced"
+    },
+    "sc003": {
+      "title": "[EN] EV Charger Setup",
+      "duration": "[EN] 3 weeks",
+      "level": "[EN] Advanced"
+    }
+  },
+  "schemes": {
+    "ws001": {
+      "name": "[EN] PM-SYM",
+      "description": "[EN] Pension scheme for unorganised workers",
+      "eligibility": "[EN] 18–40 years, income under ₹15,000/month"
+    },
+    "ws002": {
+      "name": "[EN] e-Shram",
+      "description": "[EN] Identity card for unorganised workers",
+      "eligibility": "[EN] All unorganised workers"
+    }
+  },
+  "profileScreen": {
+    "title": "[partial] Your profile",
+    "photo": "[partial] Photo",
+    "name": "[partial] Name",
+    "nameHint": "[partial] Use a name you are comfortable sharing.",
+    "city": "[partial] City",
+    "cityHint": "[partial] Choose your city so nearby work can show up.",
+    "workType": "[partial] Work type",
+    "workHint": "[partial] Pick the work that feels closest.",
+    "skills": "[partial] Skills",
+    "skillsHint": "[partial] Add skills — like wiring, fan repair, or driving.",
+    "skillPlaceholder": "[partial] Type a skill",
+    "experience": "[partial] Years of experience",
+    "experienceHint": "[partial] Even a few months count.",
+    "availability": "[partial] Availability",
+    "availabilityHint": "[partial] When are you available for work?",
+    "payRange": "[partial] Expected daily pay",
+    "payHint": "[partial] A range helps match work.",
+    "emergencyContact": "[partial] Emergency contact",
+    "emergencyHint": "[partial] Optional.",
+    "savingsGoal": "[partial] Savings goal",
+    "savingsHint": "[partial] A small goal you feel good about.",
+    "strength": "[partial] Profile ready: {{percent}}%",
+    "strengthHint": "[partial] Add skills for better work suggestions.",
+    "saved": "[partial] Profile saved",
+    "savedBody": "[partial] Your details stay on this phone.",
+    "years": "[partial] {{count}} years",
+    "validationName": "[partial] Please add a name.",
+    "validationCity": "[partial] A city helps show nearby work.",
+    "removeSkill": "[partial] Remove {{skill}}"
+  },
+  "availability": {
+    "anytime": "[partial] Any time",
+    "today": "[partial] Today",
+    "weekdays": "[partial] Weekdays",
+    "weekends": "[partial] Weekends"
+  },
+  "cities": {
+    "pune": "Pune",
+    "mumbai": "Mumbai",
+    "delhi": "Delhi",
+    "bengaluru": "Bengaluru",
+    "hyderabad": "Hyderabad",
+    "chennai": "Chennai",
+    "kolkata": "Kolkata",
+    "ahmedabad": "Ahmedabad"
+  }
+}

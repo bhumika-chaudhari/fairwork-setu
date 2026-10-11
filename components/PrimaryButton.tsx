@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Colors, BorderRadius, Spacing, Typography, ButtonSizes, Shadows } from '../constants/theme';
+import { lightTap } from '../lib/haptics';
 
 interface PrimaryButtonProps {
   title: string;
@@ -19,6 +20,7 @@ interface PrimaryButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   size?: 'normal' | 'small';
+  accessibilityLabel?: string;
 }
 
 export default function PrimaryButton({
@@ -31,6 +33,7 @@ export default function PrimaryButton({
   style,
   textStyle,
   size = 'normal',
+  accessibilityLabel,
 }: PrimaryButtonProps) {
   const bgColor = {
     primary: Colors.primary,
@@ -42,7 +45,7 @@ export default function PrimaryButton({
   const textColor = {
     primary: Colors.textOnPrimary,
     secondary: Colors.textOnPrimary,
-    accent: Colors.text,
+    accent: Colors.textPrimary,
     outline: Colors.primary,
   };
 
@@ -53,13 +56,18 @@ export default function PrimaryButton({
         size === 'small' && styles.buttonSmall,
         { backgroundColor: bgColor[variant] },
         variant === 'outline' && styles.outlineButton,
-        variant === 'primary' && Shadows.button,
+        variant === 'primary' && Shadows.clay,
         disabled && styles.disabled,
         style,
       ]}
-      onPress={onPress}
+      onPress={() => {
+        lightTap();
+        onPress();
+      }}
       disabled={disabled || loading}
-      activeOpacity={0.8}
+      activeOpacity={0.86}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? title}
     >
       {loading ? (
         <ActivityIndicator color={textColor[variant]} />
@@ -71,7 +79,7 @@ export default function PrimaryButton({
               styles.text,
               size === 'small' && styles.textSmall,
               { color: textColor[variant] },
-              icon ? { marginLeft: 8 } : undefined,
+              icon ? { marginLeft: Spacing.sm } : undefined,
               textStyle,
             ]}
           >
@@ -86,30 +94,32 @@ export default function PrimaryButton({
 const styles = StyleSheet.create({
   button: {
     height: ButtonSizes.primaryHeight,
-    borderRadius: BorderRadius.md,
+    minHeight: ButtonSizes.minTouchTarget,
+    borderRadius: BorderRadius.lg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
-    minWidth: ButtonSizes.minTouchTarget,
   },
   buttonSmall: {
-    height: 42,
+    height: ButtonSizes.secondaryHeight,
     paddingHorizontal: Spacing.lg,
   },
   outlineButton: {
     borderWidth: 2,
     borderColor: Colors.primary,
+    backgroundColor: Colors.surface,
   },
   disabled: {
     opacity: 0.5,
   },
   text: {
-    fontSize: Typography.body,
+    fontSize: Typography.bodyLarge,
     fontWeight: Typography.semibold,
     lineHeight: Typography.bodyLineHeight,
+    fontFamily: Typography.fontFamily,
   },
   textSmall: {
-    fontSize: 14,
+    fontSize: Typography.body,
   },
 });

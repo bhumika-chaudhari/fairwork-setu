@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,27 +7,37 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
+  Pressable,
+  TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import PrimaryButton from './PrimaryButton';
+import GhostButton from './GhostButton';
 import Card from './Card';
+import VoiceButton from './VoiceButton';
 import { Colors, Spacing, Typography, BorderRadius } from '../constants/theme';
+import { formatInr } from '../src/localization';
+import { voiceExpense, voiceIncome } from '../data/mockData';
+import { successTap } from '../lib/haptics';
 
 interface VoiceEntryModalProps {
   visible: boolean;
   onClose: () => void;
 }
 
-type Stage = 'listening' | 'result' | 'saved';
+type Stage = 'listening' | 'result' | 'saved' | 'typing';
 
 export default function VoiceEntryModal({ visible, onClose }: VoiceEntryModalProps) {
+  const { t } = useTranslation();
   const [stage, setStage] = useState<Stage>('listening');
-  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+  const [typed, setTyped] = useState('');
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (visible) {
       setStage('listening');
-      // Simulate listening → result after 2 seconds
+      setTyped('');
       const timer = setTimeout(() => setStage('result'), 2000);
       return () => clearTimeout(timer);
     }
@@ -38,7 +48,7 @@ export default function VoiceEntryModal({ visible, onClose }: VoiceEntryModalPro
       const pulse = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
-            toValue: 1.3,
+            toValue: 1.18,
             duration: 800,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
@@ -53,298 +63,242 @@ export default function VoiceEntryModal({ visible, onClose }: VoiceEntryModalPro
       );
       pulse.start();
       return () => pulse.stop();
-    } else {
-      pulseAnim.setValue(1);
     }
-  }, [stage]);
+    pulseAnim.setValue(1);
+  }, [pulseAnim, stage]);
 
   const handleSave = () => {
+    successTap();
     setStage('saved');
   };
-
   const handleRetry = () => {
     setStage('listening');
     setTimeout(() => setStage('result'), 2000);
   };
-
   const handleClose = () => {
     setStage('listening');
     onClose();
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={handleClose}>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>बोलकर जोड़ें</Text>
-          <TouchableOpacity onPress={handleClose} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-            <Ionicons name="close" size={28} color={Colors.text} />
-          </TouchableOpacity>
-        </View>
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={handleClose}>
+      <Pressable style={styles.overlay} onPress={handleClose}>
+        <Pressable style={styles.sheet} onPress={() => undefined}>
+          <View style={styles.handle} />
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>{t('voice.title')}</Text>
+            <TouchableOpacity
+              onPress={handleClose}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              accessibilityRole="button"
+              accessibilityLabel={t('common.close')}
+              style={styles.closeHit}
+            >
+              <Ionicons name="close" size={26} color={Colors.textPrimary} />
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.content}>
-          {/* Listening State */}
           {stage === 'listening' && (
-            <View style={styles.listeningContainer}>
-              <Animated.View style={[styles.micCircleOuter, { transform: [{ scale: pulseAnim }] }]}>
-                <View style={styles.micCircle}>
-                  <Ionicons name="mic" size={48} color={Colors.white} />
-                </View>
+            <View style={styles.center}>
+              <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                <VoiceButton onPress={() => undefined} size={104} />
               </Animated.View>
-              <Text style={styles.listeningText}>सुन रहे हैं...</Text>
-              <Text style={styles.listeningHint}>अपनी कमाई या खर्चा बोलें</Text>
-              <View style={styles.dotsRow}>
-                {[0, 1, 2].map((i) => (
-                  <View key={i} style={[styles.dot, { opacity: 0.3 + (i * 0.3) }]} />
-                ))}
-              </View>
+              <Text style={styles.listeningText}>{t('voice.listening')}</Text>
+              <Text style={styles.hint}>{t('voice.listeningHint')}</Text>
+              <GhostButton title={t('voice.typeInstead')} onPress={() => setStage('typing')} />
             </View>
           )}
 
-          {/* Result State */}
+          {stage === 'typing' && (
+            <View>
+              <TextInput
+                style={styles.typed}
+                value={typed}
+                onChangeText={setTyped}
+                placeholder={t('voice.typePlaceholder')}
+                placeholderTextColor={Colors.textMuted}
+                multiline
+              />
+              <PrimaryButton title={t('common.save')} onPress={handleSave} style={styles.cta} />
+              <GhostButton title={t('voice.speakAgain')} onPress={handleRetry} />
+            </View>
+          )}
+
           {stage === 'result' && (
-            <View style={styles.resultContainer}>
-              <Card style={styles.transcriptCard}>
-                <View style={styles.transcriptHeader}>
-                  <Ionicons name="chatbubble-ellipses-outline" size={20} color={Colors.primary} />
-                  <Text style={styles.transcriptLabel}>आपने कहा:</Text>
-                </View>
-                <Text style={styles.transcriptText}>
-                  "आज 800 रुपये कमाए, 150 पेट्रोल में गए।"
-                </Text>
+            <View>
+              <Card>
+                <Text style={styles.smallLabel}>{t('voice.youSaid')}</Text>
+                <Text style={styles.transcript}>{t('voice.transcript')}</Text>
               </Card>
-
-              <Card variant="accent" style={styles.extractedCard}>
-                <Text style={styles.extractedTitle}>समझा गया:</Text>
-                <View style={styles.extractedRow}>
-                  <View style={styles.extractedItem}>
-                    <Ionicons name="arrow-down-circle" size={24} color={Colors.success} />
-                    <Text style={styles.extractedLabel}>कमाई</Text>
-                    <Text style={styles.extractedAmount}>₹800</Text>
-                  </View>
-                  <View style={styles.extractedDivider} />
-                  <View style={styles.extractedItem}>
-                    <Ionicons name="arrow-up-circle" size={24} color={Colors.danger} />
-                    <Text style={styles.extractedLabel}>खर्चा</Text>
-                    <Text style={[styles.extractedAmount, { color: Colors.danger }]}>₹150</Text>
-                  </View>
-                </View>
-                <View style={styles.categoryRow}>
-                  <Ionicons name="pricetag-outline" size={16} color={Colors.textSecondary} />
-                  <Text style={styles.categoryText}>श्रेणी: यात्रा/ईंधन</Text>
-                </View>
-              </Card>
-
-              <View style={styles.buttonRow}>
-                <PrimaryButton
-                  title="सहेजें"
-                  onPress={handleSave}
-                  icon={<Ionicons name="checkmark-circle" size={22} color={Colors.white} />}
-                  style={styles.saveButton}
-                />
-                <PrimaryButton
-                  title="फिर से बोलें"
-                  onPress={handleRetry}
-                  variant="outline"
-                  icon={<Ionicons name="refresh" size={20} color={Colors.primary} />}
-                  style={styles.retryButton}
-                />
+              <View style={styles.miniRow}>
+                <Card style={styles.miniCard} variant="success">
+                  <Text style={styles.miniLabel}>{t('voice.income')}</Text>
+                  <Text style={styles.miniValue}>{t('common.currency', { amount: formatInr(voiceIncome) })}</Text>
+                </Card>
+                <Card style={styles.miniCard} variant="warning">
+                  <Text style={styles.miniLabel}>{t('voice.expense')}</Text>
+                  <Text style={[styles.miniValue, { color: Colors.danger }]}>
+                    {t('common.currency', { amount: formatInr(voiceExpense) })}
+                  </Text>
+                </Card>
               </View>
-            </View>
-          )}
-
-          {/* Saved State */}
-          {stage === 'saved' && (
-            <View style={styles.savedContainer}>
-              <View style={styles.successCircle}>
-                <Ionicons name="checkmark-circle" size={72} color={Colors.success} />
-              </View>
-              <Text style={styles.savedTitle}>आज की एंट्री सहेज ली गई ✅</Text>
-              <Text style={styles.savedSubtext}>कमाई ₹800 · खर्चा ₹150</Text>
+              <Text style={styles.hint}>{t('voice.category')}</Text>
               <PrimaryButton
-                title="बंद करें"
-                onPress={handleClose}
-                style={{ marginTop: Spacing.xxl }}
+                title={t('common.save')}
+                onPress={handleSave}
+                icon={<Ionicons name="checkmark-circle" size={22} color={Colors.white} />}
+                style={styles.cta}
+              />
+              <GhostButton
+                title={t('common.retry')}
+                onPress={handleRetry}
+                icon={<Ionicons name="refresh" size={20} color={Colors.primary} />}
               />
             </View>
           )}
-        </View>
-      </View>
+
+          {stage === 'saved' && (
+            <View style={styles.center}>
+              <View style={styles.successCircle}>
+                <Ionicons name="checkmark-circle" size={72} color={Colors.success} />
+              </View>
+              <Text style={styles.listeningText}>{t('voice.savedTitle')}</Text>
+              <Text style={styles.hint}>
+                {t('voice.savedSub', {
+                  income: formatInr(voiceIncome),
+                  expense: formatInr(voiceExpense),
+                })}
+              </Text>
+              <PrimaryButton title={t('common.close')} onPress={handleClose} style={styles.cta} />
+            </View>
+          )}
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.overlay,
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    backgroundColor: Colors.glass,
+    borderTopLeftRadius: BorderRadius.xl,
+    borderTopRightRadius: BorderRadius.xl,
+    paddingHorizontal: Spacing.screenPadding,
+    paddingBottom: Spacing.xxxl,
+    paddingTop: Spacing.sm,
+    maxHeight: '90%',
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.border,
+    alignSelf: 'center',
+    marginBottom: Spacing.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: 56,
-    paddingBottom: Spacing.lg,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
+    marginBottom: Spacing.lg,
   },
   headerTitle: {
     fontSize: Typography.heading,
     fontWeight: Typography.bold,
-    color: Colors.text,
-  },
-  content: {
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.headingLineHeight,
     flex: 1,
-    paddingHorizontal: Spacing.screenPadding,
-    justifyContent: 'center',
   },
-
-  // Listening
-  listeningContainer: {
-    alignItems: 'center',
-  },
-  micCircleOuter: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: Colors.accent + '20',
+  closeHit: {
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Spacing.xxl,
   },
-  micCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: Colors.accent,
+  center: {
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: Spacing.xxl,
   },
   listeningText: {
     fontSize: Typography.heading,
     fontWeight: Typography.bold,
-    color: Colors.text,
-    marginBottom: Spacing.sm,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    marginTop: Spacing.xl,
+    textAlign: 'center',
+    lineHeight: Typography.headingLineHeight,
   },
-  listeningHint: {
+  hint: {
     fontSize: Typography.body,
     color: Colors.textSecondary,
-    marginBottom: Spacing.xl,
+    fontFamily: Typography.fontFamily,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.md,
+    textAlign: 'center',
+    lineHeight: Typography.bodyLineHeight,
   },
-  dotsRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.accent,
-  },
-
-  // Result
-  resultContainer: {
-    flex: 1,
-    paddingTop: Spacing.xxl,
-  },
-  transcriptCard: {
-    marginBottom: Spacing.lg,
-  },
-  transcriptHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  smallLabel: {
+    fontSize: Typography.secondary,
+    color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginBottom: Spacing.sm,
   },
-  transcriptLabel: {
-    fontSize: 14,
-    fontWeight: Typography.medium,
-    color: Colors.textSecondary,
-    marginLeft: Spacing.sm,
-  },
-  transcriptText: {
+  transcript: {
     fontSize: Typography.cardTitle,
     fontWeight: Typography.medium,
-    color: Colors.text,
-    lineHeight: Typography.cardTitleLineHeight + 4,
-    fontStyle: 'italic',
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.cardTitleLineHeight,
   },
-  extractedCard: {
-    marginBottom: Spacing.xxl,
-  },
-  extractedTitle: {
-    fontSize: 14,
-    fontWeight: Typography.semibold,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.md,
-  },
-  extractedRow: {
+  miniRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  extractedItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  extractedLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginTop: Spacing.xs,
-    marginBottom: 2,
-  },
-  extractedAmount: {
-    fontSize: 28,
-    fontWeight: Typography.extraBold,
-    color: Colors.success,
-  },
-  extractedDivider: {
-    width: 1,
-    height: 50,
-    backgroundColor: Colors.divider,
-  },
-  categoryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: Colors.divider,
-    paddingTop: Spacing.md,
-  },
-  categoryText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginLeft: Spacing.sm,
-    fontWeight: Typography.medium,
-  },
-  buttonRow: {
     gap: Spacing.md,
   },
-  saveButton: {
-    flex: 0,
+  miniCard: {
+    flex: 1,
   },
-  retryButton: {
-    flex: 0,
+  miniLabel: {
+    fontSize: Typography.secondary,
+    color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
   },
-
-  // Saved
-  savedContainer: {
-    alignItems: 'center',
+  miniValue: {
+    fontSize: Typography.heading,
+    fontWeight: Typography.extraBold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.success,
+    marginTop: 4,
+  },
+  cta: {
+    marginTop: Spacing.md,
+    marginBottom: Spacing.md,
   },
   successCircle: {
-    marginBottom: Spacing.xl,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: Colors.successSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  savedTitle: {
-    fontSize: Typography.heading,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-    textAlign: 'center',
-    marginBottom: Spacing.sm,
-  },
-  savedSubtext: {
+  typed: {
+    minHeight: 96,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
+    padding: Spacing.lg,
     fontSize: Typography.body,
-    color: Colors.textSecondary,
-    fontWeight: Typography.medium,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.bodyLineHeight,
+    marginBottom: Spacing.lg,
+    textAlignVertical: 'top',
   },
 });

@@ -1,165 +1,141 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import Card from './Card';
 import SkillChip from './SkillChip';
 import PrimaryButton from './PrimaryButton';
 import DisclaimerText from './DisclaimerText';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../constants/theme';
-import { workerProfile, skillCourses } from '../data/mockData';
+import ScreenContainer from './ScreenContainer';
+import AppHeader from './AppHeader';
+import Badge from './Badge';
+import EmptyState from './EmptyState';
+import { Colors, Spacing, Typography, BorderRadius } from '../constants/theme';
+import { skillCourses, rating, completedJobs } from '../data/mockData';
+import { useProfile } from '../context/ProfileContext';
 
 interface KaushalScreenProps {
   onBack: () => void;
 }
 
-export default function KaushalScreen({ onBack }: KaushalScreenProps) {
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>कौशल पासपोर्ट</Text>
-        <View style={{ width: 24 }} />
-      </View>
+const PROFILE_LANG_KEYS = ['profile.langHindi', 'profile.langMarathi'];
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Profile Summary */}
+export default function KaushalScreen({ onBack }: KaushalScreenProps) {
+  const { t } = useTranslation();
+  const { profile } = useProfile();
+  const occupation = profile.workType ? t(`workerTypes.${profile.workType}`) : t('workerTypes.other');
+  const skills = [...profile.skillKeys.map((key) => t(key)), ...profile.customSkills];
+
+  return (
+    <ScreenContainer
+      padded={false}
+      header={<AppHeader title={t('kaushal.title')} onBack={onBack} />}
+    >
+      <View style={styles.body}>
         <Card lifted>
           <View style={styles.profileHeader}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {workerProfile.name.charAt(0)}
-              </Text>
+              <Text style={styles.avatarText}>{profile.name.charAt(0)}</Text>
             </View>
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{workerProfile.name}</Text>
-              <Text style={styles.profileOccupation}>{workerProfile.occupation}</Text>
+              <Text style={styles.profileName}>{profile.name}</Text>
+              <Text style={styles.profileOccupation}>{occupation}</Text>
               <View style={styles.locationRow}>
                 <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
-                <Text style={styles.profileCity}>{workerProfile.city}</Text>
+                <Text style={styles.profileCity}>{t(profile.cityKey)}</Text>
               </View>
             </View>
-            <View style={styles.ratingBadge}>
-              <Ionicons name="star" size={16} color={Colors.accent} />
-              <Text style={styles.ratingText}>{workerProfile.rating}</Text>
-            </View>
+            <Badge label={String(rating)} tone="warning" />
           </View>
 
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{workerProfile.completedJobs}</Text>
-              <Text style={styles.statLabel}>काम पूरे</Text>
+              <Text style={styles.statNumber}>{completedJobs}</Text>
+              <Text style={styles.statLabel}>{t('kaushal.jobsDone')}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{workerProfile.experience}</Text>
-              <Text style={styles.statLabel}>अनुभव</Text>
+              <Text style={styles.statNumber}>
+                {t('profileScreen.years', { count: profile.experienceYears })}
+              </Text>
+              <Text style={styles.statLabel}>{t('kaushal.experience')}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{workerProfile.languages.length}</Text>
-              <Text style={styles.statLabel}>भाषाएं</Text>
+              <Text style={styles.statNumber}>{PROFILE_LANG_KEYS.length}</Text>
+              <Text style={styles.statLabel}>{t('kaushal.languages')}</Text>
             </View>
           </View>
         </Card>
 
-        {/* Skills */}
-        <Text style={styles.sectionTitle}>कौशल</Text>
+        <Text style={styles.sectionTitle}>{t('kaushal.skills')}</Text>
+        {skills.length > 0 ? (
+          <View style={styles.skillsRow}>
+            {skills.map((skill) => (
+              <SkillChip key={skill} label={skill} variant="primary" />
+            ))}
+          </View>
+        ) : (
+          <EmptyState icon="sparkles-outline" message={t('kaushal.emptySkills')} />
+        )}
+
+        <Text style={styles.sectionTitle}>{t('kaushal.languages')}</Text>
         <View style={styles.skillsRow}>
-          {workerProfile.skills.map((skill, i) => (
-            <SkillChip key={i} label={skill} variant="primary" />
+          {PROFILE_LANG_KEYS.map((key) => (
+            <SkillChip key={key} label={t(key)} icon="chatbubble-outline" />
           ))}
         </View>
 
-        {/* Languages */}
-        <Text style={styles.sectionTitle}>भाषाएं</Text>
-        <View style={styles.skillsRow}>
-          {workerProfile.languages.map((lang, i) => (
-            <SkillChip key={i} label={lang} icon="chatbubble-outline" />
-          ))}
-        </View>
-
-        {/* Skill Passport Card */}
         <Card variant="accent" style={styles.passportCard}>
           <View style={styles.passportHeader}>
-            <Ionicons name="document-text" size={28} color={Colors.accent} />
+            <View style={styles.courseIcon}>
+              <Ionicons name="document-text" size={26} color={Colors.accent} />
+            </View>
             <View style={styles.passportInfo}>
-              <Text style={styles.passportTitle}>Skill Passport</Text>
-              <Text style={styles.passportSubtext}>आपकी स्किल्स का डिजिटल प्रमाण</Text>
+              <Text style={styles.passportTitle}>{t('kaushal.passportPreview')}</Text>
+              <Text style={styles.passportSubtext}>{t('kaushal.passportSub')}</Text>
             </View>
           </View>
           <PrimaryButton
-            title="PDF डाउनलोड करें"
-            onPress={() => Alert.alert('डाउनलोड', 'PDF डाउनलोड शुरू हो रहा है...')}
+            title={t('kaushal.downloadPdf')}
+            onPress={() => Alert.alert(t('kaushal.downloadStarted'), t('kaushal.downloadMessage'))}
             variant="accent"
-            icon={<Ionicons name="download-outline" size={20} color={Colors.text} />}
+            icon={<Ionicons name="download-outline" size={20} color={Colors.textPrimary} />}
           />
         </Card>
 
-        {/* Recommended Courses */}
-        <Text style={styles.sectionTitle}>सुझाए गए कोर्स</Text>
-        {skillCourses.map((course) => (
-          <Card key={course.id}>
-            <View style={styles.courseRow}>
+        <Text style={styles.sectionTitle}>{t('kaushal.recommended')}</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.courseScroll}
+        >
+          {skillCourses.map((course) => (
+            <Card key={course.id} style={styles.courseCard}>
               <View style={styles.courseIcon}>
-                <Ionicons name={course.icon as any} size={24} color={Colors.primary} />
+                <Ionicons name={course.icon as never} size={24} color={Colors.primary} />
               </View>
-              <View style={styles.courseInfo}>
-                <Text style={styles.courseTitle}>{course.titleHi}</Text>
-                <Text style={styles.courseMeta}>
-                  {course.provider} · {course.durationHi} · {course.levelHi}
-                </Text>
-              </View>
-              {course.isFree && (
-                <View style={styles.freeBadge}>
-                  <Text style={styles.freeText}>मुफ़्त</Text>
-                </View>
-              )}
-            </View>
-          </Card>
-        ))}
+              <Text style={styles.courseTitle}>{t(course.titleKey)}</Text>
+              <Text style={styles.courseMeta}>
+                {course.provider} · {t(course.durationKey)} · {t(course.levelKey)}
+              </Text>
+              {course.isFree ? <Badge label={t('kaushal.free')} tone="success" /> : null}
+            </Card>
+          ))}
+        </ScrollView>
 
-        {/* Disclaimer */}
-        <DisclaimerText
-          text="यह प्रोफ़ाइल आपकी स्किल्स दिखाने के लिए है। यह सरकारी प्रमाणपत्र नहीं है।"
-          variant="info"
-        />
-        <View style={{ height: Spacing.xxl }} />
-      </ScrollView>
-    </View>
+        <DisclaimerText text={t('kaushal.disclaimer')} variant="info" />
+      </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: 12,
-    paddingBottom: Spacing.md,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  headerTitle: {
-    fontSize: Typography.heading,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-  },
-  scrollView: {
-    flex: 1,
+  body: {
     paddingHorizontal: Spacing.screenPadding,
     paddingTop: Spacing.lg,
+    paddingBottom: Spacing.xxxl,
   },
-
-  // Profile
   profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -175,8 +151,9 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   avatarText: {
-    fontSize: 24,
+    fontSize: Typography.heading,
     fontWeight: Typography.bold,
+    fontFamily: Typography.fontFamily,
     color: Colors.white,
   },
   profileInfo: {
@@ -184,14 +161,16 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     lineHeight: Typography.cardTitleLineHeight,
   },
   profileOccupation: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.primary,
     fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
   },
   locationRow: {
     flexDirection: 'row',
@@ -199,30 +178,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   profileCity: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginLeft: 4,
   },
-  ratingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.accentLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-  },
-  ratingText: {
-    fontSize: 16,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-    marginLeft: 4,
-  },
-
-  // Stats
   statsRow: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: Colors.divider,
+    borderTopColor: Colors.border,
     paddingTop: Spacing.md,
   },
   statItem: {
@@ -230,38 +194,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 20,
+    fontSize: Typography.body,
     fontWeight: Typography.extraBold,
-    color: Colors.text,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    textAlign: 'center',
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: Typography.caption,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 2,
   },
   statDivider: {
     width: 1,
     height: '80%',
-    backgroundColor: Colors.divider,
+    backgroundColor: Colors.border,
     alignSelf: 'center',
   },
-
-  // Skills & Languages
   sectionTitle: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     marginBottom: Spacing.md,
     marginTop: Spacing.lg,
+    lineHeight: Typography.cardTitleLineHeight,
   },
   skillsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.sm,
-    marginBottom: Spacing.sm,
   },
-
-  // Passport
   passportCard: {
     marginTop: Spacing.lg,
   },
@@ -276,19 +240,25 @@ const styles = StyleSheet.create({
   },
   passportTitle: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.cardTitleLineHeight,
   },
   passportSubtext: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 2,
+    lineHeight: Typography.secondaryLineHeight,
   },
-
-  // Courses
-  courseRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  courseScroll: {
+    gap: Spacing.md,
+    paddingRight: Spacing.lg,
+  },
+  courseCard: {
+    width: 220,
+    marginBottom: 0,
   },
   courseIcon: {
     width: 44,
@@ -297,31 +267,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.md,
-  },
-  courseInfo: {
-    flex: 1,
+    marginBottom: Spacing.sm,
   },
   courseTitle: {
     fontSize: Typography.body,
     fontWeight: Typography.semibold,
-    color: Colors.text,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     lineHeight: Typography.bodyLineHeight,
+    marginBottom: 4,
   },
   courseMeta: {
-    fontSize: 13,
+    fontSize: Typography.caption,
     color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  freeBadge: {
-    backgroundColor: Colors.successLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-  },
-  freeText: {
-    fontSize: 13,
-    fontWeight: Typography.bold,
-    color: Colors.success,
+    fontFamily: Typography.fontFamily,
+    marginBottom: Spacing.sm,
   },
 });

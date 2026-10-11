@@ -1,0 +1,355 @@
+{
+  "common": {
+    "save": "जतन करा",
+    "cancel": "रद्द करा",
+    "retry": "पुन्हा प्रयत्न करा",
+    "close": "बंद करा",
+    "continue": "पुढे चला",
+    "back": "मागे",
+    "search": "शोधा",
+    "seeAll": "सर्व पहा",
+    "languageChanged": "भाषा बदलली",
+    "chooseLanguage": "भाषा निवडा",
+    "currency": "₹{{amount}}",
+    "skip": "आता नाही",
+    "next": "पुढे",
+    "done": "झाले",
+    "edit": "बदला",
+    "add": "जोडा",
+    "ok": "ठीक",
+    "language": "भाषा"
+  },
+  "onboarding": {
+    "appName": "सेतु",
+    "tagline": "तुमच्या कामाचा, पैशाचा, आरोग्याचा आणि कौशल्याचा साथी",
+    "chooseLanguage": "भाषा निवडा",
+    "whatWork": "तुम्ही काय काम करता?",
+    "howHelps": "सेतु कशी मदत करते",
+    "languageHint": "होमवरून कधीही भाषा बदलता येते.",
+    "workHint": "जे काम जवळचे वाटेल ते निवडा. नंतर बदलता येईल.",
+    "cityTitle": "तुम्ही कोणत्या शहरात काम करता?",
+    "cityHint": "शहर निवडा जेणेकरून जवळचे काम दिसेल.",
+    "skillsTitle": "काही कौशल्ये जोडा",
+    "skillsHint": "कौशल्ये जोडा — वायरिंग, पंखा दुरुस्ती, ड्रायव्हिंग.",
+    "moneyTitle": "छोटे बचत लक्ष्य ठेवायचे आहे का?",
+    "moneyHint": "साप्ताहिक लक्ष्य फक्त एक सौम्य आठवण आहे.",
+    "weeklyGoal": "सुचवलेले साप्ताहिक बचत लक्ष्य",
+    "welcomeTitle": "तुमचे Setu तयार आहे ✅",
+    "welcomeBody": "आता काम शोधा, कमाई नोंदवा आणि कौशल्य प्रोफाइल तयार करा.",
+    "start": "सेतु सुरू करा",
+    "stepLanguage": "भाषा",
+    "stepWork": "काम",
+    "stepMoney": "बचत",
+    "carousel1": "कमाई समजून घ्या",
+    "carousel2": "जवळचे काम शोधा",
+    "carousel3": "छोटी बचत तयार करा",
+    "carousel4": "आरोग्य आणि मदत मिळवा",
+    "carousel5": "Skill Passport तयार करा"
+  },
+  "tabs": {
+    "home": "होम",
+    "kaam": "काम",
+    "dhan": "पैसा",
+    "more": "सेवा"
+  },
+  "home": {
+    "greeting": "नमस्कार, {{name}} 👋",
+    "todayOverview": "आजचा आढावा",
+    "todayIncome": "आजची कमाई",
+    "weekDeltaUp": "↑ ₹{{amount}} गेल्या आठवड्यापेक्षा",
+    "weekDeltaDown": "↓ ₹{{amount}} गेल्या आठवड्यापेक्षा",
+    "emergencySavings": "आपत्कालीन बचत",
+    "addByVoice": "बोलून जोडा",
+    "addByVoiceHint": "कमाई किंवा खर्च बोलून नोंदवा",
+    "savingsSuggestion": "आज ₹{{amount}} वाचवू शकता",
+    "jobSuggestions": "आजच्या कामाच्या सूचना",
+    "healthSupport": "आरोग्य आणि मदत",
+    "newUserBanner": "सेतु तुमच्यासोबत चालते — एक छोटा पाऊल एका वेळी.",
+    "completeProfile": "प्रोफाइल पूर्ण करा",
+    "completeProfileHint": "कौशल्ये जोडा जेणेकरून चांगले काम दिसू शकेल.",
+    "profileReady": "प्रोफाइल तयार: {{percent}}%",
+    "openProfile": "प्रोफाइल उघडा",
+    "voiceA11y": "बोलून कमाई किंवा खर्च जोडा"
+  },
+  "kaam": {
+    "title": "काम",
+    "findWork": "काम शोधा",
+    "searchPlaceholder": "काम, कौशल्य किंवा परिसर शोधा",
+    "noJobs": "सध्या तुमच्या शहरात जुळणारे काम सापडले नाही.",
+    "noJobsHint": "नंतर पुन्हा पहा किंवा फिल्टर बदला",
+    "show": "दाखवा",
+    "jobsFound": "{{count}} कामे सापडली · {{city}}",
+    "sortDistance": "अंतर",
+    "filterAll": "सर्व",
+    "filterWiring": "वायरिंग",
+    "filterRepair": "दुरुस्ती",
+    "filterInstallation": "इन्स्टॉलेशन",
+    "filterCity": "शहर",
+    "filterAvailability": "उपलब्धता",
+    "cityPune": "पुणे",
+    "availAll": "कधीही",
+    "availToday": "आज",
+    "availWeek": "या आठवड्यात",
+    "skillMatch": "{{percent}}% कौशल्य जुळणी",
+    "updateProfile": "प्रोफाइल अपडेट करा",
+    "disclaimer": "कामाचे सुझेशन माहितीसाठी आहेत. नियोक्त्याची खात्री स्वतः करा.",
+    "payRange": "₹{{min}}–₹{{max}}"
+  },
+  "dhan": {
+    "title": "पैसा",
+    "weeklyIncome": "या आठवड्याची कमाई",
+    "income": "कमाई ₹{{amount}}",
+    "expense": "खर्च ₹{{amount}}",
+    "last7Days": "मागील 7 दिवस",
+    "expenseCategories": "खर्चाच्या श्रेणी",
+    "savingsGoal": "बचत लक्ष्य",
+    "expectedIncome": "पुढील आठवड्याची अपेक्षित कमाई",
+    "expectedRange": "₹{{min}} – ₹{{max}}",
+    "stabilityScore": "आर्थिक स्थैर्य गुणांक",
+    "stabilityHint": "आर्थिक स्थैर्याचा अंदाज",
+    "disclaimer": "ही फक्त माहिती आहे, कर्ज निर्णयासाठी नाही.",
+    "remaining": "लक्ष्यापर्यंत ₹{{amount}} आणखी वाचवायचे आहे",
+    "dash": "-",
+    "of100": "/100",
+    "expenseChip": "{{category}} · ₹{{amount}}"
+  },
+  "sehat": {
+    "title": "आरोग्य आणि मदत",
+    "searchPlaceholder": "रुग्णालय, योजना किंवा मदत शोधा",
+    "emergency": "आपत्काल",
+    "emergencyNumbers": "आपत्कालीन क्रमांक",
+    "ambulance": "रुग्णवाहिका",
+    "nearby": "जवळची आरोग्य सेवा",
+    "disclaimer": "सेतु वैद्यकीय सल्ला देत नाही. अधिकृत स्रोताकडून खात्री करा.",
+    "viewSource": "स्रोत पहा",
+    "schemes": "कल्याण मदत"
+  },
+  "kaushal": {
+    "title": "कौशल्य पासपोर्ट",
+    "downloadPdf": "PDF डाउनलोड करा",
+    "jobsDone": "पूर्ण कामे",
+    "experience": "अनुभव",
+    "languages": "भाषा",
+    "skills": "कौशल्ये",
+    "passportPreview": "कौशल्य पासपोर्ट",
+    "passportSub": "तुमच्या कौशल्यांचा डिजिटल पुरावा",
+    "recommended": "सुचवलेले अभ्यासक्रम",
+    "free": "मोफत",
+    "downloadStarted": "डाउनलोड",
+    "downloadMessage": "PDF डाउनलोड सुरू होत आहे...",
+    "disclaimer": "ही प्रोफाइल कौशल्य दाखवते. हा शासकीय प्रमाणपत्र नाही.",
+    "emptySkills": "कौशल्ये जोडा.",
+    "addSkills": "कौशल्ये जोडा",
+    "workHistory": "कामाचा इतिहास"
+  },
+  "voice": {
+    "title": "बोलून जोडा",
+    "listening": "ऐकत आहे...",
+    "listeningHint": "तुमची कमाई किंवा खर्च सांगा",
+    "youSaid": "तुम्ही म्हटले:",
+    "transcript": "आज ८०० रुपये कमावले, १५० पेट्रोलमध्ये गेले.",
+    "understood": "समजले",
+    "income": "कमाई",
+    "expense": "खर्च",
+    "category": "श्रेणी: प्रवास/इंधन",
+    "savedTitle": "आजची नोंद जतन झाली",
+    "savedSub": "कमाई ₹{{income}} · खर्च ₹{{expense}}",
+    "speakAgain": "पुन्हा बोला",
+    "typeInstead": "टाइप करून जोडा",
+    "typePlaceholder": "उदा. ८०० कमवले, १५० पेट्रोलवर गेले"
+  },
+  "more": {
+    "title": "सेवा",
+    "healthTitle": "आरोग्य आणि मदत",
+    "healthDesc": "रुग्णालये, औषधे, आपत्काल",
+    "skillTitle": "कौशल्य पासपोर्ट",
+    "skillDesc": "कौशल्ये, अभ्यासक्रम, प्रोफाइल",
+    "schemes": "शासकीय योजना",
+    "quickLinks": "त्वरित दुवे",
+    "help": "मदत आणि तक्रार",
+    "terms": "नियम आणि अटी",
+    "about": "सेतु बद्दल",
+    "profileTitle": "माझे प्रोफाइल",
+    "profileDesc": "नाव, शहर, कौशल्ये आणि लक्ष्ये"
+  },
+  "workerTypes": {
+    "driver": "ड्रायव्हर",
+    "delivery": "डिलिव्हरी",
+    "construction": "मजूर",
+    "domestic": "घरगुती काम",
+    "vendor": "दुकानदार",
+    "electrician": "इलेक्ट्रिशियन",
+    "other": "इतर",
+    "plumber": "प्लंबर",
+    "tailor": "शिंपी"
+  },
+  "days": {
+    "mon": "सोम",
+    "tue": "मंगळ",
+    "wed": "बुध",
+    "thu": "गुरु",
+    "fri": "शुक्र",
+    "sat": "शनि",
+    "sun": "रवि"
+  },
+  "expenses": {
+    "travel": "प्रवास",
+    "food": "जेवण",
+    "rent": "भाडे",
+    "tools": "औजारे",
+    "medical": "वैद्यकीय",
+    "other": "इतर"
+  },
+  "profile": {
+    "name": "रमेश कुमार",
+    "occupation": "इलेक्ट्रिशियन",
+    "city": "पुणे",
+    "experience": "८ वर्षे",
+    "langHindi": "हिंदी",
+    "langMarathi": "मराठी"
+  },
+  "skills": {
+    "wiring": "वायरिंग",
+    "fanRepair": "पंखा दुरुस्ती",
+    "switchboard": "स्विचबोर्ड दुरुस्ती",
+    "led": "LED बसवणे",
+    "electrical": "इलेक्ट्रिकल",
+    "driving": "ड्रायव्हिंग",
+    "delivery": "डिलिव्हरी"
+  },
+  "jobs": {
+    "j001": {
+      "title": "इलेक्ट्रिशियन हेल्पर",
+      "location": "कोथरुड, पुणे",
+      "payType": "प्रतिदिन",
+      "workType": "करार",
+      "postedAgo": "२ तासांपूर्वी",
+      "employer": "स्थानिक कंत्राटदार"
+    },
+    "j002": {
+      "title": "पंखा बसवणे",
+      "location": "हडपसर, पुणे",
+      "payType": "प्रति काम",
+      "workType": "एकदा",
+      "postedAgo": "५ तासांपूर्वी",
+      "employer": "हाउसिंग सोसायटी"
+    },
+    "j003": {
+      "title": "ऑफिस स्विचबोर्ड दुरुस्ती",
+      "location": "विमाननगर, पुणे",
+      "payType": "प्रतिदिन",
+      "workType": "करार",
+      "postedAgo": "१ दिवसापूर्वी",
+      "employer": "ऑफिस कॅम्पस"
+    },
+    "j004": {
+      "title": "LED लाईट बसवणे",
+      "location": "बालेवाडी, पुणे",
+      "payType": "प्रति काम",
+      "workType": "एकदा",
+      "postedAgo": "३ तासांपूर्वी",
+      "employer": "दुकान मालक"
+    },
+    "j005": {
+      "title": "बांधकाम साइट इलेक्ट्रिशियन",
+      "location": "वाकड, पुणे",
+      "payType": "प्रतिदिन",
+      "workType": "साप्ताहिक",
+      "postedAgo": "६ तासांपूर्वी",
+      "employer": "साइट कंत्राटदार"
+    }
+  },
+  "healthResources": {
+    "h001": {
+      "name": "ससून रुग्णालय",
+      "type": "शासकीय रुग्णालय",
+      "services": "आपत्काल, ओपीडी"
+    },
+    "h002": {
+      "name": "पीएचसी कोथरुड",
+      "type": "प्राथमिक आरोग्य केंद्र",
+      "services": "तपासणी, लसीकरण"
+    },
+    "h003": {
+      "name": "जन औषधी केंद्र",
+      "type": "जन औषधी",
+      "services": "स्वस्त औषधे"
+    }
+  },
+  "courses": {
+    "sc001": {
+      "title": "सोलर पॅनेल इन्स्टॉलेशन",
+      "duration": "२ आठवडे",
+      "level": "मध्यम"
+    },
+    "sc002": {
+      "title": "स्मार्ट होम वायरिंग",
+      "duration": "१ महिना",
+      "level": "प्रगत"
+    },
+    "sc003": {
+      "title": "EV चार्जर सेटअप",
+      "duration": "३ आठवडे",
+      "level": "प्रगत"
+    }
+  },
+  "schemes": {
+    "ws001": {
+      "name": "पीएम-एसवायएम",
+      "description": "असंघटित कामगारांसाठी पेन्शन योजना",
+      "eligibility": "१८–४० वर्षे, उत्पन्न ₹१५,०००/महिना पेक्षा कमी"
+    },
+    "ws002": {
+      "name": "ई-श्रम कार्ड",
+      "description": "असंघटित कामगारांसाठी ओळखपत्र",
+      "eligibility": "सर्व असंघटित कामगार"
+    }
+  },
+  "profileScreen": {
+    "title": "तुमचे प्रोफाइल",
+    "photo": "फोटो",
+    "name": "नाव",
+    "nameHint": "जे नाव सोयीस्कर आहे ते लिहा.",
+    "city": "शहर",
+    "cityHint": "जवळचे काम दिसावे म्हणून शहर निवडा.",
+    "workType": "कामाचा प्रकार",
+    "workHint": "जे काम जवळचे वाटेल ते निवडा.",
+    "skills": "कौशल्ये",
+    "skillsHint": "वायरिंग, पंखा दुरुस्ती, ड्रायव्हिंग.",
+    "skillPlaceholder": "कौशल्य लिहा",
+    "experience": "अनुभव (वर्षे)",
+    "experienceHint": "काही महिनेही महत्त्वाचे.",
+    "availability": "उपलब्धता",
+    "availabilityHint": "कामाला कधी उपलब्ध आहात?",
+    "payRange": "अपेक्षित रोजची कमाई",
+    "payHint": "मर्यादा कामाच्या जुळणीत मदत करते.",
+    "emergencyContact": "आपत्कालीन संपर्क",
+    "emergencyHint": "पर्यायी.",
+    "savingsGoal": "बचत लक्ष्य",
+    "savingsHint": "छोटे लक्ष्य जे चांगले वाटेल.",
+    "strength": "प्रोफाइल तयार: {{percent}}%",
+    "strengthHint": "चांगल्या कामासाठी कौशल्ये जोडा.",
+    "saved": "प्रोफाइल जतन झाले",
+    "savedBody": "माहिती या फोनवर राहते.",
+    "years": "{{count}} वर्षे",
+    "validationName": "नाव जोडा.",
+    "validationCity": "शहरामुळे जवळचे काम दिसते.",
+    "removeSkill": "{{skill}} काढा"
+  },
+  "availability": {
+    "anytime": "कधीही",
+    "today": "आज",
+    "weekdays": "आठवड्याचे दिवस",
+    "weekends": "शनि-रवि"
+  },
+  "cities": {
+    "pune": "पुणे",
+    "mumbai": "मुंबई",
+    "delhi": "दिल्ली",
+    "bengaluru": "बेंगळुरू",
+    "hyderabad": "हैदराबाद",
+    "chennai": "चेन्नई",
+    "kolkata": "कोलकाता",
+    "ahmedabad": "अहमदाबाद"
+  }
+}

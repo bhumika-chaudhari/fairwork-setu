@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Typography, BorderRadius } from '../constants/theme';
+import { Colors, Spacing, Typography, BorderRadius, ButtonSizes } from '../constants/theme';
 
 interface SkillChipProps {
   label: string;
@@ -10,6 +10,7 @@ interface SkillChipProps {
   onPress?: () => void;
   variant?: 'default' | 'primary' | 'accent';
   style?: ViewStyle;
+  color?: string;
 }
 
 export default function SkillChip({
@@ -19,10 +20,14 @@ export default function SkillChip({
   onPress,
   variant = 'default',
   style,
+  color,
 }: SkillChipProps) {
   const getColors = () => {
     if (selected) {
       return { bg: Colors.primary, text: Colors.textOnPrimary, border: Colors.primary };
+    }
+    if (color) {
+      return { bg: Colors.surface, text: color, border: color };
     }
     switch (variant) {
       case 'primary':
@@ -30,7 +35,7 @@ export default function SkillChip({
       case 'accent':
         return { bg: Colors.accentLight, text: Colors.warning, border: Colors.accentLight };
       default:
-        return { bg: Colors.white, text: Colors.text, border: Colors.divider };
+        return { bg: Colors.surface, text: Colors.textPrimary, border: Colors.border };
     }
   };
 
@@ -47,14 +52,9 @@ export default function SkillChip({
       activeOpacity={0.7}
       disabled={!onPress}
     >
-      {icon && (
-        <Ionicons
-          name={icon as any}
-          size={16}
-          color={colors.text}
-          style={styles.icon}
-        />
-      )}
+      {icon ? (
+        <Ionicons name={icon as never} size={16} color={colors.text} style={styles.icon} />
+      ) : null}
       <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
     </TouchableOpacity>
   );
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    minHeight: 36,
+    minHeight: ButtonSizes.minTouchTarget,
   },
   icon: {
     marginRight: 6,
@@ -76,5 +76,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: Typography.medium,
+    fontFamily: Typography.fontFamily,
   },
 });

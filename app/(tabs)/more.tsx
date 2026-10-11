@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import Card from '../../components/Card';
 import SehatScreen from '../../components/SehatScreen';
 import KaushalScreen from '../../components/KaushalScreen';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/theme';
+import ScreenContainer from '../../components/ScreenContainer';
+import AppHeader from '../../components/AppHeader';
+import LanguageSelector from '../../components/LanguageSelector';
+import { Colors, Spacing, Typography, BorderRadius, Shadows, ButtonSizes } from '../../constants/theme';
 import { welfareSchemes } from '../../data/mockData';
 
 type SubScreen = 'menu' | 'sehat' | 'kaushal';
 
 export default function MoreScreen() {
+  const { t } = useTranslation();
+  const router = useRouter();
   const [activeScreen, setActiveScreen] = useState<SubScreen>('menu');
 
   if (activeScreen === 'sehat') {
@@ -22,18 +28,13 @@ export default function MoreScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>सेवा</Text>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Main Service Cards */}
+    <ScreenContainer
+      padded={false}
+      header={
+        <AppHeader title={t('more.title')} right={<LanguageSelector variant="icon" />} />
+      }
+    >
+      <View style={styles.content}>
         <View style={styles.cardGrid}>
           <TouchableOpacity
             style={styles.serviceCard}
@@ -43,11 +44,8 @@ export default function MoreScreen() {
             <View style={[styles.serviceIconCircle, { backgroundColor: Colors.healthLight }]}>
               <Ionicons name="heart" size={32} color={Colors.health} />
             </View>
-            <Text style={styles.serviceTitle}>सेहत और मदद</Text>
-            <Text style={styles.serviceDesc}>अस्पताल, दवाइयाँ, इमरजेंसी</Text>
-            <View style={styles.serviceArrow}>
-              <Ionicons name="arrow-forward-circle" size={28} color={Colors.health} />
-            </View>
+            <Text style={styles.serviceTitle}>{t('more.healthTitle')}</Text>
+            <Text style={styles.serviceDesc}>{t('more.healthDesc')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -58,91 +56,80 @@ export default function MoreScreen() {
             <View style={[styles.serviceIconCircle, { backgroundColor: Colors.accentLight }]}>
               <Ionicons name="school" size={32} color={Colors.accent} />
             </View>
-            <Text style={styles.serviceTitle}>कौशल पासपोर्ट</Text>
-            <Text style={styles.serviceDesc}>स्किल्स, कोर्स, प्रोफ़ाइल</Text>
-            <View style={styles.serviceArrow}>
-              <Ionicons name="arrow-forward-circle" size={28} color={Colors.accent} />
-            </View>
+            <Text style={styles.serviceTitle}>{t('more.skillTitle')}</Text>
+            <Text style={styles.serviceDesc}>{t('more.skillDesc')}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Welfare Schemes */}
-        <Text style={styles.sectionTitle}>सरकारी योजनाएं</Text>
+        <TouchableOpacity
+          style={styles.profileRow}
+          activeOpacity={0.85}
+          onPress={() => router.push('/profile')}
+        >
+          <View style={[styles.serviceIconCircle, styles.profileIcon, { backgroundColor: Colors.primaryLight }]}>
+            <Ionicons name="person" size={26} color={Colors.primary} />
+          </View>
+          <View style={styles.profileCopy}>
+            <Text style={styles.serviceTitle}>{t('more.profileTitle')}</Text>
+            <Text style={styles.serviceDesc}>{t('more.profileDesc')}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={Colors.textMuted} />
+        </TouchableOpacity>
+
+        <Text style={styles.sectionTitle}>{t('more.schemes')}</Text>
         {welfareSchemes.map((scheme) => (
           <Card key={scheme.id}>
             <View style={styles.schemeRow}>
               <View style={styles.schemeIcon}>
-                <Ionicons name={scheme.icon as any} size={24} color={Colors.primary} />
+                <Ionicons name={scheme.icon as never} size={24} color={Colors.primary} />
               </View>
               <View style={styles.schemeInfo}>
-                <Text style={styles.schemeName}>{scheme.nameHi}</Text>
-                <Text style={styles.schemeDesc}>{scheme.descriptionHi}</Text>
+                <Text style={styles.schemeName}>{t(scheme.nameKey)}</Text>
+                <Text style={styles.schemeDesc}>{t(scheme.descriptionKey)}</Text>
                 <View style={styles.schemeEligibility}>
                   <Ionicons name="checkmark-circle-outline" size={14} color={Colors.success} />
-                  <Text style={styles.eligibilityText}>{scheme.eligibilityHi}</Text>
+                  <Text style={styles.eligibilityText}>{t(scheme.eligibilityKey)}</Text>
                 </View>
               </View>
             </View>
           </Card>
         ))}
 
-        {/* Quick links */}
-        <Text style={styles.sectionTitle}>त्वरित लिंक</Text>
+        <Text style={styles.sectionTitle}>{t('more.quickLinks')}</Text>
         <Card>
-          {[
-            { icon: 'help-circle-outline', label: 'सहायता और शिकायत', color: Colors.primary },
-            { icon: 'document-text-outline', label: 'नियम और शर्तें', color: Colors.textSecondary },
-            { icon: 'information-circle-outline', label: 'Setu के बारे में', color: Colors.textSecondary },
-          ].map((item, i) => (
-            <TouchableOpacity key={i} style={[styles.linkRow, i > 0 && styles.linkRowBorder]}>
-              <Ionicons name={item.icon as any} size={22} color={item.color} />
-              <Text style={styles.linkText}>{item.label}</Text>
-              <Ionicons name="chevron-forward" size={18} color={Colors.textTertiary} />
+          {(
+            [
+              { icon: 'help-circle-outline' as const, labelKey: 'more.help', color: Colors.primary },
+              { icon: 'document-text-outline' as const, labelKey: 'more.terms', color: Colors.textSecondary },
+              { icon: 'information-circle-outline' as const, labelKey: 'more.about', color: Colors.textSecondary },
+            ] as const
+          ).map((item, i) => (
+            <TouchableOpacity key={item.labelKey} style={[styles.linkRow, i > 0 && styles.linkRowBorder]}>
+              <Ionicons name={item.icon} size={22} color={item.color} />
+              <Text style={styles.linkText}>{t(item.labelKey)}</Text>
+              <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
             </TouchableOpacity>
           ))}
         </Card>
-
-        <View style={{ height: 24 }} />
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.md,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  headerTitle: {
-    fontSize: Typography.heading,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-  },
-  scrollView: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: Spacing.screenPadding,
     paddingTop: Spacing.lg,
+    paddingBottom: Spacing.xxxl,
   },
-
-  // Service Cards
   cardGrid: {
     flexDirection: 'row',
     gap: Spacing.md,
-    marginBottom: Spacing.xxl,
+    marginBottom: Spacing.md,
   },
   serviceCard: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.cardPaddingLarge,
     ...Shadows.card,
@@ -156,30 +143,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: Spacing.md,
   },
+  profileIcon: {
+    marginBottom: 0,
+    marginRight: Spacing.md,
+    width: ButtonSizes.minTouchTarget,
+    height: ButtonSizes.minTouchTarget,
+  },
   serviceTitle: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     lineHeight: Typography.cardTitleLineHeight,
     marginBottom: 4,
   },
   serviceDesc: {
-    fontSize: 13,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
-    lineHeight: 19,
+    fontFamily: Typography.fontFamily,
+    lineHeight: Typography.secondaryLineHeight,
     flex: 1,
   },
-  serviceArrow: {
-    alignSelf: 'flex-end',
-    marginTop: Spacing.md,
+  profileRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.cardPadding,
+    marginBottom: Spacing.xxl,
+    ...Shadows.card,
   },
-
-  // Schemes
+  profileCopy: {
+    flex: 1,
+  },
   sectionTitle: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     marginBottom: Spacing.md,
+    lineHeight: Typography.cardTitleLineHeight,
   },
   schemeRow: {
     flexDirection: 'row',
@@ -199,14 +202,16 @@ const styles = StyleSheet.create({
   schemeName: {
     fontSize: Typography.body,
     fontWeight: Typography.bold,
-    color: Colors.text,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     lineHeight: Typography.bodyLineHeight,
   },
   schemeDesc: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 2,
-    lineHeight: 20,
+    lineHeight: Typography.secondaryLineHeight,
   },
   schemeEligibility: {
     flexDirection: 'row',
@@ -217,24 +222,26 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.success,
     fontWeight: Typography.medium,
+    fontFamily: Typography.fontFamily,
     marginLeft: 4,
+    flex: 1,
   },
-
-  // Quick links
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: ButtonSizes.minTouchTarget,
     paddingVertical: Spacing.md,
   },
   linkRowBorder: {
     borderTopWidth: 1,
-    borderTopColor: Colors.divider,
+    borderTopColor: Colors.border,
   },
   linkText: {
     flex: 1,
     fontSize: Typography.body,
-    color: Colors.text,
+    color: Colors.textPrimary,
     fontWeight: Typography.medium,
+    fontFamily: Typography.fontFamily,
     marginLeft: Spacing.md,
   },
 });

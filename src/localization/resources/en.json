@@ -1,0 +1,355 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "close": "Close",
+    "continue": "Continue",
+    "back": "Back",
+    "skip": "Skip for now",
+    "next": "Next",
+    "done": "Done",
+    "edit": "Edit",
+    "add": "Add",
+    "ok": "OK",
+    "search": "Search",
+    "seeAll": "See all",
+    "languageChanged": "Language changed",
+    "chooseLanguage": "Choose language",
+    "currency": "₹{{amount}}",
+    "language": "Language"
+  },
+  "onboarding": {
+    "appName": "Setu",
+    "tagline": "Your companion for work, money, health and skills",
+    "howHelps": "How Setu helps",
+    "chooseLanguage": "Choose language",
+    "languageHint": "You can change this anytime from Home.",
+    "whatWork": "What work do you do?",
+    "workHint": "Pick the work that feels closest. You can change it later.",
+    "cityTitle": "Which city do you work in?",
+    "cityHint": "Choose your city so nearby work can show up.",
+    "skillsTitle": "Add a few skills",
+    "skillsHint": "Add skills — like wiring, fan repair, or driving.",
+    "moneyTitle": "Would you like a small savings goal?",
+    "moneyHint": "A weekly goal is only a gentle reminder. Skip if you prefer.",
+    "weeklyGoal": "Suggested weekly savings",
+    "welcomeTitle": "Your Setu is ready ✅",
+    "welcomeBody": "You can now find work, track earnings, and build your skill profile.",
+    "start": "Start using Setu",
+    "stepLanguage": "Language",
+    "stepWork": "Work",
+    "stepMoney": "Savings",
+    "carousel1": "Understand your earnings",
+    "carousel2": "Find nearby work",
+    "carousel3": "Build a small savings habit",
+    "carousel4": "Get health and support",
+    "carousel5": "Create your Skill Passport"
+  },
+  "tabs": {
+    "home": "Home",
+    "kaam": "Work",
+    "dhan": "Money",
+    "more": "Services"
+  },
+  "home": {
+    "greeting": "Hello, {{name}} 👋",
+    "todayOverview": "Today's overview",
+    "todayIncome": "Today's income",
+    "weekDeltaUp": "↑ ₹{{amount}} from last week",
+    "weekDeltaDown": "↓ ₹{{amount}} from last week",
+    "emergencySavings": "Emergency savings",
+    "addByVoice": "Add by voice",
+    "addByVoiceHint": "Log income or expense by speaking",
+    "savingsSuggestion": "You can save ₹{{amount}} today",
+    "jobSuggestions": "Work suggestions for today",
+    "healthSupport": "Health and support",
+    "newUserBanner": "Setu is here to walk with you — one small step at a time.",
+    "completeProfile": "Complete your profile",
+    "completeProfileHint": "Add skills so better work suggestions can reach you.",
+    "profileReady": "Profile ready: {{percent}}%",
+    "openProfile": "Open profile",
+    "voiceA11y": "Add income or expense by voice"
+  },
+  "kaam": {
+    "title": "Work",
+    "findWork": "Find work",
+    "searchPlaceholder": "Search work, skill or area",
+    "noJobs": "No matching work found right now. Update your skills or city.",
+    "noJobsHint": "A small profile update can bring better matches.",
+    "show": "Show",
+    "jobsFound": "{{count}} jobs found · {{city}}",
+    "sortDistance": "Distance",
+    "filterAll": "All",
+    "filterWiring": "Wiring",
+    "filterRepair": "Repair",
+    "filterInstallation": "Installation",
+    "filterCity": "City",
+    "filterAvailability": "Availability",
+    "cityPune": "Pune",
+    "availAll": "Any time",
+    "availToday": "Today",
+    "availWeek": "This week",
+    "skillMatch": "{{percent}}% skill match",
+    "payRange": "₹{{min}}–₹{{max}}",
+    "updateProfile": "Update profile",
+    "disclaimer": "Job suggestions are for information. Please verify the employer yourself."
+  },
+  "dhan": {
+    "title": "Money",
+    "weeklyIncome": "This week's income",
+    "income": "Income ₹{{amount}}",
+    "expense": "Expense ₹{{amount}}",
+    "last7Days": "Last 7 days",
+    "expenseCategories": "Expense categories",
+    "savingsGoal": "Savings goal",
+    "expectedIncome": "Expected income next week",
+    "expectedRange": "₹{{min}} – ₹{{max}}",
+    "stabilityScore": "Financial Stability Score",
+    "stabilityHint": "A gentle estimate of money stability",
+    "disclaimer": "This is for information only, not for loan decisions.",
+    "remaining": "₹{{amount}} more to reach your savings goal",
+    "dash": "-",
+    "of100": "/100",
+    "expenseChip": "{{category}} · ₹{{amount}}"
+  },
+  "sehat": {
+    "title": "Health & Support",
+    "searchPlaceholder": "Search hospitals, schemes or help",
+    "emergency": "Emergency",
+    "emergencyNumbers": "Emergency numbers",
+    "ambulance": "Ambulance",
+    "nearby": "Nearby health services",
+    "disclaimer": "Setu does not provide medical advice. Please verify with official sources.",
+    "viewSource": "View source",
+    "schemes": "Welfare support"
+  },
+  "kaushal": {
+    "title": "Skill Passport",
+    "downloadPdf": "Download PDF",
+    "jobsDone": "Jobs done",
+    "experience": "Experience",
+    "languages": "Languages",
+    "skills": "Skills",
+    "passportPreview": "Skill Passport",
+    "passportSub": "A digital snapshot of your skills",
+    "recommended": "Recommended courses",
+    "free": "Free",
+    "downloadStarted": "Download",
+    "downloadMessage": "PDF download is starting...",
+    "disclaimer": "This profile shows your skills. It is not a government certificate.",
+    "emptySkills": "Add skills so your Skill Passport can shine.",
+    "addSkills": "Add skills",
+    "workHistory": "Work history"
+  },
+  "voice": {
+    "title": "Add by voice",
+    "listening": "Listening...",
+    "listeningHint": "Say your income or expense",
+    "youSaid": "You said:",
+    "transcript": "Today I earned 800 rupees, 150 went on petrol.",
+    "understood": "Understood",
+    "income": "Income",
+    "expense": "Expense",
+    "category": "Category: Travel/Fuel",
+    "savedTitle": "Today's entry saved",
+    "savedSub": "Income ₹{{income}} · Expense ₹{{expense}}",
+    "speakAgain": "Speak again",
+    "typeInstead": "Type instead",
+    "typePlaceholder": "Example: earned 800, spent 150 on petrol"
+  },
+  "more": {
+    "title": "Services",
+    "healthTitle": "Health & help",
+    "healthDesc": "Hospitals, medicines, emergency",
+    "skillTitle": "Skill Passport",
+    "skillDesc": "Skills, courses, profile",
+    "profileTitle": "My profile",
+    "profileDesc": "Name, city, skills and goals",
+    "schemes": "Government schemes",
+    "quickLinks": "Quick links",
+    "help": "Help and complaints",
+    "terms": "Terms and conditions",
+    "about": "About Setu"
+  },
+  "profileScreen": {
+    "title": "Your profile",
+    "photo": "Photo",
+    "name": "Name",
+    "nameHint": "Use the name you are comfortable sharing.",
+    "city": "City",
+    "cityHint": "Choose your city so nearby work can show up.",
+    "workType": "Work type",
+    "workHint": "Pick the work that feels closest.",
+    "skills": "Skills",
+    "skillsHint": "Add skills — like wiring, fan repair, or driving.",
+    "skillPlaceholder": "Type a skill",
+    "experience": "Years of experience",
+    "experienceHint": "Even a few months count. There is no wrong answer.",
+    "availability": "Availability",
+    "availabilityHint": "When are you available for work?",
+    "payRange": "Expected daily pay",
+    "payHint": "A range helps match work. You can change it anytime.",
+    "emergencyContact": "Emergency contact",
+    "emergencyHint": "Optional. Someone who can be reached in an emergency.",
+    "savingsGoal": "Savings goal",
+    "savingsHint": "A small goal you feel good about.",
+    "strength": "Profile ready: {{percent}}%",
+    "strengthHint": "Add skills so better work suggestions can reach you.",
+    "saved": "Profile saved",
+    "savedBody": "Your details stay on this phone.",
+    "years": "{{count}} years",
+    "validationName": "Please add a name so we can greet you.",
+    "validationCity": "A city helps show nearby work.",
+    "removeSkill": "Remove {{skill}}"
+  },
+  "availability": {
+    "anytime": "Any time",
+    "today": "Today",
+    "weekdays": "Weekdays",
+    "weekends": "Weekends"
+  },
+  "cities": {
+    "pune": "Pune",
+    "mumbai": "Mumbai",
+    "delhi": "Delhi",
+    "bengaluru": "Bengaluru",
+    "hyderabad": "Hyderabad",
+    "chennai": "Chennai",
+    "kolkata": "Kolkata",
+    "ahmedabad": "Ahmedabad"
+  },
+  "workerTypes": {
+    "driver": "Driver",
+    "delivery": "Delivery",
+    "construction": "Construction",
+    "domestic": "Domestic work",
+    "vendor": "Vendor",
+    "electrician": "Electrician",
+    "plumber": "Plumber",
+    "tailor": "Tailor",
+    "other": "Other"
+  },
+  "days": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "expenses": {
+    "travel": "Travel",
+    "food": "Food",
+    "rent": "Rent",
+    "tools": "Tools",
+    "medical": "Medical",
+    "other": "Other"
+  },
+  "profile": {
+    "name": "Ramesh Kumar",
+    "occupation": "Electrician",
+    "city": "Pune",
+    "experience": "8 years",
+    "langHindi": "Hindi",
+    "langMarathi": "Marathi"
+  },
+  "skills": {
+    "wiring": "Wiring",
+    "fanRepair": "Fan repair",
+    "switchboard": "Switchboard repair",
+    "led": "LED installation",
+    "electrical": "Electrical",
+    "driving": "Driving",
+    "delivery": "Delivery"
+  },
+  "jobs": {
+    "j001": {
+      "title": "Electrician Helper",
+      "location": "Kothrud, Pune",
+      "payType": "per day",
+      "workType": "Contract",
+      "postedAgo": "2 hours ago",
+      "employer": "Local contractor"
+    },
+    "j002": {
+      "title": "Fan Installation",
+      "location": "Hadapsar, Pune",
+      "payType": "per job",
+      "workType": "One-time",
+      "postedAgo": "5 hours ago",
+      "employer": "Housing society"
+    },
+    "j003": {
+      "title": "Office Switchboard Repair",
+      "location": "Viman Nagar, Pune",
+      "payType": "per day",
+      "workType": "Contract",
+      "postedAgo": "1 day ago",
+      "employer": "Office campus"
+    },
+    "j004": {
+      "title": "LED Light Installation",
+      "location": "Balewadi, Pune",
+      "payType": "per job",
+      "workType": "One-time",
+      "postedAgo": "3 hours ago",
+      "employer": "Shop owner"
+    },
+    "j005": {
+      "title": "Construction Site Electrician",
+      "location": "Wakad, Pune",
+      "payType": "per day",
+      "workType": "Weekly",
+      "postedAgo": "6 hours ago",
+      "employer": "Site contractor"
+    }
+  },
+  "healthResources": {
+    "h001": {
+      "name": "Sassoon Hospital",
+      "type": "Government hospital",
+      "services": "Emergency, OPD"
+    },
+    "h002": {
+      "name": "PHC Kothrud",
+      "type": "Primary health centre",
+      "services": "Checkup, Vaccination"
+    },
+    "h003": {
+      "name": "Jan Aushadhi Kendra",
+      "type": "Jan Aushadhi",
+      "services": "Affordable medicines"
+    }
+  },
+  "courses": {
+    "sc001": {
+      "title": "Solar Panel Installation",
+      "duration": "2 weeks",
+      "level": "Intermediate"
+    },
+    "sc002": {
+      "title": "Smart Home Wiring",
+      "duration": "1 month",
+      "level": "Advanced"
+    },
+    "sc003": {
+      "title": "EV Charger Setup",
+      "duration": "3 weeks",
+      "level": "Advanced"
+    }
+  },
+  "schemes": {
+    "ws001": {
+      "name": "PM-SYM",
+      "description": "Pension scheme for unorganised workers",
+      "eligibility": "18–40 years, income under ₹15,000/month"
+    },
+    "ws002": {
+      "name": "e-Shram",
+      "description": "Identity card for unorganised workers",
+      "eligibility": "All unorganised workers"
+    }
+  }
+}

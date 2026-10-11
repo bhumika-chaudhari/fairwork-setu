@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Linking } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Card from './Card';
+import { useTranslation } from 'react-i18next';
 import HealthResourceCard from './HealthResourceCard';
 import DisclaimerText from './DisclaimerText';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../constants/theme';
+import SearchField from './SearchField';
+import ScreenContainer from './ScreenContainer';
+import AppHeader from './AppHeader';
+import EmptyState from './EmptyState';
+import { Colors, Spacing, Typography, BorderRadius, Shadows, ButtonSizes } from '../constants/theme';
 import { healthResources } from '../data/mockData';
 
 interface SehatScreenProps {
@@ -12,173 +16,126 @@ interface SehatScreenProps {
 }
 
 export default function SehatScreen({ onBack }: SehatScreenProps) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredResources = healthResources.filter((r) =>
-    r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.typeHi.includes(searchQuery)
-  );
+  const filteredResources = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return healthResources;
+    return healthResources.filter((r) => {
+      const haystack = `${t(r.nameKey)} ${t(r.typeKey)} ${t(r.servicesKey)}`.toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [searchQuery, t]);
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>सेहत और मदद</Text>
-        <View style={{ width: 24 }} />
-      </View>
+    <ScreenContainer
+      padded={false}
+      header={<AppHeader title={t('sehat.title')} onBack={onBack} />}
+    >
+      <View style={styles.body}>
+        <SearchField
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder={t('sehat.searchPlaceholder')}
+        />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Search */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color={Colors.textTertiary} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="अस्पताल, स्कीम या मदद खोजें"
-            placeholderTextColor={Colors.textTertiary}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+        <Text style={styles.sectionTitle}>{t('sehat.emergency')}</Text>
+        <View style={styles.emergencyRow}>
+          <TouchableOpacity
+            style={[styles.emergencyCard, styles.emergencyDanger]}
+            onPress={() => Linking.openURL('tel:108')}
+            accessibilityRole="button"
+            accessibilityLabel={`108 ${t('sehat.ambulance')}`}
+          >
+            <View style={styles.emergencyIcon}>
+              <Ionicons name="medkit" size={26} color={Colors.white} />
+            </View>
+            <Text style={styles.emergencyNumber}>108</Text>
+            <Text style={styles.emergencyLabel}>{t('sehat.ambulance')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.emergencyCard, styles.emergencyHealth]}
+            onPress={() => Linking.openURL('tel:112')}
+            accessibilityRole="button"
+            accessibilityLabel={`112 ${t('sehat.emergency')}`}
+          >
+            <View style={styles.emergencyIcon}>
+              <Ionicons name="call" size={26} color={Colors.white} />
+            </View>
+            <Text style={styles.emergencyNumber}>112</Text>
+            <Text style={styles.emergencyLabel}>{t('sehat.emergency')}</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Emergency Numbers */}
-        <Card variant="warning">
-          <View style={styles.emergencyHeader}>
-            <Ionicons name="warning" size={22} color={Colors.warning} />
-            <Text style={styles.emergencyTitle}>इमरजेंसी नंबर</Text>
-          </View>
-          <View style={styles.emergencyNumbers}>
-            <TouchableOpacity
-              style={styles.emergencyItem}
-              onPress={() => Linking.openURL('tel:108')}
-            >
-              <View style={[styles.emergencyIcon, { backgroundColor: Colors.dangerLight }]}>
-                <Ionicons name="medical" size={20} color={Colors.danger} />
-              </View>
-              <View>
-                <Text style={styles.emergencyNumber}>108</Text>
-                <Text style={styles.emergencyLabel}>एम्बुलेंस</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.emergencyItem}
-              onPress={() => Linking.openURL('tel:112')}
-            >
-              <View style={[styles.emergencyIcon, { backgroundColor: Colors.warningLight }]}>
-                <Ionicons name="call" size={20} color={Colors.warning} />
-              </View>
-              <View>
-                <Text style={styles.emergencyNumber}>112</Text>
-                <Text style={styles.emergencyLabel}>इमरजेंसी</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </Card>
+        <Text style={styles.sectionTitle}>{t('sehat.nearby')}</Text>
+        {filteredResources.length > 0 ? (
+          filteredResources.map((resource) => (
+            <HealthResourceCard key={resource.id} resource={resource} />
+          ))
+        ) : (
+          <EmptyState icon="medkit-outline" message={t('kaam.noJobsHint')} />
+        )}
 
-        {/* Nearby Resources */}
-        <Text style={styles.sectionTitle}>नज़दीकी स्वास्थ्य सेवाएं</Text>
-        {filteredResources.map((resource) => (
-          <HealthResourceCard key={resource.id} resource={resource} />
-        ))}
-
-        {/* Disclaimer */}
-        <DisclaimerText
-          text="Setu चिकित्सा सलाह नहीं देता। कृपया आधिकारिक स्रोत से पुष्टि करें।"
-          variant="health"
-        />
-        <View style={{ height: Spacing.xxl }} />
-      </ScrollView>
-    </View>
+        <DisclaimerText text={t('sehat.disclaimer')} variant="health" />
+      </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: 12,
-    paddingBottom: Spacing.md,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  headerTitle: {
-    fontSize: Typography.heading,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-  },
-  scrollView: {
-    flex: 1,
+  body: {
     paddingHorizontal: Spacing.screenPadding,
     paddingTop: Spacing.lg,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    marginBottom: Spacing.lg,
-    ...Shadows.card,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: Typography.body,
-    color: Colors.text,
-    marginLeft: Spacing.sm,
-    padding: 0,
-  },
-  emergencyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  emergencyTitle: {
-    fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-    marginLeft: Spacing.sm,
-  },
-  emergencyNumbers: {
-    flexDirection: 'row',
-    gap: Spacing.lg,
-  },
-  emergencyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  emergencyIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.sm,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: Spacing.sm,
-  },
-  emergencyNumber: {
-    fontSize: 20,
-    fontWeight: Typography.extraBold,
-    color: Colors.text,
-  },
-  emergencyLabel: {
-    fontSize: 13,
-    color: Colors.textSecondary,
+    paddingBottom: Spacing.xxxl,
   },
   sectionTitle: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     marginBottom: Spacing.md,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.lg,
+    lineHeight: Typography.cardTitleLineHeight,
+  },
+  emergencyRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  emergencyCard: {
+    flex: 1,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.cardPadding,
+    minHeight: 128,
+    ...Shadows.card,
+  },
+  emergencyDanger: {
+    backgroundColor: Colors.danger,
+  },
+  emergencyHealth: {
+    backgroundColor: Colors.health,
+  },
+  emergencyIcon: {
+    width: ButtonSizes.minTouchTarget,
+    height: ButtonSizes.minTouchTarget,
+    borderRadius: BorderRadius.md,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
+  },
+  emergencyNumber: {
+    fontSize: Typography.heading,
+    fontWeight: Typography.extraBold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.white,
+    lineHeight: Typography.headingLineHeight,
+  },
+  emergencyLabel: {
+    fontSize: Typography.body,
+    color: Colors.white,
+    fontFamily: Typography.fontFamily,
+    marginTop: 2,
+    lineHeight: Typography.bodyLineHeight,
   },
 });

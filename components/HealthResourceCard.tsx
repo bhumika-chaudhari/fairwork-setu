@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import Card from './Card';
-import { Colors, Spacing, Typography, BorderRadius } from '../constants/theme';
+import Badge from './Badge';
+import { Colors, Spacing, Typography, BorderRadius, ButtonSizes } from '../constants/theme';
 import type { HealthResource } from '../data/mockData';
 
 interface HealthResourceCardProps {
@@ -10,6 +12,8 @@ interface HealthResourceCardProps {
 }
 
 export default function HealthResourceCard({ resource }: HealthResourceCardProps) {
+  const { t } = useTranslation();
+
   return (
     <Card variant="health">
       <View style={styles.header}>
@@ -21,25 +25,16 @@ export default function HealthResourceCard({ resource }: HealthResourceCardProps
           />
         </View>
         <View style={styles.info}>
-          <Text style={styles.name}>{resource.name}</Text>
-          <Text style={styles.type}>{resource.typeHi}</Text>
+          <Text style={styles.name}>{t(resource.nameKey)}</Text>
+          <Text style={styles.type}>{t(resource.typeKey)}</Text>
         </View>
-        <View style={styles.distanceBadge}>
-          <Ionicons name="navigate-outline" size={14} color={Colors.health} />
-          <Text style={styles.distance}>{resource.distance}</Text>
-        </View>
+        <Badge label={resource.distance} tone="health" />
       </View>
 
-      <View style={styles.services}>
-        {resource.servicesHi.map((service, i) => (
-          <View key={i} style={styles.serviceChip}>
-            <Text style={styles.serviceText}>{service}</Text>
-          </View>
-        ))}
-      </View>
+      <Text style={styles.services}>{t(resource.servicesKey)}</Text>
 
       <View style={styles.footer}>
-        {resource.phone && (
+        {resource.phone ? (
           <TouchableOpacity
             style={styles.phoneButton}
             onPress={() => Linking.openURL(`tel:${resource.phone}`)}
@@ -47,9 +42,11 @@ export default function HealthResourceCard({ resource }: HealthResourceCardProps
             <Ionicons name="call-outline" size={16} color={Colors.health} />
             <Text style={styles.phoneText}>{resource.phone}</Text>
           </TouchableOpacity>
+        ) : (
+          <View />
         )}
         <TouchableOpacity style={styles.linkButton}>
-          <Text style={styles.linkText}>स्रोत देखें</Text>
+          <Text style={styles.linkText}>{t('sehat.viewSource')}</Text>
           <Ionicons name="open-outline" size={14} color={Colors.health} />
         </TouchableOpacity>
       </View>
@@ -77,74 +74,55 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: Typography.cardTitle,
-    fontWeight: Typography.bold,
-    color: Colors.text,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     lineHeight: Typography.cardTitleLineHeight,
   },
   type: {
     fontSize: 14,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 2,
   },
-  distanceBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.healthLight,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-  },
-  distance: {
-    fontSize: 13,
-    fontWeight: Typography.semibold,
-    color: Colors.health,
-    marginLeft: 4,
-  },
   services: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginBottom: Spacing.md,
-  },
-  serviceChip: {
-    backgroundColor: Colors.white,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: Colors.healthLight,
-  },
-  serviceText: {
-    fontSize: 13,
+    fontSize: 14,
     color: Colors.health,
     fontWeight: Typography.medium,
+    fontFamily: Typography.fontFamily,
+    marginBottom: Spacing.md,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: Colors.divider,
+    borderTopColor: Colors.border,
     paddingTop: Spacing.md,
+    minHeight: ButtonSizes.minTouchTarget,
   },
   phoneButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: ButtonSizes.minTouchTarget,
   },
   phoneText: {
     fontSize: 14,
     color: Colors.health,
     fontWeight: Typography.medium,
+    fontFamily: Typography.fontFamily,
     marginLeft: 4,
   },
   linkButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: ButtonSizes.minTouchTarget,
   },
   linkText: {
     fontSize: 14,
     color: Colors.health,
     fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
     marginRight: 4,
   },
 });

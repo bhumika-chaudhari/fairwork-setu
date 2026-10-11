@@ -1,152 +1,130 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import JobCard from '../../components/JobCard';
 import SkillChip from '../../components/SkillChip';
 import EmptyState from '../../components/EmptyState';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/theme';
+import AppHeader from '../../components/AppHeader';
+import SearchField from '../../components/SearchField';
+import DisclaimerText from '../../components/DisclaimerText';
+import ScreenContainer from '../../components/ScreenContainer';
+import { Colors, Spacing, Typography } from '../../constants/theme';
 import { mockJobs } from '../../data/mockData';
+import { useProfile } from '../../context/ProfileContext';
 
-type FilterType = 'all' | 'wiring' | 'repair' | 'installation';
-
-const filters: { key: FilterType; labelHi: string }[] = [
-  { key: 'all', labelHi: 'सभी' },
-  { key: 'wiring', labelHi: 'वायरिंग' },
-  { key: 'repair', labelHi: 'रिपेयर' },
-  { key: 'installation', labelHi: 'इंस्टालेशन' },
-];
+type SkillFilter = 'all' | 'wiring' | 'repair' | 'installation';
+type AvailFilter = 'all' | 'today' | 'week';
 
 export default function KaamScreen() {
-  const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { profile } = useProfile();
+  const [query, setQuery] = useState('');
+  const [skill, setSkill] = useState<SkillFilter>('all');
+  const [cityOn, setCityOn] = useState(true);
+  const [availability, setAvailability] = useState<AvailFilter>('all');
 
-  const filteredJobs = selectedFilter === 'all'
-    ? mockJobs
-    : mockJobs.filter((job) =>
-        job.skills.some((s) => s.toLowerCase().includes(selectedFilter))
-      );
+  const filteredJobs = useMemo(() => {
+    return mockJobs.filter((job) => {
+      const haystack = `${t(job.titleKey)} ${t(job.locationKey)} ${t(job.employerKey)}`.toLowerCase();
+      const matchesQuery = !query.trim() || haystack.includes(query.trim().toLowerCase());
+      const matchesSkill = skill === 'all' || job.filterTags.includes(skill);
+      const matchesCity = cityOn;
+      const matchesAvail = availability !== 'today' || job.id !== 'j003';
+      return matchesQuery && matchesSkill && matchesCity && matchesAvail;
+    });
+  }, [availability, cityOn, query, skill, t]);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>काम खोजें</Text>
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Ionicons name="filter-outline" size={22} color={Colors.text} />
-          </TouchableOpacity>
-        </View>
+    <ScreenContainer
+      scroll={false}
+      padded={false}
+      header={<AppHeader title={t('kaam.findWork')} />}
+    >
+      <View style={styles.searchPad}>
+        <SearchField value={query} onChangeText={setQuery} placeholder={t('kaam.searchPlaceholder')} />
       </View>
 
-      {/* Filters */}
-      <View style={styles.filtersContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersScroll}>
-          {filters.map((filter) => (
-            <SkillChip
-              key={filter.key}
-              label={filter.labelHi}
-              selected={selectedFilter === filter.key}
-              onPress={() => setSelectedFilter(filter.key)}
-              style={styles.filterChip}
-            />
-          ))}
-        </ScrollView>
-      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+        <SkillChip label={t('kaam.filterAll')} selected={skill === 'all'} onPress={() => setSkill('all')} />
+        <SkillChip label={t('kaam.filterWiring')} selected={skill === 'wiring'} onPress={() => setSkill('wiring')} />
+        <SkillChip label={t('kaam.filterRepair')} selected={skill === 'repair'} onPress={() => setSkill('repair')} />
+        <SkillChip
+          label={t('kaam.filterInstallation')}
+          selected={skill === 'installation'}
+          onPress={() => setSkill('installation')}
+        />
+        <SkillChip
+          icon="location-outline"
+          label={t(profile.cityKey)}
+          selected={cityOn}
+          onPress={() => setCityOn((v) => !v)}
+        />
+        <SkillChip label={t('kaam.availAll')} selected={availability === 'all'} onPress={() => setAvailability('all')} />
+        <SkillChip
+          label={t('kaam.availToday')}
+          selected={availability === 'today'}
+          onPress={() => setAvailability('today')}
+        />
+        <SkillChip
+          label={t('kaam.availWeek')}
+          selected={availability === 'week'}
+          onPress={() => setAvailability('week')}
+        />
+      </ScrollView>
 
-      {/* Job Info Bar */}
       <View style={styles.infoBar}>
         <Text style={styles.infoText}>
-          {filteredJobs.length > 0
-            ? `${filteredJobs.length} काम मिले · पुणे`
-            : 'कोई काम नहीं मिला'}
+          {t('kaam.jobsFound', { count: filteredJobs.length, city: t(profile.cityKey) })}
         </Text>
-        <TouchableOpacity>
-          <Text style={styles.sortText}>दूरी ↑</Text>
-        </TouchableOpacity>
+        <Text style={styles.sortText}>{t('kaam.sortDistance')}</Text>
       </View>
 
-      {/* Job list */}
-      <ScrollView
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.list} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
         {filteredJobs.length > 0 ? (
-          filteredJobs.map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))
+          filteredJobs.map((job) => <JobCard key={job.id} job={job} />)
         ) : (
           <EmptyState
             icon="briefcase-outline"
-            message="अभी आपके शहर में मैचिंग काम नहीं मिला।"
-            submessage="बाद में फिर से देखें या फ़िल्टर बदलें"
+            message={t('kaam.noJobs')}
+            submessage={t('kaam.noJobsHint')}
+            actionLabel={t('kaam.updateProfile')}
+            onAction={() => router.push('/profile')}
           />
         )}
-        <View style={{ height: 24 }} />
+        <DisclaimerText text={t('kaam.disclaimer')} variant="info" />
       </ScrollView>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  searchPad: {
     paddingHorizontal: Spacing.screenPadding,
     paddingTop: Spacing.md,
-    paddingBottom: Spacing.md,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
   },
-  headerTitle: {
-    fontSize: Typography.heading,
-    fontWeight: Typography.bold,
-    color: Colors.text,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  headerIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filtersContainer: {
-    backgroundColor: Colors.white,
-    paddingBottom: Spacing.md,
-  },
-  filtersScroll: {
+  filters: {
     paddingHorizontal: Spacing.screenPadding,
     gap: Spacing.sm,
-  },
-  filterChip: {
-    marginRight: 0,
+    paddingVertical: Spacing.md,
   },
   infoBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: Spacing.screenPadding,
-    paddingVertical: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   infoText: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     fontWeight: Typography.medium,
   },
   sortText: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.primary,
+    fontFamily: Typography.fontFamily,
     fontWeight: Typography.semibold,
   },
   list: {
@@ -154,5 +132,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: Spacing.screenPadding,
+    paddingBottom: Spacing.xxl,
   },
 });

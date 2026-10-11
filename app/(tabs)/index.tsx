@@ -1,157 +1,208 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
+import ScreenContainer from '../../components/ScreenContainer';
 import IncomeCard from '../../components/IncomeCard';
 import JobCard from '../../components/JobCard';
+import SavingsProgressCard from '../../components/SavingsProgressCard';
 import Card from '../../components/Card';
 import SectionHeader from '../../components/SectionHeader';
 import VoiceButton from '../../components/VoiceButton';
 import VoiceEntryModal from '../../components/VoiceEntryModal';
+import LanguageSelector from '../../components/LanguageSelector';
+import ProgressBar from '../../components/ProgressBar';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/theme';
-import { workerProfile, mockJobs, healthResources } from '../../data/mockData';
+import {
+  mockJobs,
+  healthResources,
+  todayIncome,
+  weekIncomeDelta,
+  emergencySaved,
+  todaySaveSuggestion,
+} from '../../data/mockData';
+import { useProfile } from '../../context/ProfileContext';
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { profile, strength, isIncomplete } = useProfile();
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
-
-  const suggestedJobs = mockJobs.slice(0, 2);
-  const nearbyHealth = healthResources[0];
+  const savingsTarget = profile.savingsGoal || 5000;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Greeting */}
-        <View style={styles.greetingRow}>
-          <View>
-            <Text style={styles.greeting}>नमस्ते, रमेश 👋</Text>
-            <Text style={styles.subGreeting}>आज आपका दिन शानदार हो!</Text>
-          </View>
-          <View style={styles.notifIcon}>
-            <Ionicons name="notifications-outline" size={24} color={Colors.text} />
-          </View>
+    <ScreenContainer>
+      <View style={styles.greetingRow}>
+        <View style={styles.greetingCopy}>
+          <Text style={styles.greeting}>{t('home.greeting', { name: profile.name })}</Text>
+          <Text style={styles.subGreeting}>{t('home.todayOverview')}</Text>
         </View>
-
-        {/* Today's Income */}
-        <IncomeCard todayIncome={750} savingSuggestion={50} />
-
-        {/* Voice Entry CTA */}
-        <View style={styles.voiceSection}>
-          <VoiceButton onPress={() => setVoiceModalVisible(true)} size={68} />
-          <Text style={styles.voiceLabel}>बोलकर जोड़ें</Text>
-          <Text style={styles.voiceHint}>कमाई या खर्चा बोलकर दर्ज करें</Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={() => router.push('/profile')}
+            accessibilityRole="button"
+            accessibilityLabel={t('more.profileTitle')}
+          >
+            <Ionicons name="person-outline" size={22} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <LanguageSelector variant="icon" />
         </View>
+      </View>
 
-        {/* Suggested Work */}
-        <SectionHeader title="आपके लिए काम" actionLabel="सभी देखें" onAction={() => {}} />
-        {suggestedJobs.map((job) => (
-          <JobCard key={job.id} job={job} />
-        ))}
+      <Card variant="soft">
+        <Text style={styles.banner}>{t('home.newUserBanner')}</Text>
+      </Card>
 
-        {/* Nearby Health */}
-        <SectionHeader title="नज़दीकी सुविधाएं" />
-        <Card variant="health">
-          <View style={styles.healthRow}>
-            <View style={styles.healthIcon}>
-              <Ionicons name="medical" size={22} color={Colors.health} />
-            </View>
-            <View style={styles.healthInfo}>
-              <Text style={styles.healthName}>{nearbyHealth.name}</Text>
-              <Text style={styles.healthType}>
-                {nearbyHealth.typeHi} · {nearbyHealth.distance}
-              </Text>
-            </View>
-            <View style={styles.healthArrow}>
-              <Ionicons name="chevron-forward" size={20} color={Colors.health} />
-            </View>
-          </View>
-        </Card>
+      <IncomeCard todayIncome={todayIncome} weekDelta={weekIncomeDelta} />
 
-        {/* Bottom spacing for tab bar */}
-        <View style={{ height: 24 }} />
-      </ScrollView>
-
-      {/* Voice Modal */}
-      <VoiceEntryModal
-        visible={voiceModalVisible}
-        onClose={() => setVoiceModalVisible(false)}
+      <SavingsProgressCard
+        target={savingsTarget}
+        saved={emergencySaved}
+        suggestion={todaySaveSuggestion}
       />
-    </SafeAreaView>
+
+      <View style={styles.voiceSection}>
+        <VoiceButton onPress={() => setVoiceModalVisible(true)} size={76} />
+        <Text style={styles.voiceLabel}>{t('home.addByVoice')}</Text>
+        <Text style={styles.voiceHint}>{t('home.addByVoiceHint')}</Text>
+      </View>
+
+      {isIncomplete ? (
+        <TouchableOpacity activeOpacity={0.88} onPress={() => router.push('/profile')}>
+          <Card variant="accent">
+            <Text style={styles.completeTitle}>{t('home.completeProfile')}</Text>
+            <Text style={styles.completeHint}>{t('home.completeProfileHint')}</Text>
+            <Text style={styles.ready}>{t('home.profileReady', { percent: strength })}</Text>
+            <ProgressBar progress={strength / 100} color={Colors.accent} trackColor={Colors.accentSoft} />
+          </Card>
+        </TouchableOpacity>
+      ) : null}
+
+      <SectionHeader
+        title={t('home.jobSuggestions')}
+        actionLabel={t('common.seeAll')}
+        onAction={() => router.push('/(tabs)/kaam')}
+      />
+      {mockJobs.slice(0, 2).map((job) => (
+        <JobCard key={job.id} job={job} />
+      ))}
+
+      <SectionHeader title={t('home.healthSupport')} />
+      <Card variant="health">
+        <View style={styles.healthRow}>
+          <View style={styles.healthIcon}>
+            <Ionicons name="medical" size={22} color={Colors.health} />
+          </View>
+          <View style={styles.healthInfo}>
+            <Text style={styles.healthName}>{t(healthResources[0].nameKey)}</Text>
+            <Text style={styles.healthType}>
+              {healthResources[0].distance} · {t(healthResources[0].servicesKey)}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={Colors.health} />
+        </View>
+      </Card>
+
+      <VoiceEntryModal visible={voiceModalVisible} onClose={() => setVoiceModalVisible(false)} />
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: Spacing.lg,
-  },
-
-  // Greeting
   greetingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.lg,
+    gap: Spacing.md,
+  },
+  greetingCopy: {
+    flex: 1,
   },
   greeting: {
-    fontSize: Typography.headingLarge,
+    fontSize: Typography.heading,
     fontWeight: Typography.bold,
-    color: Colors.text,
-    lineHeight: Typography.headingLineHeight + 4,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.headingLineHeight,
   },
   subGreeting: {
-    fontSize: 15,
+    fontSize: Typography.body,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 2,
+    lineHeight: Typography.bodyLineHeight,
   },
-  notifIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.white,
+  headerActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  iconBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     ...Shadows.card,
   },
-
-  // Voice section
+  banner: {
+    fontSize: Typography.body,
+    color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
+    lineHeight: Typography.bodyLineHeight,
+  },
   voiceSection: {
     alignItems: 'center',
     paddingVertical: Spacing.xl,
-    marginBottom: Spacing.sm,
   },
   voiceLabel: {
     fontSize: Typography.cardTitle,
     fontWeight: Typography.bold,
-    color: Colors.text,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
     marginTop: Spacing.md,
+    lineHeight: Typography.cardTitleLineHeight,
   },
   voiceHint: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 4,
+    lineHeight: Typography.secondaryLineHeight,
   },
-
-  // Health
+  completeTitle: {
+    fontSize: Typography.cardTitle,
+    fontWeight: Typography.semibold,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.cardTitleLineHeight,
+  },
+  completeHint: {
+    fontSize: Typography.secondary,
+    color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
+    marginVertical: Spacing.sm,
+    lineHeight: Typography.secondaryLineHeight,
+  },
+  ready: {
+    fontSize: Typography.secondary,
+    fontWeight: Typography.semibold,
+    color: Colors.warning,
+    fontFamily: Typography.fontFamily,
+    marginBottom: Spacing.sm,
+  },
   healthRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   healthIcon: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.healthLight,
+    backgroundColor: Colors.healthSoft,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -162,19 +213,15 @@ const styles = StyleSheet.create({
   healthName: {
     fontSize: Typography.body,
     fontWeight: Typography.semibold,
-    color: Colors.text,
+    fontFamily: Typography.fontFamily,
+    color: Colors.textPrimary,
+    lineHeight: Typography.bodyLineHeight,
   },
   healthType: {
-    fontSize: 14,
+    fontSize: Typography.secondary,
     color: Colors.textSecondary,
+    fontFamily: Typography.fontFamily,
     marginTop: 2,
-  },
-  healthArrow: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.healthLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+    lineHeight: Typography.secondaryLineHeight,
   },
 });

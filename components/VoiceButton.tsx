@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Shadows } from '../constants/theme';
+import { Colors, Shadows, ButtonSizes } from '../constants/theme';
 
 interface VoiceButtonProps {
   onPress: () => void;
@@ -9,14 +9,24 @@ interface VoiceButtonProps {
 }
 
 export default function VoiceButton({ onPress, size = 64 }: VoiceButtonProps) {
+  const dimension = Math.max(size, ButtonSizes.minTouchTarget);
   return (
     <TouchableOpacity
-      style={[styles.button, { width: size, height: size, borderRadius: size / 2 }]}
+      style={[styles.button, { width: dimension, height: dimension, borderRadius: dimension / 2 }]}
       onPress={onPress}
       activeOpacity={0.85}
     >
-      <View style={[styles.ring, { width: size + 12, height: size + 12, borderRadius: (size + 12) / 2 }]} />
-      <Ionicons name="mic" size={size * 0.45} color={Colors.white} />
+      <View
+        style={[
+          styles.ring,
+          {
+            width: dimension + 16,
+            height: dimension + 16,
+            borderRadius: (dimension + 16) / 2,
+          },
+        ]}
+      />
+      <Ionicons name="mic" size={dimension * 0.45} color={Colors.white} />
     </TouchableOpacity>
   );
 }
@@ -33,6 +43,6 @@ const styles = StyleSheet.create({
   ring: {
     position: 'absolute',
     borderWidth: 3,
-    borderColor: Colors.accent + '30',
+    borderColor: Colors.accentLight,
   },
 });
