@@ -32,7 +32,7 @@ Setu's intelligence layer is designed as a **multi-model pipeline** combining cl
 
 ### Model Map
 
-| Module | Task | Model / Approach | Output | Status |
+| Module | Task | Model / Approach | Output |
 |--------|------|-------------------|--------|--------|
 | **Voice** | Speech-to-Text (Hindi/English) | OpenAI Whisper `small`/`medium`, IndicConformer | Transcript + language code + confidence | 
 | **Voice** | Language Identification | FastText `lid.176.bin` / `langdetect` | ISO 639-1 language code | 
@@ -56,45 +56,45 @@ Setu's intelligence layer is designed as a **multi-model pipeline** combining cl
 │                        SETU ML PIPELINE                             │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ┌──────────┐    ┌──────────────┐    ┌────────────────────────┐    │
-│  │  Voice   │───▶│   Whisper    │───▶│  Language Detection    │    │
-│  │  Input   │    │  STT Engine  │    │  (FastText lid.176)    │    │
-│  └──────────┘    └──────┬───────┘    └────────────────────────┘    │
+│  ┌──────────┐    ┌──────────────┐    ┌────────────────────────┐     │
+│  │  Voice   │───▶│   Whisper    │───▶│  Language Detection    │     │
+│  │  Input   │    │  STT Engine  │    │  (FastText lid.176)    │     │
+│  └──────────┘    └──────┬───────┘    └────────────────────────┘     │
 │                         │                                           │
 │                         ▼                                           │
 │              ┌──────────────────┐                                   │
 │              │  NER Pipeline    │                                   │
 │              │  ├─ Regex layer  │                                   │
-│              │  ├─ spaCy NER   │                                   │
-│              │  └─ Transformer │                                   │
+│              │  ├─ spaCy NER    │                                   │
+│              │  └─ Transformer  │                                   │
 │              └────────┬─────────┘                                   │
 │                       │                                             │
 │          ┌────────────┼────────────┐                                │
 │          ▼            ▼            ▼                                │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────┐                    │
-│  │ Expense  │  │  Income   │  │    Job       │                    │
-│  │ Classify │  │ Forecast  │  │  Matching    │                    │
-│  │ (TF-IDF/ │  │ (RF/LSTM/ │  │ (SentTrans + │                    │
-│  │ DistilBT)│  │  Prophet) │  │  Cosine Sim) │                    │
-│  └──────────┘  └───────────┘  └──────────────┘                    │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────┐                      │
+│  │ Expense  │  │  Income   │  │    Job       │                      │
+│  │ Classify │  │ Forecast  │  │  Matching    │                      │
+│  │ (TF-IDF/ │  │ (RF/LSTM/ │  │ (SentTrans + │                      │
+│  │ DistilBT)│  │  Prophet) │  │  Cosine Sim) │                      │
+│  └──────────┘  └───────────┘  └──────────────┘                      │
 │                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │            RAG — Retrieval-Augmented Generation               │  │
-│  │  ┌─────────────┐  ┌──────────┐  ┌────────────────────────┐  │  │
-│  │  │  Document   │  │  FAISS / │  │  LLM Answer Generator  │  │  │
-│  │  │  Chunking   │──│ pgvector │──│  (Source-cited only)    │  │  │
-│  │  │  (200-400w) │  │  Index   │  │  No hallucination      │  │  │
-│  │  └─────────────┘  └──────────┘  └────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │            RAG — Retrieval-Augmented Generation              │   │
+│  │  ┌─────────────┐  ┌──────────┐  ┌────────────────────────┐   │   │
+│  │  │  Document   │  │  FAISS / │  │  LLM Answer Generator  │   │   │
+│  │  │  Chunking   │──│ pgvector │──│  (Source-cited only)   │   │   │
+│  │  │  (200-400w) │  │  Index   │  │  No hallucination      │   │   │
+│  │  └─────────────┘  └──────────┘  └────────────────────────┘   │   │
+│  └──────────────────────────────────────────────────────────────┘   │
 │                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │  Financial Stability Score (Informational Only)              │  │
-│  │  ├─ Income Regularity (25%)                                  │  │
-│  │  ├─ Savings Rate (25%)                                       │  │
-│  │  ├─ Emergency Fund Progress (20%)                            │  │
-│  │  ├─ Work-Day Consistency (15%)                               │  │
-│  │  └─ Expense Stability (15%)                                  │  │
-│  └──────────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │  Financial Stability Score (Informational Only)              │   │
+│  │  ├─ Income Regularity (25%)                                  │   │
+│  │  ├─ Savings Rate (25%)                                       │   │
+│  │  ├─ Emergency Fund Progress (20%)                            │   │
+│  │  ├─ Work-Day Consistency (15%)                               │   │
+│  │  └─ Expense Stability (15%)                                  │   │
+│  └──────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
