@@ -24,6 +24,19 @@ const VOICE_CATEGORIES: { id: string; key: string }[] = [
   { id: 'Other', key: 'categories.other' },
 ];
 
+const BCP47_LANGUAGE_MAP: Record<string, string> = {
+  hi: 'hi-IN',
+  mr: 'mr-IN',
+  gu: 'gu-IN',
+  ta: 'ta-IN',
+  te: 'te-IN',
+  kn: 'kn-IN',
+  bn: 'bn-IN',
+  pa: 'pa-IN',
+  ml: 'ml-IN',
+  en: 'en-IN',
+};
+
 export default function VoiceEntryModal({
   visible,
   onClose,
@@ -31,12 +44,12 @@ export default function VoiceEntryModal({
   visible: boolean;
   onClose: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { addTransaction } = useTransactions();
   const [stage, setStage] = useState<VoiceStage>('listening');
   const [transcript, setTranscript] = useState('');
-  const [incomeAmount, setIncomeAmount] = useState(500);
-  const [expenseAmount, setExpenseAmount] = useState(150);
+  const [incomeAmount, setIncomeAmount] = useState(0);
+  const [expenseAmount, setExpenseAmount] = useState(0);
   const [category, setCategory] = useState('Food');
   const [manualNote, setManualNote] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -44,6 +57,10 @@ export default function VoiceEntryModal({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognizerRef = useRef<any>(null);
+  const latestTranscriptRef = useRef('');
+
+  const langKey = (i18n.language || 'hi').toLowerCase().slice(0, 2);
+  const speechLang = BCP47_LANGUAGE_MAP[langKey] || 'hi-IN';
 
   // Start speech recognition or prepare manual fallback
   useEffect(() => {
@@ -59,6 +76,7 @@ export default function VoiceEntryModal({
     }
 
     setTranscript('');
+    latestTranscriptRef.current = '';
     setErrorMessage('');
     const speechSupported = isWebSpeechAvailable();
     setHasSpeechSupport(speechSupported);
@@ -66,9 +84,10 @@ export default function VoiceEntryModal({
     if (speechSupported) {
       setStage('listening');
       const recognizer = createSpeechRecognizer({
-        language: 'en-IN',
+        language: speechLang,
         onResult: (text, isFinal) => {
           setTranscript(text);
+          latestTranscriptRef.current = text;
           if (isFinal) {
             handleExtract(text);
           }
@@ -80,8 +99,9 @@ export default function VoiceEntryModal({
         },
         onEnd: () => {
           // If transcript collected, extract details
-          if (transcript.length > 3) {
-            handleExtract(transcript);
+          const currentText = latestTranscriptRef.current.trim();
+          if (currentText.length > 0) {
+            handleExtract(currentText);
           }
         },
       });
@@ -109,22 +129,24 @@ export default function VoiceEntryModal({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  }, [visible, speechLang]);
 
   const handleExtract = async (text: string) => {
     const res = await runInformationExtraction({ transcript: text });
-    setIncomeAmount(res.output.income || 500);
-    setExpenseAmount(res.output.expense || 150);
+    setIncomeAmount(typeof res.output.income === 'number' ? res.output.income : 0);
+    setExpenseAmount(typeof res.output.expense === 'number' ? res.output.expense : 0);
     setCategory(res.output.expenseCategory || 'Food');
     setStage('result');
   };
 
   const handleManualSubmit = async () => {
-    if (!manualNote.trim()) {
+    const textToExtract = manualNote.trim();
+    if (!textToExtract) {
       setStage('result');
       return;
     }
-    await handleExtract(manualNote);
+    setTranscript(textToExtract);
+    await handleExtract(textToExtract);
   };
 
   const handleRetryListening = () => {

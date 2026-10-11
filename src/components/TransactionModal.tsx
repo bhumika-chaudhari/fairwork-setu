@@ -4,6 +4,7 @@ import { AppIcon } from '../lib/icons';
 import { useTransactions } from '../hooks/TransactionContext';
 import type { Transaction, TransactionType, TransactionCategory } from '../types/transaction';
 import { CATEGORY_ICONS, CATEGORY_TRANSLATION_KEYS } from '../services/transactionService';
+import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
 
 const INCOME_CATEGORIES: TransactionCategory[] = [
   'work_earnings',
@@ -129,7 +130,8 @@ export default function TransactionModal({
     e.preventDefault();
     setValidationError(null);
 
-    const parsedAmount = parseFloat(amount.trim());
+    const normalizedAmt = normalizeIndicDigits(amount.trim());
+    const parsedAmount = parseFloat(normalizedAmt);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setValidationError(t('transactions.errorInvalidAmount'));
       return;
