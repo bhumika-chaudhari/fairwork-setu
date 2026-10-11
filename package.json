@@ -1,38 +1,34 @@
 {
-  "name": "setu-app",
+  "name": "setu",
+  "private": true,
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@expo/metro-runtime": "~57.0.16",
-    "@expo/vector-icons": "^15.0.2",
-    "@react-native-async-storage/async-storage": "2.2.0",
-    "expo": "~57.0.27",
-    "expo-constants": "~57.0.21",
-    "expo-haptics": "~57.0.3",
-    "expo-linking": "~57.0.12",
-    "expo-localization": "~57.0.2",
-    "expo-router": "~57.0.25",
-    "expo-status-bar": "~57.0.1",
-    "i18next": "^26.4.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-i18next": "^17.0.16",
-    "react-native": "0.86.3",
-    "react-native-gesture-handler": "~2.32.0",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.26.0",
-    "react-native-svg": "15.15.4",
-    "react-native-web": "^0.21.2"
+    "@tanstack/react-query": "^5.66.0",
+    "axios": "^1.7.9",
+    "framer-motion": "^11.18.2",
+    "i18next": "^24.2.2",
+    "lucide-react": "^0.474.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^15.4.1",
+    "react-router-dom": "^6.29.0",
+    "recharts": "^2.15.1"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
-  },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
-  },
-  "private": true
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.3",
+    "vite": "^6.0.11"
+  }
 }

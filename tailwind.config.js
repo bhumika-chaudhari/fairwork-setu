@@ -1,0 +1,88 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        deepEmerald: '#073B3A',
+        primaryTeal: '#087F73',
+        mint: '#72E5C2',
+        saffron: '#F4B544',
+        warmIvory: '#F7F5EF',
+        emerald: '#073B3A',
+        teal: '#087F73',
+        ivory: '#F7F5EF',
+        primary: '#087F73',
+        primaryDark: '#073B3A',
+        primarySoft: '#E6F7F2',
+        accent: '#F4B544',
+        accentSoft: '#FEF7E8',
+        background: '#F7F5EF',
+        page: '#F7F5EF',
+        surface: '#FFFFFF',
+        surfaceAlt: '#FCFBF7',
+        surfaceGlass: 'rgba(255, 255, 255, 0.78)',
+        surfaceGlassHover: 'rgba(255, 255, 255, 0.92)',
+        textPrimary: '#0C2B2A',
+        textSecondary: '#3F5957',
+        textMuted: '#6E8A88',
+        success: '#0F9F58',
+        successSoft: '#E6F8EE',
+        warning: '#D97706',
+        warningSoft: '#FEF3C7',
+        danger: '#DC2626',
+        dangerSoft: '#FEE2E2',
+        health: '#087F73',
+        healthSoft: '#E6F7F2',
+        border: 'rgba(7, 59, 58, 0.1)',
+        glassBorder: 'rgba(255, 255, 255, 0.85)',
+      },
+      maxWidth: {
+        app: '480px',
+        desktop: '1200px',
+      },
+      fontFamily: {
+        sans: ['"Noto Sans"', '"Noto Sans Devanagari"', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      boxShadow: {
+        glass: '0 4px 20px -2px rgba(7, 59, 58, 0.06), 0 2px 6px -1px rgba(7, 59, 58, 0.04)',
+        glassHover: '0 8px 30px -4px rgba(7, 59, 58, 0.12), 0 4px 10px -2px rgba(7, 59, 58, 0.06)',
+        card: '0 2px 14px rgba(7, 59, 58, 0.06)',
+        lifted: '0 10px 28px rgba(7, 59, 58, 0.12)',
+        clay: '0 6px 18px rgba(8, 127, 115, 0.28)',
+        glow: '0 0 32px rgba(114, 229, 194, 0.35)',
+        nav: '0 -2px 16px rgba(7, 59, 58, 0.06)',
+      },
+      borderRadius: {
+        card: '22px',
+        btn: '18px',
+      },
+      backgroundImage: {
+        'emerald-gradient': 'linear-gradient(135deg, #073B3A 0%, #087F73 100%)',
+        'mint-gradient': 'linear-gradient(135deg, #72E5C2 0%, #087F73 100%)',
+        'saffron-gradient': 'linear-gradient(135deg, #F4B544 0%, #E29B26 100%)',
+        'glass-gradient': 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)',
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'slide-up': {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        'pulse-ring': {
+          '0%': { transform: 'scale(1)', opacity: '0.6' },
+          '100%': { transform: 'scale(1.35)', opacity: '0' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.3s ease-out both',
+        'slide-up': 'slide-up 0.35s ease-out both',
+        'pulse-ring': 'pulse-ring 2s cubic-bezier(0.24, 0, 0.38, 1) infinite',
+      },
+    },
+  },
+  plugins: [],
+};

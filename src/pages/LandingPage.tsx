@@ -1,0 +1,157 @@
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import SetuLogo from '../components/SetuLogo';
+import LanguageSelector from '../components/LanguageSelector';
+import { AppIcon } from '../lib/icons';
+
+const FEATURE_CARDS = [
+  {
+    key: 'landing.featureWork',
+    subKey: 'landing.featureWorkSub',
+    icon: 'briefcase',
+    bg: 'bg-[#E6F7F2]',
+    border: 'border-[#72E5C2]/50',
+    iconColor: 'text-[#087F73]',
+    title: 'Kaam',
+    sub: 'Nearby jobs & skill matching',
+  },
+  {
+    key: 'landing.featureMoney',
+    subKey: 'landing.featureMoneySub',
+    icon: 'wallet',
+    bg: 'bg-[#FEF7E8]',
+    border: 'border-[#F4B544]/50',
+    iconColor: 'text-[#D97706]',
+    title: 'Dhan',
+    sub: 'Track income, save money',
+  },
+  {
+    key: 'landing.featureHealth',
+    subKey: 'landing.featureHealthSub',
+    icon: 'heart',
+    bg: 'bg-[#FEE2E2]/60',
+    border: 'border-[#EF4444]/30',
+    iconColor: 'text-[#DC2626]',
+    title: 'Sehat',
+    sub: 'Health & welfare support',
+  },
+  {
+    key: 'landing.featureSkills',
+    subKey: 'landing.featureSkillsSub',
+    icon: 'school',
+    bg: 'bg-[#E0F2FE]',
+    border: 'border-[#38BDF8]/40',
+    iconColor: 'text-[#0284C7]',
+    title: 'Kaushal',
+    sub: 'Build your skill passport',
+  },
+] as const;
+
+export default function LandingPage() {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  return (
+    <div className="relative min-h-screen w-full bg-page overflow-x-hidden flex flex-col justify-between">
+      {/* Ambient background glows */}
+      <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-mint/20 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
+
+      {/* Main container */}
+      <div className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-4xl flex-1 flex-col px-5 py-4 md:py-8">
+        {/* Top bar matching reference Screen 1 */}
+        <header className="flex items-center justify-between pb-3">
+          <SetuLogo size="md" />
+          <LanguageSelector variant="icon" />
+        </header>
+
+        {/* Hero Headline and subtitle */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="mt-3"
+        >
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-deepEmerald leading-[1.25]">
+            {t('landing.title')}
+          </h1>
+          <p className="mt-2 text-sm md:text-base text-textSecondary leading-relaxed">
+            {t('landing.subtitle')}
+          </p>
+        </motion.div>
+
+        {/* Hero Illustration */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.12 }}
+          className="my-5 flex justify-center"
+        >
+          <div className="relative w-full overflow-hidden rounded-[26px] bg-gradient-to-br from-white/95 via-[rgba(235,253,248,0.85)] to-[rgba(114,229,194,0.20)] p-2 shadow-glass backdrop-blur-md border border-[rgba(8,127,115,0.22)]">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+            <img
+              src="/images/hero-illustration.jpg"
+              alt={t('landing.heroAlt')}
+              className="h-auto w-full rounded-[20px] object-cover transition-transform duration-300 hover:scale-[1.01]"
+              loading="eager"
+            />
+            {/* Subtle soft gradient fade at bottom of image */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 rounded-b-[20px] bg-gradient-to-t from-white/50 to-transparent" />
+          </div>
+        </motion.div>
+
+        {/* Four Feature Cards Grid (2x2 matching reference image) */}
+        <div className="grid grid-cols-2 gap-3 md:gap-4 my-2">
+          {FEATURE_CARDS.map((card, idx) => (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.2 + idx * 0.07 }}
+              className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.90)] to-[rgba(114,229,194,0.18)] p-3.5 shadow-glass backdrop-blur-md border border-[rgba(8,127,115,0.16)] transition-all duration-200 hover:border-[rgba(8,127,115,0.32)] hover:shadow-glassHover overflow-hidden"
+            >
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${card.bg} ${card.border} border shadow-xs`}
+              >
+                <AppIcon name={card.icon} size={20} className={card.iconColor} />
+              </div>
+              <div className="min-w-0">
+                <span className="block text-sm font-bold text-deepEmerald leading-tight">
+                  {t(card.key)}
+                </span>
+                <span className="block text-[11px] text-textMuted leading-tight mt-0.5 truncate">
+                  {t(card.subKey)}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Primary Action Button (Get Started) */}
+        <div className="mt-6 pt-2">
+          <motion.button
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            type="button"
+            onClick={() => navigate('/onboarding')}
+            className="emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2 rounded-full text-base font-extrabold text-white"
+          >
+            <span>{t('landing.getStarted')}</span>
+            <AppIcon name="arrow-forward" size={18} />
+          </motion.button>
+        </div>
+
+        {/* Bottom Language Selector Pills row */}
+        <footer className="mt-5 pb-3">
+          <div className="flex items-center justify-center gap-2 overflow-x-auto py-1">
+            <span className="text-xs text-textMuted mr-1">🌐</span>
+            <LanguageSelector variant="grid" />
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}

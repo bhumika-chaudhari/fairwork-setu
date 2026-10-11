@@ -1,19 +1,4 @@
-# Dependencies
-node_modules/
-
-# Expo
-.expo/
-dist/
-web-build/
-
-# macOS
+node_modules
+dist
 .DS_Store
-
-# IDE
-.idea/
-.vscode/
-
-# Env
 .env
-.env.local
-.env.production
