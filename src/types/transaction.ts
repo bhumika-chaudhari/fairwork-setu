@@ -79,3 +79,12 @@ export interface FinancialSummary {
   transactionCount: number;
   hasTransactions: boolean;
 }
+
+export interface DaySummary {
+  date: string; // "YYYY-MM-DD" local date string
+  income: number;
+  expense: number;
+  net: number;
+  count: number;
+  transactions: Transaction[];
+}

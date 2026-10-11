@@ -200,7 +200,19 @@
     "buildingScore": "स्कोर बन रहा है",
     "activeDaysProgress": "{{count}}/7 सक्रिय दिन",
     "monSun": "सोम – रवि",
-    "emptyChartAction": "अपने दैनिक धन को ट्रैक करने के लिए \"+ आय जोड़ें\" या \"− खर्च जोड़ें\" दबाएं।"
+    "emptyChartAction": "अपने दैनिक धन को ट्रैक करने के लिए \"+ आय जोड़ें\" या \"− खर्च जोड़ें\" दबाएं।",
+    "chooseDate": "तारीख चुनें",
+    "dayView": "दैनिक दृश्य",
+    "weekView": "साप्ताहिक और AI विश्लेषण",
+    "selectedDay": "चुनी हुई तारीख",
+    "dayBalance": "दैनिक शेष",
+    "dayIncome": "दिन की आय",
+    "dayExpense": "दिन का खर्च",
+    "noDayTransactions": "इस तारीख का कोई लेनदेन नहीं है",
+    "noDayTransactionsSub": "इस तारीख के लिए कमाई या खर्च दर्ज करने के लिए आय या खर्च जोड़ें दबाएं।",
+    "logDayTransaction": "इस तारीख का लेनदेन दर्ज करें",
+    "deleteConfirm": "क्या आप इसे हटाना चाहते हैं?",
+    "jumpToToday": "आज"
   },
   "sehat": {
     "title": "सेहत और सहायता",

@@ -38,15 +38,26 @@ const QUICK_PRESETS: QuickPreset[] = [
   { label: 'Spent ₹200 on fuel / petrol', type: 'expense', amount: 200, category: 'travel_fuel', desc: 'Vehicle fuel refill' },
 ];
 
+function formatForDateTimeLocal(d: Date): string {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
 export default function TransactionModal({
   isOpen,
   onClose,
   initialType = 'income',
+  initialDate,
   editingTx = null,
 }: {
   isOpen: boolean;
   onClose: () => void;
   initialType?: TransactionType;
+  initialDate?: string;
   editingTx?: Transaction | null;
 }) {
   const { t } = useTranslation();
@@ -74,10 +85,13 @@ export default function TransactionModal({
       // Format timestamp for datetime-local: YYYY-MM-DDTHH:mm
       try {
         const d = new Date(editingTx.timestamp);
-        const isoLocal = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        setDateStr(isoLocal);
+        if (!isNaN(d.getTime())) {
+          setDateStr(formatForDateTimeLocal(d));
+        } else {
+          setDateStr(formatForDateTimeLocal(new Date()));
+        }
       } catch {
-        setDateStr(new Date().toISOString().slice(0, 16));
+        setDateStr(formatForDateTimeLocal(new Date()));
       }
     } else {
       setType(initialType);
@@ -86,12 +100,17 @@ export default function TransactionModal({
       setDescription('');
       setWorkRef('');
       const now = new Date();
-      const isoLocal = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setDateStr(isoLocal);
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      if (initialDate && /^\d{4}-\d{2}-\d{2}$/.test(initialDate)) {
+        setDateStr(`${initialDate}T${hh}:${min}`);
+      } else {
+        setDateStr(formatForDateTimeLocal(now));
+      }
     }
     setValidationError(null);
     setIsSubmitting(false);
-  }, [isOpen, editingTx, initialType]);
+  }, [isOpen, editingTx, initialType, initialDate]);
 
   if (!isOpen) return null;
 
@@ -118,10 +137,23 @@ export default function TransactionModal({
 
     setIsSubmitting(true);
     try {
-      // Parse ISO timestamp
+      // Parse ISO timestamp preserving local datetime chosen by user
       let finalTimestamp = new Date().toISOString();
       if (dateStr) {
-        finalTimestamp = new Date(dateStr).toISOString();
+        const [datePart, timePart] = dateStr.split('T');
+        if (datePart && timePart) {
+          const [yyyy, mm, dd] = datePart.split('-').map(Number);
+          const [hh, min] = timePart.split(':').map(Number);
+          const localDate = new Date(yyyy, mm - 1, dd, hh, min, 0);
+          if (!isNaN(localDate.getTime())) {
+            finalTimestamp = localDate.toISOString();
+          }
+        } else {
+          const parsed = new Date(dateStr);
+          if (!isNaN(parsed.getTime())) {
+            finalTimestamp = parsed.toISOString();
+          }
+        }
       }
 
       if (editingTx) {

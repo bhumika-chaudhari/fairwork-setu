@@ -193,7 +193,19 @@
     "buildingScore": "गुणांक तयार होत आहे",
     "activeDaysProgress": "{{count}}/7 सक्रिय दिवस",
     "monSun": "सोम – रवि",
-    "emptyChartAction": "रोजचा हिशोब ठेवण्यासाठी \"+ कमाई जोडा\" किंवा \"− खर्च जोडा\" दाबा."
+    "emptyChartAction": "रोजचा हिशोब ठेवण्यासाठी \"+ कमाई जोडा\" किंवा \"− खर्च जोडा\" दाबा.",
+    "chooseDate": "तारीख निवडा",
+    "dayView": "दैनिक दृश्य",
+    "weekView": "साप्ताहिक व AI विश्लेषण",
+    "selectedDay": "निवडलेली तारीख",
+    "dayBalance": "दैनिक शिल्लक",
+    "dayIncome": "दिवसाची कमाई",
+    "dayExpense": "दिवसाचा खर्च",
+    "noDayTransactions": "या तारखेचा कोणताही हिशोब नोंदवलेला नाही",
+    "noDayTransactionsSub": "या दिवसासाठी कमाई किंवा खर्च नोंदवण्यासाठी कमाई किंवा खर्च जोडा दाबा.",
+    "logDayTransaction": "या दिवसाचा व्यवहार नोंदवा",
+    "deleteConfirm": "ही नोंद हटवायची का?",
+    "jumpToToday": "आज"
   },
   "sehat": {
     "title": "आरोग्य आणि मदत",

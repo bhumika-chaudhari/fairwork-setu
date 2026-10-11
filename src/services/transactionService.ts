@@ -5,9 +5,98 @@ import type {
   TransactionFilter,
   FinancialSummary,
   DateFilterType,
+  DaySummary,
 } from '../types/transaction';
 
 const STORAGE_KEY = 'setu_transactions';
+
+/**
+ * Returns YYYY-MM-DD for a date object using LOCAL calendar dates (not UTC).
+ * Completely avoids off-by-one errors across timezones.
+ */
+export function getLocalDateString(d: Date = new Date()): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Extracts YYYY-MM-DD from an ISO string using the user's local timezone.
+ */
+export function getTransactionLocalDateString(isoTimestamp: string): string {
+  try {
+    const d = new Date(isoTimestamp);
+    if (isNaN(d.getTime())) return isoTimestamp.slice(0, 10);
+    return getLocalDateString(d);
+  } catch {
+    return isoTimestamp.slice(0, 10);
+  }
+}
+
+/**
+ * Formats a local date string (YYYY-MM-DD) into an ISO string preserving local time components.
+ */
+export function formatLocalDatetimetoIso(dateStr: string, timeStr?: string): string {
+  if (dateStr.includes('T')) {
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      return d.toISOString();
+    }
+  }
+
+  const now = new Date();
+  const [yearStr, monthStr, dayStr] = dateStr.split('-');
+  const year = parseInt(yearStr, 10) || now.getFullYear();
+  const month = (parseInt(monthStr, 10) || now.getMonth() + 1) - 1;
+  const day = parseInt(dayStr, 10) || now.getDate();
+
+  let hours = now.getHours();
+  let minutes = now.getMinutes();
+  let seconds = now.getSeconds();
+
+  if (timeStr) {
+    const [h, m] = timeStr.split(':');
+    hours = parseInt(h, 10) || 0;
+    minutes = parseInt(m, 10) || 0;
+    seconds = 0;
+  }
+
+  const localDate = new Date(year, month, day, hours, minutes, seconds);
+  return localDate.toISOString();
+}
+
+/**
+ * Computes financial snapshot for an arbitrary single calendar day (YYYY-MM-DD).
+ */
+export function computeDaySummary(
+  transactions: Transaction[],
+  dateStr: string = getLocalDateString()
+): DaySummary {
+  const dayTxs = transactions
+    .filter((tx) => getTransactionLocalDateString(tx.timestamp) === dateStr)
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  let income = 0;
+  let expense = 0;
+
+  dayTxs.forEach((tx) => {
+    if (tx.type === 'income') {
+      income += tx.amount;
+    } else {
+      expense += tx.amount;
+    }
+  });
+
+  return {
+    date: dateStr,
+    income,
+    expense,
+    net: income - expense,
+    count: dayTxs.length,
+    transactions: dayTxs,
+  };
+}
 
 export const CATEGORY_ICONS: Record<TransactionCategory, string> = {
   work_earnings: 'briefcase',
@@ -440,29 +529,32 @@ export function filterTransactions(
   filter: TransactionFilter
 ): Transaction[] {
   const now = new Date();
+  const todayStr = getLocalDateString(now);
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const endOfToday = startOfToday + 86400000;
 
   return transactions.filter((tx) => {
     const txTime = new Date(tx.timestamp).getTime();
+    const txDateStr = getTransactionLocalDateString(tx.timestamp);
 
     // 1. Date Filter
     if (filter.dateFilter === 'today') {
-      if (txTime < startOfToday) return false;
+      if (txDateStr !== todayStr) return false;
     } else if (filter.dateFilter === 'this_week') {
       const dayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1; // Mon = 0
       const startOfWeek = startOfToday - dayOfWeek * 86400000;
-      if (txTime < startOfWeek) return false;
+      const endOfWeek = startOfWeek + 7 * 86400000;
+      if (txTime < startOfWeek || txTime >= endOfWeek) return false;
     } else if (filter.dateFilter === 'this_month') {
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-      if (txTime < startOfMonth) return false;
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime();
+      if (txTime < startOfMonth || txTime >= endOfMonth) return false;
     } else if (filter.dateFilter === 'custom') {
-      if (filter.customStartDate) {
-        const start = new Date(filter.customStartDate).getTime();
-        if (txTime < start) return false;
+      if (filter.customStartDate && txDateStr < filter.customStartDate) {
+        return false;
       }
-      if (filter.customEndDate) {
-        const end = new Date(filter.customEndDate).getTime() + 86400000; // End of selected day
-        if (txTime > end) return false;
+      if (filter.customEndDate && txDateStr > filter.customEndDate) {
+        return false;
       }
     }
 
@@ -508,7 +600,7 @@ export function computeFinancialSummary(
   });
 
   const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const todayStr = getLocalDateString(now);
 
   let totalIncome = 0;
   let totalExpense = 0;
@@ -519,18 +611,17 @@ export function computeFinancialSummary(
   const categoryMap: Partial<Record<TransactionCategory, number>> = {};
 
   filtered.forEach((tx) => {
-    const txTime = new Date(tx.timestamp).getTime();
-    const dateKey = tx.timestamp.slice(0, 10);
+    const dateKey = getTransactionLocalDateString(tx.timestamp);
     activeDates.add(dateKey);
 
     if (tx.type === 'income') {
       totalIncome += tx.amount;
-      if (txTime >= startOfToday) {
+      if (dateKey === todayStr) {
         todayIncome += tx.amount;
       }
     } else {
       totalExpense += tx.amount;
-      if (txTime >= startOfToday) {
+      if (dateKey === todayStr) {
         todayExpense += tx.amount;
       }
       categoryMap[tx.category] = (categoryMap[tx.category] || 0) + tx.amount;
@@ -541,8 +632,8 @@ export function computeFinancialSummary(
   let actualTodayIncome = 0;
   let actualTodayExpense = 0;
   transactions.forEach((tx) => {
-    const txTime = new Date(tx.timestamp).getTime();
-    if (txTime >= startOfToday) {
+    const dateKey = getTransactionLocalDateString(tx.timestamp);
+    if (dateKey === todayStr) {
       if (tx.type === 'income') actualTodayIncome += tx.amount;
       else actualTodayExpense += tx.amount;
     }
@@ -572,16 +663,15 @@ export function computeFinancialSummary(
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().slice(0, 10);
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const dateStr = getLocalDateString(d);
     const dayOfWeek = (d.getDay() + 6) % 7; // Monday = 0, Sunday = 6
 
     let dayInc = 0;
     let dayExp = 0;
 
     transactions.forEach((tx) => {
-      if (tx.timestamp.slice(0, 10) === dateStr) {
+      if (getTransactionLocalDateString(tx.timestamp) === dateStr) {
         if (tx.type === 'income') dayInc += tx.amount;
         else dayExp += tx.amount;
       }

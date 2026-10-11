@@ -199,7 +199,19 @@
     "buildingScore": "Building Score",
     "activeDaysProgress": "{{count}}/7 active days",
     "monSun": "Mon – Sun",
-    "emptyChartAction": "Tap \"+ Add Income\" or \"+ Add Expense\" to track your daily dhan."
+    "emptyChartAction": "Tap \"+ Add Income\" or \"+ Add Expense\" to track your daily dhan.",
+    "chooseDate": "Pick Date",
+    "dayView": "Day View",
+    "weekView": "Weekly Analytics & AI",
+    "selectedDay": "Selected Day",
+    "dayBalance": "Day Balance",
+    "dayIncome": "Day Income",
+    "dayExpense": "Day Expenses",
+    "noDayTransactions": "No transactions recorded for this day",
+    "noDayTransactionsSub": "Tap Add Income or Add Expense to log earnings or costs for this date.",
+    "logDayTransaction": "Log Transaction for this Day",
+    "deleteConfirm": "Delete this entry?",
+    "jumpToToday": "Today"
   },
   "sehat": {
     "title": "Health & Support",

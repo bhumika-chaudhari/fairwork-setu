@@ -41,9 +41,10 @@ interface TransactionContextType {
   loadSampleData: () => void;
   // Modal controllers
   isAddModalOpen: boolean;
-  openAddModal: (type?: TransactionType) => void;
+  openAddModal: (type?: TransactionType, date?: string) => void;
   closeAddModal: () => void;
   modalDefaultType: TransactionType;
+  modalDefaultDate?: string;
   editingTransaction: Transaction | null;
   openEditModal: (tx: Transaction) => void;
   closeEditModal: () => void;
@@ -59,6 +60,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalDefaultType, setModalDefaultType] = useState<TransactionType>('income');
+  const [modalDefaultDate, setModalDefaultDate] = useState<string | undefined>(undefined);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   const refresh = useCallback(() => {
@@ -123,19 +125,22 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     refresh();
   }, [refresh]);
 
-  const openAddModal = useCallback((type: TransactionType = 'income') => {
+  const openAddModal = useCallback((type: TransactionType = 'income', date?: string) => {
     setModalDefaultType(type);
+    setModalDefaultDate(date);
     setEditingTransaction(null);
     setIsAddModalOpen(true);
   }, []);
 
   const closeAddModal = useCallback(() => {
     setIsAddModalOpen(false);
+    setModalDefaultDate(undefined);
   }, []);
 
   const openEditModal = useCallback((tx: Transaction) => {
     setEditingTransaction(tx);
     setIsAddModalOpen(false);
+    setModalDefaultDate(undefined);
   }, []);
 
   const closeEditModal = useCallback(() => {
@@ -158,6 +163,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       openAddModal,
       closeAddModal,
       modalDefaultType,
+      modalDefaultDate,
       editingTransaction,
       openEditModal,
       closeEditModal,
@@ -176,6 +182,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       openAddModal,
       closeAddModal,
       modalDefaultType,
+      modalDefaultDate,
       editingTransaction,
       openEditModal,
       closeEditModal,

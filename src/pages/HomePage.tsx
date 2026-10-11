@@ -38,6 +38,7 @@ export default function HomePage() {
     isAddModalOpen,
     closeAddModal,
     modalDefaultType,
+    modalDefaultDate,
     editingTransaction,
     closeEditModal,
   } = useTransactions();
@@ -575,6 +576,7 @@ export default function HomePage() {
           closeEditModal();
         }}
         initialType={modalDefaultType}
+        initialDate={modalDefaultDate}
         editingTx={editingTransaction}
       />
     </div>

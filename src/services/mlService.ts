@@ -6,7 +6,11 @@
  */
 
 import type { Transaction } from '../types/transaction';
-import { getStoredTransactions } from './transactionService';
+import {
+  getStoredTransactions,
+  getTransactionLocalDateString,
+  getLocalDateString,
+} from './transactionService';
 
 const BASE_URL = (
   import.meta.env.VITE_ML_API_URL ||
@@ -242,19 +246,26 @@ function sanitizeTransactions(txs: Transaction[]) {
 // Used if the Python microservice is offline or deploying to static preview
 // -------------------------------------------------------------
 function generateFallbackLinear(txs: Transaction[]): LinearRegressionResult {
-  const dates: string[] = [];
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const today = new Date();
 
   const historyPoints: LinearHistoryPoint[] = [];
-  let runningBal = 3200;
+  let runningBal = 2500;
   for (let i = 13; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().split('T')[0];
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+    const dateStr = getLocalDateString(d);
     const dow = days[d.getDay()];
-    const inc = dow === 'Sat' || dow === 'Sun' ? 850 : 650;
-    const exp = 380;
+
+    const dayTxs = txs.filter((t) => getTransactionLocalDateString(t.timestamp) === dateStr);
+    let inc = dayTxs.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    let exp = dayTxs.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+
+    // If fewer than 5 user transactions recorded overall and this day is empty, supply demo baseline
+    if (dayTxs.length === 0 && txs.length < 5) {
+      inc = dow === 'Sat' || dow === 'Sun' ? 850 : 650;
+      exp = 380;
+    }
+
     runningBal += inc - exp;
     historyPoints.push({
       date: dateStr,
@@ -268,12 +279,15 @@ function generateFallbackLinear(txs: Transaction[]): LinearRegressionResult {
 
   const forecastDays: LinearForecastDay[] = [];
   let predBal = runningBal;
+  const recentDays = historyPoints.slice(-7);
+  const avgNet = Math.round(recentDays.reduce((sum, h) => sum + (h.income - h.expense), 0) / 7);
+  const baseNet = isNaN(avgNet) || avgNet === 0 ? 320 : avgNet;
+
   for (let step = 1; step <= 7; step++) {
-    const d = new Date(today);
-    d.setDate(d.getDate() + step);
-    const dateStr = d.toISOString().split('T')[0];
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + step);
+    const dateStr = getLocalDateString(d);
     const dow = days[d.getDay()];
-    const net = dow === 'Sat' || dow === 'Sun' ? 420 : 260;
+    const net = dow === 'Sat' || dow === 'Sun' ? Math.round(baseNet * 1.25) : baseNet;
     predBal += net;
     forecastDays.push({
       date: dateStr,
@@ -325,25 +339,38 @@ function generateFallbackLinear(txs: Transaction[]): LinearRegressionResult {
   };
 }
 
-function generateFallbackLogistic(budget = 5000): LogisticRegressionResult {
-  const prob = 0.38;
+function generateFallbackLogistic(budget = 5000, txs: Transaction[] = []): LogisticRegressionResult {
+  const totalExpense = txs.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const totalIncome = txs.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const activeDays = new Set(txs.map((t) => getTransactionLocalDateString(t.timestamp))).size;
+  const daysCount = Math.max(1, activeDays);
+  const dailyMean = Math.round(totalExpense / daysCount);
+  const projectedSpend = Math.round(dailyMean * 30);
+  const burnRate = budget > 0 ? projectedSpend / budget : 1.0;
+
+  let prob = burnRate > 1 ? Math.min(0.95, 0.5 + (burnRate - 1) * 0.4) : Math.max(0.05, burnRate * 0.45);
+  if (txs.length === 0) prob = 0.38;
+
+  const riskLevel: 'Low' | 'Moderate' | 'High' = prob > 0.65 ? 'High' : prob > 0.35 ? 'Moderate' : 'Low';
+  const predictedClass: 0 | 1 = prob >= 0.5 ? 1 : 0;
+
   return {
     model_name: 'Logistic Regression (Budget Risk)',
     status: 'trained',
-    is_synthetic: true,
+    is_synthetic: txs.length < 5,
     budget_amount: budget,
-    projected_spend: Math.round(budget * 0.94),
-    predicted_class: 0,
-    predicted_label: 'Within Budget',
+    projected_spend: projectedSpend > 0 ? projectedSpend : Math.round(budget * 0.94),
+    predicted_class: predictedClass,
+    predicted_label: predictedClass === 1 ? 'Over Budget' : 'Within Budget',
     over_budget_probability: prob,
     probability_percent: Math.round(prob * 1000) / 10,
-    risk_level: 'Moderate',
-    status_text: 'Borderline Risk',
+    risk_level: riskLevel,
+    status_text: riskLevel === 'High' ? 'High Risk of Overspending' : riskLevel === 'Moderate' ? 'Moderate Spending Caution' : 'Healthy Budget Trajectory',
     feature_snapshot: {
-      daily_expense_mean: 340.5,
+      daily_expense_mean: dailyMean > 0 ? dailyMean : 340.5,
       expense_volatility: 112.3,
-      expense_to_income_ratio: 0.54,
-      burn_rate_projected: Math.round(budget * 0.94),
+      expense_to_income_ratio: totalIncome > 0 ? Math.round((totalExpense / totalIncome) * 100) / 100 : 0.54,
+      burn_rate_projected: projectedSpend > 0 ? projectedSpend : Math.round(budget * 0.94),
     },
     metrics: {
       accuracy: 0.94,
@@ -623,7 +650,7 @@ export async function getLogisticBudgetRisk(
     return await res.json();
   } catch (err) {
     console.info('ML API unavailable, using verified client fallback for Logistic Regression', err);
-    return generateFallbackLogistic(budget);
+    return generateFallbackLogistic(budget, txs);
   }
 }
 
