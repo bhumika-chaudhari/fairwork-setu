@@ -328,7 +328,13 @@
     "validationCity": "Please select a city.",
     "removeSkill": "Remove {{skill}}",
     "stabilityGood": "Good",
-    "preferredLanguage": "Preferred Language"
+    "preferredLanguage": "Preferred Language",
+    "logout": "Log Out",
+    "logoutPromptTitle": "Log Out of Setu?",
+    "logoutPromptSub": "You will be returned to the welcome screen. Your saved transactions and profile will remain safe on your device.",
+    "confirmLogout": "Yes, Log Out",
+    "accountSession": "Session & Demo Controls",
+    "reloadDemo": "Reload 5-Day Demo Data"
   },
   "availability": {
     "anytime": "Any time",

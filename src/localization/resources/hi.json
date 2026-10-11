@@ -329,7 +329,13 @@
     "validationCity": "कृपया शहर चुनें।",
     "removeSkill": "{{skill}} हटाएं",
     "stabilityGood": "अच्छा",
-    "preferredLanguage": "पसंदीदा भाषा"
+    "preferredLanguage": "पसंदीदा भाषा",
+    "logout": "लॉग आउट करें",
+    "logoutPromptTitle": "क्या आप सेतु से लॉग आउट करना चाहते हैं?",
+    "logoutPromptSub": "आप स्वागत स्क्रीन पर वापस चले जाएंगे। आपके सहेजे गए लेन-देन और जानकारी डिवाइस पर सुरक्षित रहेगी।",
+    "confirmLogout": "हाँ, लॉग आउट करें",
+    "accountSession": "सत्र एवं डेमो नियंत्रण",
+    "reloadDemo": "पिछले 5 दिनों का डेमो डेटा पुनः लोड करें"
   },
   "availability": {
     "anytime": "किसी भी समय",

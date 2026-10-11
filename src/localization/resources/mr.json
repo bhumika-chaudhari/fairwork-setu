@@ -599,7 +599,13 @@
     "validationContact": "कृपया वैध संपर्क क्रमांक प्रविष्ट करा",
     "updateSuccess": "प्रोफाइल यशस्वीरीत्या अपडेट झाली!",
     "stabilityGood": "उत्तम",
-    "preferredLanguage": "पसंतीची भाषा"
+    "preferredLanguage": "पसंतीची भाषा",
+    "logout": "लॉग आउट",
+    "logoutPromptTitle": "तुम्ही सेतूमधून लॉग आउट करू इच्छिता?",
+    "logoutPromptSub": "तुम्ही स्वागत स्क्रीनवर परत जाल. तुमचे जतन केलेले व्यवहार आणि तपशील सुरक्षित राहतील.",
+    "confirmLogout": "होय, लॉग आउट करा",
+    "accountSession": "सत्र व डेमो नियंत्रणे",
+    "reloadDemo": "गेल्या ५ दिवसांचा डेमो डेटा पुन्हा लोड करा"
   },
   "availability": {
     "anytime": "कधीही",

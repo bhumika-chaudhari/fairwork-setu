@@ -20,7 +20,7 @@ export default function TabLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { profile } = useProfile();
+  const { profile, logout } = useProfile();
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
 
   // If user navigates directly to /voice, show modal
@@ -92,6 +92,20 @@ export default function TabLayout() {
               ) : (
                 profile.name.charAt(0) || 'R'
               )}
+            </button>
+
+            {/* Logout button */}
+            <button
+              type="button"
+              onClick={async () => {
+                await logout();
+                navigate('/welcome');
+              }}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/60 hover:bg-rose-50 text-textSecondary hover:text-rose-600 transition-all border border-white/80 shadow-xs active:scale-95"
+              title={t('profileScreen.logout', 'Log Out')}
+              aria-label="Log Out"
+            >
+              <AppIcon name="close" size={16} />
             </button>
           </div>
         </div>

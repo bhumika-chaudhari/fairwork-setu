@@ -63,6 +63,7 @@ interface ProfileContextValue {
   isIncomplete: boolean;
   updateProfile: (patch: Partial<ProfileState>) => Promise<void>;
   completeOnboarding: (patch?: Partial<ProfileState>) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
@@ -107,6 +108,11 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     [persist, profile]
   );
 
+  const logout = useCallback(async () => {
+    localStorage.removeItem(ONBOARDING_KEY);
+    setOnboardingComplete(false);
+  }, []);
+
   const strength = useMemo(() => computeStrength(profile), [profile]);
 
   const value = useMemo(
@@ -118,8 +124,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       isIncomplete: strength < 90,
       updateProfile,
       completeOnboarding,
+      logout,
     }),
-    [completeOnboarding, onboardingComplete, profile, ready, strength, updateProfile]
+    [completeOnboarding, logout, onboardingComplete, profile, ready, strength, updateProfile]
   );
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;

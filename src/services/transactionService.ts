@@ -32,17 +32,270 @@ export const CATEGORY_TRANSLATION_KEYS: Record<TransactionCategory, string> = {
 };
 
 /**
- * Safe local storage reader. Returns empty array for new users.
+ * Generates realistic transaction history spanning the past 5 days
+ * dynamically anchored to the current date and time.
+ * Stored in localStorage as real data for demo and calculation purposes.
+ */
+export function generateDemoPastTransactions(): Transaction[] {
+  const now = new Date();
+  const txs: Transaction[] = [];
+
+  const createIso = (daysAgo: number, hours: number, minutes: number) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - daysAgo);
+    d.setHours(hours, minutes, 0, 0);
+    return d.toISOString();
+  };
+
+  // Day 0: Today
+  txs.push(
+    {
+      id: 'tx_demo_0_1',
+      type: 'income',
+      amount: 450,
+      category: 'work_earnings',
+      description: 'Morning delivery shift (4 orders)',
+      workRef: 'Zomato Partner',
+      timestamp: createIso(0, 10, 30),
+      createdAt: Date.now() - 5 * 3600 * 1000,
+      updatedAt: Date.now() - 5 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_0_2',
+      type: 'expense',
+      amount: 160,
+      category: 'travel_fuel',
+      description: 'Petrol refill at HP pump',
+      timestamp: createIso(0, 11, 15),
+      createdAt: Date.now() - 4 * 3600 * 1000,
+      updatedAt: Date.now() - 4 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_0_3',
+      type: 'expense',
+      amount: 45,
+      category: 'food',
+      description: 'Chai & snack break',
+      timestamp: createIso(0, 13, 20),
+      createdAt: Date.now() - 3 * 3600 * 1000,
+      updatedAt: Date.now() - 3 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_0_4',
+      type: 'income',
+      amount: 380,
+      category: 'work_earnings',
+      description: 'Afternoon passenger trips (3 rides)',
+      workRef: 'Uber Driver',
+      timestamp: createIso(0, 14, 45),
+      createdAt: Date.now() - 2 * 3600 * 1000,
+      updatedAt: Date.now() - 2 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_0_5',
+      type: 'income',
+      amount: 60,
+      category: 'tips_bonus',
+      description: 'Customer tip for fast delivery',
+      timestamp: createIso(0, 15, 10),
+      createdAt: Date.now() - 3600 * 1000,
+      updatedAt: Date.now() - 3600 * 1000,
+    }
+  );
+
+  // Day 1: Yesterday
+  txs.push(
+    {
+      id: 'tx_demo_1_1',
+      type: 'expense',
+      amount: 180,
+      category: 'travel_fuel',
+      description: 'Daily fuel refill',
+      timestamp: createIso(1, 9, 30),
+      createdAt: Date.now() - 28 * 3600 * 1000,
+      updatedAt: Date.now() - 28 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_1_2',
+      type: 'expense',
+      amount: 110,
+      category: 'food',
+      description: 'Lunch thali at roadside eatery',
+      timestamp: createIso(1, 13, 45),
+      createdAt: Date.now() - 24 * 3600 * 1000,
+      updatedAt: Date.now() - 24 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_1_3',
+      type: 'income',
+      amount: 820,
+      category: 'work_earnings',
+      description: 'Full day city passenger rides & parcel drops',
+      workRef: 'Rapido & Dunzo',
+      timestamp: createIso(1, 18, 30),
+      createdAt: Date.now() - 20 * 3600 * 1000,
+      updatedAt: Date.now() - 20 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_1_4',
+      type: 'income',
+      amount: 80,
+      category: 'tips_bonus',
+      description: 'Evening peak surge bonus',
+      timestamp: createIso(1, 19, 15),
+      createdAt: Date.now() - 19 * 3600 * 1000,
+      updatedAt: Date.now() - 19 * 3600 * 1000,
+    }
+  );
+
+  // Day 2: 2 days ago
+  txs.push(
+    {
+      id: 'tx_demo_2_1',
+      type: 'expense',
+      amount: 210,
+      category: 'travel_fuel',
+      description: 'Full tank petrol top-up',
+      timestamp: createIso(2, 10, 0),
+      createdAt: Date.now() - 50 * 3600 * 1000,
+      updatedAt: Date.now() - 50 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_2_2',
+      type: 'expense',
+      amount: 85,
+      category: 'food',
+      description: 'Tea and evening samosa snack',
+      timestamp: createIso(2, 15, 30),
+      createdAt: Date.now() - 46 * 3600 * 1000,
+      updatedAt: Date.now() - 46 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_2_3',
+      type: 'income',
+      amount: 750,
+      category: 'work_earnings',
+      description: 'Grocery delivery batch (6 orders)',
+      workRef: 'Zepto Partner',
+      timestamp: createIso(2, 17, 0),
+      createdAt: Date.now() - 44 * 3600 * 1000,
+      updatedAt: Date.now() - 44 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_2_4',
+      type: 'income',
+      amount: 120,
+      category: 'tips_bonus',
+      description: 'Weekend completion milestone reward',
+      timestamp: createIso(2, 20, 0),
+      createdAt: Date.now() - 40 * 3600 * 1000,
+      updatedAt: Date.now() - 40 * 3600 * 1000,
+    }
+  );
+
+  // Day 3: 3 days ago
+  txs.push(
+    {
+      id: 'tx_demo_3_1',
+      type: 'expense',
+      amount: 150,
+      category: 'travel_fuel',
+      description: 'CNG gas refill',
+      timestamp: createIso(3, 11, 30),
+      createdAt: Date.now() - 74 * 3600 * 1000,
+      updatedAt: Date.now() - 74 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_3_2',
+      type: 'expense',
+      amount: 250,
+      category: 'tools',
+      description: 'Mobile bike mount bracket replacement',
+      workRef: 'Vehicle Accessory',
+      timestamp: createIso(3, 14, 0),
+      createdAt: Date.now() - 70 * 3600 * 1000,
+      updatedAt: Date.now() - 70 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_3_3',
+      type: 'income',
+      amount: 680,
+      category: 'work_earnings',
+      description: 'Courier dispatch deliveries',
+      workRef: 'Porter Partner',
+      timestamp: createIso(3, 16, 30),
+      createdAt: Date.now() - 68 * 3600 * 1000,
+      updatedAt: Date.now() - 68 * 3600 * 1000,
+    }
+  );
+
+  // Day 4: 4 days ago
+  txs.push(
+    {
+      id: 'tx_demo_4_1',
+      type: 'expense',
+      amount: 190,
+      category: 'travel_fuel',
+      description: 'Petrol refill',
+      timestamp: createIso(4, 12, 0),
+      createdAt: Date.now() - 98 * 3600 * 1000,
+      updatedAt: Date.now() - 98 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_4_2',
+      type: 'expense',
+      amount: 120,
+      category: 'food',
+      description: 'Dinner meal on the route',
+      timestamp: createIso(4, 20, 30),
+      createdAt: Date.now() - 90 * 3600 * 1000,
+      updatedAt: Date.now() - 90 * 3600 * 1000,
+    },
+    {
+      id: 'tx_demo_4_3',
+      type: 'income',
+      amount: 890,
+      category: 'work_earnings',
+      description: 'Late evening airport return ride',
+      workRef: 'Ola Cabs',
+      timestamp: createIso(4, 21, 15),
+      createdAt: Date.now() - 89 * 3600 * 1000,
+      updatedAt: Date.now() - 89 * 3600 * 1000,
+    }
+  );
+
+  return txs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+}
+
+/**
+ * Reset or seed stored transactions to demo data spanning the past 4-5 days.
+ */
+export function seedDemoTransactions(): Transaction[] {
+  const demoData = generateDemoPastTransactions();
+  saveStoredTransactions(demoData);
+  return demoData;
+}
+
+/**
+ * Safe local storage reader. Returns initialized demo transactions for past 4-5 days if storage is empty.
  */
 export function getStoredTransactions(): Transaction[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) {
+      const demoData = generateDemoPastTransactions();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoData));
+      return demoData;
+    }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      const demoData = generateDemoPastTransactions();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoData));
+      return demoData;
+    }
     return parsed.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   } catch {
-    return [];
+    return generateDemoPastTransactions();
   }
 }
 

@@ -21,6 +21,7 @@ import {
   LANGUAGE_NATIVE_NAMES,
   type LanguageCode,
 } from '../localization';
+import { seedDemoTransactions } from '../services/transactionService';
 
 const AVAILABILITY_OPTIONS: { id: Availability; label: string }[] = [
   { id: 'anytime', label: 'Full Time / Any time' },
@@ -32,7 +33,7 @@ const AVAILABILITY_OPTIONS: { id: Availability; label: string }[] = [
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { profile, updateProfile, strength } = useProfile();
+  const { profile, updateProfile, strength, logout } = useProfile();
 
   const [name, setName] = useState(profile.name);
   const [gender, setGender] = useState<Gender | null>(profile.gender || null);
@@ -52,6 +53,8 @@ export default function ProfilePage() {
   const [emergencyContact, setEmergencyContact] = useState(profile.emergencyContact);
   const [savingsGoal, setSavingsGoal] = useState(String(profile.savingsGoal));
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [demoResetSuccess, setDemoResetSuccess] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -155,6 +158,17 @@ export default function ProfilePage() {
     navigate(-1);
   };
 
+  const handleLogout = async () => {
+    await logout();
+    navigate('/welcome', { replace: true });
+  };
+
+  const handleResetDemoData = () => {
+    seedDemoTransactions();
+    setDemoResetSuccess(true);
+    setTimeout(() => setDemoResetSuccess(false), 2500);
+  };
+
   return (
     <div className="min-h-screen w-full bg-transparent px-4 py-4 md:py-8 pb-28">
       <div className="mx-auto w-full max-w-md md:max-w-xl space-y-4">
@@ -171,7 +185,15 @@ export default function ProfilePage() {
           <h1 className="text-xl font-extrabold text-deepEmerald">
             {t('profileScreen.title')}
           </h1>
-          <div className="w-10" />
+          <button
+            type="button"
+            onClick={() => setShowLogoutConfirm(true)}
+            className="flex items-center gap-1 rounded-full bg-rose-50 border border-rose-200/80 px-3 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-all shadow-xs active:scale-95"
+            title={t('profileScreen.logout', 'Log Out')}
+          >
+            <AppIcon name="close" size={14} className="text-rose-600" />
+            <span className="hidden sm:inline">{t('profileScreen.logout', 'Log Out')}</span>
+          </button>
         </header>
 
         {/* Profile Photo Avatar & Strength Card matching reference Screen 9 */}
@@ -530,6 +552,75 @@ export default function ProfilePage() {
             </button>
           </div>
         </div>
+
+        {/* Account & Session Controls */}
+        <div className="rounded-3xl bg-white/50 backdrop-blur-2xl p-4 md:p-5 border border-white/80 shadow-glass space-y-3">
+          <h3 className="text-xs font-bold text-textMuted uppercase tracking-wider">
+            {t('profileScreen.accountSession', 'Session & Demo Controls')}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={handleResetDemoData}
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-white/70 hover:bg-white/90 text-primary border border-mint/40 py-3 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
+            >
+              <AppIcon name="refresh" size={15} />
+              <span>{t('profileScreen.reloadDemo', 'Reload 5-Day Demo Data')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowLogoutConfirm(true)}
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 py-3 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
+            >
+              <AppIcon name="close" size={15} className="text-rose-600" />
+              <span>{t('profileScreen.logout', 'Log Out')}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Logout Confirmation Modal */}
+        {showLogoutConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-deepEmerald/40 backdrop-blur-md animate-fade-in">
+            <div className="w-full max-w-sm rounded-3xl bg-white/95 backdrop-blur-2xl p-6 shadow-lifted border border-white/90 space-y-4 text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 border border-rose-200">
+                <AppIcon name="close" size={26} />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-deepEmerald">
+                  {t('profileScreen.logoutPromptTitle', 'Log Out of Setu?')}
+                </h3>
+                <p className="text-xs text-textSecondary mt-1">
+                  {t('profileScreen.logoutPromptSub', 'You will be returned to the welcome screen. Your saved transactions and details will remain safe in local storage.')}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="flex-1 rounded-full border border-white/80 bg-white/80 py-2.5 text-xs font-bold text-textSecondary hover:bg-white transition-all shadow-xs active:scale-95"
+                >
+                  {t('common.cancel', 'Cancel')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex-1 rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white shadow-glass hover:bg-rose-700 transition-all active:scale-95"
+                >
+                  {t('profileScreen.confirmLogout', 'Yes, Log Out')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {demoResetSuccess && (
+          <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 animate-fade-in">
+            <div className="flex items-center gap-2 rounded-full bg-deepEmerald px-6 py-3 text-sm font-extrabold text-white shadow-lifted border border-mint">
+              <AppIcon name="checkmark-circle" size={18} className="text-mint" />
+              <span>Demo transactions loaded for past 5 days!</span>
+            </div>
+          </div>
+        )}
 
         {/* Confirmation Toast matching reference Screen 9 ("Profile updated successfully!") */}
         {savedSuccess && (
