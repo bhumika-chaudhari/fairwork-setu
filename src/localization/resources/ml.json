@@ -17,7 +17,12 @@
     "edit": "തിരുത്തുക",
     "add": "ചേർക്കുക",
     "ok": "ശരി",
-    "language": "ഭാഷ"
+    "language": "ഭാഷ",
+    "optional": "वैकल्पिक",
+    "clear": "हटाएं",
+    "delete": "हटाएं",
+    "confirm": "पुष्टि करें",
+    "view": "देखें"
   },
   "onboarding": {
     "appName": "സേതു",
@@ -44,13 +49,28 @@
     "carousel2": "അടുത്തുള്ള ജോലി",
     "carousel3": "ചെറിയ സമ്പാദ്യം",
     "carousel4": "ആരോഗ്യവും സഹായവും",
-    "carousel5": "Skill Passport"
+    "carousel5": "Skill Passport",
+    "tellUs": "अपने बारे में बताएं",
+    "tellUsHint": "इससे हमें आपके लिए सबसे अच्छा काम और सहायता ढूंढने में मदद मिलती है।",
+    "selectWorkerType": "अपने काम का प्रकार चुनें",
+    "cityPlaceholder": "अपना शहर दर्ज करें (उदा. पुणे)",
+    "genderTitle": "लिंग / Gender (वैकल्पिक)",
+    "genderHint": "लिंग की जानकारी पूरी तरह वैकल्पिक है और यह काम के अवसरों को कभी सीमित नहीं करती। घरेलू काम, ड्राइविंग, वेयरहाउस और मरम्मत कार्य सभी के लिए खुले हैं।",
+    "genderSkip": "बताना आवश्यक नहीं",
+    "stepCounter": "कदम {{current}} / {{total}}",
+    "tapToSelect": "चुनने के लिए टैप करें",
+    "welcomeSubtitle": "सेतु में आपका स्वागत है, {{name}}! आपकी प्रोफ़ाइल तैयार है।",
+    "loadingDashboard": "आपका डैशबोर्ड लोड हो रहा है...",
+    "profileCreated": "प्रोफ़ाइल सफलतापूर्वक बनाई गई! ✅"
   },
   "tabs": {
     "home": "ഹോം",
     "kaam": "ജോലി",
     "dhan": "പണം",
-    "more": "സേവനങ്ങൾ"
+    "more": "സേവനങ്ങൾ",
+    "sehat": "ആരോഗ്യം",
+    "kaushal": "നൈപുണ്യം",
+    "voice": "आवाज़"
   },
   "home": {
     "greeting": "നമസ്കാരം, {{name}} 👋",
@@ -69,7 +89,20 @@
     "completeProfileHint": "മികച്ച ജോലി നിർദ്ദേശത്തിന് സ്കിൽ ചേർക്കുക.",
     "profileReady": "പ്രൊഫൈൽ തയ്യാർ: {{percent}}%",
     "openProfile": "പ്രൊഫൈൽ",
-    "voiceA11y": "ശബ്ദത്തിലൂടെ വരുമാനമോ ചെലവോ"
+    "voiceA11y": "ശബ്ദത്തിലൂടെ വരുമാനമോ ചെലവോ",
+    "greetingMorning": "सुप्रभात, {{name}}!",
+    "subGreeting": "आगे बढ़ते रहें, आप बहुत अच्छा कर रहे हैं!",
+    "todaySummary": "आज का हिसाब",
+    "todayExpenses": "आज के खर्च",
+    "netForToday": "आज का शुद्ध शेष",
+    "netForPeriod": "इस अवधि का शुद्ध शेष",
+    "addIncome": "आय जोड़ें",
+    "addExpense": "खर्च जोड़ें",
+    "savings": "बचत",
+    "savingsGoal": "लक्ष्य: ₹{{amount}}",
+    "savingsTarget": "लक्ष्य: ₹{{amount}}",
+    "incomeForecast": "AI कमाई का अनुमान",
+    "incomeForecastHint": "अगले सप्ताह का अनुमान: ₹5,800 - ₹6,400"
   },
   "kaam": {
     "title": "ജോലി",
@@ -93,7 +126,21 @@
     "skillMatch": "{{percent}}% കഴിവ് പൊരുത്തം",
     "updateProfile": "പ്രൊഫൈൽ അപ്‌ഡേറ്റ്",
     "disclaimer": "ജോലി നിർദ്ദേശങ്ങൾ വിവരത്തിന് മാത്രം.",
-    "payRange": "₹{{min}}–₹{{max}}"
+    "payRange": "₹{{min}}–₹{{max}}",
+    "clearFilters": "फ़िल्टर हटाएं",
+    "filterPay": "वेतन सीमा",
+    "filterSkill": "कौशल",
+    "chatWhatsApp": "व्हाट्सएप पर संपर्क करें",
+    "callEmployer": "नियोक्ता को कॉल करें",
+    "applySuccess": "आवेदन सफलतापूर्वक भेजा गया!",
+    "applySuccessBody": "नियोक्ता को आपकी सत्यापित सेतु प्रोफ़ाइल मिल गई है और वे आपसे शीघ्र संपर्क करेंगे।",
+    "viewDetails": "विवरण देखें",
+    "payRate": "वेतन दर",
+    "aiMatchScore": "AI मैच स्कोर",
+    "verifiedHighFit": "सत्यापित उच्च उपयुक्तता",
+    "whyMatch": "यह काम आपके लिए क्यों उपयुक्त है",
+    "skillsRequirements": "कौशल और आवश्यकताएं",
+    "applyWithProfile": "सेतु प्रोफ़ाइल से आवेदन करें"
   },
   "dhan": {
     "title": "പണം",
@@ -111,7 +158,38 @@
     "remaining": "ലക്ഷ്യത്തിലെത്താൻ ഇനി ₹{{amount}} ലാഭിക്കണം",
     "dash": "-",
     "of100": "/100",
-    "expenseChip": "{{category}} · ₹{{amount}}"
+    "expenseChip": "{{category}} · ₹{{amount}}",
+    "todaySummary": "आज का हिसाब",
+    "todayIncome": "आज की आय",
+    "todayExpenses": "आज के खर्च",
+    "netForToday": "आज का शुद्ध शेष",
+    "netForPeriod": "इस अवधि का शुद्ध शेष",
+    "avgDailyIncome": "औसत दैनिक आय",
+    "recentExpenses": "हाल के खर्च",
+    "stabilityScoreValue": "348",
+    "stabilityScoreLabel": "अच्छी स्थिरता",
+    "anomalyAlert": "AI चेतावनी: असामान्य खर्च का पता चला। ईंधन/यात्रा खर्च सामान्य से अधिक है।",
+    "noSpikesDetected": "आपके दर्ज लेन-देन में कोई असामान्य खर्च वृद्धि नहीं मिली।",
+    "reviewDeductions": "कटौती की समीक्षा करें",
+    "emptyChartHint": "इस सप्ताह कोई आय या खर्च दर्ज नहीं किया गया।",
+    "sampleDataBanner": "नमूना डेमो डेटा सक्रिय",
+    "sampleDataSub": "वर्तमान में डेमो रिकॉर्ड देख रहे हैं। अपने वास्तविक लेन-देन शुरू करने के लिए हटाएं।",
+    "clearSampleData": "डेमो डेटा हटाएं",
+    "loadSampleData": "डेमो डेटा लोड करें",
+    "aiForecastNotice": "AI आय का पूर्वानुमान",
+    "aiForecastInsufficient": "AI पूर्वानुमान के लिए कम से कम 5 दिनों के दर्ज लेन-देन आवश्यक हैं। अपनी दैनिक आय दर्ज करते रहें।",
+    "stabilityScoreInsufficient": "स्थिरता स्कोर के मूल्यांकन के लिए कम से कम 7 दिनों की गतिविधि आवश्यक है।",
+    "sampleDataPrompt": "क्या आप नमूना रिकॉर्ड के साथ पूर्वावलोकन करना चाहते हैं?",
+    "fromLastWeek": "पिछले हफ्ते से",
+    "basedOn7Days": "7 दिनों की अवधि पर आधारित",
+    "aiModel": "AI मॉडल",
+    "projectionBasedOn": "{{count}} दर्ज कार्य दिवसों पर आधारित अनुमान।",
+    "forecastProgress": "प्रगति: {{count}}/5 दिन दर्ज",
+    "aiSpendingAnalysis": "AI खर्च विश्लेषण",
+    "buildingScore": "स्कोर बन रहा है",
+    "activeDaysProgress": "{{count}}/7 सक्रिय दिन",
+    "monSun": "सोम – रवि",
+    "emptyChartAction": "अपने दैनिक धन को ट्रैक करने के लिए \"+ आय जोड़ें\" या \"− खर्च जोड़ें\" दबाएं।"
   },
   "sehat": {
     "title": "ആരോഗ്യവും സഹായവും",
@@ -122,7 +200,22 @@
     "nearby": "അടുത്തുള്ള ആരോഗ്യ സേവനങ്ങൾ",
     "disclaimer": "സേതു വൈദ്യോപദേശം നൽകുന്നില്ല. ഔദ്യോഗിക സ്രോതസ്സിൽ ഉറപ്പാക്കുക.",
     "viewSource": "സ്രോതസ്സ് കാണുക",
-    "schemes": "ക്ഷേമ സഹായം"
+    "schemes": "ക്ഷേമ സഹായം",
+    "helpline": "ഹെൽപ്പ്‌ലൈൻ",
+    "police": "पुलिस",
+    "childHelpline": "चाइल्ड हेल्प",
+    "askSetuAi": "सेतु AI से पूछें",
+    "askSetuAiPlaceholder": "उदा. मुफ्त स्वास्थ्य जांच कहाँ मिल सकती है?",
+    "checkEligibility": "पात्रता जांचें",
+    "verifiedSource": "सत्यापित आधिकारिक पोर्टल",
+    "thinking": "ചിന്തിക്കുന്നു...",
+    "ask": "ചോദിക്കുക",
+    "verifiedSources": "സ്ഥിരീകരിച്ച ഉറവിടങ്ങൾ:",
+    "categoryLabel": "വിഭാഗം:",
+    "distanceLabel": "ദൂരം:",
+    "servicesLabel": "സേവനങ്ങൾ:",
+    "hoursLabel": "സമയം:",
+    "callPhone": "വിളിക്കുക {{phone}}"
   },
   "kaushal": {
     "title": "കഴിവ് പാസ്പോർട്ട്",
@@ -140,7 +233,26 @@
     "disclaimer": "ഇത് കഴിവുകളുടെ പ്രൊഫൈലാണ്. സർക്കാർ സർട്ടിഫിക്കറ്റല്ല.",
     "emptySkills": "സ്കിൽ ചേർക്കുക.",
     "addSkills": "സ്കിൽ",
-    "workHistory": "ജോലി ചരിത്രം"
+    "workHistory": "ജോലി ചരിത്രം",
+    "rating": "റേറ്റിംഗ്",
+    "viewPassport": "स्किल पासपोर्ट देखें",
+    "editSkills": "कौशल बदलें",
+    "saveSkills": "कौशल सहेजें",
+    "downloadPdfSub": "अपने कौशल और कार्य अनुभव का साझा करने योग्य PDF सहेजें।",
+    "verifiedCompetencies": "सत्यापित योग्यताएं (प्लेटफ़ॉर्म कार्य)",
+    "declaredSkills": "कामगार द्वारा घोषित कौशल",
+    "shareWhatsApp": "व्हाट्सएप पर शेयर करें",
+    "copyLink": "शेयर लिंक कॉपी करें",
+    "linkCopied": "शेयर लिंक कॉपी हो गया! ✓",
+    "pdfSuccess": "स्किल पासपोर्ट PDF सफलतापूर्वक डाउनलोड हुआ!",
+    "pdfError": "PDF बनाने में समस्या आई। कृपया पुनः प्रयास करें।",
+    "previewTitle": "डिजिटल स्किल पासपोर्ट पूर्वावलोकन",
+    "aiSummaryTitle": "AI सारांश",
+    "aiSummary": "5 वर्षों के अनुभव वाले विश्वसनीय पेशेवर, समय की पाबंदी, गुणवत्तापूर्ण कार्य और उच्च ग्राहक संतुष्टि के लिए जाने जाते हैं।",
+    "verified": "സ്ഥിരീകരിച്ചത്",
+    "authenticated": "സാക്ഷ്യപ്പെടുത്തിയത്",
+    "customSkills": "മറ്റ് കഴിവുകൾ",
+    "selectSkillsHint": "കഴിവുകൾ തിരഞ്ഞെടുക്കുക (ചേർക്കാനോ നീക്കം ചെയ്യാനോ ടാപ്പുചെയ്യുക)"
   },
   "voice": {
     "title": "സംസാരിച്ച് ചേർക്കുക",
@@ -156,7 +268,16 @@
     "savedSub": "വരുമാനം ₹{{income}} · ചെലവ് ₹{{expense}}",
     "speakAgain": "വീണ്ടും സംസാരിക്കുക",
     "typeInstead": "ടൈപ്പ് ചെയ്ത് ചേർക്കുക",
-    "typePlaceholder": "ഉദാ. 800 സമ്പാദിച്ചു, 150 പെട്രോൾ"
+    "typePlaceholder": "ഉദാ. 800 സമ്പാദിച്ചു, 150 പെട്രോൾ",
+    "date": "तारीख",
+    "speechNotSupported": "ब्राउज़र में आवाज़ पहचान उपलब्ध नहीं है। कृपया नीचे टाइप करें।",
+    "incomeLabel": "कमाई (₹)",
+    "expenseLabel": "खर्चा (₹)",
+    "micNote": "माइक्रोफोन नोट",
+    "loggedToday": "ഇന്നത്തേക്ക് രേഖപ്പെടുത്തി",
+    "typeNote": "നിങ്ങളുടെ കുറിപ്പ് ടൈപ്പ് ചെയ്യുക",
+    "extractReview": "വിശദാംശങ്ങൾ എടുത്തു പരിശോധിക്കുക",
+    "tryAgainVoice": "മൈക്രോഫോൺ വീണ്ടും ശ്രമിക്കുക"
   },
   "more": {
     "title": "സേവനങ്ങൾ",
@@ -215,7 +336,18 @@
     "led": "LED ഇൻസ്റ്റലേഷൻ",
     "electrical": "ഇലക്ട്രിക്കൽ",
     "driving": "ഡ്രൈവിങ്",
-    "delivery": "ഡെലിവറി"
+    "delivery": "ഡെലിവറി",
+    "cleaning": "सफाई",
+    "cooking": "खाना पकाना",
+    "sweepingMopping": "झाड़ू और पोछा",
+    "dishwashing": "बर्तन धोना",
+    "laundry": "कपड़े धोना व प्रेस",
+    "caregiving": "देखभाल व सेवा",
+    "electrician": "इलेक्ट्रीशियन",
+    "plumbing": "प्लंबिंग",
+    "tailoring": "सिलाई",
+    "loading": "लोडिंग / अनलोडिंग",
+    "other": "अन्य"
   },
   "jobs": {
     "j001": {
@@ -257,6 +389,62 @@
       "workType": "[EN] Weekly",
       "postedAgo": "[EN] 6 hours ago",
       "employer": "[EN] Site contractor"
+    },
+    "deliveryPartner": {
+      "title": "डिलीवरी पार्टनर",
+      "location": "कोथरूड, पुणे",
+      "payType": "पार्ट टाइम",
+      "workType": "फ़ूड डिलीवरी",
+      "postedAgo": "2 घंटे पहले",
+      "employer": "ज़ोमैटो"
+    },
+    "warehouseHelper": {
+      "title": "वेयरहाउस हेल्पर",
+      "location": "चाकण, पुणे",
+      "payType": "फुल टाइम",
+      "workType": "वेयरहाउस",
+      "postedAgo": "4 घंटे पहले",
+      "employer": "अमेज़न"
+    },
+    "houseHelp": {
+      "title": "घरेलू सहायक और रसोइया",
+      "location": "औंध, पुणे",
+      "payType": "प्रति दिन 4 घंटे",
+      "workType": "घरेलू कार्य",
+      "postedAgo": "1 घंटा पहले",
+      "employer": "परिवार"
+    },
+    "domesticCaregiver": {
+      "title": "घरेलू देखभालकर्ता एवं सफाईकर्मी",
+      "location": "कल्याणी नगर, पुणे",
+      "payType": "पूरा दिन",
+      "workType": "घरेलू कार्य",
+      "postedAgo": "3 घंटे पहले",
+      "employer": "सीनियर केयर होम"
+    },
+    "homeCleaner": {
+      "title": "घर की सफाई और बर्तन विशेषज्ञ",
+      "location": "औंध / बानेर, पुणे",
+      "payType": "दैनिक / लचीला",
+      "workType": "घरेलू कार्य",
+      "postedAgo": "अभी",
+      "employer": "सत्यापित सोसाइटी"
+    },
+    "electricianService": {
+      "title": "इलेक्ट्रीशियन व उपकरण मरम्मत",
+      "location": "बानेर, पुणे",
+      "payType": "प्रति दिन",
+      "workType": "अनुबंध",
+      "postedAgo": "5 घंटे पहले",
+      "employer": "अर्बन कंपनी"
+    },
+    "privateDriver": {
+      "title": "प्राइवेट ड्राइवर / कार चालक",
+      "location": "शिवाजीनगर, पुणे",
+      "payType": "फुल टाइम",
+      "workType": "ड्राइविंग",
+      "postedAgo": "6 घंटे पहले",
+      "employer": "सिटी कैब्स"
     }
   },
   "healthResources": {
@@ -274,6 +462,21 @@
       "name": "[EN] Jan Aushadhi Kendra",
       "type": "[EN] Jan Aushadhi",
       "services": "[EN] Affordable medicines"
+    },
+    "cityHospital": {
+      "name": "सिटी हॉस्पिटल",
+      "type": "अस्पताल",
+      "services": "सामान्य चिकित्सा • ओपीडी • आपातकालीन"
+    },
+    "janArogya": {
+      "name": "जन आरोग्य केंद्र",
+      "type": "स्वास्थ्य केंद्र",
+      "services": "मुफ्त जांच • दवाएं • परामर्श"
+    },
+    "wellnessClinic": {
+      "name": "वेलनेस क्लिनिक",
+      "type": "निजी क्लिनिक",
+      "services": "दंत, फार्मेसी"
     }
   },
   "courses": {
@@ -291,6 +494,21 @@
       "title": "[EN] EV Charger Setup",
       "duration": "[EN] 3 weeks",
       "level": "[EN] Advanced"
+    },
+    "advancedDriving": {
+      "title": "उन्नत ड्राइविंग और ईवी फ्लीट कौशल",
+      "duration": "2 सप्ताह",
+      "level": "मध्यम"
+    },
+    "customerService": {
+      "title": "ग्राहक सेवा और डिजिटल यूपीआई भुगतान",
+      "duration": "1 सप्ताह",
+      "level": "शुरुआती"
+    },
+    "digitalPayments": {
+      "title": "कामकाज के लिए स्मार्टफोन व डिजिटल टूल्स",
+      "duration": "1 सप्ताह",
+      "level": "शुरुआती"
     }
   },
   "schemes": {
@@ -303,6 +521,21 @@
       "name": "[EN] e-Shram",
       "description": "[EN] Identity card for unorganised workers",
       "eligibility": "[EN] All unorganised workers"
+    },
+    "ayushmanBharat": {
+      "name": "आयुष्मान भारत (PM-JAY)",
+      "description": "पात्र परिवारों के लिए ₹5 लाख/वर्ष तक का मुफ्त स्वास्थ्य बीमा",
+      "eligibility": "कम आय वाले परिवार और अनौपचारिक कामगार"
+    },
+    "pmShramYogi": {
+      "name": "पीएम श्रम योगी मानधन",
+      "description": "60 वर्ष की आयु के बाद ₹3,000/माह की सुनिश्चित न्यूनतम पेंशन",
+      "eligibility": "18–40 वर्ष के असंगठित कामगार"
+    },
+    "pmjjby": {
+      "name": "पीएम जीवन ज्योति बीमा योजना",
+      "description": "₹436/वर्ष में ₹2 लाख का जीवन बीमा कवर",
+      "eligibility": "18–50 वर्ष के सभी बैंक खाताधारक"
     }
   },
   "profileScreen": {
@@ -334,7 +567,17 @@
     "years": "[partial] {{count}} years",
     "validationName": "[partial] Please add a name.",
     "validationCity": "[partial] A city helps show nearby work.",
-    "removeSkill": "[partial] Remove {{skill}}"
+    "removeSkill": "[partial] Remove {{skill}}",
+    "changePhoto": "फ़ोटो बदलें",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "saveChanges": "बदलाव सहेजें",
+    "cancel": "रद्द करें",
+    "saving": "सहेज रहे हैं...",
+    "validationMinPay": "अधिकतम वेतन न्यूनतम वेतन से अधिक या बराबर होना चाहिए।",
+    "validationContact": "कृपया वैध 10-अंकों का फ़ोन नंबर दर्ज करें।",
+    "gender": "लिंग / Gender (वैकल्पिक)",
+    "stabilityGood": "अच्छा",
+    "preferredLanguage": "തിരഞ്ഞെടുത്ത ഭാഷ"
   },
   "availability": {
     "anytime": "[partial] Any time",
@@ -351,5 +594,87 @@
     "chennai": "Chennai",
     "kolkata": "Kolkata",
     "ahmedabad": "Ahmedabad"
+  },
+  "landing": {
+    "title": "മെച്ചപ്പെട്ട ജോലിയിലേക്കുള്ള പാലം",
+    "subtitle": "ന്യായമായ ജോലി കണ്ടെത്തുക, വരുമാനം ട്രാക്ക് ചെയ്യുക, ആരോഗ്യ പിന്തുണ നേടുക — എല്ലാം ഒരിടത്ത്.",
+    "heroAlt": "സേതു ഉപയോഗിക്കുന്ന തൊഴിലാളികളുടെ ചിത്രം",
+    "featureWork": "ന്യായമായ ജോലി കണ്ടെത്തുക",
+    "featureMoney": "വരുമാനം ട്രാക്ക് ചെയ്യുക",
+    "featureHealth": "ആരോഗ്യ പിന്തുണ",
+    "featureSkills": "നൈപുണ്യങ്ങൾ വളർത്തുക",
+    "getStarted": "ആരംഭിക്കുക",
+    "featureWorkSub": "नजदीकी काम और स्किल मैचिंग",
+    "featureMoneySub": "कमाई ट्रैक करें और बचत बढ़ाएं",
+    "featureHealthSub": "स्वास्थ्य और कल्याण सहायता",
+    "featureSkillsSub": "अपना डिजिटल स्किल पासपोर्ट बनाएं"
+  },
+  "gender": {
+    "title": "लिंग (वैकल्पिक)",
+    "label": "लिंग",
+    "optionalBadge": "वैकल्पिक",
+    "noRestrictionNotice": "काम के अवसरों पर कोई प्रतिबंध नहीं",
+    "helperText": "लिंग की जानकारी वैकल्पिक है। घरेलू काम, ड्राइविंग, डिलीवरी, निर्माण और मरम्मत के काम सभी के लिए खुले हैं।",
+    "woman": "महिला",
+    "man": "पुरुष",
+    "nonBinary": "नॉन-बाइनरी",
+    "preferNotToSay": "बताना नहीं चाहते"
+  },
+  "notFound": {
+    "title": "पृष्ठ नहीं मिला",
+    "body": "आप जिस पृष्ठ की तलाश कर रहे हैं वह मौजूद नहीं है या हटा दिया गया है।",
+    "goHome": "होम पर वापस जाएं"
+  },
+  "categories": {
+    "workEarnings": "काम की कमाई",
+    "tipsBonus": "टिप और बोनस",
+    "travelFuel": "यात्रा और ईंधन",
+    "food": "भोजन और नाश्ता",
+    "rent": "किराया",
+    "tools": "औजार और उपकरण",
+    "medical": "दवा और इलाज",
+    "other": "अन्य"
+  },
+  "transactions": {
+    "title": "लेन-देन",
+    "historyTitle": "लेन-देन का इतिहास",
+    "entriesCount": "प्रविष्टियां",
+    "addIncome": "आय जोड़ें",
+    "addExpense": "खर्च जोड़ें",
+    "incomeAction": "आय",
+    "expenseAction": "खर्च",
+    "editTitle": "लेन-देन संपादित करें",
+    "editSub": "दर्ज प्रविष्टि के विवरण में बदलाव करें",
+    "incomeSub": "काम, गिग या टिप से अर्जित धन दर्ज करें",
+    "expenseSub": "ईंधन, भोजन, उपकरण या बिलों पर खर्च दर्ज करें",
+    "typeLabel": "लेन-देन का प्रकार",
+    "typeIncome": "आय",
+    "typeExpense": "खर्च",
+    "quickSuggestions": "त्वरित सुझाव",
+    "amountLabel": "राशि (₹)",
+    "categoryLabel": "श्रेणी",
+    "descriptionLabel": "संक्षिप्त विवरण",
+    "dateTimeLabel": "दिनांक और समय",
+    "workRefLabel": "काम / प्लेटफॉर्म संदर्भ",
+    "errorInvalidAmount": "कृपया ₹0 से अधिक वैध राशि दर्ज करें",
+    "saveTransaction": "लेन-देन सहेजें",
+    "saveEdit": "बदलाव सहेजें",
+    "filterToday": "आज",
+    "filterWeek": "इस सप्ताह",
+    "filterMonth": "इस माह",
+    "filterAll": "सभी समय",
+    "filterCustom": "कस्टम अवधि",
+    "allTypes": "सभी प्रकार",
+    "allCategories": "सभी श्रेणियां",
+    "searchPlaceholder": "विवरण, संदर्भ या राशि खोजें...",
+    "emptyHistoryTitle": "अभी तक कोई लेन-देन दर्ज नहीं हुआ है",
+    "emptyHistorySub": "सटीक सारांश, AI पूर्वानुमान और वित्तीय अंतर्दृष्टि के लिए अपनी दैनिक आय और खर्च दर्ज करें।",
+    "noMatching": "कोई मेल खाता लेन-देन नहीं मिला",
+    "noMatchingSub": "फ़िल्टर या खोज शब्द बदलें।",
+    "today": "आज",
+    "yesterday": "कल",
+    "startDate": "प्रारंभ तिथि",
+    "endDate": "अंतिम तिथि",
+    "voiceSource": "आवाज़"
   }
 }

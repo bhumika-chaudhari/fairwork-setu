@@ -1,7 +1,5 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as Localization from 'expo-localization';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import en from './resources/en.json';
 import hi from './resources/hi.json';
@@ -61,37 +59,39 @@ export function isSupportedLanguage(code?: string | null): code is LanguageCode 
   return !!code && (SUPPORTED_LANGUAGE_CODES as readonly string[]).includes(code);
 }
 
+export function getInitialLanguage(): LanguageCode {
+  try {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (isSupportedLanguage(saved)) return saved;
+  } catch {}
+  try {
+    const deviceCode = navigator.language?.split('-')[0];
+    if (isSupportedLanguage(deviceCode)) return deviceCode;
+  } catch {}
+  return 'hi';
+}
+
 void i18n.use(initReactI18next).init({
   resources,
-  lng: 'hi',
+  lng: getInitialLanguage(),
   fallbackLng: ['hi', 'en'],
   interpolation: { escapeValue: false },
-  react: {
-    useSuspense: false,
-    bindI18n: 'languageChanged loaded',
-  },
+  react: { useSuspense: false, bindI18n: 'languageChanged loaded' },
 });
 
 export async function initLanguage(): Promise<LanguageCode> {
-  try {
-    const saved = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (isSupportedLanguage(saved)) {
-      await i18n.changeLanguage(saved);
-      return saved;
-    }
-  } catch {
-    // Fall through to device language.
-  }
-
-  const deviceCode = Localization.getLocales()?.[0]?.languageCode;
-  const language: LanguageCode = isSupportedLanguage(deviceCode) ? deviceCode : 'hi';
-  await i18n.changeLanguage(language);
-  return language;
+  const lang = getInitialLanguage();
+  await i18n.changeLanguage(lang);
+  return lang;
 }
 
 export async function changeAppLanguage(code: LanguageCode): Promise<void> {
   await i18n.changeLanguage(code);
-  await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, code);
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
+  } catch (err) {
+    console.error('Failed to save language to localStorage', err);
+  }
 }
 
 export function formatInr(amount: number): string {
