@@ -372,10 +372,14 @@ export default function DhanPage() {
             <button
               type="button"
               onClick={() => openAddModal('expense', selectedDate)}
-              className="flex items-center justify-center gap-1 rounded-xl bg-white text-rose-700 border border-rose-300 px-3 py-2 text-xs font-black shadow-xs hover:bg-rose-50 active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-white/95 backdrop-blur-xl border border-rose-300/80 px-3 py-2 text-xs font-black text-black shadow-glass hover:bg-white active:scale-95 transition-all group"
             >
-              <span>−</span>
-              <span>{t('transactions.addExpense', 'Add Expense')}</span>
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-[10px] font-black text-rose-700 border border-rose-200">
+                −
+              </span>
+              <span className="text-black font-black tracking-tight">
+                {t('transactions.addExpense', 'Add Expense')}
+              </span>
             </button>
           </div>
         </div>
@@ -433,9 +437,14 @@ export default function DhanPage() {
                 <button
                   type="button"
                   onClick={() => openAddModal('expense', selectedDate)}
-                  className="rounded-full bg-rose-500/15 text-rose-800 border border-rose-300/60 px-2.5 py-1 text-[11px] font-bold hover:bg-rose-500/25 active:scale-95 transition-all"
+                  className="flex items-center gap-1 rounded-full bg-white/95 text-black border border-rose-300/80 px-2.5 py-1 text-[11px] font-black hover:bg-white shadow-xs active:scale-95 transition-all"
                 >
-                  − {t('transactions.expenseAction', 'Expense')}
+                  <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-[9px] font-black text-rose-700 border border-rose-200">
+                    −
+                  </span>
+                  <span className="text-black font-black">
+                    {t('transactions.expenseAction', 'Expense')}
+                  </span>
                 </button>
               </div>
             </div>
@@ -550,9 +559,14 @@ export default function DhanPage() {
                   <button
                     type="button"
                     onClick={() => openAddModal('expense', selectedDate)}
-                    className="rounded-xl bg-white text-rose-700 border border-rose-300 px-3.5 py-1.5 text-xs font-bold shadow-xs hover:bg-rose-50 active:scale-95 transition-all"
+                    className="flex items-center justify-center gap-1.5 rounded-xl bg-white/95 backdrop-blur-xl border border-rose-300/80 px-3.5 py-1.5 text-xs font-black text-black shadow-xs hover:bg-white active:scale-95 transition-all"
                   >
-                    − {t('transactions.addExpense', 'Add Expense')}
+                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-[10px] font-black text-rose-700 border border-rose-200">
+                      −
+                    </span>
+                    <span className="text-black font-black tracking-tight">
+                      {t('transactions.addExpense', 'Add Expense')}
+                    </span>
                   </button>
                 </div>
               </div>

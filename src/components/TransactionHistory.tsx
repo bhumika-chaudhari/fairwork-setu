@@ -135,10 +135,14 @@ export default function TransactionHistory({
           <button
             type="button"
             onClick={onAddExpense}
-            className="flex items-center gap-1 rounded-full bg-white/60 backdrop-blur-md border border-danger/30 px-3.5 py-1.5 text-xs font-bold text-danger hover:bg-danger/10 shadow-xs active:scale-95 transition-all"
+            className="flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-xl border border-rose-300/80 px-3.5 py-1.5 text-xs font-black text-black hover:bg-white shadow-xs active:scale-95 transition-all"
           >
-            <span>−</span>
-            <span>{t('transactions.expenseAction')}</span>
+            <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-[9px] font-black text-rose-700 border border-rose-200">
+              −
+            </span>
+            <span className="text-black font-black">
+              {t('transactions.expenseAction')}
+            </span>
           </button>
         </div>
       </div>
