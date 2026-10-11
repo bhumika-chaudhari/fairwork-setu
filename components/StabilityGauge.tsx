@@ -27,8 +27,7 @@ export default function StabilityGauge({ score }: { score: number }) {
             strokeDasharray={`${circ} ${circ}`}
             strokeDashoffset={circ * (1 - progress)}
             strokeLinecap="round"
-            rotation="-90"
-            origin={`${size / 2}, ${size / 2}`}
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
           />
         </Svg>
         <View style={styles.center}>
