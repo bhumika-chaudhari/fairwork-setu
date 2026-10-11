@@ -201,10 +201,10 @@ export default function KaushalPage() {
           <button
             type="button"
             onClick={() => setPassportModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-3 py-1.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 transition-all active:scale-95"
+            className="flex items-center gap-1.5 rounded-full bg-white/80 backdrop-blur-md px-3 py-1.5 text-xs font-bold text-black shadow-glass hover:bg-white border border-white/90 transition-all active:scale-95"
           >
-            <AppIcon name="document-text" size={13} />
-            <span>{t('kaushal.viewPassport')}</span>
+            <AppIcon name="document-text" size={13} className="text-black" />
+            <span className="text-black font-bold">{t('kaushal.viewPassport')}</span>
           </button>
           <div className="md:hidden">
             <LanguageSelector variant="icon" />
@@ -338,10 +338,10 @@ export default function KaushalPage() {
           </div>
           <button
             type="button"
-            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-3 py-1.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30"
+            className="flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-md px-3 py-1.5 text-xs font-bold text-black shadow-glass hover:bg-white border border-white/90"
           >
-            <span>{t('kaushal.viewPassport')}</span>
-            <AppIcon name="chevron-forward" size={13} />
+            <span className="text-black font-bold">{t('kaushal.viewPassport')}</span>
+            <AppIcon name="chevron-forward" size={13} className="text-black" />
           </button>
         </div>
       </Card>

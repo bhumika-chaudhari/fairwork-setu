@@ -255,10 +255,10 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => openAddModal('expense')}
-              className="flex items-center justify-center gap-1.5 rounded-full bg-white/60 backdrop-blur-md py-2.5 px-3 text-xs font-bold text-danger border border-danger/30 shadow-xs hover:bg-danger/10 active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-full bg-white/60 backdrop-blur-md py-2.5 px-3 text-xs font-bold text-black border border-danger/30 shadow-xs hover:bg-danger/10 active:scale-95 transition-all"
             >
-              <span className="text-sm font-black">−</span>
-              <span>{t('home.addExpense')}</span>
+              <span className="text-sm font-black text-black">−</span>
+              <span className="text-black font-bold">{t('home.addExpense')}</span>
             </button>
           </div>
         </div>
