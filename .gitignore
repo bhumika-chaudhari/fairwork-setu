@@ -2,3 +2,9 @@ node_modules
 dist
 .DS_Store
 .env
+__pycache__
+*.pyc
+ml_service/__pycache__
+ml_service/**/__pycache__
+ml_service/artifacts/*.joblib
+ml_service/artifacts/*.pt

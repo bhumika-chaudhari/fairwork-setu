@@ -83,6 +83,7 @@
     "home": "Home",
     "kaam": "Work",
     "dhan": "Money",
+    "aiLab": "AI Lab",
     "sehat": "Health",
     "kaushal": "Skills",
     "more": "Services",
@@ -566,5 +567,17 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "voiceSource": "Voice"
+  },
+  "aiLab": {
+    "title": "AI/ML Intelligence Lab",
+    "subtitle": "4 Production ML Models for Financial Decision-Making",
+    "retrainAll": "Retrain All",
+    "training": "Training...",
+    "allTrainedSuccess": "All 4 ML models retrained successfully with updated parameters!",
+    "systemStatus": "System Status",
+    "apiConnected": "Python FastAPI Microservice Connected (Port 8000)",
+    "offlineFallback": "Client Numerical Engine Active (Offline Fallback)",
+    "syntheticNotice": "Synthetic Demo Mode Active (Deterministic Seed 42)",
+    "realDataNotice": "Trained on Real Recorded Transactions"
   }
 }

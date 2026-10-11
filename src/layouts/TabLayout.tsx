@@ -11,6 +11,7 @@ const tabs = [
   { to: '/home', key: 'tabs.home', icon: 'home' },
   { to: '/kaam', key: 'tabs.kaam', icon: 'briefcase' },
   { to: '/dhan', key: 'tabs.dhan', icon: 'wallet' },
+  { to: '/ai-lab', key: 'tabs.aiLab', icon: 'sparkles' },
   { to: '/sehat', key: 'tabs.sehat', icon: 'heart' },
   { to: '/kaushal', key: 'tabs.kaushal', icon: 'school' },
 ] as const;
@@ -143,7 +144,7 @@ export default function TabLayout() {
                     />
                   </div>
                   <span
-                    className={`text-[10px] tracking-tight transition-all ${
+                    className={`text-[9.5px] leading-tight tracking-tight truncate max-w-[52px] text-center transition-all ${
                       isActive
                         ? 'font-black text-white'
                         : 'font-semibold text-textSecondary'

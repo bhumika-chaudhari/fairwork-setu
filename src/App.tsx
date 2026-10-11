@@ -18,6 +18,7 @@ import DhanPage from './pages/DhanPage';
 import SehatPage from './pages/SehatPage';
 import KaushalPage from './pages/KaushalPage';
 import ProfilePage from './pages/ProfilePage';
+import AiLabPage from './pages/AiLabPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const queryClient = new QueryClient();
@@ -66,6 +67,8 @@ export default function App() {
                     <Route path="/health" element={<Navigate to="/sehat" replace />} />
                     <Route path="/kaushal" element={<KaushalPage />} />
                     <Route path="/skills" element={<Navigate to="/kaushal" replace />} />
+                    <Route path="/ai-lab" element={<AiLabPage />} />
+                    <Route path="/ml" element={<Navigate to="/ai-lab" replace />} />
                     <Route path="/voice" element={<HomePage />} />
                   </Route>
 
