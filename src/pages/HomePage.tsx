@@ -86,7 +86,7 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => navigate('/profile')}
-            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-gradient text-lg font-black text-white shadow-card ring-2 ring-white transition-transform hover:scale-105 overflow-hidden"
+            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 text-lg font-black text-white shadow-glass ring-2 ring-white/80 transition-transform hover:scale-105 active:scale-95 overflow-hidden"
             aria-label="Profile"
           >
             {profile.avatarUrl ? (
@@ -103,7 +103,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => navigate('/profile')}
-                className="inline-flex items-center gap-1 rounded-full bg-white/90 border border-mint/70 px-2.5 py-0.5 text-[11px] font-bold text-deepEmerald hover:bg-white transition-all shadow-xs"
+                className="inline-flex items-center gap-1 rounded-full bg-white/60 backdrop-blur-md border border-white/80 px-2.5 py-0.5 text-[11px] font-bold text-deepEmerald hover:bg-white/85 transition-all shadow-xs"
                 title={t('profileScreen.editProfile')}
               >
                 <AppIcon name="create-outline" size={11} className="text-primary" />
@@ -120,7 +120,7 @@ export default function HomePage() {
           {/* Notification bell */}
           <button
             type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/80 shadow-glass border border-white hover:bg-white text-deepEmerald transition-colors"
+            className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/60 backdrop-blur-xl shadow-glass border border-white/80 hover:bg-white/85 text-deepEmerald transition-all active:scale-95"
             aria-label="Notifications"
           >
             <AppIcon name="sparkles" size={18} className="text-[#087F73]" />
@@ -184,12 +184,12 @@ export default function HomePage() {
         </div>
 
         {/* Today's Summary & Fast Income/Expense Entry */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.90)] to-[rgba(114,229,194,0.18)] p-3.5 shadow-glass border border-[rgba(8,127,115,0.18)] space-y-3">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+        <div className="relative overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-4 shadow-glass border border-white/80 space-y-3">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
           
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primarySoft text-primary shadow-xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
                 <AppIcon name="wallet" size={17} />
               </div>
               <div>
@@ -217,11 +217,11 @@ export default function HomePage() {
           </div>
 
           {/* Quick Action Buttons: Add Income and Add Expense */}
-          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-border/50">
+          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/50">
             <button
               type="button"
               onClick={() => openAddModal('income')}
-              className="emerald-gradient-btn flex items-center justify-center gap-1.5 rounded-full py-2 px-3 text-xs font-bold text-white shadow-xs hover:brightness-105 active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 py-2.5 px-3 text-xs font-bold text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
             >
               <span className="text-sm font-black">+</span>
               <span>{t('home.addIncome')}</span>
@@ -229,7 +229,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => openAddModal('expense')}
-              className="flex items-center justify-center gap-1.5 rounded-full bg-white py-2 px-3 text-xs font-bold text-danger border border-danger/40 shadow-xs hover:bg-danger/5 active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-full bg-white/60 backdrop-blur-md py-2.5 px-3 text-xs font-bold text-danger border border-danger/30 shadow-xs hover:bg-danger/10 active:scale-95 transition-all"
             >
               <span className="text-sm font-black">−</span>
               <span>{t('home.addExpense')}</span>
@@ -246,11 +246,11 @@ export default function HomePage() {
       >
         <div
           onClick={() => setVoiceModalVisible(true)}
-          className="relative overflow-hidden rounded-[26px] bg-gradient-to-br from-white/95 via-[#EDFAF5]/90 to-[#E0F8F1]/80 p-5 shadow-glass border border-[rgba(8,127,115,0.22)] cursor-pointer transition-all duration-200 hover:shadow-glassHover active:scale-[0.99] group text-center"
+          className="relative overflow-hidden rounded-[28px] bg-white/50 backdrop-blur-2xl p-6 shadow-glass border border-white/80 cursor-pointer transition-all duration-300 hover:shadow-glassHover hover:bg-white/60 active:scale-[0.99] group text-center"
         >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
           {/* Ambient soft glow */}
-          <div className="pointer-events-none absolute inset-x-0 -top-10 h-32 bg-mint/20 blur-2xl" />
+          <div className="pointer-events-none absolute inset-x-0 -top-10 h-36 bg-mint/25 blur-3xl" />
 
           {/* Central Pulsing Mic Button */}
           <div className="my-2 flex justify-center">

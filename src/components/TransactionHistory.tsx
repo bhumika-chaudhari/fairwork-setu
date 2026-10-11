@@ -127,7 +127,7 @@ export default function TransactionHistory({
           <button
             type="button"
             onClick={onAddIncome}
-            className="flex items-center gap-1 rounded-full bg-emerald-gradient px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:brightness-105"
+            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-3.5 py-1.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
           >
             <span>+</span>
             <span>{t('transactions.incomeAction')}</span>
@@ -135,7 +135,7 @@ export default function TransactionHistory({
           <button
             type="button"
             onClick={onAddExpense}
-            className="flex items-center gap-1 rounded-full bg-white border border-danger/40 px-3 py-1.5 text-xs font-bold text-danger hover:bg-danger/5 shadow-xs"
+            className="flex items-center gap-1 rounded-full bg-white/60 backdrop-blur-md border border-danger/30 px-3.5 py-1.5 text-xs font-bold text-danger hover:bg-danger/10 shadow-xs active:scale-95 transition-all"
           >
             <span>−</span>
             <span>{t('transactions.expenseAction')}</span>
@@ -156,10 +156,10 @@ export default function TransactionHistory({
             key={tab.id}
             type="button"
             onClick={() => setDateFilter(tab.id as DateFilterType)}
-            className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition-all ${
+            className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition-all duration-200 active:scale-95 ${
               dateFilter === tab.id
-                ? 'bg-deepEmerald text-white shadow-xs'
-                : 'bg-surfaceAlt text-textSecondary hover:bg-white border border-border/60'
+                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                : 'bg-white/40 hover:bg-white/70 backdrop-blur-md text-textSecondary border border-white/60 shadow-xs'
             }`}
           >
             {tab.label}
@@ -169,7 +169,7 @@ export default function TransactionHistory({
 
       {/* Custom Date Range Picker */}
       {dateFilter === 'custom' && (
-        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-surfaceAlt border border-border/60 animate-fade-in">
+        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-white/40 backdrop-blur-md border border-white/60 shadow-glass animate-fade-in">
           <div>
             <label className="text-[10px] font-bold text-textMuted uppercase block mb-1">
               {t('transactions.startDate')}
@@ -178,7 +178,7 @@ export default function TransactionHistory({
               type="date"
               value={customStart}
               onChange={(e) => setCustomStart(e.target.value)}
-              className="w-full rounded-xl border border-border/80 bg-white px-2.5 py-1.5 text-xs font-medium text-textPrimary"
+              className="w-full rounded-xl border border-white/80 bg-white/80 backdrop-blur-md px-2.5 py-1.5 text-xs font-medium text-textPrimary shadow-inner focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
           <div>
@@ -189,7 +189,7 @@ export default function TransactionHistory({
               type="date"
               value={customEnd}
               onChange={(e) => setCustomEnd(e.target.value)}
-              className="w-full rounded-xl border border-border/80 bg-white px-2.5 py-1.5 text-xs font-medium text-textPrimary"
+              className="w-full rounded-xl border border-white/80 bg-white/80 backdrop-blur-md px-2.5 py-1.5 text-xs font-medium text-textPrimary shadow-inner focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function TransactionHistory({
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value as any)}
           aria-label="Filter transactions by type"
-          className="rounded-xl border border-border/80 bg-white px-2.5 py-1.5 font-bold text-deepEmerald shadow-xs focus:outline-none"
+          className="rounded-xl border border-white/70 bg-white/70 backdrop-blur-md px-2.5 py-1.5 font-bold text-deepEmerald shadow-glass focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
           <option value="all">{t('transactions.allTypes')}</option>
           <option value="income">{t('transactions.typeIncome')}</option>
@@ -214,7 +214,7 @@ export default function TransactionHistory({
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as any)}
           aria-label="Filter transactions by category"
-          className="rounded-xl border border-border/80 bg-white px-2.5 py-1.5 font-bold text-deepEmerald shadow-xs focus:outline-none"
+          className="rounded-xl border border-white/70 bg-white/70 backdrop-blur-md px-2.5 py-1.5 font-bold text-deepEmerald shadow-glass focus:outline-none focus:ring-2 focus:ring-primary/30"
         >
           <option value="all">{t('transactions.allCategories')}</option>
           {(Object.keys(CATEGORY_ICONS) as TransactionCategory[]).map((cat) => (
@@ -231,7 +231,7 @@ export default function TransactionHistory({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('transactions.searchPlaceholder')}
-            className="w-full rounded-xl border border-border/80 bg-white px-2.5 py-1.5 text-xs font-medium text-textPrimary shadow-xs placeholder:text-textMuted focus:outline-none"
+            className="w-full rounded-xl border border-white/70 bg-white/70 backdrop-blur-md px-2.5 py-1.5 text-xs font-medium text-textPrimary shadow-glass placeholder:text-textMuted focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           {searchQuery && (
             <button
@@ -258,8 +258,8 @@ export default function TransactionHistory({
       {/* Transaction List */}
       {filtered.length === 0 ? (
         /* Empty State */
-        <div className="rounded-2xl border border-dashed border-border/80 bg-surfaceAlt/60 p-6 text-center space-y-3">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primarySoft text-primary">
+        <div className="rounded-2xl border border-dashed border-white/60 bg-white/30 backdrop-blur-md p-6 text-center space-y-3 shadow-xs">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
             <AppIcon name="receipt-outline" size={24} />
           </div>
           <div>
@@ -275,14 +275,14 @@ export default function TransactionHistory({
               <button
                 type="button"
                 onClick={onAddIncome}
-                className="emerald-gradient-btn rounded-full px-4 py-2 text-xs font-bold text-white shadow-xs"
+                className="rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-2 text-xs font-bold text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
               >
                 + {t('transactions.addIncome')}
               </button>
               <button
                 type="button"
                 onClick={onAddExpense}
-                className="rounded-full bg-white border border-danger/40 px-4 py-2 text-xs font-bold text-danger hover:bg-danger/5 shadow-xs"
+                className="rounded-full bg-white/60 backdrop-blur-md border border-danger/30 px-4 py-2 text-xs font-bold text-danger hover:bg-danger/10 shadow-xs active:scale-95 transition-all"
               >
                 + {t('transactions.addExpense')}
               </button>
@@ -290,7 +290,7 @@ export default function TransactionHistory({
           )}
         </div>
       ) : (
-        <div className="divide-y divide-border/60">
+        <div className="divide-y divide-white/40">
           {filtered.map((tx) => {
             const isIncome = tx.type === 'income';
             const iconName = CATEGORY_ICONS[tx.category] || 'ellipsis-horizontal';
@@ -299,14 +299,14 @@ export default function TransactionHistory({
             return (
               <div
                 key={tx.id}
-                className="py-3 flex items-start justify-between gap-3 first:pt-1 last:pb-0 group"
+                className="py-3 px-2 rounded-xl transition-all hover:bg-white/40 backdrop-blur-xs flex items-start justify-between gap-3 first:pt-2 last:pb-2 group"
               >
                 <div className="flex items-start gap-3 min-w-0">
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-xs ${
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-glass ${
                       isIncome
-                        ? 'bg-[#E4FAF2] text-success border border-mint/40'
-                        : 'bg-[#FEF2F2] text-danger border border-red-200'
+                        ? 'bg-gradient-to-br from-emerald-100/90 to-teal-50/90 text-success border border-emerald-300/50'
+                        : 'bg-gradient-to-br from-red-100/90 to-rose-50/90 text-danger border border-red-300/50'
                     }`}
                   >
                     <AppIcon name={iconName} size={18} />
@@ -317,7 +317,7 @@ export default function TransactionHistory({
                         {tx.description || catLabel}
                       </span>
                       {tx.workRef && (
-                        <span className="rounded-md bg-surfaceAlt px-1.5 py-0.5 text-[10px] font-semibold text-textMuted border border-border/50">
+                        <span className="rounded-md bg-white/60 backdrop-blur-xs px-1.5 py-0.5 text-[10px] font-semibold text-textMuted border border-white/80 shadow-xs">
                           {tx.workRef}
                         </span>
                       )}

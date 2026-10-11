@@ -1,10 +1,10 @@
 const tones = {
-  success: 'bg-[#E4FAF2] text-deepEmerald border border-[#72E5C2]/60',
-  warning: 'bg-[#FEF3C7] text-[#92400E] border border-[#F4B544]/40',
-  danger: 'bg-dangerSoft text-danger border border-danger/30',
-  health: 'bg-primarySoft text-primary border border-mint/40',
-  primary: 'bg-primarySoft text-deepEmerald border border-mint/30',
-  accent: 'bg-accentSoft text-[#B45309] border border-saffron/40',
+  success: 'bg-[#E4FAF2]/85 text-deepEmerald border border-[#72E5C2]/60 backdrop-blur-md shadow-xs',
+  warning: 'bg-[#FEF3C7]/85 text-[#92400E] border border-[#F4B544]/50 backdrop-blur-md shadow-xs',
+  danger: 'bg-dangerSoft/85 text-danger border border-danger/40 backdrop-blur-md shadow-xs',
+  health: 'bg-primarySoft/85 text-primary border border-mint/45 backdrop-blur-md shadow-xs',
+  primary: 'bg-primarySoft/85 text-deepEmerald border border-mint/40 backdrop-blur-md shadow-xs',
+  accent: 'bg-accentSoft/85 text-[#B45309] border border-saffron/45 backdrop-blur-md shadow-xs',
 };
 
 export default function Badge({

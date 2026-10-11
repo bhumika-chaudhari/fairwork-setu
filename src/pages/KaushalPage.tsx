@@ -181,7 +181,7 @@ export default function KaushalPage() {
       {/* Header bar matching reference Screen 8 */}
       <header className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-glass border border-emerald-400/30">
             K
           </div>
           <h1 className="text-xl font-extrabold text-deepEmerald">
@@ -193,7 +193,7 @@ export default function KaushalPage() {
           <button
             type="button"
             onClick={() => setEditSkillsModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-white/90 border border-mint/60 px-3 py-1.5 text-xs font-bold text-deepEmerald shadow-xs hover:bg-white transition-all"
+            className="flex items-center gap-1.5 rounded-full bg-white/60 backdrop-blur-md border border-white/80 px-3 py-1.5 text-xs font-bold text-deepEmerald shadow-xs hover:bg-white/85 transition-all active:scale-95"
           >
             <AppIcon name="create-outline" size={13} className="text-primary" />
             <span>{t('kaushal.editSkills')}</span>
@@ -201,7 +201,7 @@ export default function KaushalPage() {
           <button
             type="button"
             onClick={() => setPassportModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-emerald-gradient px-3 py-1.5 text-xs font-bold text-white shadow-clay hover:brightness-105 transition-all"
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-3 py-1.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 transition-all active:scale-95"
           >
             <AppIcon name="document-text" size={13} />
             <span>{t('kaushal.viewPassport')}</span>
@@ -288,7 +288,7 @@ export default function KaushalPage() {
           </div>
 
           {/* Work History / Completed Stats Row */}
-          <div className="mt-3.5 grid grid-cols-3 divide-x divide-border/60 rounded-2xl bg-white/70 p-2.5 border border-[rgba(8,127,115,0.12)]">
+          <div className="mt-3.5 grid grid-cols-3 divide-x divide-white/60 rounded-2xl bg-white/40 backdrop-blur-md p-2.5 border border-white/80 shadow-inner">
             <div className="text-center">
               <span className="text-base font-black text-deepEmerald">48</span>
               <span className="block text-[10px] font-semibold text-textMuted uppercase">
@@ -319,7 +319,7 @@ export default function KaushalPage() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#087F73] text-mint shadow-sm">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-mint shadow-glass border border-emerald-400/30">
               <AppIcon name="document-text" size={22} />
             </div>
             <div>
@@ -338,7 +338,7 @@ export default function KaushalPage() {
           </div>
           <button
             type="button"
-            className="flex items-center gap-1 rounded-full bg-emerald-gradient px-3 py-1.5 text-xs font-bold text-white shadow-clay hover:brightness-105"
+            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-3 py-1.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30"
           >
             <span>{t('kaushal.viewPassport')}</span>
             <AppIcon name="chevron-forward" size={13} />
@@ -397,7 +397,7 @@ export default function KaushalPage() {
             href={`https://wa.me/?text=${encodeURIComponent(buildShareText())}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-12 items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 font-bold text-white shadow-card transition-all hover:brightness-105 active:scale-[0.98]"
+            className="flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-5 font-bold text-white shadow-glass transition-all hover:brightness-110 active:scale-[0.98] border border-green-300/40"
           >
             <AppIcon name="logo-whatsapp" size={18} />
             <span>{t('kaushal.shareWhatsApp')}</span>
@@ -414,7 +414,7 @@ export default function KaushalPage() {
         <button
           type="button"
           onClick={handleCopyLink}
-          className="flex w-full items-center justify-center gap-1.5 rounded-full border border-border/80 bg-white/90 py-2.5 text-xs font-bold text-deepEmerald shadow-xs hover:bg-white transition-all active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-1.5 rounded-full border border-white/80 bg-white/60 backdrop-blur-md py-2.5 text-xs font-bold text-deepEmerald shadow-xs hover:bg-white/85 transition-all active:scale-[0.98]"
         >
           <AppIcon name="copy-outline" size={14} className="text-primary" />
           <span>{t('kaushal.copyLink')}</span>
@@ -431,14 +431,14 @@ export default function KaushalPage() {
       {/* ========================================================================= */}
       {passportModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md p-4 animate-fade-in"
           onClick={() => setPassportModalOpen(false)}
         >
           <div
-            className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-lifted border-2 border-primary max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-lg rounded-3xl bg-white/85 backdrop-blur-2xl p-6 shadow-glassModal border border-white/90 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3 mb-4">
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-deepEmerald text-base">
                   {t('kaushal.previewTitle')}
@@ -450,7 +450,7 @@ export default function KaushalPage() {
               <button
                 type="button"
                 onClick={() => setPassportModalOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-surfaceAlt text-textMuted hover:text-deepEmerald"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 text-textMuted hover:text-deepEmerald"
               >
                 ✕
               </button>
@@ -579,14 +579,14 @@ export default function KaushalPage() {
       {/* ========================================================================= */}
       {editSkillsModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md p-4 animate-fade-in"
           onClick={() => setEditSkillsModalOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-3xl bg-white p-6 shadow-lifted border border-border/60 max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-md rounded-3xl bg-white/85 backdrop-blur-2xl p-6 shadow-glassModal border border-white/90 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3 mb-4">
               <div>
                 <h3 className="font-extrabold text-deepEmerald text-base">
                   {t('kaushal.editSkills')}
@@ -598,7 +598,7 @@ export default function KaushalPage() {
               <button
                 type="button"
                 onClick={() => setEditSkillsModalOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-surfaceAlt text-textMuted hover:text-deepEmerald"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 text-textMuted hover:text-deepEmerald"
               >
                 ✕
               </button>
@@ -627,7 +627,7 @@ export default function KaushalPage() {
               </div>
 
               {/* Custom Skills */}
-              <div className="border-t border-border/50 pt-3">
+              <div className="border-t border-white/60 pt-3">
                 <label className="text-xs font-bold text-deepEmerald block mb-1.5">
                   {t('kaushal.customSkills')}
                 </label>
@@ -635,7 +635,7 @@ export default function KaushalPage() {
                   {customSkills.map((c) => (
                     <span
                       key={c}
-                      className="inline-flex items-center gap-1 rounded-full bg-primarySoft border border-primary/30 px-2.5 py-1 text-xs font-bold text-primary"
+                      className="inline-flex items-center gap-1 rounded-full bg-teal-500/15 border border-mint/30 px-2.5 py-1 text-xs font-bold text-primary shadow-xs"
                     >
                       <span>{c}</span>
                       <button
@@ -654,7 +654,7 @@ export default function KaushalPage() {
                     value={newCustomSkill}
                     onChange={(e) => setNewCustomSkill(e.target.value)}
                     placeholder={t('profileScreen.skillPlaceholder')}
-                    className="flex-1 rounded-xl border border-border/80 bg-white px-3 py-2 text-xs font-medium text-textPrimary focus:border-primary focus:outline-none"
+                    className="flex-1 rounded-xl border border-white/80 bg-white/70 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary focus:ring-2 focus:ring-primary/30 focus:outline-none shadow-inner"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -665,7 +665,7 @@ export default function KaushalPage() {
                   <button
                     type="button"
                     onClick={handleAddCustomSkill}
-                    className="rounded-xl bg-deepEmerald px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:brightness-105"
+                    className="rounded-xl bg-gradient-to-r from-deepEmerald to-teal-700 px-3.5 py-2 text-xs font-bold text-white shadow-glass hover:brightness-110 active:scale-95 transition-all"
                   >
                     + {t('common.add')}
                   </button>
@@ -673,18 +673,18 @@ export default function KaushalPage() {
               </div>
 
               {/* Actions */}
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-border/50">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-white/60">
                 <button
                   type="button"
                   onClick={() => setEditSkillsModalOpen(false)}
-                  className="rounded-full px-4 py-2.5 text-xs font-bold text-textSecondary hover:bg-surfaceAlt"
+                  className="rounded-full px-4 py-2.5 text-xs font-bold text-textSecondary hover:bg-white/60 transition-colors"
                 >
                   {t('profileScreen.cancel')}
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveSkills}
-                  className="emerald-gradient-btn rounded-full px-6 py-2.5 text-xs font-bold text-white shadow-clay hover:brightness-105"
+                  className="rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-6 py-2.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 active:scale-95 transition-all"
                 >
                   {t('kaushal.saveSkills')}
                 </button>

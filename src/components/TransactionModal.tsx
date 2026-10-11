@@ -155,21 +155,22 @@ export default function TransactionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-deepEmerald/30 p-4 backdrop-blur-xl animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-3xl bg-white/95 p-6 shadow-lifted border border-white max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-lg rounded-[32px] bg-white/80 p-6 shadow-glassModal border border-white/90 backdrop-blur-3xl max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
+        <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
           <div className="flex items-center gap-2.5">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+              className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-glass ${
                 type === 'income'
-                  ? 'bg-successSoft text-success'
-                  : 'bg-danger/10 text-danger'
+                  ? 'bg-successSoft/90 text-success border border-[#72E5C2]/60'
+                  : 'bg-danger/15 text-danger border border-danger/30'
               }`}
             >
               <AppIcon name={type === 'income' ? 'arrow-up' : 'arrow-down'} size={20} />
@@ -194,7 +195,7 @@ export default function TransactionModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-surfaceAlt text-textMuted hover:text-deepEmerald"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 hover:bg-white text-textMuted hover:text-deepEmerald border border-white/80 transition-all active:scale-95"
           >
             ✕
           </button>
@@ -202,7 +203,7 @@ export default function TransactionModal({
 
         {/* Validation Error Banner */}
         {validationError && (
-          <div className="mb-4 flex items-center gap-2 rounded-2xl bg-danger/10 border border-danger/30 p-3 text-xs font-bold text-danger">
+          <div className="mb-4 flex items-center gap-2 rounded-2xl bg-danger/15 border border-danger/30 p-3 text-xs font-bold text-danger backdrop-blur-md">
             <AppIcon name="alert-circle" size={16} />
             <span>{validationError}</span>
           </div>
@@ -214,20 +215,20 @@ export default function TransactionModal({
             <label className="block text-xs font-bold text-deepEmerald mb-1.5">
               {t('transactions.typeLabel')}
             </label>
-            <div className="grid grid-cols-2 gap-2 p-1 bg-surfaceAlt rounded-2xl border border-border/70">
+            <div className="grid grid-cols-2 gap-2 p-1 bg-white/50 backdrop-blur-xl rounded-2xl border border-white/80 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
               <button
                 type="button"
                 onClick={() => {
                   setType('income');
                   if (!editingTx) setCategory('work_earnings');
                 }}
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
                   type === 'income'
-                    ? 'bg-white text-deepEmerald shadow-xs border border-mint/80 font-black'
-                    : 'text-textSecondary hover:text-deepEmerald'
+                    ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40 font-black'
+                    : 'text-textSecondary hover:text-deepEmerald active:scale-95'
                 }`}
               >
-                <span className="h-2 w-2 rounded-full bg-success" />
+                <span className="h-2 w-2 rounded-full bg-mint shadow-[0_0_6px_#72E5C2]" />
                 <span>{t('transactions.typeIncome')}</span>
               </button>
               <button
@@ -236,10 +237,10 @@ export default function TransactionModal({
                   setType('expense');
                   if (!editingTx) setCategory('food');
                 }}
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
                   type === 'expense'
                     ? 'bg-white text-danger shadow-xs border border-danger/40 font-black'
-                    : 'text-textSecondary hover:text-danger'
+                    : 'text-textSecondary hover:text-danger active:scale-95'
                 }`}
               >
                 <span className="h-2 w-2 rounded-full bg-danger" />
@@ -262,7 +263,7 @@ export default function TransactionModal({
                     key={preset.label}
                     type="button"
                     onClick={() => handleApplyPreset(preset)}
-                    className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-deepEmerald border border-mint/50 shadow-xs hover:bg-mint/15 transition-all"
+                    className="rounded-full bg-white/70 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-deepEmerald border border-mint/50 shadow-xs hover:bg-white active:scale-95 transition-all"
                   >
                     + {preset.label}
                   </button>
@@ -288,7 +289,7 @@ export default function TransactionModal({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="e.g. 500"
-                className="w-full rounded-2xl border border-[rgba(8,127,115,0.22)] bg-white pl-9 pr-4 py-3 text-base font-black text-deepEmerald shadow-xs placeholder:text-textMuted focus:border-primary focus:outline-none"
+                className="w-full rounded-2xl border border-white/85 bg-white/65 hover:bg-white/80 focus:bg-white/92 backdrop-blur-xl pl-9 pr-4 py-3 text-base font-black text-deepEmerald shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] placeholder:text-textMuted focus:border-primary/50 focus:ring-4 focus:ring-mint/30 focus:outline-none transition-all"
               />
             </div>
             {/* Quick Amount Chips */}
@@ -298,7 +299,7 @@ export default function TransactionModal({
                   key={amt}
                   type="button"
                   onClick={() => setAmount(amt.toString())}
-                  className="rounded-xl bg-surfaceAlt px-2.5 py-1 text-xs font-bold text-deepEmerald hover:bg-mint/20 border border-border/60"
+                  className="rounded-xl bg-white/65 hover:bg-white/90 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-deepEmerald border border-white/80 shadow-xs active:scale-95 transition-all"
                 >
                   ₹{amt}
                 </button>
@@ -319,10 +320,10 @@ export default function TransactionModal({
                     key={cat}
                     type="button"
                     onClick={() => setCategory(cat)}
-                    className={`flex items-center gap-1.5 rounded-xl p-2.5 text-xs font-bold text-left transition-all ${
+                    className={`flex items-center gap-1.5 rounded-xl p-2.5 text-xs font-bold text-left transition-all active:scale-95 ${
                       isSelected
-                        ? 'bg-deepEmerald text-white shadow-xs'
-                        : 'bg-white text-textPrimary border border-border/80 hover:bg-surfaceAlt'
+                        ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40'
+                        : 'bg-white/65 hover:bg-white/90 text-textPrimary border border-white/80 backdrop-blur-md shadow-xs'
                     }`}
                   >
                     <AppIcon name={CATEGORY_ICONS[cat]} size={15} />
@@ -348,7 +349,7 @@ export default function TransactionModal({
                   ? 'e.g. 10 customer trips, painting bedroom'
                   : 'e.g. Chai, petrol 2L, grocery'
               }
-              className="w-full rounded-2xl border border-border/80 bg-white px-3.5 py-2.5 text-xs font-medium text-textPrimary focus:border-primary focus:outline-none"
+              className="w-full rounded-2xl border border-white/85 bg-white/65 hover:bg-white/80 focus:bg-white/92 backdrop-blur-xl px-3.5 py-2.5 text-xs font-semibold text-textPrimary shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] focus:border-primary/50 focus:ring-4 focus:ring-mint/30 focus:outline-none transition-all placeholder:text-textMuted"
             />
           </div>
 
@@ -362,7 +363,7 @@ export default function TransactionModal({
                 type="datetime-local"
                 value={dateStr}
                 onChange={(e) => setDateStr(e.target.value)}
-                className="w-full rounded-2xl border border-border/80 bg-white px-3 py-2 text-xs font-medium text-textPrimary focus:border-primary focus:outline-none"
+                className="w-full rounded-2xl border border-white/85 bg-white/65 hover:bg-white/80 focus:bg-white/92 backdrop-blur-xl px-3 py-2 text-xs font-semibold text-textPrimary shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] focus:border-primary/50 focus:ring-4 focus:ring-mint/30 focus:outline-none transition-all"
               />
             </div>
             <div>
@@ -375,25 +376,25 @@ export default function TransactionModal({
                 value={workRef}
                 onChange={(e) => setWorkRef(e.target.value)}
                 placeholder="e.g. Zomato, Urban Company, Home"
-                className="w-full rounded-2xl border border-border/80 bg-white px-3 py-2 text-xs font-medium text-textPrimary focus:border-primary focus:outline-none"
+                className="w-full rounded-2xl border border-white/85 bg-white/65 hover:bg-white/80 focus:bg-white/92 backdrop-blur-xl px-3 py-2 text-xs font-semibold text-textPrimary shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] focus:border-primary/50 focus:ring-4 focus:ring-mint/30 focus:outline-none transition-all placeholder:text-textMuted"
               />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-2 flex items-center justify-end gap-2 border-t border-border/60">
+          <div className="pt-2 flex items-center justify-end gap-2 border-t border-border/40">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-full px-5 py-2.5 text-xs font-bold text-textSecondary hover:bg-surfaceAlt transition-all"
+              className="rounded-full px-5 py-2.5 text-xs font-bold text-textSecondary hover:bg-white/60 transition-all active:scale-95"
             >
               {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="emerald-gradient-btn flex items-center gap-1.5 rounded-full px-7 py-2.5 text-xs font-bold text-white shadow-clay hover:brightness-105 active:scale-95 disabled:opacity-50"
+              className="emerald-gradient-btn flex items-center gap-1.5 rounded-full px-7 py-2.5 text-xs font-bold text-white transition-all active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

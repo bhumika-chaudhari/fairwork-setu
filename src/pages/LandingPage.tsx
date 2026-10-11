@@ -53,7 +53,7 @@ export default function LandingPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="relative min-h-screen w-full bg-page overflow-x-hidden flex flex-col justify-between">
+    <div className="relative min-h-screen w-full bg-transparent overflow-x-hidden flex flex-col justify-between">
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-mint/20 blur-3xl" />
       <div className="pointer-events-none absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
@@ -88,8 +88,8 @@ export default function LandingPage() {
           transition={{ duration: 0.5, delay: 0.12 }}
           className="my-5 flex justify-center"
         >
-          <div className="relative w-full overflow-hidden rounded-[26px] bg-gradient-to-br from-white/95 via-[rgba(235,253,248,0.85)] to-[rgba(114,229,194,0.20)] p-2 shadow-glass backdrop-blur-md border border-[rgba(8,127,115,0.22)]">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+          <div className="relative w-full overflow-hidden rounded-[26px] bg-white/50 backdrop-blur-2xl p-2.5 shadow-glass border border-white/80">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
             <img
               src="/images/hero-illustration.jpg"
               alt={t('landing.heroAlt')}
@@ -97,7 +97,7 @@ export default function LandingPage() {
               loading="eager"
             />
             {/* Subtle soft gradient fade at bottom of image */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 rounded-b-[20px] bg-gradient-to-t from-white/50 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 rounded-b-[20px] bg-gradient-to-t from-white/40 to-transparent" />
           </div>
         </motion.div>
 
@@ -109,9 +109,9 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.2 + idx * 0.07 }}
-              className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.90)] to-[rgba(114,229,194,0.18)] p-3.5 shadow-glass backdrop-blur-md border border-[rgba(8,127,115,0.16)] transition-all duration-200 hover:border-[rgba(8,127,115,0.32)] hover:shadow-glassHover overflow-hidden"
+              className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/50 backdrop-blur-xl p-3.5 shadow-glass border border-white/75 transition-all duration-300 hover:border-white hover:bg-white/65 hover:shadow-glassHover overflow-hidden"
             >
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
               <div
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${card.bg} ${card.border} border shadow-xs`}
               >
@@ -137,7 +137,7 @@ export default function LandingPage() {
             transition={{ duration: 0.4, delay: 0.5 }}
             type="button"
             onClick={() => navigate('/onboarding')}
-            className="emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2 rounded-full text-base font-extrabold text-white"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 text-base font-extrabold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 hover:brightness-110 active:scale-95 transition-all"
           >
             <span>{t('landing.getStarted')}</span>
             <AppIcon name="arrow-forward" size={18} />

@@ -156,14 +156,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-page px-4 py-4 md:py-8 pb-20">
+    <div className="min-h-screen w-full bg-transparent px-4 py-4 md:py-8 pb-28">
       <div className="mx-auto w-full max-w-md md:max-w-xl space-y-4">
         {/* Top Header matching reference Screen 9 */}
-        <header className="flex items-center justify-between border-b border-border/50 pb-3">
+        <header className="flex items-center justify-between border-b border-white/60 pb-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-xs hover:bg-white text-deepEmerald transition-all"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 backdrop-blur-md shadow-glass border border-white/80 hover:bg-white/85 text-deepEmerald transition-all active:scale-95"
             aria-label="Back"
           >
             <AppIcon name="arrow-back" size={20} />
@@ -250,7 +250,7 @@ export default function ProfilePage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
             />
           </div>
 
@@ -275,10 +275,10 @@ export default function ProfilePage() {
                     key={opt.id}
                     type="button"
                     onClick={() => setGender(isSelected ? null : opt.id)}
-                    className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all ${
+                    className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
                       isSelected
-                        ? 'bg-deepEmerald text-white shadow-xs border border-deepEmerald'
-                        : 'bg-white text-textSecondary border border-border/70 hover:bg-surfaceAlt'
+                        ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                        : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
                     }`}
                   >
                     <AppIcon name={opt.icon} size={14} />
@@ -300,7 +300,7 @@ export default function ProfilePage() {
             <select
               value={cityKey}
               onChange={(e) => setCityKey(e.target.value)}
-              className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
             >
               {CITY_KEYS.map((k) => (
                 <option key={k} value={k}>
@@ -321,10 +321,10 @@ export default function ProfilePage() {
                   key={code}
                   type="button"
                   onClick={() => handleLangSelect(code)}
-                  className={`rounded-full px-3 py-1 text-xs font-bold transition-all ${
+                  className={`rounded-full px-3 py-1 text-xs font-bold transition-all active:scale-95 ${
                     selectedLang === code
-                      ? 'bg-deepEmerald text-white'
-                      : 'bg-white/80 text-textSecondary border border-border/70 hover:bg-white'
+                      ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                      : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
                   }`}
                 >
                   {LANGUAGE_NATIVE_NAMES[code]}
@@ -344,10 +344,10 @@ export default function ProfilePage() {
                   key={opt.type}
                   type="button"
                   onClick={() => setWorkType(opt.type)}
-                  className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
                     workType === opt.type
-                      ? 'bg-[#E4FAF2] border-2 border-primary text-deepEmerald'
-                      : 'bg-white text-textSecondary border border-border/70 hover:bg-surfaceAlt'
+                      ? 'bg-teal-500/15 border-2 border-primary text-deepEmerald shadow-glass'
+                      : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
                   }`}
                 >
                   <AppIcon name={opt.icon} size={15} />
@@ -402,7 +402,7 @@ export default function ProfilePage() {
                 value={newSkillText}
                 onChange={(e) => setNewSkillText(e.target.value)}
                 placeholder={t('profileScreen.skillPlaceholder')}
-                className="flex-1 rounded-xl border border-border/80 bg-white px-3 py-2 text-xs font-medium text-textPrimary focus:border-primary focus:outline-none"
+                className="flex-1 rounded-xl border border-white/80 bg-white/70 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary focus:ring-2 focus:ring-primary/30 focus:outline-none shadow-inner"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -413,7 +413,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={handleAddCustomSkill}
-                className="rounded-xl bg-deepEmerald px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:brightness-105"
+                className="rounded-xl bg-gradient-to-r from-deepEmerald to-teal-700 px-3.5 py-2 text-xs font-bold text-white shadow-glass hover:brightness-110 active:scale-95 transition-all"
               >
                 + {t('common.add')}
               </button>
@@ -429,7 +429,7 @@ export default function ProfilePage() {
               type="number"
               value={experienceYears}
               onChange={(e) => setExperienceYears(e.target.value)}
-              className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
             />
           </div>
 
@@ -444,10 +444,10 @@ export default function ProfilePage() {
                   key={av.id}
                   type="button"
                   onClick={() => setAvailability(av.id)}
-                  className={`rounded-xl p-2.5 text-xs font-bold text-center transition-all ${
+                  className={`rounded-xl p-2.5 text-xs font-bold text-center transition-all active:scale-95 ${
                     availability === av.id
-                      ? 'bg-deepEmerald text-white shadow-xs'
-                      : 'bg-white text-textSecondary border border-border/70 hover:bg-surfaceAlt'
+                      ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                      : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
                   }`}
                 >
                   {t(`availability.${av.id}`)}
@@ -467,14 +467,14 @@ export default function ProfilePage() {
                 value={payMin}
                 onChange={(e) => setPayMin(e.target.value)}
                 placeholder="Min (e.g. 400)"
-                className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+                className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
               />
               <input
                 type="number"
                 value={payMax}
                 onChange={(e) => setPayMax(e.target.value)}
                 placeholder="Max (e.g. 700)"
-                className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+                className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
               />
             </div>
           </div>
@@ -489,7 +489,7 @@ export default function ProfilePage() {
               value={emergencyContact}
               onChange={(e) => setEmergencyContact(e.target.value)}
               placeholder="+91 98765 43210"
-              className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
             />
           </div>
 
@@ -503,7 +503,7 @@ export default function ProfilePage() {
               value={savingsGoal}
               onChange={(e) => setSavingsGoal(e.target.value)}
               placeholder="10000"
-              className="w-full rounded-2xl border border-border/80 bg-white/90 px-3.5 py-3 text-sm font-medium text-textPrimary shadow-glass focus:border-primary focus:bg-white focus:outline-none"
+              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
             />
           </div>
 
@@ -513,7 +513,7 @@ export default function ProfilePage() {
               type="button"
               onClick={handleCancel}
               disabled={isSaving}
-              className="flex-1 rounded-full border border-border/80 bg-white/90 py-3 text-xs font-bold text-textSecondary hover:bg-surfaceAlt transition-all shadow-xs"
+              className="flex-1 rounded-full border border-white/80 bg-white/60 backdrop-blur-md py-3 text-xs font-bold text-textSecondary hover:bg-white/85 transition-all shadow-xs active:scale-95"
             >
               {t('profileScreen.cancel')}
             </button>
@@ -521,7 +521,7 @@ export default function ProfilePage() {
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-[2] emerald-gradient-btn flex items-center justify-center gap-2 rounded-full py-3 text-xs font-bold text-white shadow-clay transition-all hover:brightness-105 active:scale-95 disabled:opacity-50"
+              className="flex-[2] flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 py-3 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
             >
               {isSaving && (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

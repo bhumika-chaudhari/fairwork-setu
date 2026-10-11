@@ -35,10 +35,10 @@ export default function LanguageSelector({
             type="button"
             onClick={() => select(code)}
             aria-pressed={selected}
-            className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
+            className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
               selected
-                ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-xs'
-                : 'bg-white/80 text-textSecondary border border-border/80 hover:bg-white hover:border-primary/40'
+                ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40'
+                : 'bg-white/65 hover:bg-white/90 text-textSecondary border border-white/80 hover:border-primary/40 backdrop-blur-md shadow-xs'
             }`}
           >
             {LANGUAGE_NATIVE_NAMES[code]}
@@ -54,7 +54,7 @@ export default function LanguageSelector({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex h-10 items-center gap-1.5 rounded-full bg-white/85 px-3 shadow-glass border border-white text-xs font-bold text-deepEmerald hover:bg-white transition-all active:scale-95"
+          className="flex h-10 items-center gap-1.5 rounded-full bg-white/70 backdrop-blur-xl px-3 shadow-glass border border-white/85 text-xs font-bold text-deepEmerald hover:bg-white/90 transition-all active:scale-95"
           aria-label={t('common.chooseLanguage')}
         >
           <span className="text-sm">🌐</span>
@@ -68,14 +68,15 @@ export default function LanguageSelector({
       {/* Language Modal */}
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-deepEmerald/25 p-4 backdrop-blur-xl animate-fade-in"
           onClick={() => setOpen(false)}
         >
           <div
-            className="w-full max-w-sm rounded-3xl bg-white/95 p-5 shadow-lifted border border-white"
+            className="relative w-full max-w-sm rounded-[30px] bg-white/80 p-6 shadow-glassModal border border-white/90 backdrop-blur-3xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
+            <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-lg">🌐</span>
                 <h3 className="text-base font-extrabold text-deepEmerald">

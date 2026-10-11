@@ -194,16 +194,16 @@ export default function VoiceEntryModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-deepEmerald/30 p-4 backdrop-blur-xl animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md rounded-[28px] bg-gradient-to-br from-white/96 via-[rgba(244,253,250,0.92)] to-[rgba(114,229,194,0.18)] p-6 shadow-lifted border border-[rgba(8,127,115,0.22)] backdrop-blur-xl max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-md rounded-[32px] bg-white/80 p-6 shadow-glassModal border border-white/90 backdrop-blur-3xl max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
         {/* Top Header with title and close button */}
-        <div className="flex items-center justify-between border-b border-[rgba(8,127,115,0.14)] pb-3">
+        <div className="flex items-center justify-between border-b border-border/40 pb-3">
           <div className="flex items-center gap-2">
             <span className="flex h-2.5 w-2.5 rounded-full bg-mint animate-pulse" />
             <h2 className="text-lg font-extrabold text-deepEmerald">
@@ -213,7 +213,7 @@ export default function VoiceEntryModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-surfaceAlt text-textMuted hover:text-deepEmerald"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 hover:bg-white text-textMuted hover:text-deepEmerald border border-white/80 transition-all active:scale-95"
             aria-label="Close"
           >
             ✕
@@ -283,19 +283,19 @@ export default function VoiceEntryModal({
               className="py-3 space-y-4"
             >
               {/* Transcript Card */}
-              <Card className="bg-surfaceAlt border-border/70 p-3 mb-0">
+              <div className="rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 p-3 mb-0 shadow-xs">
                 <span className="text-[11px] font-bold text-textMuted uppercase tracking-wider">
                   {t('voice.youSaid')}
                 </span>
                 <p className="mt-1 text-sm font-semibold text-deepEmerald leading-snug">
                   "{transcript || 'Today I earned 500 rupees and spent 150 on food.'}"
                 </p>
-              </Card>
+              </div>
 
               {/* Two Extracted Amount Cards Side-by-Side matching reference Screen 6 */}
               <div className="grid grid-cols-2 gap-3">
                 {/* Income Card */}
-                <div className="rounded-2xl bg-[#EDFAF5] p-3 border border-[#72E5C2]/60">
+                <div className="rounded-2xl bg-[#EDFAF5]/80 backdrop-blur-md p-3 border border-[#72E5C2]/60 shadow-xs">
                   <span className="text-[11px] font-bold text-textMuted block">
                     {t('voice.income')}
                   </span>
@@ -308,12 +308,12 @@ export default function VoiceEntryModal({
                     type="number"
                     value={incomeAmount}
                     onChange={(e) => setIncomeAmount(Number(e.target.value))}
-                    className="mt-1.5 w-full rounded-lg border border-mint/40 bg-white px-2 py-1 text-xs font-bold text-deepEmerald"
+                    className="mt-1.5 w-full rounded-xl border border-white/80 bg-white/80 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-deepEmerald focus:outline-none focus:ring-2 focus:ring-mint/50"
                   />
                 </div>
 
                 {/* Expense Card */}
-                <div className="rounded-2xl bg-[#FEF3C7]/60 p-3 border border-[#F4B544]/60">
+                <div className="rounded-2xl bg-[#FEF3C7]/80 backdrop-blur-md p-3 border border-[#F4B544]/60 shadow-xs">
                   <span className="text-[11px] font-bold text-textMuted block">
                     {t('voice.expense')}
                   </span>
@@ -326,7 +326,7 @@ export default function VoiceEntryModal({
                     type="number"
                     value={expenseAmount}
                     onChange={(e) => setExpenseAmount(Number(e.target.value))}
-                    className="mt-1.5 w-full rounded-lg border border-[#F4B544]/40 bg-white px-2 py-1 text-xs font-bold text-deepEmerald"
+                    className="mt-1.5 w-full rounded-xl border border-white/80 bg-white/80 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-deepEmerald focus:outline-none focus:ring-2 focus:ring-amber-400/50"
                   />
                 </div>
               </div>
@@ -342,10 +342,10 @@ export default function VoiceEntryModal({
                       key={cat.id}
                       type="button"
                       onClick={() => setCategory(cat.id)}
-                      className={`rounded-xl px-2.5 py-1 text-xs font-bold transition-all ${
+                      className={`rounded-xl px-2.5 py-1 text-xs font-bold transition-all active:scale-95 ${
                         category === cat.id
-                          ? 'bg-deepEmerald text-white shadow-xs'
-                          : 'bg-white text-textSecondary border border-border/70 hover:bg-surfaceAlt'
+                          ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40'
+                          : 'bg-white/65 hover:bg-white/90 text-textSecondary border border-white/80 backdrop-blur-md shadow-xs'
                       }`}
                     >
                       {t(cat.key)}
@@ -355,7 +355,7 @@ export default function VoiceEntryModal({
               </div>
 
               {/* Date Card matching reference Screen 6 */}
-              <div className="flex items-center justify-between rounded-xl bg-white p-3 border border-border/60">
+              <div className="flex items-center justify-between rounded-2xl bg-white/65 backdrop-blur-md p-3 border border-white/85 shadow-xs">
                 <span className="text-xs font-bold text-textSecondary">
                   📅 28 Oct 2025
                 </span>

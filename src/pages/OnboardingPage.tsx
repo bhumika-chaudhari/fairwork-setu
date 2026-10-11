@@ -128,14 +128,14 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-page overflow-x-hidden py-4 md:py-8 px-4 sm:px-6">
+    <div className="relative min-h-screen w-full bg-transparent overflow-x-hidden py-4 md:py-8 px-4 sm:px-6">
       {/* Background ambient glow */}
       <div className="pointer-events-none absolute -top-20 -right-20 h-96 w-96 rounded-full bg-mint/15 blur-3xl" />
       <div className="pointer-events-none absolute bottom-10 -left-20 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto w-full max-w-md md:max-w-2xl lg:max-w-3xl">
         {/* Top bar with back arrow, logo, step progress */}
-        <header className="mb-4 space-y-3 border-b border-border/50 pb-3">
+        <header className="mb-4 space-y-3 border-b border-white/60 pb-3">
           <div className="flex items-center justify-between">
             <button
               type="button"
@@ -146,13 +146,13 @@ export default function OnboardingPage() {
                   navigate('/welcome');
                 }
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-xs hover:bg-white text-deepEmerald transition-all"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 backdrop-blur-md shadow-glass border border-white/80 hover:bg-white/85 text-deepEmerald transition-all active:scale-95"
               aria-label="Back"
             >
               <AppIcon name="arrow-back" size={20} />
             </button>
             <SetuLogo size="sm" />
-            <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-mint/60 px-3 py-1 shadow-xs">
+            <div className="flex items-center gap-1.5 rounded-full bg-white/60 backdrop-blur-md border border-white/80 px-3 py-1 shadow-xs">
               <span className="text-xs font-bold text-deepEmerald">Step {step}/3</span>
             </div>
           </div>
@@ -205,10 +205,10 @@ export default function OnboardingPage() {
                             key={code}
                             type="button"
                             onClick={() => handleLanguageChange(code)}
-                            className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 ${
+                            className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
                               isSelected
-                                ? 'bg-deepEmerald text-white shadow-xs'
-                                : 'bg-white/80 text-textSecondary border border-border/80 hover:bg-white'
+                                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                                : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
                             }`}
                           >
                             {LANGUAGE_NATIVE_NAMES[code]}
@@ -219,10 +219,10 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* Personal Identity Details Card */}
-                  <div className="relative rounded-[26px] bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.90)] to-[rgba(114,229,194,0.18)] p-5 shadow-glass backdrop-blur-md border border-[rgba(8,127,115,0.18)] overflow-hidden space-y-4">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+                  <div className="relative rounded-[26px] bg-white/50 backdrop-blur-2xl p-5 shadow-glass border border-white/80 overflow-hidden space-y-4">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
                     {/* Photo / Selfie Upload */}
-                    <div className="flex items-center gap-4 border-b border-[rgba(8,127,115,0.12)] pb-4">
+                    <div className="flex items-center gap-4 border-b border-white/60 pb-4">
                       <input
                         id="onboarding-photo-input"
                         type="file"
@@ -290,7 +290,7 @@ export default function OnboardingPage() {
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           placeholder="Jaise: Ramesh Kumar / Sunita Devi / Amit Patil"
-                          className="w-full rounded-2xl border border-[rgba(8,127,115,0.18)] bg-white/95 pl-10 pr-4 py-3 text-sm font-medium text-textPrimary shadow-xs placeholder:text-textMuted focus:border-primary focus:bg-white focus:outline-none"
+                          className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md pl-10 pr-4 py-3 text-sm font-medium text-textPrimary shadow-inner placeholder:text-textMuted focus:ring-2 focus:ring-primary/30 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
                         {t('profileScreen.emergencyContact')}
                       </label>
                       <div className="relative flex">
-                        <span className="inline-flex items-center rounded-l-2xl border border-r-0 border-[rgba(8,127,115,0.18)] bg-page px-3 text-xs font-bold text-deepEmerald">
+                        <span className="inline-flex items-center rounded-l-2xl border border-r-0 border-white/80 bg-white/60 backdrop-blur-md px-3 text-xs font-bold text-deepEmerald shadow-inner">
                           +91
                         </span>
                         <input
@@ -311,13 +311,13 @@ export default function OnboardingPage() {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
                           placeholder="98765 43210"
-                          className="w-full rounded-r-2xl border border-[rgba(8,127,115,0.18)] bg-white/95 px-3 py-2.5 text-sm font-medium text-textPrimary shadow-xs placeholder:text-textMuted focus:border-primary focus:bg-white focus:outline-none"
+                          className="w-full rounded-r-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3 py-2.5 text-sm font-medium text-textPrimary shadow-inner placeholder:text-textMuted focus:ring-2 focus:ring-primary/30 focus:outline-none"
                         />
                       </div>
                     </div>
 
                     {/* Gender Selection (Optional, Non-Discriminatory) */}
-                    <div className="pt-2 border-t border-[rgba(8,127,115,0.12)]">
+                    <div className="pt-2 border-t border-white/60">
                       <div className="flex items-center justify-between mb-1.5">
                         <label className="text-xs font-bold text-deepEmerald">
                           {t('gender.label')}{' '}
@@ -337,10 +337,10 @@ export default function OnboardingPage() {
                               key={opt.id}
                               type="button"
                               onClick={() => setGender(isSelected ? null : opt.id)}
-                              className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all ${
+                              className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
                                 isSelected
-                                  ? 'bg-deepEmerald text-white shadow-xs border border-deepEmerald'
-                                  : 'bg-white/90 text-textSecondary hover:bg-white border border-[rgba(8,127,115,0.16)]'
+                                  ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                                  : 'bg-white/50 backdrop-blur-md text-textSecondary hover:bg-white/80 border border-white/70 shadow-xs'
                               }`}
                             >
                               <AppIcon name={opt.icon} size={14} />
@@ -367,7 +367,7 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(2)}
-                      className="emerald-gradient-btn flex h-12 items-center gap-2 rounded-full px-8 text-sm font-bold text-white"
+                      className="flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-8 text-sm font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 hover:brightness-110 active:scale-95 transition-all"
                     >
                       <span>{t('common.next')}</span>
                       <AppIcon name="arrow-forward" size={16} />
@@ -406,10 +406,10 @@ export default function OnboardingPage() {
                             key={opt.type}
                             type="button"
                             onClick={() => setWorkType(opt.type)}
-                            className={`flex flex-col items-center justify-center rounded-[20px] p-3 text-center transition-all duration-200 ${
+                            className={`flex flex-col items-center justify-center rounded-[20px] p-3 text-center transition-all duration-200 active:scale-95 ${
                               isSelected
-                                ? 'bg-gradient-to-br from-[#E8FAF3] to-[#D5F5EC] border-2 border-[#087F73] shadow-card scale-[1.02]'
-                                : 'bg-gradient-to-br from-white/95 via-[rgba(248,252,250,0.85)] to-[rgba(114,229,194,0.12)] border border-[rgba(8,127,115,0.14)] hover:bg-white hover:border-primary/40 shadow-glass'
+                                ? 'bg-teal-500/15 border-2 border-primary shadow-glass scale-[1.02]'
+                                : 'bg-white/50 backdrop-blur-xl border border-white/75 hover:bg-white/70 shadow-glass'
                             }`}
                           >
                             <div
@@ -435,8 +435,8 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* Experience in Years */}
-                  <div className="relative rounded-[24px] bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.88)] to-[rgba(114,229,194,0.16)] p-4 shadow-glass border border-[rgba(8,127,115,0.16)] overflow-hidden">
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+                  <div className="relative rounded-[24px] bg-white/50 backdrop-blur-2xl p-4 shadow-glass border border-white/80 overflow-hidden">
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
                     <label className="block text-xs font-bold text-deepEmerald mb-2">
                       Kitne saal ka anubhav hai? / Years of Experience
                     </label>
@@ -446,10 +446,10 @@ export default function OnboardingPage() {
                           key={yrs}
                           type="button"
                           onClick={() => setExperienceYears(yrs)}
-                          className={`flex-1 rounded-xl py-2 text-xs font-bold transition-all ${
+                          className={`flex-1 rounded-xl py-2 text-xs font-bold transition-all active:scale-95 ${
                             experienceYears === yrs
-                              ? 'bg-deepEmerald text-white shadow-xs'
-                              : 'bg-white/80 text-textSecondary hover:bg-white border border-[rgba(8,127,115,0.14)]'
+                              ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                              : 'bg-white/50 backdrop-blur-md text-textSecondary hover:bg-white/80 border border-white/70 shadow-xs'
                           }`}
                         >
                           {yrs === 8 ? '8+ yr' : `${yrs} yr`}
@@ -472,7 +472,7 @@ export default function OnboardingPage() {
                         value={cityInput}
                         onChange={(e) => setCityInput(e.target.value)}
                         placeholder={t('onboarding.cityPlaceholder')}
-                        className="w-full rounded-2xl border border-[rgba(8,127,115,0.18)] bg-white/95 pl-10 pr-4 py-3 text-sm font-medium text-textPrimary shadow-glass placeholder:text-textMuted focus:border-primary focus:bg-white focus:outline-none"
+                        className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md pl-10 pr-4 py-3 text-sm font-medium text-textPrimary shadow-inner placeholder:text-textMuted focus:ring-2 focus:ring-primary/30 focus:outline-none"
                       />
                     </div>
                     {/* Quick city suggestions */}
@@ -484,10 +484,10 @@ export default function OnboardingPage() {
                             key={key}
                             type="button"
                             onClick={() => setCityInput(cityName)}
-                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors active:scale-95 ${
                               cityInput.toLowerCase() === cityName.toLowerCase()
-                                ? 'bg-primarySoft text-deepEmerald font-bold border border-mint/60'
-                                : 'bg-white/60 text-textMuted hover:bg-white hover:text-textPrimary'
+                                ? 'bg-teal-500/15 text-deepEmerald font-bold border border-mint/60 shadow-xs'
+                                : 'bg-white/50 backdrop-blur-xs text-textMuted hover:bg-white hover:text-textPrimary border border-white/70'
                             }`}
                           >
                             {cityName}
@@ -502,7 +502,7 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="flex h-12 items-center gap-1.5 rounded-full border border-[rgba(8,127,115,0.2)] bg-white/90 px-6 text-sm font-bold text-deepEmerald hover:bg-white transition-all shadow-xs"
+                      className="flex h-12 items-center gap-1.5 rounded-full border border-white/80 bg-white/60 backdrop-blur-md px-6 text-sm font-bold text-deepEmerald hover:bg-white/85 transition-all shadow-xs active:scale-95"
                     >
                       <AppIcon name="arrow-back" size={16} />
                       <span>{t('common.back')}</span>
@@ -510,7 +510,7 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(3)}
-                      className="emerald-gradient-btn flex h-12 items-center gap-2 rounded-full px-8 text-sm font-bold text-white"
+                      className="flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-8 text-sm font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 hover:brightness-110 active:scale-95 transition-all"
                     >
                       <span>{t('common.next')}</span>
                       <AppIcon name="arrow-forward" size={16} />
@@ -562,7 +562,7 @@ export default function OnboardingPage() {
                     <label className="text-sm font-bold text-deepEmerald block mb-2">
                       Emergency Bachat Goal / Savings Target
                     </label>
-                    <Card className="bg-gradient-to-br from-white/90 to-[#FEF7E8]/80 border-[#F4B544]/30 p-4">
+                    <Card className="bg-white/50 backdrop-blur-2xl border border-white/80 p-4 shadow-glass">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-xs font-medium text-textSecondary">
                           Target Emergency Fund
@@ -588,10 +588,10 @@ export default function OnboardingPage() {
                             key={amt}
                             type="button"
                             onClick={() => setSavingsGoal(amt)}
-                            className={`rounded-xl px-2.5 py-1 text-xs font-bold transition-all ${
+                            className={`rounded-xl px-2.5 py-1 text-xs font-bold transition-all active:scale-95 ${
                               savingsGoal === amt
-                                ? 'bg-deepEmerald text-white shadow-xs'
-                                : 'bg-white/80 text-textSecondary hover:bg-white'
+                                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                                : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
                             }`}
                           >
                             ₹{amt / 1000}k
@@ -602,7 +602,7 @@ export default function OnboardingPage() {
                   </div>
 
                   {/* Live Setu ID Badge preview card */}
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[rgba(235,253,247,0.95)] via-[rgba(209,250,237,0.85)] to-[rgba(114,229,194,0.25)] p-4 border border-[rgba(8,127,115,0.24)] shadow-glass flex items-center gap-3.5">
+                  <div className="relative overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-4 border border-white/80 shadow-glass flex items-center gap-3.5">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
                     <div className="relative shrink-0">
                       {avatarUrl ? (
@@ -612,7 +612,7 @@ export default function OnboardingPage() {
                           className="h-13 w-13 rounded-full object-cover shadow-xs ring-2 ring-white"
                         />
                       ) : (
-                        <div className="flex h-13 w-13 items-center justify-center rounded-full bg-emerald-gradient text-white font-black text-lg shadow-xs ring-2 ring-white">
+                        <div className="flex h-13 w-13 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 text-white font-black text-lg shadow-glass ring-2 ring-white">
                           {(fullName.trim() || 'R').charAt(0).toUpperCase()}
                         </div>
                       )}
@@ -643,7 +643,7 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setStep(2)}
-                      className="flex h-12 items-center gap-1.5 rounded-full border border-[rgba(8,127,115,0.2)] bg-white/90 px-6 text-sm font-bold text-deepEmerald hover:bg-white transition-all shadow-xs"
+                      className="flex h-12 items-center gap-1.5 rounded-full border border-white/80 bg-white/60 backdrop-blur-md px-6 text-sm font-bold text-deepEmerald hover:bg-white/85 transition-all shadow-xs active:scale-95"
                     >
                       <AppIcon name="arrow-back" size={16} />
                       <span>{t('common.back')}</span>
@@ -651,7 +651,7 @@ export default function OnboardingPage() {
                     <button
                       type="button"
                       onClick={handleFinish}
-                      className="emerald-gradient-btn flex h-12 items-center gap-2 rounded-full px-8 text-sm font-bold text-white"
+                      className="flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-8 text-sm font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 hover:brightness-110 active:scale-95 transition-all"
                     >
                       <span>{t('onboarding.start')}</span>
                       <AppIcon name="checkmark" size={17} />

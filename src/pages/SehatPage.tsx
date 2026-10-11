@@ -57,7 +57,7 @@ export default function SehatPage() {
       {/* Header bar matching reference Screen 7 */}
       <header className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-glass border border-emerald-400/30">
             S
           </div>
           <h1 className="text-xl font-extrabold text-deepEmerald">
@@ -97,7 +97,7 @@ export default function SehatPage() {
               className="mb-0 hover:border-mint/60 p-3.5 cursor-pointer flex items-center justify-between gap-3"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E6F7F2] text-primary">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
                   <AppIcon name="medical" size={20} />
                 </div>
                 <div className="min-w-0">
@@ -130,9 +130,9 @@ export default function SehatPage() {
           {/* 108 Ambulance */}
           <a
             href="tel:108"
-            className="flex flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-white/95 via-[rgba(254,242,242,0.85)] to-[rgba(239,68,68,0.10)] p-3 text-center shadow-glass border border-[rgba(239,68,68,0.25)] hover:border-danger/40 active:scale-95 transition-all"
+            className="flex flex-col items-center justify-center rounded-2xl bg-white/50 backdrop-blur-md p-3 text-center shadow-glass border border-red-300/40 hover:bg-white/70 active:scale-95 transition-all"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-dangerSoft text-danger mb-1.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-dangerSoft text-danger mb-1.5 shadow-xs">
               <AppIcon name="medkit-outline" size={18} />
             </div>
             <span className="text-base font-black text-danger">108</span>
@@ -144,9 +144,9 @@ export default function SehatPage() {
           {/* 112 Police / All Emergency */}
           <a
             href="tel:112"
-            className="flex flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.88)] to-[rgba(114,229,194,0.14)] p-3 text-center shadow-glass border border-[rgba(8,127,115,0.18)] hover:border-mint active:scale-95 transition-all"
+            className="flex flex-col items-center justify-center rounded-2xl bg-white/50 backdrop-blur-md p-3 text-center shadow-glass border border-emerald-400/30 hover:bg-white/70 active:scale-95 transition-all"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primarySoft text-primary mb-1.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primarySoft text-primary mb-1.5 shadow-xs">
               <AppIcon name="call" size={18} />
             </div>
             <span className="text-base font-black text-primary">112</span>
@@ -158,9 +158,9 @@ export default function SehatPage() {
           {/* 1098 Child Helpline */}
           <a
             href="tel:1098"
-            className="flex flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-white/95 via-[rgba(254,243,199,0.82)] to-[rgba(244,181,68,0.12)] p-3 text-center shadow-glass border border-[rgba(244,181,68,0.30)] hover:border-accent active:scale-95 transition-all"
+            className="flex flex-col items-center justify-center rounded-2xl bg-white/50 backdrop-blur-md p-3 text-center shadow-glass border border-amber-300/40 hover:bg-white/70 active:scale-95 transition-all"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accentSoft text-[#D97706] mb-1.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accentSoft text-[#D97706] mb-1.5 shadow-xs">
               <AppIcon name="heart" size={18} />
             </div>
             <span className="text-base font-black text-[#D97706]">1098</span>
@@ -226,9 +226,9 @@ export default function SehatPage() {
       </div>
 
       {/* SECTION: Ask Setu AI & Semantic Search Q&A matching reference Screen 7 */}
-      <Card className="bg-gradient-to-br from-white/95 via-[#EDFAF5]/90 to-[#E0F8F1]/80 border-mint/40 p-4 shadow-glass">
+      <Card className="bg-white/50 backdrop-blur-2xl border border-white/80 p-4 shadow-glass">
         <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-gradient text-white">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-teal-500 text-white shadow-xs">
             <AppIcon name="sparkles" size={14} />
           </div>
           <h3 className="text-sm font-extrabold text-deepEmerald">
@@ -242,13 +242,13 @@ export default function SehatPage() {
             value={aiQuestion}
             onChange={(e) => setAiQuestion(e.target.value)}
             placeholder={t('sehat.askSetuAiPlaceholder')}
-            className="flex-1 rounded-xl border border-border/80 bg-white/95 px-3 py-2 text-xs font-medium text-textPrimary placeholder:text-textMuted focus:border-primary focus:outline-none"
+            className="flex-1 rounded-xl border border-white/80 bg-white/70 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary placeholder:text-textMuted focus:ring-2 focus:ring-primary/30 focus:outline-none shadow-inner"
           />
           <button
             type="button"
             onClick={() => handleAskAi()}
             disabled={aiLoading}
-            className="rounded-xl bg-emerald-gradient px-4 py-2 text-xs font-bold text-white shadow-clay hover:brightness-105 disabled:opacity-50"
+            className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-2 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 disabled:opacity-50 active:scale-95 transition-all"
           >
             {aiLoading ? t('sehat.thinking') : t('sehat.ask')}
           </button>
@@ -268,7 +268,7 @@ export default function SehatPage() {
                 setAiQuestion(prompt);
                 handleAskAi(prompt);
               }}
-              className="rounded-lg bg-white/80 px-2 py-1 text-[11px] font-semibold text-textSecondary hover:bg-white hover:text-deepEmerald border border-border/50"
+              className="rounded-full bg-white/60 backdrop-blur-xs px-2.5 py-1 text-[11px] font-semibold text-textSecondary hover:bg-white/90 hover:text-deepEmerald border border-white/80 shadow-xs transition-all active:scale-95"
             >
               {prompt}
             </button>
@@ -277,11 +277,11 @@ export default function SehatPage() {
 
         {/* AI Answer & Source Citations Display */}
         {aiResponse && (
-          <div className="mt-4 rounded-2xl bg-white p-3.5 border border-mint/40 space-y-2 animate-fade-in">
+          <div className="mt-4 rounded-2xl bg-white/70 backdrop-blur-xl p-3.5 border border-white/90 shadow-glass space-y-2 animate-fade-in">
             <p className="text-xs text-textPrimary leading-relaxed">
               {aiResponse.answer}
             </p>
-            <div className="border-t border-border/40 pt-2">
+            <div className="border-t border-white/60 pt-2">
               <span className="text-[10px] font-bold text-textMuted uppercase tracking-wider block mb-1">
                 {t('sehat.verifiedSources')}
               </span>
@@ -292,7 +292,7 @@ export default function SehatPage() {
                     href={src.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-md bg-primarySoft px-2 py-0.5 text-[11px] font-semibold text-primary hover:underline"
+                    className="inline-flex items-center gap-1 rounded-md bg-teal-500/15 border border-mint/30 px-2 py-0.5 text-[11px] font-semibold text-primary hover:underline"
                   >
                     <span>{src.title}</span>
                     <AppIcon name="open-outline" size={11} />
@@ -312,14 +312,14 @@ export default function SehatPage() {
       {/* Resource Detail Modal */}
       {selectedResource && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md p-4 animate-fade-in"
           onClick={() => setSelectedResource(null)}
         >
           <div
-            className="w-full max-w-md rounded-3xl bg-white/95 p-6 shadow-lifted border border-white"
+            className="w-full max-w-md rounded-3xl bg-white/85 backdrop-blur-2xl p-6 shadow-glassModal border border-white/90"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-3">
+            <div className="flex items-center justify-between border-b border-white/60 pb-3 mb-3">
               <h3 className="text-lg font-bold text-deepEmerald">
                 {t(selectedResource.nameKey)}
               </h3>
@@ -348,7 +348,7 @@ export default function SehatPage() {
             {selectedResource.phone && (
               <a
                 href={`tel:${selectedResource.phone}`}
-                className="mt-4 flex h-11 items-center justify-center gap-2 rounded-full bg-emerald-gradient font-bold text-white shadow-clay text-sm"
+                className="mt-4 flex h-11 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 text-sm active:scale-95 transition-all"
               >
                 <AppIcon name="call" size={16} />
                 <span>{t('sehat.callPhone', { phone: selectedResource.phone })}</span>

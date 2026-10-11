@@ -63,7 +63,7 @@ export default function KaamPage() {
       {/* Header bar matching reference Screen 4 */}
       <header className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-glass border border-emerald-400/30">
             K
           </div>
           <h1 className="text-xl font-extrabold text-deepEmerald">
@@ -72,7 +72,7 @@ export default function KaamPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-[#E4FAF2] border border-mint/60 px-3 py-1 text-xs font-bold text-deepEmerald">
+          <span className="rounded-full bg-white/60 backdrop-blur-md border border-white/80 px-3 py-1 text-xs font-bold text-deepEmerald shadow-xs">
             {filteredJobs.length} {t('kaam.sortDistance')}
           </span>
           <div className="md:hidden">
@@ -97,10 +97,10 @@ export default function KaamPage() {
           <button
             type="button"
             onClick={() => setActiveDropdown(activeDropdown === 'skill' ? null : 'skill')}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap active:scale-95 ${
               selectedSkill !== 'all'
-                ? 'bg-deepEmerald text-white shadow-xs'
-                : 'bg-white/90 text-textSecondary border border-border/80 hover:bg-white'
+                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
             }`}
           >
             <span>{t('kaam.filterSkill')} {selectedSkill !== 'all' ? `(${selectedSkill})` : ''}</span>
@@ -111,10 +111,10 @@ export default function KaamPage() {
           <button
             type="button"
             onClick={() => setActiveDropdown(activeDropdown === 'city' ? null : 'city')}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap active:scale-95 ${
               selectedCity !== 'all'
-                ? 'bg-deepEmerald text-white shadow-xs'
-                : 'bg-white/90 text-textSecondary border border-border/80 hover:bg-white'
+                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
             }`}
           >
             <span>{t('kaam.filterCity')} {selectedCity !== 'all' ? `(${selectedCity})` : ''}</span>
@@ -125,10 +125,10 @@ export default function KaamPage() {
           <button
             type="button"
             onClick={() => setActiveDropdown(activeDropdown === 'avail' ? null : 'avail')}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap active:scale-95 ${
               selectedAvail !== 'all'
-                ? 'bg-deepEmerald text-white shadow-xs'
-                : 'bg-white/90 text-textSecondary border border-border/80 hover:bg-white'
+                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
+                : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
             }`}
           >
             <span>{t('kaam.filterAvailability')} {selectedAvail !== 'all' ? `(${selectedAvail})` : ''}</span>
@@ -149,7 +149,7 @@ export default function KaamPage() {
 
         {/* Dropdown Options Popup */}
         {activeDropdown === 'skill' && (
-          <div className="absolute top-10 left-0 z-30 w-56 rounded-2xl bg-white p-2.5 shadow-lifted border border-border/60 animate-fade-in">
+          <div className="absolute top-10 left-0 z-30 w-56 rounded-2xl bg-white/85 backdrop-blur-2xl p-2.5 shadow-glassModal border border-white/90 animate-fade-in">
             <div className="text-xs font-bold text-textMuted uppercase mb-1 px-2">{t('kaam.filterSkill')}</div>
             {[
               { id: 'all', label: t('kaam.filterAll') },
@@ -167,7 +167,7 @@ export default function KaamPage() {
                   setActiveDropdown(null);
                 }}
                 className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-left transition-colors ${
-                  selectedSkill === item.id ? 'bg-primarySoft text-deepEmerald font-bold' : 'hover:bg-surfaceAlt text-textPrimary'
+                  selectedSkill === item.id ? 'bg-teal-500/15 text-deepEmerald font-bold border border-mint/30' : 'hover:bg-white/60 text-textPrimary'
                 }`}
               >
                 <span>{item.label}</span>
@@ -178,7 +178,7 @@ export default function KaamPage() {
         )}
 
         {activeDropdown === 'city' && (
-          <div className="absolute top-10 left-16 z-30 w-44 rounded-2xl bg-white p-2.5 shadow-lifted border border-border/60 animate-fade-in">
+          <div className="absolute top-10 left-16 z-30 w-44 rounded-2xl bg-white/85 backdrop-blur-2xl p-2.5 shadow-glassModal border border-white/90 animate-fade-in">
             <div className="text-xs font-bold text-textMuted uppercase mb-1 px-2">{t('kaam.filterCity')}</div>
             {[
               { id: 'all', label: t('kaam.filterAll') },
@@ -195,7 +195,7 @@ export default function KaamPage() {
                   setActiveDropdown(null);
                 }}
                 className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-left transition-colors ${
-                  selectedCity === c.id ? 'bg-primarySoft text-deepEmerald font-bold' : 'hover:bg-surfaceAlt text-textPrimary'
+                  selectedCity === c.id ? 'bg-teal-500/15 text-deepEmerald font-bold border border-mint/30' : 'hover:bg-white/60 text-textPrimary'
                 }`}
               >
                 <span>{c.label}</span>
@@ -206,7 +206,7 @@ export default function KaamPage() {
         )}
 
         {activeDropdown === 'avail' && (
-          <div className="absolute top-10 left-36 z-30 w-44 rounded-2xl bg-white p-2.5 shadow-lifted border border-border/60 animate-fade-in">
+          <div className="absolute top-10 left-36 z-30 w-44 rounded-2xl bg-white/85 backdrop-blur-2xl p-2.5 shadow-glassModal border border-white/90 animate-fade-in">
             <div className="text-xs font-bold text-textMuted uppercase mb-1 px-2">{t('kaam.filterAvailability')}</div>
             {[
               { id: 'all', label: t('kaam.filterAll') },
@@ -221,7 +221,7 @@ export default function KaamPage() {
                   setActiveDropdown(null);
                 }}
                 className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-left transition-colors ${
-                  selectedAvail === av.id ? 'bg-primarySoft text-deepEmerald font-bold' : 'hover:bg-surfaceAlt text-textPrimary'
+                  selectedAvail === av.id ? 'bg-teal-500/15 text-deepEmerald font-bold border border-mint/30' : 'hover:bg-white/60 text-textPrimary'
                 }`}
               >
                 <span>{av.label}</span>

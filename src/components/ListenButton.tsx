@@ -52,16 +52,16 @@ export default function ListenButton({ track, className = '', size = 'md' }: Lis
         type="button"
         onClick={handleClick}
         aria-label={`${getButtonLabel()}: ${track.title}`}
-        className={`group relative inline-flex items-center gap-1.5 rounded-full font-bold transition-all duration-200 active:scale-95 ${
+        className={`group relative inline-flex items-center gap-1.5 rounded-full font-bold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-95 ${
           size === 'sm'
             ? 'px-2.5 py-1 text-[11px]'
             : 'px-3.5 py-1.5 text-xs'
         } ${
           isPlaying
-            ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-clay ring-2 ring-mint/50'
+            ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive ring-2 ring-mint/50 border border-mint/40'
             : isPaused
-            ? 'bg-saffron/20 border border-saffron/50 text-[#854D0E]'
-            : 'bg-white/80 hover:bg-white text-deepEmerald border border-[rgba(8,127,115,0.2)] shadow-xs hover:border-[rgba(8,127,115,0.4)]'
+            ? 'bg-amber-100/80 border border-amber-300/60 text-[#854D0E] backdrop-blur-md shadow-xs'
+            : 'bg-white/70 hover:bg-white/90 text-deepEmerald border border-white/85 shadow-glass backdrop-blur-xl hover:border-mint/60'
         } ${className}`}
         title={`${getButtonLabel()} audio explanation`}
       >

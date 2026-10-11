@@ -16,16 +16,17 @@ export default function AudioPlayerBar() {
       role="region"
       aria-label="Audio player controls"
       aria-live="polite"
-      className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-lg transition-all duration-300"
+      className="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-lg transition-all duration-300"
     >
-      <div className="rounded-2xl bg-white/95 backdrop-blur-xl border border-[rgba(8,127,115,0.24)] p-3 shadow-[0_12px_36px_rgba(7,59,58,0.18)] flex items-center justify-between gap-3">
+      <div className="relative overflow-hidden rounded-[26px] bg-white/80 backdrop-blur-3xl border border-white/90 p-3 shadow-dock flex items-center justify-between gap-3">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
         {/* Left: Speaker icon + Sound waves or error */}
         <div className="flex items-center gap-3 min-w-0">
           <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
               errorMessage
-                ? 'bg-danger/15 text-danger'
-                : 'bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white shadow-xs'
+                ? 'bg-danger/15 text-danger border border-danger/30'
+                : 'bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40'
             }`}
           >
             {errorMessage ? (

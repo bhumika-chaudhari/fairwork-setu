@@ -10,7 +10,7 @@ export default function SearchField({
   placeholder: string;
 }) {
   return (
-    <label className="flex h-12 items-center rounded-2xl border border-white/95 bg-white/90 px-3.5 shadow-glass backdrop-blur-md transition-all focus-within:border-primary/60 focus-within:bg-white focus-within:shadow-glassHover">
+    <label className="flex h-12 items-center rounded-2xl border border-white/85 bg-white/68 hover:bg-white/80 focus-within:bg-white/92 px-3.5 shadow-glass backdrop-blur-2xl transition-all duration-300 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-mint/30 focus-within:shadow-glassHover">
       <AppIcon name="search-outline" size={18} className="text-primary" />
       <input
         className="ml-2.5 w-full bg-transparent text-sm font-medium text-textPrimary outline-none placeholder:text-textMuted"

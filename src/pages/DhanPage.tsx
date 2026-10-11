@@ -69,7 +69,7 @@ export default function DhanPage() {
       {/* Header */}
       <header className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-glass border border-emerald-400/30">
             D
           </div>
           <h1 className="text-xl font-extrabold text-deepEmerald">
@@ -87,9 +87,9 @@ export default function DhanPage() {
 
       {/* DEV / DEMO SAMPLE DATA BANNER */}
       {summary.isSampleData && (
-        <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-3 shadow-xs flex items-center justify-between gap-3 animate-fade-in">
+        <div className="rounded-2xl border border-amber-300/80 bg-amber-50/70 backdrop-blur-md p-3.5 shadow-glass flex items-center justify-between gap-3 animate-fade-in">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-200 text-amber-900">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-200/90 text-amber-900 shadow-xs">
               <AppIcon name="sparkles" size={16} />
             </div>
             <div className="min-w-0">
@@ -104,7 +104,7 @@ export default function DhanPage() {
           <button
             type="button"
             onClick={clearTransactions}
-            className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-amber-900 border border-amber-400 shadow-xs hover:bg-amber-100 transition-colors"
+            className="shrink-0 rounded-full bg-white/80 backdrop-blur-md px-3.5 py-1.5 text-xs font-bold text-amber-900 border border-amber-400/60 shadow-xs hover:bg-white transition-all active:scale-95"
           >
             {t('dhan.clearSampleData')}
           </button>
@@ -113,7 +113,7 @@ export default function DhanPage() {
 
       {/* EMPTY DATA DEV HELPER: Load sample data or start fresh */}
       {!summary.isSampleData && transactions.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-mint/60 bg-surfaceAlt/60 p-3 flex items-center justify-between gap-2">
+        <div className="rounded-2xl border border-dashed border-mint/70 bg-white/40 backdrop-blur-md p-3.5 flex items-center justify-between gap-2 shadow-xs">
           <div className="flex items-center gap-2">
             <AppIcon name="receipt-outline" size={16} className="text-primary shrink-0" />
             <span className="text-xs text-textSecondary font-medium">
@@ -123,7 +123,7 @@ export default function DhanPage() {
           <button
             type="button"
             onClick={loadSampleData}
-            className="rounded-full bg-white px-3 py-1 text-xs font-bold text-deepEmerald border border-border/80 hover:bg-mint/10 transition-colors shrink-0 shadow-xs"
+            className="rounded-full bg-white/70 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-deepEmerald border border-white/80 hover:bg-white transition-all shrink-0 shadow-xs active:scale-95"
           >
             {t('dhan.loadSampleData')}
           </button>
@@ -135,7 +135,7 @@ export default function DhanPage() {
         <button
           type="button"
           onClick={() => openAddModal('income')}
-          className="emerald-gradient-btn flex items-center justify-center gap-2 rounded-2xl py-3 px-4 text-xs font-black text-white shadow-clay hover:brightness-105 active:scale-95 transition-all"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 py-3 px-4 text-xs font-black text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
         >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-sm font-black">
             +
@@ -145,7 +145,7 @@ export default function DhanPage() {
         <button
           type="button"
           onClick={() => openAddModal('expense')}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-white py-3 px-4 text-xs font-black text-danger border border-danger/40 shadow-glass hover:bg-danger/5 active:scale-95 transition-all"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-white/60 backdrop-blur-md py-3 px-4 text-xs font-black text-danger border border-danger/30 shadow-glass hover:bg-danger/10 active:scale-95 transition-all"
         >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-danger/10 text-sm font-black">
             −
@@ -194,10 +194,10 @@ export default function DhanPage() {
       </motion.div>
 
       {/* NET FOR PERIOD SUMMARY BANNER */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.90)] to-[rgba(114,229,194,0.18)] p-3.5 shadow-glass border border-[rgba(8,127,115,0.18)] flex items-center justify-between">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+      <div className="relative overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-4 shadow-glass border border-white/80 flex items-center justify-between">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primarySoft text-primary shadow-xs">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
             <AppIcon name="wallet" size={17} />
           </div>
           <div>

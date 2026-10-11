@@ -7,6 +7,7 @@ import { ProfileProvider } from './hooks/ProfileContext';
 import { TransactionProvider } from './hooks/TransactionContext';
 import { SpeechProvider } from './lib/speechSynthesisContext';
 import AudioPlayerBar from './components/AudioPlayerBar';
+import AtmosphericBackground from './components/AtmosphericBackground';
 import TabLayout from './layouts/TabLayout';
 import RootRedirect from './pages/RootRedirect';
 import LandingPage from './pages/LandingPage';
@@ -45,8 +46,9 @@ export default function App() {
         <ProfileProvider>
           <TransactionProvider>
             <SpeechProvider>
-              <div className="min-h-screen w-full bg-page text-textPrimary">
-              <BrowserRouter>
+              <div className="relative min-h-screen w-full bg-transparent text-textPrimary">
+                <AtmosphericBackground />
+                <BrowserRouter>
                 <Routes>
                   {/* Entry & Onboarding */}
                   <Route path="/" element={<RootRedirect />} />
