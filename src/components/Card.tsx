@@ -33,6 +33,7 @@ export default function Card({
   return (
     <div
       onClick={onClick}
+      data-clickable={onClick ? 'true' : undefined}
       className={`relative mb-4 rounded-[26px] p-4 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
         lifted ? 'shadow-lifted' : 'shadow-glass'
       } ${variants[variant]} ${

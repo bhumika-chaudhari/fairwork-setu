@@ -226,3 +226,69 @@ export const playNotification = () => feedback.playNotification();
 export const toggleMute = () => feedback.toggleMute();
 export const isMuted = () => feedback.isMuted;
 export const triggerHaptic = (pattern?: HapticPattern) => feedback.triggerHaptic(pattern);
+
+/**
+ * Attaches a lightweight, universal interaction listener to the document
+ * providing tactile haptic and sound feedback across all buttons, tabs, links,
+ * interactive cards, and form controls.
+ */
+export function attachGlobalFeedback(): () => void {
+  if (typeof window === 'undefined') return () => {};
+
+  const handleInteraction = (event: MouseEvent) => {
+    // Only respond to primary mouse click or direct touch
+    if (event.button !== undefined && event.button !== 0) return;
+
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+
+    // Check if target or parent has explicit ignore flag
+    if (target.closest('[data-no-feedback]')) return;
+
+    // 1. Explicit feedback tags
+    const explicitElement = target.closest('[data-feedback]') as HTMLElement | null;
+    if (explicitElement) {
+      const type = explicitElement.getAttribute('data-feedback');
+      if (type === 'pop') feedback.playPop();
+      else if (type === 'select') feedback.playSelect();
+      else if (type === 'notification') feedback.playNotification();
+      else feedback.playTap();
+      return;
+    }
+
+    // 2. Primary / CTA buttons (e.g. submit or emerald gradient buttons)
+    const ctaButton = target.closest(
+      'button[type="submit"], .emerald-gradient-btn, [data-action="primary"]'
+    );
+    if (ctaButton) {
+      feedback.playPop();
+      return;
+    }
+
+    // 3. Navigation tabs, filter chips, checkboxes, radio buttons
+    const navTab = target.closest('nav a, [role="tab"], .filter-pill');
+    if (navTab) {
+      feedback.playSelect();
+      return;
+    }
+
+    const inputControl = target.closest('input[type="checkbox"], input[type="radio"]');
+    if (inputControl) {
+      feedback.playSelect();
+      return;
+    }
+
+    // 4. Any button, anchor, [role="button"], clickable card or summary element
+    const interactive = target.closest(
+      'button, a, [role="button"], summary, [data-clickable="true"]'
+    );
+    if (interactive) {
+      feedback.playTap();
+    }
+  };
+
+  document.addEventListener('click', handleInteraction, { capture: true, passive: true });
+  return () => {
+    document.removeEventListener('click', handleInteraction, { capture: true });
+  };
+}

@@ -6,6 +6,7 @@ import type { Transaction, TransactionType, TransactionCategory } from '../types
 import { CATEGORY_ICONS, CATEGORY_TRANSLATION_KEYS } from '../services/transactionService';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
 import ModalPortal from './ModalPortal';
+import { playPop, playTap } from '../lib/feedback';
 
 const INCOME_CATEGORIES: TransactionCategory[] = [
   'work_earnings',
@@ -119,6 +120,7 @@ export default function TransactionModal({
   const activeCategories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
   const handleApplyPreset = (preset: QuickPreset) => {
+    playTap();
     setType(preset.type);
     setAmount(preset.amount.toString());
     setCategory(preset.category);
@@ -180,6 +182,7 @@ export default function TransactionModal({
         });
       }
 
+      playPop();
       onClose();
     } catch (err: any) {
       setValidationError(err.message || 'Failed to save transaction');
