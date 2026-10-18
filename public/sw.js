@@ -3,12 +3,16 @@
  * Handles background push alerts, Android TWA / PWA notifications, and deep-link click routing.
  */
 
-const CACHE_NAME = 'setu-pwa-v1';
+const CACHE_NAME = 'setu-pwa-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/favicon.png',
+  '/favicon.ico',
+  '/favicon-32x32.png',
+  '/android-chrome-192x192.png',
+  '/notification-badge-72x72.png',
+  '/logo.png',
 ];
 
 // Service Worker Install
@@ -39,8 +43,8 @@ self.addEventListener('push', (event) => {
   let payload = {
     title: 'FairWork Setu',
     body: 'Aapke liye Setu par naya update aaya hai.',
-    icon: '/favicon.png',
-    badge: '/favicon.png',
+    icon: '/android-chrome-192x192.png',
+    badge: '/notification-badge-72x72.png',
     data: { url: '/home' },
     tag: 'setu-update',
   };
@@ -56,8 +60,8 @@ self.addEventListener('push', (event) => {
 
   const notificationOptions = {
     body: payload.body,
-    icon: payload.icon || '/favicon.png',
-    badge: payload.badge || '/favicon.png',
+    icon: payload.icon || '/android-chrome-192x192.png',
+    badge: payload.badge || '/notification-badge-72x72.png',
     tag: payload.tag || 'setu-notification',
     data: payload.data || { url: '/home' },
     vibrate: [100, 50, 100],

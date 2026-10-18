@@ -359,8 +359,8 @@ async function dispatchSystemNotification(notif: InAppNotification): Promise<voi
         const registration = await navigator.serviceWorker.ready;
         await (registration as any).showNotification(notif.title, {
           body: notif.body,
-          icon: '/favicon.png',
-          badge: '/favicon.png',
+          icon: '/android-chrome-192x192.png',
+          badge: '/notification-badge-72x72.png',
           tag: notif.metadata?.dedupKey || notif.id,
           data: { url: notif.deepLink },
           vibrate: [100, 50, 100],
@@ -374,7 +374,7 @@ async function dispatchSystemNotification(notif: InAppNotification): Promise<voi
     try {
       const n = new Notification(notif.title, {
         body: notif.body,
-        icon: '/favicon.png',
+        icon: '/android-chrome-192x192.png',
         tag: notif.metadata?.dedupKey || notif.id,
         data: { url: notif.deepLink },
       });
