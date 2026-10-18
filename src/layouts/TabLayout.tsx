@@ -11,7 +11,6 @@ const tabs = [
   { to: '/home', key: 'tabs.home', icon: 'home' },
   { to: '/kaam', key: 'tabs.kaam', icon: 'briefcase' },
   { to: '/dhan', key: 'tabs.dhan', icon: 'wallet' },
-  { to: '/ai-lab', key: 'tabs.aiLab', icon: 'sparkles' },
   { to: '/sehat', key: 'tabs.sehat', icon: 'heart' },
   { to: '/kaushal', key: 'tabs.kaushal', icon: 'school' },
   { to: '/haq', key: 'tabs.haqSetu', icon: 'shield-checkmark' },

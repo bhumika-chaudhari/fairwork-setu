@@ -20,12 +20,6 @@ import { getMoneyOverview } from '../services/moneyService';
 import { useProfile } from '../hooks/ProfileContext';
 import { useTransactions } from '../hooks/TransactionContext';
 import TransactionModal from '../components/TransactionModal';
-import {
-  getLinearRegressionForecast,
-  getLogisticBudgetRisk,
-  getLstmForecast,
-  getKMeansClusters,
-} from '../services/mlService';
 
 export default function HomePage() {
   const { t, i18n } = useTranslation();
@@ -49,25 +43,6 @@ export default function HomePage() {
   const moneyQuery = useQuery({ queryKey: ['money'], queryFn: getMoneyOverview });
 
   const savingsTarget = profile.savingsGoal && profile.savingsGoal > 0 ? profile.savingsGoal : 5000;
-
-  // Real ML Model Queries with automatic caching and invalidation
-  const linearQuery = useQuery({
-    queryKey: ['ml_linear', summary.transactionCount],
-    queryFn: () => getLinearRegressionForecast(transactions),
-  });
-  const logisticQuery = useQuery({
-    queryKey: ['ml_logistic', summary.transactionCount, savingsTarget],
-    queryFn: () => getLogisticBudgetRisk(savingsTarget, transactions),
-  });
-  const lstmQuery = useQuery({
-    queryKey: ['ml_lstm', summary.transactionCount],
-    queryFn: () => getLstmForecast(false, transactions),
-  });
-  const kmeansQuery = useQuery({
-    queryKey: ['ml_kmeans', summary.transactionCount],
-    queryFn: () => getKMeansClusters(transactions),
-  });
-
   const jobs = jobsQuery.data?.slice(0, 2) ?? [];
   const nearby = healthQuery.data?.[0];
   const money = moneyQuery.data;
@@ -277,167 +252,7 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* SECTION: AI FINANCIAL INSIGHTS (4 Working ML Models) */}
-          <section className="pt-1">
-            <div className="mb-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-terracotta/10 text-terracotta">
-                  <AppIcon name="sparkles" size={14} />
-                </div>
-                <h2 className="text-base font-extrabold text-deepEmerald">
-                  {t('home.aiInsights', 'AI Financial Insights')}
-                </h2>
-                <span className="rounded-full bg-[#F1F8F3] px-2 py-0.5 text-[10px] font-extrabold text-success border border-[#2E7D32]/30">
-                  4 Models
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => navigate('/ai-lab')}
-                className="text-xs font-bold text-terracotta hover:underline inline-flex items-center gap-0.5"
-              >
-                <span>Open AI Lab</span> →
-              </button>
-            </div>
 
-            {/* 2x2 Grid of Liquid Glass ML Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Model 1: Linear Regression Balance Forecast */}
-              <div
-                onClick={() => navigate('/ai-lab?tab=linear')}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                      1. Linear Regression
-                    </span>
-                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                      R²: {linearQuery.data?.metrics?.r2_score ?? '0.88'}
-                    </span>
-                  </div>
-                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                    7-Day Balance Projection
-                  </h3>
-                  <p className="text-xl font-black text-deepEmerald mt-1">
-                    {formatInr(linearQuery.data?.next_day_prediction ?? 3460)}
-                  </p>
-                </div>
-                <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
-                  <span className="text-textSecondary">
-                    {(linearQuery.data?.delta_amount ?? 0) >= 0 ? 'Expected gain' : 'Expected net'}:
-                  </span>
-                  <span
-                    className={`font-bold ${
-                      (linearQuery.data?.delta_amount ?? 0) >= 0 ? 'text-success' : 'text-danger'
-                    }`}
-                  >
-                    {(linearQuery.data?.delta_amount ?? 0) >= 0 ? '↑ +' : '↓ −'}
-                    {formatInr(Math.abs(linearQuery.data?.delta_amount ?? 260))}
-                  </span>
-                </div>
-              </div>
-
-              {/* Model 2: Logistic Regression Budget Risk */}
-              <div
-                onClick={() => navigate('/ai-lab?tab=logistic')}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                      2. Logistic Regression
-                    </span>
-                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                      AUC: {logisticQuery.data?.metrics?.roc_auc ?? '0.99'}
-                    </span>
-                  </div>
-                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                    Budget Risk Classifier
-                  </h3>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <p className="text-xl font-black text-deepEmerald">
-                      {logisticQuery.data?.probability_percent ?? 40.8}%
-                    </p>
-                    <span className="text-xs font-bold text-textMuted">over-budget risk</span>
-                  </div>
-                </div>
-                <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
-                  <span className="text-textSecondary">Status:</span>
-                  <span
-                    className={`font-black px-2 py-0.5 rounded-full text-[10px] ${
-                      logisticQuery.data?.risk_level === 'Low'
-                        ? 'bg-[#F1F8F3] text-success border border-[#2E7D32]/30'
-                        : logisticQuery.data?.risk_level === 'Moderate'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-[#FDF3EE] text-danger border border-[#B34A26]/30'
-                    }`}
-                  >
-                    {logisticQuery.data?.predicted_label ?? 'Within Budget'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Model 3: PyTorch LSTM Sequence Forecaster */}
-              <div
-                onClick={() => navigate('/ai-lab?tab=lstm')}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                      3. PyTorch LSTM
-                    </span>
-                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                      Deep Learning
-                    </span>
-                  </div>
-                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                    Sequence Cash Flow Forecaster
-                  </h3>
-                  <p className="text-xl font-black text-deepEmerald mt-1">
-                    {formatInr(lstmQuery.data?.next_day_predicted_net ?? 295)}
-                    <span className="text-xs font-semibold text-textMuted ml-1">tomorrow net</span>
-                  </p>
-                </div>
-                <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
-                  <span className="text-textSecondary">Test MAE:</span>
-                  <span className="font-bold text-deepEmerald">
-                    ₹{lstmQuery.data?.metrics?.test_mae?.toFixed(0) ?? 197} (35 Epochs)
-                  </span>
-                </div>
-              </div>
-
-              {/* Model 4: K-Means Clustering Spending Discovery */}
-              <div
-                onClick={() => navigate('/ai-lab?tab=kmeans')}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                      4. K-Means Clustering
-                    </span>
-                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                      k = 3 Archetypes
-                    </span>
-                  </div>
-                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                    Spending Pattern Discovery
-                  </h3>
-                  <p className="text-sm font-extrabold text-deepEmerald mt-1.5 truncate">
-                    {kmeansQuery.data?.prominent_cluster?.title ?? 'Essential Living & Operational'}
-                  </p>
-                </div>
-                <div className="mt-2 pt-2 border-t border-white/50 flex items-center justify-between text-[11px]">
-                  <span className="text-textSecondary">Total Analyzed:</span>
-                  <span className="font-bold text-deepEmerald">
-                    {kmeansQuery.data?.total_analyzed ?? 180} transactions
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
 
           {/* SECTION: Recommended For You (2 Job Cards) */}
           <section className="pt-1">

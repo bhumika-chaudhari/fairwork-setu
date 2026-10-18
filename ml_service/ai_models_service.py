@@ -791,17 +791,117 @@ class AIModelsService:
                     "algorithm": "SentenceTransformer ('all-MiniLM-L6-v2') + FAISS Inner Product Flat Index",
                     "dataset": "4 verified official policy documents (Ayushman Bharat PM-JAY, ESIC Benefits, Rajasthan Gig Act 2023, PM-SYM Pension)",
                     "dataset_license": "Government Open Data / Public Policy Public Domain",
-                    "evaluation_metrics": {
-                        "mean_reciprocal_rank_at_4": 0.9167,
-                        "indexed_chunks": 16,
-                        "labeled_queries": 6
-                    },
                     "status": "Indexed & Validated",
                     "integrated_feature": "Health (Sehat) - Grounded Scheme & Health Triage Assistant"
                 }
             }
         }
 
+    def parse_assistant_intent(self, text: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Multilingual Intent & Action Parser for FairWork Setu's unified voice assistant.
+        Handles Hindi, Marathi, English, and Hinglish.
+        """
+        text_str = str(text or "").strip()
+        lowered = text_str.lower()
+
+        # 1. Detect language
+        lang = "en"
+        if re.search(r"[\u0900-\u097F]", text_str):
+            if re.search(r"आहे|नाही|झाले|झाला|केले|केला|पाहिजे|रुपये|मिळाले|मिळवले|खर्च|काम|करायचे|मला|माझे|सांगा|कशी|कसा|द्या", text_str):
+                lang = "mr"
+            else:
+                lang = "hi"
+        elif re.search(r"\b(mala|mazha|mazhe|ahe|ahet|nahi|jhale|zale|kela|kele|pahije|kamavle|kharch zala|paise|ani)\b", lowered):
+            lang = "mr"
+        elif re.search(r"\b(aaj|kal|kamaya|kharcha|kharch|rupaye|batao|chahiye|kaam|bukhar|dard|paise|kitna|hua|likho|jodo)\b", lowered):
+            lang = "hi"
+
+        # 2. Critical Health Emergency Check
+        is_emergency = any(k in lowered for k in [
+            "chest pain", "seene mein dard", "chaati madhe dard", "heart attack",
+            "breathless", "saans nahi", "saas lene", "heavy bleeding", "bahut khoon",
+            "accident", "unconscious", "behosh", "chakkar khakar gir"
+        ])
+        if is_emergency:
+            reply = "CRITICAL EMERGENCY DETECTED: Please stop physical work and call 112 or 108 immediately."
+            if lang == "hi":
+                reply = "आपातकालीन स्वास्थ्य चेतावनी: कृपया तुरंत काम रोकें और 112 या 108 पर संपर्क करें।"
+            elif lang == "mr":
+                reply = "वैद्यकीय आणीबाणी: कृपया त्वरित काम थांबवा आणि 112 किंवा 108 वर संपर्क साधा."
+
+            return {
+                "intent": "health_emergency",
+                "language": lang,
+                "is_emergency": True,
+                "emergency_numbers": ["112", "108"],
+                "reply": reply,
+                "confidence": 0.99
+            }
+
+        # 3. Navigation
+        nav_map = {
+            "money": "/dhan", "dhan": "/dhan", "paisa": "/dhan", "paise": "/dhan",
+            "work": "/kaam", "kaam": "/kaam", "job": "/kaam", "jobs": "/kaam",
+            "health": "/sehat", "sehat": "/sehat", "hospital": "/sehat", "doctor": "/sehat",
+            "skill": "/kaushal", "skills": "/kaushal", "kaushal": "/kaushal", "course": "/kaushal",
+            "rights": "/haq", "haq": "/haq", "home": "/home", "profile": "/profile"
+        }
+        if any(lowered.startswith(p) for p in ["open ", "go to ", "take me to "]) or any(k in lowered for k in ["page kholo", "dikhao", "dakhav"]):
+            for k, route in nav_map.items():
+                if k in lowered:
+                    return {
+                        "intent": "navigate_page",
+                        "language": lang,
+                        "route": route,
+                        "reply": f"Opening {k.capitalize()} for you...",
+                        "confidence": 0.95
+                    }
+
+        # 4. Job Search
+        if any(w in lowered for w in ["job", "jobs", "kaam", "gig", "delivery", "electrician", "plumber", "driver", "rozi"]):
+            return {
+                "intent": "search_jobs",
+                "language": lang,
+                "query": text_str,
+                "confidence": 0.90
+            }
+
+        # 5. Skills
+        if any(w in lowered for w in ["course", "skill", "kaushal", "learn", "training", "seekhna", "shikayche"]):
+            return {
+                "intent": "recommend_skills",
+                "language": lang,
+                "query": text_str,
+                "confidence": 0.90
+            }
+
+        # 6. Health & Welfare
+        if any(w in lowered for w in ["fever", "bukhar", "taap", "cough", "khansi", "pain", "dard", "ayushman", "abha", "bimar", "tabiyat"]):
+            return {
+                "intent": "health_guidance",
+                "language": lang,
+                "query": text_str,
+                "confidence": 0.88
+            }
+
+        # 7. Financial Transaction
+        tx = self.extract_transaction(text_str)
+        if tx["amount"] is not None:
+            return {
+                "intent": "add_income" if tx["transaction_type"] == "income" else "add_expense",
+                "language": lang,
+                "transaction": tx,
+                "confidence": tx.get("confidence", 0.90)
+            }
+
+        return {
+            "intent": "general_help",
+            "language": lang,
+            "confidence": 0.70
+        }
+
 
 # Singleton service instance
 ai_models_service = AIModelsService()
+

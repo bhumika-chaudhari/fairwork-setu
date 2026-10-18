@@ -17,7 +17,6 @@ import DhanPage from './pages/DhanPage';
 import SehatPage from './pages/SehatPage';
 import KaushalPage from './pages/KaushalPage';
 import ProfilePage from './pages/ProfilePage';
-import AiLabPage from './pages/AiLabPage';
 import HaqSetuPage from './pages/HaqSetuPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -95,8 +94,8 @@ export default function App() {
                     <Route path="/health" element={<Navigate to="/sehat" replace />} />
                     <Route path="/kaushal" element={<KaushalPage />} />
                     <Route path="/skills" element={<Navigate to="/kaushal" replace />} />
-                    <Route path="/ai-lab" element={<AiLabPage />} />
-                    <Route path="/ml" element={<Navigate to="/ai-lab" replace />} />
+                    <Route path="/ai-lab" element={<Navigate to="/home" replace />} />
+                    <Route path="/ml" element={<Navigate to="/home" replace />} />
                     <Route path="/haq" element={<HaqSetuPage />} />
                     <Route path="/haq-setu" element={<Navigate to="/haq" replace />} />
                     <Route path="/rights" element={<Navigate to="/haq" replace />} />

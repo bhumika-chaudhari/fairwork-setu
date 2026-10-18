@@ -81,6 +81,13 @@ class HealthRAGRequest(BaseModel):
     top_k: Optional[int] = 4
 
 
+class AssistantIntentRequest(BaseModel):
+    text: str = Field(..., description="Worker utterance in Hindi, Marathi, English, or Hinglish")
+    language: Optional[str] = Field("auto", description="Spoken or typed language code")
+    context: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Dialogue context")
+
+
+
 # -------------------------------------------------------------------------
 # ROUTES
 # -------------------------------------------------------------------------
@@ -177,3 +184,14 @@ def search_health_welfare_rag(payload: HealthRAGRequest):
         payload.query,
         top_k=payload.top_k or 4
     )
+
+
+@ai_models_router.post("/assistant-intent")
+def parse_assistant_intent(payload: AssistantIntentRequest):
+    """
+    Unified Multilingual NLU & Action Router for Setu Voice Assistant.
+    """
+    if not payload.text.strip():
+        raise HTTPException(status_code=400, detail="Utterance text cannot be empty.")
+    return ai_models_service.parse_assistant_intent(payload.text, context=payload.context)
+
