@@ -133,10 +133,13 @@ The application declares essential system capabilities in `android/app/src/main/
 * **Algorithm & Physics:**
   * Normalizes 3-axis acceleration against Earth gravity:
     $$gForce = \frac{\sqrt{x^2 + y^2 + z^2}}{g_{earth}}$$
-  * Threshold condition: $gForce > 2.7\text{ G}$ with a `SHAKE_SLOP_TIME_MS = 1500\text{ ms}` anti-chatter cooldown to eliminate false triggers caused by vehicle vibration or walking.
+  * **Multi-Peak Reversal Validation (Anti-False-Trigger):**
+    * Threshold condition: $gForce \ge 2.7\text{ G}$ (normal phone handling, walking, or screen tapping stays below 2.0 G).
+    * Requires **at least 2 consecutive back-and-forth acceleration peaks** within a 650 ms rolling oscillation window, separated by at least 160 ms. Single-shock impacts (e.g. setting phone on a table or picking it up) only produce 1 peak and are rejected.
+    * Post-trigger cooldown: `SHAKE_COOLDOWN_MS = 2500 ms` prevents trailing vibrations from re-triggering.
   * Upon detection:
     1. Triggers a **180ms haptic vibration pulse** (`Vibrator` / `VibrationEffect`).
-    2. Automatically navigates the app into the **Voice Assistant Logger** (`/home?action=voice`).
+    2. Directly invokes `window.dispatchEvent(new CustomEvent('setu-open-voice'))` via WebView, opening the Voice Assistant overlay without disruptive full-page navigation or URL pollution.
 
 ### 3.6 Feature 6: Camera Bill & Receipt OCR Scanner
 * **Component Type:** Client-side Multimodal Image Ingestion & Entity Parser

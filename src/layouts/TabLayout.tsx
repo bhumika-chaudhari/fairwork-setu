@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
@@ -28,9 +28,16 @@ export default function TabLayout() {
 
   // Listen for Native Shake-to-Log & Quick Tile Voice Triggers
   const [searchParams, setSearchParams] = useSearchParams();
+  const lastVoiceActionRef = useRef<number>(0);
+
   useEffect(() => {
-    if (searchParams.get('action') === 'voice') {
-      openAssistant();
+    const action = searchParams.get('action');
+    if (action === 'voice') {
+      const now = Date.now();
+      if (now - lastVoiceActionRef.current > 1200) {
+        lastVoiceActionRef.current = now;
+        openAssistant();
+      }
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
         next.delete('action');
@@ -40,7 +47,14 @@ export default function TabLayout() {
   }, [searchParams, openAssistant, setSearchParams]);
 
   useEffect(() => {
-    const handleVoiceEvent = () => openAssistant();
+    let lastVoiceEventTime = 0;
+    const handleVoiceEvent = () => {
+      const now = Date.now();
+      if (now - lastVoiceEventTime > 1200) {
+        lastVoiceEventTime = now;
+        openAssistant();
+      }
+    };
     window.addEventListener('setu-open-voice', handleVoiceEvent);
     return () => window.removeEventListener('setu-open-voice', handleVoiceEvent);
   }, [openAssistant]);
