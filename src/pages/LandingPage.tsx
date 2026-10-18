@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import SetuLogo from '../components/SetuLogo';
 import LanguageSelector from '../components/LanguageSelector';
 import { AppIcon } from '../lib/icons';
+import { useProfile } from '../hooks/ProfileContext';
 
 const FEATURE_CARDS = [
   {
@@ -51,6 +52,7 @@ const FEATURE_CARDS = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { profile, onboardingComplete } = useProfile();
 
   return (
     <div className="relative min-h-screen w-full bg-transparent overflow-x-hidden flex flex-col justify-between">
@@ -129,8 +131,8 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* Primary Action Button (Get Started) */}
-        <div className="mt-6 pt-2">
+        {/* Action Buttons (Get Started + Quick Dashboard shortcut if already onboarded) */}
+        <div className="mt-6 pt-2 space-y-2.5">
           <motion.button
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -142,6 +144,20 @@ export default function LandingPage() {
             <span>{t('landing.getStarted')}</span>
             <AppIcon name="arrow-forward" size={18} />
           </motion.button>
+
+          {onboardingComplete && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.55 }}
+              type="button"
+              onClick={() => navigate('/home')}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/70 hover:bg-white text-sm font-extrabold text-deepEmerald shadow-xs border border-white/90 backdrop-blur-md hover:shadow-sm active:scale-95 transition-all"
+            >
+              <AppIcon name="home" size={16} className="text-primary" />
+              <span>{t('landing.goToDashboard', 'Proceed to Dashboard')} ({profile.name}) →</span>
+            </motion.button>
+          )}
         </div>
 
         {/* Bottom Language Selector Pills row */}

@@ -99,7 +99,7 @@ export default function TabLayout() {
               type="button"
               onClick={async () => {
                 await logout();
-                navigate('/welcome');
+                navigate('/');
               }}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-white/60 hover:bg-rose-50 text-textSecondary hover:text-rose-600 transition-all border border-white/80 shadow-xs active:scale-95"
               title={t('profileScreen.logout', 'Log Out')}

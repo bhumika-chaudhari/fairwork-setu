@@ -160,7 +160,7 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/welcome', { replace: true });
+    navigate('/', { replace: true });
   };
 
   const handleResetDemoData = () => {

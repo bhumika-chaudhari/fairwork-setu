@@ -25,13 +25,15 @@ import { AppIcon } from '../lib/icons';
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { profile, completeOnboarding } = useProfile();
+  const { profile, completeOnboarding, onboardingComplete } = useProfile();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>(
     (i18n.language as LanguageCode) || 'hi'
   );
-  const [fullName, setFullName] = useState(profile.name || '');
+  const [fullName, setFullName] = useState(
+    onboardingComplete ? profile.name : profile.name === 'Ramesh Kumar' ? '' : profile.name
+  );
   const [gender, setGender] = useState<Gender | null>(profile.gender || null);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl || '');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -143,7 +145,7 @@ export default function OnboardingPage() {
                 if (step > 1) {
                   setStep((step - 1) as 1 | 2);
                 } else {
-                  navigate('/welcome');
+                  navigate('/');
                 }
               }}
               className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 backdrop-blur-md shadow-glass border border-white/80 hover:bg-white/85 text-deepEmerald transition-all active:scale-95"

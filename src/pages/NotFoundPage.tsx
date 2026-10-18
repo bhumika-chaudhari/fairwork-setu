@@ -32,10 +32,10 @@ export default function NotFoundPage() {
         </button>
         <button
           type="button"
-          onClick={() => navigate('/welcome')}
+          onClick={() => navigate('/')}
           className="flex h-12 items-center gap-2 rounded-full bg-white/80 border border-border/80 px-6 font-bold text-deepEmerald shadow-glass hover:bg-white transition-transform active:scale-[0.98]"
         >
-          <span>Welcome Page</span>
+          <span>Landing Page</span>
         </button>
       </div>
     </div>

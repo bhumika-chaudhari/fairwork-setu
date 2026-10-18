@@ -9,7 +9,6 @@ import { SpeechProvider } from './lib/speechSynthesisContext';
 import AudioPlayerBar from './components/AudioPlayerBar';
 import AtmosphericBackground from './components/AtmosphericBackground';
 import TabLayout from './layouts/TabLayout';
-import RootRedirect from './pages/RootRedirect';
 import LandingPage from './pages/LandingPage';
 import OnboardingPage from './pages/OnboardingPage';
 import HomePage from './pages/HomePage';
@@ -20,6 +19,26 @@ import KaushalPage from './pages/KaushalPage';
 import ProfilePage from './pages/ProfilePage';
 import AiLabPage from './pages/AiLabPage';
 import NotFoundPage from './pages/NotFoundPage';
+
+import { useProfile } from './hooks/ProfileContext';
+
+function RequireOnboarding({ children }: { children: React.ReactNode }) {
+  const { ready, onboardingComplete } = useProfile();
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-page">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-mint border-t-deepEmerald" />
+          <span className="text-sm font-bold text-deepEmerald">Setu • सेतु</span>
+        </div>
+      </div>
+    );
+  }
+  if (!onboardingComplete) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
 
 const queryClient = new QueryClient();
 
@@ -51,13 +70,21 @@ export default function App() {
                 <AtmosphericBackground />
                 <BrowserRouter>
                 <Routes>
-                  {/* Entry & Onboarding */}
-                  <Route path="/" element={<RootRedirect />} />
+                  {/* First screen: Landing Page */}
+                  <Route path="/" element={<LandingPage />} />
                   <Route path="/welcome" element={<LandingPage />} />
+
+                  {/* Information Entry / Profile Setup */}
                   <Route path="/onboarding" element={<OnboardingPage />} />
 
-                  {/* Main App with Shared Navigation */}
-                  <Route element={<TabLayout />}>
+                  {/* Main Dashboard & App Tabs (Protected by Onboarding) */}
+                  <Route
+                    element={
+                      <RequireOnboarding>
+                        <TabLayout />
+                      </RequireOnboarding>
+                    }
+                  >
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/kaam" element={<KaamPage />} />
                     <Route path="/work" element={<Navigate to="/kaam" replace />} />
@@ -73,7 +100,14 @@ export default function App() {
                   </Route>
 
                   {/* Profile & Utility */}
-                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      <RequireOnboarding>
+                        <ProfilePage />
+                      </RequireOnboarding>
+                    }
+                  />
                   <Route path="/404" element={<NotFoundPage />} />
                   <Route path="*" element={<Navigate to="/404" replace />} />
                 </Routes>

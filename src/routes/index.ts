@@ -1,6 +1,7 @@
 export const appRoutes = {
   root: '/',
-  landing: '/welcome',
+  landing: '/',
+  welcome: '/welcome',
   onboarding: '/onboarding',
   home: '/home',
   kaam: '/kaam',
