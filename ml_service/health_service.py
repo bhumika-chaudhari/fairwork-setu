@@ -789,6 +789,27 @@ def ask_health_assistant(payload: AskHealthPayload):
         }
 
     else:
+        # Ground with Model 8 Health & Welfare RAG
+        try:
+            from ai_models_service import ai_models_service
+            rag_res = ai_models_service.search_health_welfare_rag(payload.question, top_k=2)
+            passages = rag_res.get("passages", [])
+            if passages and passages[0].get("similarity_score", 0) > 0.40:
+                top_p = passages[0]
+                src = top_p.get("source", "verified_scheme.md")
+                clean_text = top_p.get("text", "").replace("#", "").strip()[:400]
+                return {
+                    "answer": f"Based on verified government policy ({src}):\n\n{clean_text}...\n\nFor personalized verification, visit your nearest Primary Health Centre (PHC) or empanelled hospital with your Aadhaar and Ration Card.",
+                    "isEmergency": False,
+                    "sources": [
+                        {"title": f"Verified Document: {src} (Score: {top_p.get('similarity_score')})", "url": "https://pmjay.gov.in"},
+                        {"title": "National Health Authority Helpline (14555)", "url": "tel:14555"}
+                    ],
+                    "disclaimer": "Retrieved via Setu Model 8 Health & Welfare RAG. Informational only; consult licensed health professionals."
+                }
+        except Exception:
+            pass
+
         return {
             "answer": f"Thank you for asking Setu. Regarding '{payload.question}':\n\nFor non-emergency health concerns, we recommend visiting your nearest Urban Primary Health Centre or Ayushman Arogya Mandir for a free checkup with a licensed medical officer. If this relates to workplace fatigue or dehydration, please remember to take shade breaks and drink water with electrolytes.\n\nIf you are experiencing severe pain, difficulty breathing, or sudden weakness, please seek immediate medical care at a hospital casualty or call 112.",
             "isEmergency": False,
@@ -798,3 +819,4 @@ def ask_health_assistant(payload: AskHealthPayload):
             ],
             "disclaimer": "Setu provides health navigation and welfare guidance only. Always consult a qualified medical professional for health diagnoses and treatment."
         }
+

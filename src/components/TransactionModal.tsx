@@ -5,7 +5,9 @@ import { useTransactions } from '../hooks/TransactionContext';
 import type { Transaction, TransactionType, TransactionCategory } from '../types/transaction';
 import { CATEGORY_ICONS, CATEGORY_TRANSLATION_KEYS } from '../services/transactionService';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
+import { classifyExpenseText, extractTransactionEntities } from '../services/aiModelsClient';
 import ModalPortal from './ModalPortal';
+
 
 const INCOME_CATEGORIES: TransactionCategory[] = [
   'work_earnings',
@@ -73,6 +75,72 @@ export default function TransactionModal({
   const [workRef, setWorkRef] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Model 1 & 5 Integration States
+  const [smartInput, setSmartInput] = useState('');
+  const [isSmartParsing, setIsSmartParsing] = useState(false);
+  const [aiSuggestedCat, setAiSuggestedCat] = useState<{ raw: string; mapped: TransactionCategory; confidence: number } | null>(null);
+
+  const mapModel1ToTxCategory = (rawCat: string): TransactionCategory => {
+    const c = rawCat.toLowerCase();
+    if (c.includes('fuel')) return 'travel_fuel';
+    if (c.includes('food') || c.includes('grocer')) return 'food';
+    if (c.includes('mainten') || c.includes('tool') || c.includes('educat')) return 'tools';
+    if (c.includes('health') || c.includes('medic')) return 'medical';
+    if (c.includes('hous') || c.includes('rent')) return 'rent';
+    return 'other';
+  };
+
+  const handleSmartParse = async () => {
+    if (!smartInput.trim()) return;
+    setIsSmartParsing(true);
+    try {
+      const res = await extractTransactionEntities(smartInput);
+      if (res.transaction_type && (res.transaction_type === 'income' || res.transaction_type === 'expense')) {
+        setType(res.transaction_type);
+      }
+      if (res.amount && res.amount > 0) {
+        setAmount(res.amount.toString());
+      }
+      if (res.category) {
+        const mapped = mapModel1ToTxCategory(res.category);
+        setCategory(mapped);
+      }
+      if (res.text) {
+        setDescription(res.text);
+      }
+      setSmartInput('');
+    } catch (err) {
+      console.error('Smart parse error:', err);
+    } finally {
+      setIsSmartParsing(false);
+    }
+  };
+
+  // Real-time AI Category suggestion for expense description (Model 1)
+  useEffect(() => {
+    if (type !== 'expense' || description.trim().length < 4) {
+      setAiSuggestedCat(null);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await classifyExpenseText(description);
+        if (res && res.category) {
+          const mapped = mapModel1ToTxCategory(res.category);
+          setAiSuggestedCat({
+            raw: res.category,
+            mapped,
+            confidence: Math.round(res.confidence * 100),
+          });
+        }
+      } catch {
+        // ignore
+      }
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [description, type]);
+
 
   // Sync state when modal opens or editingTx changes
   useEffect(() => {
@@ -281,8 +349,45 @@ export default function TransactionModal({
             </div>
           </div>
 
+          {/* Model 5: AI Hinglish Quick-Fill Bar */}
+          {!editingTx && (
+            <div className="rounded-2xl border border-[#E5953E]/40 bg-gradient-to-r from-[#FDF8F0] to-[#FFF9F3] p-2.5 shadow-xs">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[11px] font-bold text-terracotta flex items-center gap-1">
+                  <span>⚡</span>
+                  <span>AI Quick Fill (Hinglish / English)</span>
+                </span>
+                <span className="text-[10px] text-textMuted font-mono">Model 5 Parser</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="text"
+                  value={smartInput}
+                  onChange={(e) => setSmartInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSmartParse();
+                    }
+                  }}
+                  placeholder="e.g. Aaj petrol 250 diya or 800 Zomato se kamaya"
+                  className="flex-1 rounded-xl border border-stone-200 bg-white px-2.5 py-1.5 text-xs text-textPrimary placeholder:text-stone-400 focus:outline-none focus:border-terracotta"
+                />
+                <button
+                  type="button"
+                  onClick={handleSmartParse}
+                  disabled={isSmartParsing || !smartInput.trim()}
+                  className="rounded-xl bg-terracotta hover:bg-[#8D3418] text-white px-3 py-1.5 text-xs font-bold shadow-xs disabled:opacity-50 active:scale-95 transition-all shrink-0"
+                >
+                  {isSmartParsing ? '...' : 'Auto-Fill'}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Quick Presets (Only when adding new) */}
           {!editingTx && (
+
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[11px] font-bold text-textMuted uppercase tracking-wider">
@@ -383,7 +488,26 @@ export default function TransactionModal({
               }
               className="w-full rounded-2xl border border-white/85 bg-white/65 hover:bg-white/80 focus:bg-white/92 backdrop-blur-xl px-3.5 py-2.5 text-xs font-semibold text-textPrimary shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] focus:border-primary/50 focus:ring-4 focus:ring-mint/30 focus:outline-none transition-all placeholder:text-textMuted"
             />
+            {aiSuggestedCat && (
+              <div className="mt-1.5 flex items-center justify-between rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-emerald-800 animate-fade-in">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="font-bold">🤖 AI Suggestion:</span>
+                  <span className="capitalize">{aiSuggestedCat.raw}</span>
+                  <span className="text-[10px] text-emerald-600">({aiSuggestedCat.confidence}% confidence)</span>
+                </div>
+                {category !== aiSuggestedCat.mapped && (
+                  <button
+                    type="button"
+                    onClick={() => setCategory(aiSuggestedCat.mapped)}
+                    className="ml-2 rounded-lg bg-emerald-700 text-white px-2 py-0.5 text-[11px] font-bold hover:bg-emerald-800 active:scale-95 transition-all shrink-0"
+                  >
+                    Apply Category
+                  </button>
+                )}
+              </div>
+            )}
           </div>
+
 
           {/* Date & Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

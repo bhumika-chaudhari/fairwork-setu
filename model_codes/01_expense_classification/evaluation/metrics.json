@@ -1,0 +1,161 @@
+{
+  "accuracy": 0.75,
+  "weighted_precision": 0.7375,
+  "weighted_recall": 0.75,
+  "weighted_f1": 0.7361111111111112,
+  "classification_report": {
+    "education": {
+      "precision": 0.75,
+      "recall": 0.75,
+      "f1-score": 0.75,
+      "support": 4.0
+    },
+    "emi": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "food": {
+      "precision": 0.75,
+      "recall": 0.75,
+      "f1-score": 0.75,
+      "support": 4.0
+    },
+    "fuel": {
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1-score": 0.8888888888888888,
+      "support": 4.0
+    },
+    "health": {
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1-score": 0.5,
+      "support": 4.0
+    },
+    "housing": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4.0
+    },
+    "maintenance": {
+      "precision": 0.6,
+      "recall": 0.75,
+      "f1-score": 0.6666666666666666,
+      "support": 4.0
+    },
+    "personal": {
+      "precision": 0.5,
+      "recall": 0.25,
+      "f1-score": 0.3333333333333333,
+      "support": 4.0
+    },
+    "accuracy": 0.75,
+    "macro avg": {
+      "precision": 0.7375,
+      "recall": 0.75,
+      "f1-score": 0.7361111111111112,
+      "support": 32.0
+    },
+    "weighted avg": {
+      "precision": 0.7375,
+      "recall": 0.75,
+      "f1-score": 0.7361111111111112,
+      "support": 32.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      3,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      3,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      1
+    ]
+  ],
+  "class_labels": [
+    "education",
+    "emi",
+    "food",
+    "fuel",
+    "health",
+    "housing",
+    "maintenance",
+    "personal"
+  ]
+}

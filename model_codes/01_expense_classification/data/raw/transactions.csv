@@ -1,0 +1,161 @@
+text,category
+Petrol for bike delivery shift 250 rs,fuel
+HP petrol pump 300 rupees fuel,fuel
+Diesel filled for auto 500 rs,fuel
+CNG cylinder gas refill 280,fuel
+IOCL petrol pump 200 fuel,fuel
+Bharat Petroleum fuel tank refill 350,fuel
+Bike petrol expense for Swiggy shift 180 rs,fuel
+Auto CNG gas 320 rupees,fuel
+Petrol pump fuel expense 400,fuel
+Delivery trip petrol fill 250,fuel
+Gaddi mein petrol dalwaya 300 rs,fuel
+Auto diesel refill 600 rupees,fuel
+Shell petrol pump fuel 220 rs,fuel
+Bike delivery petrol 150 rs,fuel
+CNG pump auto fuel 290 rs,fuel
+Petrol bill 500 rupees,fuel
+Daily bike fuel expense 200 rs,fuel
+Commercial auto fuel refill 450,fuel
+Delivery bike petrol fill 380 rs,fuel
+CNG gas filling station 270,fuel
+Lunch at dhaba during afternoon shift 120 rs,food
+Chai nashta at tea stall 40 rupees,food
+Dinner thali after evening delivery 90,food
+Tea and biscuits roadside stall 30 rs,food
+Samosa and tea afternoon snacks 50 rs,food
+Lunch thali meal 80 rupees,food
+Roti sabzi lunch at roadside hotel 70 rs,food
+Morning breakfast poha chai 45 rs,food
+Night shift dinner paratha 85 rs,food
+Tea and snacks with auto drivers 60 rs,food
+Biryani dinner parcel 150 rupees,food
+Chai bun maska breakfast 40 rs,food
+Midday lunch meal parcel 110 rs,food
+Evening snacks chai pakoda 55 rs,food
+Lunch meal plate 95 rs,food
+Tea stall bill morning 25 rs,food
+Cold drink and biscuits 35 rs,food
+Night shift meal roti tadka 75 rs,food
+Dhaba lunch parcel 130 rs,food
+Breakfast tea omelette 65 rs,food
+Apollo pharmacy fever paracetamol medicine 120 rs,health
+Doctor consultation clinic fee 200 rupees,health
+Cough syrup and painkiller tablets 150 rs,health
+Jan Aushadhi Kendra generic medicine 85 rs,health
+Bandage and Dettol wound dressing 60 rs,health
+Back pain spray and balm for delivery strain 140 rs,health
+Eye drops for dust irritation 95 rs,health
+Government dispensary registration fee 20 rs,health
+Blood pressure checkup clinic 50 rs,health
+Child fever syrup pharmacy 110 rs,health
+Medical store antibiotic tablets 180 rs,health
+Dawa khana medical purchase 220 rs,health
+Clinic doctor visit consultation 250 rs,health
+Pharmacy vitamin and calcium tablets 160 rs,health
+First aid ointment and cotton 45 rs,health
+Physiotherapy for neck sprain 300 rs,health
+Medical lab test charges 350 rs,health
+Ayurvedic joint pain oil 130 rs,health
+Emergency medicine at night chemist 190 rs,health
+Dental pain relief tablet 75 rs,health
+Bike rear tyre puncture repair 80 rs,maintenance
+Engine mobil oil change Castrol 350 rupees,maintenance
+Brake shoe replacement for motorcycle 220 rs,maintenance
+Clutch wire broke mechanic repair 150 rs,maintenance
+Motorcycle general servicing at garage 500 rs,maintenance
+Auto rickshaw tyre replacement tube 400 rs,maintenance
+Bike chain lubrication and tightening 60 rs,maintenance
+Headlight bulb replacement 90 rs,maintenance
+Horn repair and electrical wiring check 120 rs,maintenance
+Mechanic labor charge for oil change 100 rs,maintenance
+Air pressure and puncture repair 50 rs,maintenance
+Bike battery water and charging 150 rs,maintenance
+Rearview mirror replacement bike 140 rs,maintenance
+Auto brake oil refill and checkup 180 rs,maintenance
+Front tyre tube vulcanizing puncture 90 rs,maintenance
+Engine tuning and carburetor cleaning 280 rs,maintenance
+Shock absorber repair bike 320 rs,maintenance
+Silencer welding at local workshop 150 rs,maintenance
+Bike wash and polish 100 rs,maintenance
+Spark plug new replacement 110 rs,maintenance
+Monthly room rent payment 3000 rupees,housing
+Kamra kiraya payment to landlord 2500 rs,housing
+Electricity bijli bill payment 650 rs,housing
+LPG cooking gas cylinder refill 850 rupees,housing
+Water tanker supply payment 200 rs,housing
+House rent transfer for current month 3500 rs,housing
+Room light bill deposit 420 rs,housing
+Indane gas cylinder booking 820 rs,housing
+Chawl room rent cash payment 2200 rs,housing
+Society maintenance bill 350 rs,housing
+Bijli meter recharge bill 500 rs,housing
+Cooking gas cylinder delivery charge 860 rs,housing
+Rental deposit part payment 1500 rs,housing
+Water motor repair shared cost 150 rs,housing
+Room rent for sharing accommodation 1800 rs,housing
+Electricity meter bill payment 720 rs,housing
+Kamra kiraya cash given 2800 rs,housing
+Gas cylinder refill subsidy deducted 810 rs,housing
+Quarterly water tax bill 300 rs,housing
+Sublet room rent payment 2400 rs,housing
+Two wheeler bike loan monthly EMI 2200 rs,emi
+Bajaj Finance smartphone EMI deduction 1450,emi
+Auto loan monthly installment paid 3500 rs,emi
+Hero Fincorp motorcycle loan kist 1850 rs,emi
+Personal loan EMI bank debit 1200 rupees,emi
+TV installment consumer loan EMI 800 rs,emi
+Vehicle finance loan installment 2600 rs,emi
+Mobile phone monthly EMI payment 999 rs,emi
+Microfinance group loan weekly installment 350 rs,emi
+Bandhan bank loan weekly repayment 400 rs,emi
+Bike EMI auto debited from account 2150 rs,emi
+Auto rickshaw financier EMI installment 3200 rs,emi
+App loan credit repayment 750 rs,emi
+Vehicle purchase finance installment 2400 rs,emi
+Scooter loan EMI payment 1950 rs,emi
+Consumer durable loan EMI 650 rs,emi
+Gold loan monthly interest payment 450 rs,emi
+Monthly loan repayment installment 1600 rs,emi
+Bike finance EMI deduction 2050 rs,emi
+Two-wheeler installment payment 1800 rs,emi
+Jio prepaid mobile recharge 299 rs pack,personal
+Airtel mobile data recharge 239 rupees,personal
+Haircut and shaving at local salon 100 rs,personal
+Soap shampoo and toothpaste toiletries 180 rs,personal
+Footwear sandals for walking delivery 250 rs,personal
+Mobile screen guard tempered glass 120 rs,personal
+Raincoat for monsoon delivery shift 350 rs,personal
+Mobile phone charger cable replacement 150 rs,personal
+Cotton shirts from weekly market 300 rs,personal
+Mobile recharge monthly unlimited plan 349 rs,personal
+Vi prepaid number validity recharge 199 rs,personal
+Gloves and face mask for dust protection 80 rs,personal
+Water bottle and lunch bag 160 rs,personal
+Mobile holder for bike handlebar 220 rs,personal
+Barber hair cutting salon 80 rs,personal
+Bath soap detergent powder washing 140 rs,personal
+Power bank USB charging cable 180 rs,personal
+Socks and handkerchiefs 90 rs,personal
+Bedsheet and pillow cover 250 rs,personal
+Mobile phone battery repair 350 rs,personal
+Child school monthly tuition fee 600 rupees,education
+School notebooks and stationery pens 150 rs,education
+Coaching class fees for daughter 800 rs,education
+School bag and water bottle child 350 rs,education
+Computer training course admission fee 1000 rs,education
+Driving license test fee and learner form 450 rs,education
+Children school uniform tailoring 500 rs,education
+English speaking practice book 120 rs,education
+Exam fees deposit at municipal school 200 rs,education
+Tuition class math teacher fee 500 rs,education
+School textbooks set purchase 420 rs,education
+Drawing notebook and crayons for child 85 rs,education
+Vocational skill certificate registration 300 rs,education
+School picnic contribution 150 rs,education
+Monthly coaching tuition 700 rs,education
+Geometry box and notebooks 110 rs,education
+Hindi and English story books 90 rs,education
+Annual school sports activity fee 250 rs,education
+Skill center admission form 100 rs,education
+School homework guide books 180 rs,education

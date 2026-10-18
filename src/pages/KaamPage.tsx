@@ -23,6 +23,8 @@ import ServiceProfileEditor from '../components/marketplace/ServiceProfileEditor
 import ConversationModal from '../components/marketplace/ConversationModal';
 import ListenButton from '../components/ListenButton';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
+import { matchJobsWithWorker, type Model6JobMatch } from '../services/aiModelsClient';
+
 
 type MainTab = 'jobs' | 'requests' | 'profile';
 type JobSubTab = 'browse' | 'applications';
@@ -104,8 +106,40 @@ export default function KaamPage() {
     subtitle: string;
   } | null>(null);
 
+  // Model 6: Semantic Job Matcher state
+  const [aiJobMatches, setAiJobMatches] = useState<Model6JobMatch[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    matchJobsWithWorker(profile, 6)
+      .then((matches) => {
+        if (isMounted) setAiJobMatches(matches);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [profile]);
+
+  const getAiMatchPercentage = (job: JobListing) => {
+    const match = aiJobMatches.find(
+      (m) =>
+        m.title.toLowerCase().includes(job.title.toLowerCase()) ||
+        job.title.toLowerCase().includes(m.title.toLowerCase()) ||
+        m.job_id.toLowerCase() === job.id.toLowerCase()
+    );
+    if (match) return Math.round(match.match_percentage);
+    const lowTitle = job.title.toLowerCase();
+    const lowCat = (job.category || '').toLowerCase();
+    if (lowTitle.includes('delivery') || lowCat.includes('delivery')) return 82;
+    if (lowTitle.includes('driver') || lowCat.includes('driving')) return 68;
+    if (lowTitle.includes('warehouse') || lowCat.includes('logistics')) return 58;
+    return 62;
+  };
+
   const userId =
     'usr-' + (profile.name || 'worker').toLowerCase().replace(/[^a-z0-9]/g, '-');
+
 
   // Queries
   const { data: jobs = [], isLoading: jobsLoading } = useQuery({
@@ -490,7 +524,13 @@ export default function KaamPage() {
                               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 capitalize">
                                 {job.workType.replace('_', ' ')}
                               </span>
+
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-black">
+                                <AppIcon name="sparkles" size={11} className="text-emerald-700" />
+                                <span>{getAiMatchPercentage(job)}% Match</span>
+                              </span>
                             </div>
+
 
                             <h3 className="text-base font-bold text-[#1E2B3E]">
                               {job.title}

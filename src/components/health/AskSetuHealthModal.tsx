@@ -12,12 +12,14 @@ interface AskSetuHealthModalProps {
 }
 
 const SUGGESTED_PROMPTS = [
+  'How can a gig worker get 5 lakh hospital treatment under Ayushman Bharat?',
+  'What sickness cash benefits are provided by ESIC for injured workers?',
   'What should I do if I feel dizzy in the afternoon heat?',
   'Where is the nearest 24x7 government hospital in Pune?',
   'How can I get generic medicines at 50% discount?',
-  'What health benefits do gig workers qualify for under e-Shram?',
-  'First aid for a minor bike exhaust burn on my leg?',
+  'What is the PM-SYM 3,000 rupees monthly pension scheme?',
 ];
+
 
 export default function AskSetuHealthModal({
   initialQuery = '',

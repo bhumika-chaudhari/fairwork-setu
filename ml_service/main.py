@@ -19,10 +19,11 @@ from models.lstm_model import lstm_model
 from models.kmeans_clustering import kmeans_model
 from marketplace import marketplace_router
 from health_service import health_router
+from ai_models_router import ai_models_router
 
 app = FastAPI(
     title="Setu Financial & Livelihood Marketplace Service",
-    description="Production-grade AI/ML Microservice for cash flow forecasting, budget risk analysis, LSTM sequence prediction, transaction clustering, and worker marketplace.",
+    description="Production-grade AI/ML Microservice for cash flow forecasting, budget risk analysis, LSTM sequence prediction, transaction clustering, worker marketplace, and 8 integrated ML models.",
     version="1.0.0",
 )
 
@@ -37,6 +38,8 @@ app.add_middleware(
 
 app.include_router(marketplace_router)
 app.include_router(health_router)
+app.include_router(ai_models_router)
+
 
 
 # Request schemas

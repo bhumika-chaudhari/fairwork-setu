@@ -1,0 +1,20 @@
+{
+  "date_column": "date",
+  "target_column": "income",
+  "frequency": "D",
+  "feature_columns": [
+    "lag_1",
+    "lag_2",
+    "lag_3",
+    "lag_7",
+    "lag_14",
+    "rolling_mean_3",
+    "rolling_mean_7",
+    "rolling_mean_14",
+    "period_day",
+    "period_month",
+    "period_weekday"
+  ],
+  "train_rows": 84,
+  "test_rows": 22
+}

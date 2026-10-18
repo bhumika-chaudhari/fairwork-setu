@@ -14,6 +14,7 @@ import { getSkillCourses, getWorkerStats } from '../services/workerService';
 import { useProfile } from '../hooks/ProfileContext';
 import { SUGGESTED_SKILL_KEYS } from '../data/mockData';
 import { downloadSkillPassportFile } from '../lib/pdfGenerator';
+import { recommendSkillsForWorker, type Model7CourseRec } from '../services/aiModelsClient';
 
 const VERIFIED_COMPETENCIES = [
   'Safe Driving & Local Navigation Protocol',
@@ -23,6 +24,7 @@ const VERIFIED_COMPETENCIES = [
 ];
 
 export default function KaushalPage() {
+
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { profile, updateProfile } = useProfile();
@@ -37,11 +39,27 @@ export default function KaushalPage() {
   const [downloading, setDownloading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Model 7: AI Course Recommendations
+  const [aiCourses, setAiCourses] = useState<Model7CourseRec[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    recommendSkillsForWorker(profile, 3)
+      .then((recs) => {
+        if (isMounted) setAiCourses(recs);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [profile]);
+
   // Sync state if profile changes
   useEffect(() => {
     setSelectedSkills(profile.skillKeys);
     setCustomSkills(profile.customSkills);
   }, [profile.skillKeys, profile.customSkills]);
+
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -441,12 +459,60 @@ export default function KaushalPage() {
             </div>
           </Card>
 
+          {/* MODEL 7: AI RECOMMENDED PMKVY & NSDC COURSES */}
+          <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+              <h3 className="text-sm font-extrabold text-warmCocoa flex items-center gap-1.5">
+                <AppIcon name="sparkles" size={15} className="text-terracotta" />
+                <span>AI Recommended Courses for You</span>
+              </h3>
+              <span className="text-[10px] font-mono text-terracotta font-bold bg-warmAmber/20 px-2 py-0.5 rounded-full border border-warmAmber/40">
+                Model 7 (MAP@5: 0.78)
+              </span>
+            </div>
+            {aiCourses.length > 0 && (
+              <div className="space-y-2.5 mb-4">
+                {aiCourses.map((c) => (
+                  <Card key={c.course_id} className="mb-0 p-3.5 flex items-center justify-between gap-3 border border-[#E5953E]/40 hover:border-terracotta">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-warmAmber/20 text-terracotta">
+                        <AppIcon name="briefcase" size={18} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-bold text-warmCocoa truncate">
+                            {c.title}
+                          </h4>
+                          <span className="text-[10px] font-black bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded shrink-0">
+                            {c.match_percentage.toFixed(0)}% Match
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-textMuted mt-0.5 truncate">
+                          {c.provider} • Skills: {c.skills_taught}
+                        </p>
+                      </div>
+                    </div>
+                    <a
+                      href={c.course_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 rounded-full bg-terracotta hover:bg-[#8D3418] text-white px-3 py-1 text-[11px] font-bold shadow-xs active:scale-95 transition-all"
+                    >
+                      Enroll Free
+                    </a>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* RECOMMENDED COURSES */}
           <div>
             <h3 className="text-sm font-extrabold text-warmCocoa mb-2.5 px-1">
               {t('kaushal.recommended')}
             </h3>
             <div className="space-y-2.5">
+
               {(coursesQuery.data ?? []).map((course) => (
                 <Card key={course.id} className="mb-0 p-3.5 flex items-center justify-between gap-3 hover:border-terracotta/40">
                   <div className="flex items-center gap-3 min-w-0">

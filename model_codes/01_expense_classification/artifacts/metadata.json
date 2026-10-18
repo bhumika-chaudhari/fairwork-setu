@@ -1,0 +1,18 @@
+{
+  "target_column": "category",
+  "feature_columns": [
+    "text"
+  ],
+  "classes": [
+    "education",
+    "emi",
+    "food",
+    "fuel",
+    "health",
+    "housing",
+    "maintenance",
+    "personal"
+  ],
+  "train_rows": 128,
+  "test_rows": 32
+}

@@ -1,0 +1,11 @@
+job_id,title,description,skills_required,location,employment_type
+JOB01,Delivery Partner,"Deliver food packages, grocery orders, and e-commerce items on two-wheeler",two-wheeler driving smartphone navigation hindi local routes,Mumbai,full_time
+JOB02,Residential Electrician,"House wiring, switchboard repairs, ceiling fan installations, and MCB tripping fixes",electrical repair wiring switches inverter installation basic english,Mumbai,part_time
+JOB03,Commercial Auto Driver,"Drive passenger auto rickshaw across central city routes, handle cash and UPI",auto rickshaw driving commercial license route navigation punctuality,Mumbai,full_time
+JOB04,Plumbing Technician,"Fix pipe leakages, bathroom sanitary fittings, water pump motor installation",plumbing pipe fitting leakage repair sanitary installation tools,Mumbai,contract
+JOB05,Warehouse Associate,"Unload delivery trucks, inventory scanning, package sorting, and pallet stacking",inventory management scanning physical stamina packaging warehouse,Navi Mumbai,full_time
+JOB06,Tailor & Stitching Master,"Stitch garments, alter clothes, blouses, curtains, and operate sewing machines",tailoring stitching garment alteration sewing machine pattern cutting,Mumbai,contract
+JOB07,Housekeeping & Office Cleaner,"Clean commercial office premises, floor mopping, dusting, sanitization",cleaning housekeeping waste disposal hygiene time management,Mumbai,part_time
+JOB08,Domestic Cook & Meal Maker,"Cook North Indian and South Indian meals, roti preparation, kitchen hygiene",cooking food preparation hygiene indian cuisine punctuality,Mumbai,part_time
+JOB09,Smartphone & Mobile Repair Tech,"Screen replacement, battery soldering, speaker and charging port troubleshooting",mobile repair hardware troubleshooting soldering chip replacement,Thane,full_time
+JOB10,Wall Painter & Surface Polisher,"Interior wall painting, primer coating, putty smoothing, and wood varnish",painting surface preparation wall putty primer brush technique,Mumbai,contract

@@ -1,0 +1,11 @@
+Shape: (160, 2)
+
+Columns:
+text        object
+category    object
+
+Missing values:
+text        0
+category    0
+
+Duplicate rows: 0

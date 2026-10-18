@@ -1,0 +1,5 @@
+{
+  "evaluated_workers": 5,
+  "mean_reciprocal_rank": 1.0,
+  "precision_at_5": 0.32
+}

@@ -37,8 +37,9 @@ import {
   type KMeansResult,
   type ModelSystemStatus,
 } from '../services/mlService';
+import Models8SuiteBench from '../components/ailab/Models8SuiteBench';
 
-type TabKey = 'linear' | 'logistic' | 'lstm' | 'kmeans';
+type TabKey = 'suite8' | 'linear' | 'logistic' | 'lstm' | 'kmeans';
 
 const CLUSTER_COLORS = ['#B34A26', '#E5953E', '#3A757D', '#1E2B3E'];
 
@@ -49,8 +50,9 @@ export default function AiLabPage() {
   const { transactions } = useTransactions();
   const { profile } = useProfile();
 
-  const tabParam = (searchParams.get('tab') as TabKey) || 'linear';
+  const tabParam = (searchParams.get('tab') as TabKey) || 'suite8';
   const [activeTab, setActiveTab] = useState<TabKey>(tabParam);
+
 
   // States
   const [status, setStatus] = useState<ModelSystemStatus | null>(null);
@@ -209,10 +211,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
         )}
       </header>
 
-      {/* 4 MODEL TABS NAVIGATION */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 p-1 rounded-2xl bg-cleanWhite/90 backdrop-blur-2xl border border-softBorder shadow-card">
+      {/* MODEL TABS NAVIGATION */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5 p-1 rounded-2xl bg-cleanWhite/90 backdrop-blur-2xl border border-softBorder shadow-card">
         {(
           [
+            { key: 'suite8', label: '8 AI Models Suite', sub: 'Verified Test Bench', icon: 'sparkles' },
             { key: 'linear', label: '1. Linear Regression', sub: 'Balance Forecast', icon: 'trending-up' },
             { key: 'logistic', label: '2. Logistic Regression', sub: 'Budget Risk', icon: 'shield-checkmark' },
             { key: 'lstm', label: '3. PyTorch LSTM', sub: 'Sequence Forecaster', icon: 'sparkles' },
@@ -251,6 +254,22 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
       {/* TAB CONTENT PANELS */}
       <AnimatePresence mode="wait">
         {/* ============================================================= */}
+        {/* TAB 0: 8-MODEL AI SUITE & TEST BENCH */}
+        {/* ============================================================= */}
+        {activeTab === 'suite8' && (
+          <motion.div
+            key="suite8"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="space-y-4"
+          >
+            <Models8SuiteBench />
+          </motion.div>
+        )}
+
+        {/* ============================================================= */}
         {/* TAB 1: LINEAR REGRESSION */}
         {/* ============================================================= */}
         {activeTab === 'linear' && (
@@ -261,6 +280,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
             className="space-y-4"
+
           >
             {/* Header Card */}
             <div className="relative overflow-hidden rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 shadow-card border border-softBorder space-y-3">

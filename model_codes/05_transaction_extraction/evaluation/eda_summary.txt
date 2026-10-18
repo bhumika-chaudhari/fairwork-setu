@@ -1,0 +1,6 @@
+Shape: (170, 2)
+Columns: ['text', 'category']
+Missing values:
+text        0
+category    0
+dtype: int64

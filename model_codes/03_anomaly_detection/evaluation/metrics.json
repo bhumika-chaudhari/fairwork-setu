@@ -1,0 +1,7 @@
+{
+  "test_rows": 50,
+  "predicted_anomalies": 2,
+  "predicted_anomaly_rate": 0.04,
+  "mean_anomaly_score": -0.16573840400965334,
+  "label_note": "Isolation Forest labels: -1 = flagged anomaly, 1 = not flagged. These are not verified ground-truth labels."
+}
