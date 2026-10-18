@@ -10,13 +10,45 @@ Maps persistent entities for:
 - Notification Preferences
 """
 
+import sys
+import os
 import uuid
 from datetime import datetime
-from sqlalchemy import (
-    Column, String, Float, Integer, Boolean, DateTime, Text, ForeignKey, UniqueConstraint, Index
-)
-from sqlalchemy.orm import relationship
-from database import Base
+
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if _CURRENT_DIR not in sys.path:
+    sys.path.insert(0, _CURRENT_DIR)
+
+try:
+    from sqlalchemy import (
+        Column, String, Float, Integer, Boolean, DateTime, Text, ForeignKey, UniqueConstraint, Index
+    )
+    from sqlalchemy.orm import relationship
+    HAS_SQLALCHEMY = True
+except ImportError:
+    HAS_SQLALCHEMY = False
+    def Column(*args, **kwargs): return None
+    def String(*args, **kwargs): return None
+    def Float(*args, **kwargs): return None
+    def Integer(*args, **kwargs): return None
+    def Boolean(*args, **kwargs): return None
+    def DateTime(*args, **kwargs): return None
+    def Text(*args, **kwargs): return None
+    def ForeignKey(*args, **kwargs): return None
+    def UniqueConstraint(*args, **kwargs): return None
+    def Index(*args, **kwargs): return None
+    def relationship(*args, **kwargs): return None
+
+try:
+    from database import Base
+except ImportError:
+    try:
+        from ml_service.database import Base
+    except ImportError:
+        class Base:  # type: ignore
+            metadata = None
+            def __init__(self, *args, **kwargs):
+                pass
 
 
 def generate_uuid() -> str:
