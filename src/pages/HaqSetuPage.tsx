@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
 import ListenButton from '../components/ListenButton';
@@ -17,6 +18,16 @@ export default function HaqSetuPage() {
   const { t, i18n } = useTranslation();
   const { openAssistant } = useVoiceAssistant();
   const [currentView, setCurrentView] = useState<HaqView>('overview');
+
+  // Deep-link Action Handler (from Smart Notifications)
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const view = searchParams.get('view');
+    if (view === 'deactivation_wizard' || view === 'cases' || view === 'rights' || view === 'overview') {
+      setCurrentView(view as HaqView);
+    }
+  }, [searchParams]);
+
   const [missingPaymentModalOpen, setMissingPaymentModalOpen] = useState(false);
   const [penaltyModalOpen, setPenaltyModalOpen] = useState(false);
   const [somethingElseModalOpen, setSomethingElseModalOpen] = useState(false);

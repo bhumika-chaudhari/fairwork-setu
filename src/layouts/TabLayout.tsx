@@ -5,6 +5,7 @@ import { AppIcon } from '../lib/icons';
 import SetuLogo from '../components/SetuLogo';
 import LanguageSelector from '../components/LanguageSelector';
 import SoundToggle from '../components/SoundToggle';
+import NotificationBellButton from '../components/notifications/NotificationBellButton';
 import { useProfile } from '../hooks/ProfileContext';
 import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import { playTap, playSelect } from '../lib/feedback';
@@ -80,6 +81,9 @@ export default function TabLayout() {
               <span>{t('tabs.voice')}</span>
             </button>
 
+            {/* Smart Notification Bell Button */}
+            <NotificationBellButton size="sm" />
+
             {/* Sound & Haptics Global Toggle */}
             <SoundToggle />
 
@@ -114,6 +118,7 @@ export default function TabLayout() {
 
       {/* Mobile Floating Action Buttons (FABs) positioned above bottom dock */}
       <div className="fixed bottom-24 right-4 z-40 md:hidden flex flex-col items-center gap-2.5">
+        <NotificationBellButton size="sm" />
         <SoundToggle size="sm" />
         <button
           type="button"

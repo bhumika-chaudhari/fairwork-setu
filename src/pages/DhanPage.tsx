@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../components/Card';
@@ -53,6 +54,27 @@ export default function DhanPage() {
   const [activeTab, setActiveTab] = useState<'day' | 'week'>('day');
   const [selectedExpenseCat, setSelectedExpenseCat] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Deep-link Action Handler (from Smart Notifications)
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const action = searchParams.get('action');
+    if (action === 'add-expense') {
+      openAddModal('expense');
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('action');
+        return next;
+      }, { replace: true });
+    } else if (action === 'add-income') {
+      openAddModal('income');
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('action');
+        return next;
+      }, { replace: true });
+    }
+  }, [searchParams, openAddModal, setSearchParams]);
 
   // Model 2 & Model 3 Live States
   const [model2Forecast, setModel2Forecast] = useState<Model2Forecast | null>(null);

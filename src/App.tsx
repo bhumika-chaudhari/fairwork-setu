@@ -11,6 +11,8 @@ import AtmosphericBackground from './components/AtmosphericBackground';
 import TabLayout from './layouts/TabLayout';
 import { VoiceAssistantProvider } from './hooks/VoiceAssistantContext';
 import UnifiedVoiceAssistantModal from './components/UnifiedVoiceAssistantModal';
+import { NotificationProvider } from './hooks/NotificationContext';
+import NotificationCenterDrawer from './components/notifications/NotificationCenterDrawer';
 import { attachGlobalFeedback } from './lib/feedback';
 import LandingPage from './pages/LandingPage';
 import OnboardingPage from './pages/OnboardingPage';
@@ -74,55 +76,58 @@ export default function App() {
               <div className="relative min-h-screen w-full bg-transparent text-textPrimary">
                 <AtmosphericBackground />
                 <BrowserRouter>
-                  <VoiceAssistantProvider>
-                    <Routes>
-                      {/* First screen: Landing Page */}
-                      <Route path="/" element={<LandingPage />} />
-                      <Route path="/welcome" element={<LandingPage />} />
+                  <NotificationProvider>
+                    <VoiceAssistantProvider>
+                      <Routes>
+                        {/* First screen: Landing Page */}
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/welcome" element={<LandingPage />} />
 
-                      {/* Information Entry / Profile Setup */}
-                      <Route path="/onboarding" element={<OnboardingPage />} />
+                        {/* Information Entry / Profile Setup */}
+                        <Route path="/onboarding" element={<OnboardingPage />} />
 
-                      {/* Main Dashboard & App Tabs (Protected by Onboarding) */}
-                      <Route
-                        element={
-                          <RequireOnboarding>
-                            <TabLayout />
-                          </RequireOnboarding>
-                        }
-                      >
-                        <Route path="/home" element={<HomePage />} />
-                        <Route path="/kaam" element={<KaamPage />} />
-                        <Route path="/work" element={<Navigate to="/kaam" replace />} />
-                        <Route path="/dhan" element={<DhanPage />} />
-                        <Route path="/money" element={<Navigate to="/dhan" replace />} />
-                        <Route path="/sehat" element={<SehatPage />} />
-                        <Route path="/health" element={<Navigate to="/sehat" replace />} />
-                        <Route path="/kaushal" element={<KaushalPage />} />
-                        <Route path="/skills" element={<Navigate to="/kaushal" replace />} />
-                        <Route path="/ai-lab" element={<Navigate to="/home" replace />} />
-                        <Route path="/ml" element={<Navigate to="/home" replace />} />
-                        <Route path="/haq" element={<HaqSetuPage />} />
-                        <Route path="/haq-setu" element={<Navigate to="/haq" replace />} />
-                        <Route path="/rights" element={<Navigate to="/haq" replace />} />
-                        <Route path="/voice" element={<HomePage />} />
-                      </Route>
+                        {/* Main Dashboard & App Tabs (Protected by Onboarding) */}
+                        <Route
+                          element={
+                            <RequireOnboarding>
+                              <TabLayout />
+                            </RequireOnboarding>
+                          }
+                        >
+                          <Route path="/home" element={<HomePage />} />
+                          <Route path="/kaam" element={<KaamPage />} />
+                          <Route path="/work" element={<Navigate to="/kaam" replace />} />
+                          <Route path="/dhan" element={<DhanPage />} />
+                          <Route path="/money" element={<Navigate to="/dhan" replace />} />
+                          <Route path="/sehat" element={<SehatPage />} />
+                          <Route path="/health" element={<Navigate to="/sehat" replace />} />
+                          <Route path="/kaushal" element={<KaushalPage />} />
+                          <Route path="/skills" element={<Navigate to="/kaushal" replace />} />
+                          <Route path="/ai-lab" element={<Navigate to="/home" replace />} />
+                          <Route path="/ml" element={<Navigate to="/home" replace />} />
+                          <Route path="/haq" element={<HaqSetuPage />} />
+                          <Route path="/haq-setu" element={<Navigate to="/haq" replace />} />
+                          <Route path="/rights" element={<Navigate to="/haq" replace />} />
+                          <Route path="/voice" element={<HomePage />} />
+                        </Route>
 
-                      {/* Profile & Utility */}
-                      <Route
-                        path="/profile"
-                        element={
-                          <RequireOnboarding>
-                            <ProfilePage />
-                          </RequireOnboarding>
-                        }
-                      />
-                      <Route path="/404" element={<NotFoundPage />} />
-                      <Route path="*" element={<Navigate to="/404" replace />} />
-                    </Routes>
-                    <UnifiedVoiceAssistantModal />
-                    <AudioPlayerBar />
-                  </VoiceAssistantProvider>
+                        {/* Profile & Utility */}
+                        <Route
+                          path="/profile"
+                          element={
+                            <RequireOnboarding>
+                              <ProfilePage />
+                            </RequireOnboarding>
+                          }
+                        />
+                        <Route path="/404" element={<NotFoundPage />} />
+                        <Route path="*" element={<Navigate to="/404" replace />} />
+                      </Routes>
+                      <UnifiedVoiceAssistantModal />
+                      <NotificationCenterDrawer />
+                      <AudioPlayerBar />
+                    </VoiceAssistantProvider>
+                  </NotificationProvider>
                 </BrowserRouter>
             </div>
           </SpeechProvider>

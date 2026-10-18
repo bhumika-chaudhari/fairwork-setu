@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AppIcon } from '../lib/icons';
@@ -107,6 +108,22 @@ export default function KaamPage() {
 
   // Primary 3 Worker Tabs
   const [activeTab, setActiveTab] = useState<MainTab>('jobs');
+
+  // Deep-link Action Handler (from Smart Notifications)
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'jobs' || tab === 'requests' || tab === 'profile') {
+      setActiveTab(tab as MainTab);
+    }
+    const jobId = searchParams.get('id');
+    if (jobId && tab === 'jobs') {
+      fetchJobs().then((list) => {
+        const found = list.find((j) => j.id === jobId);
+        if (found) setSelectedJobForDetail(found);
+      });
+    }
+  }, [searchParams]);
 
   // Sub-tab under Find Jobs: Browse vs My Applications
   const [jobSubTab, setJobSubTab] = useState<JobSubTab>('browse');

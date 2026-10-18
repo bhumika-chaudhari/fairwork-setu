@@ -22,10 +22,11 @@ import {
   type LanguageCode,
 } from '../localization';
 import { seedDemoTransactions } from '../services/transactionService';
+import NotificationSettingsSection from '../components/notifications/NotificationSettingsSection';
 import { feedback, playTap, playPop, playSelect } from '../lib/feedback';
 import { readTextAloud, setSpeechRate, getSpeechRate } from '../lib/speechSynthesis';
 
-type ProfileTab = 'personal' | 'work' | 'language' | 'privacy' | 'preferences';
+type ProfileTab = 'personal' | 'work' | 'language' | 'notifications' | 'privacy' | 'preferences';
 
 const AVAILABILITY_OPTIONS: { id: Availability; label: string }[] = [
   { id: 'anytime', label: 'Full Time / Any time' },
@@ -598,6 +599,22 @@ export default function ProfilePage() {
           >
             <AppIcon name="globe" size={15} />
             <span>{t('profileScreen.tabsLanguage', 'Language & Audio')}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              playSelect();
+              setActiveTab('notifications');
+            }}
+            className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-extrabold transition-all whitespace-nowrap active:scale-95 ${
+              activeTab === 'notifications'
+                ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-md'
+                : 'text-textSecondary hover:bg-white hover:text-deepEmerald'
+            }`}
+          >
+            <AppIcon name="notifications" size={15} />
+            <span>{t('profileScreen.tabsNotifications', 'Notifications')}</span>
           </button>
 
           <button
@@ -1195,7 +1212,10 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* TAB 4: PRIVACY & DATA */}
+        {/* TAB 4: SMART NOTIFICATIONS */}
+        {activeTab === 'notifications' && <NotificationSettingsSection />}
+
+        {/* TAB 5: PRIVACY & DATA */}
         {activeTab === 'privacy' && (
           <div className="space-y-4 animate-fade-in">
             {/* Privacy Masking Card */}

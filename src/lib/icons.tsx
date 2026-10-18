@@ -79,6 +79,11 @@ import {
   Navigation,
   Bookmark,
   BookmarkCheck,
+  Bell,
+  BellRing,
+  BellOff,
+  CheckCheck,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 const MAP: Record<string, LucideIcon> = {
@@ -181,6 +186,13 @@ const MAP: Record<string, LucideIcon> = {
   navigation: Navigation,
   bookmark: Bookmark,
   'bookmark-check': BookmarkCheck,
+  notifications: Bell,
+  'notifications-outline': Bell,
+  bell: Bell,
+  'bell-ring': BellRing,
+  'bell-off': BellOff,
+  'check-all': CheckCheck,
+  sliders: SlidersHorizontal,
 };
 
 export function AppIcon({
