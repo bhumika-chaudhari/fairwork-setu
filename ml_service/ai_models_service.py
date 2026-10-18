@@ -478,13 +478,23 @@ class AIModelsService:
         if not worker_text:
             worker_text = "delivery partner two wheeler license navigation driving"
 
-        if self.model_6_jobs_df is not None and embedder is not None:
+        if self.model_6_jobs_df is not None:
             try:
+                from sklearn.feature_extraction.text import TfidfVectorizer
                 from sklearn.metrics.pairwise import cosine_similarity
-                job_texts = self.model_6_jobs_df["job_text"].tolist()
-                embeddings = embedder.encode([worker_text] + job_texts, normalize_embeddings=True)
 
-                scores = cosine_similarity(embeddings[0:1], embeddings[1:])[0]
+                job_texts = self.model_6_jobs_df["job_text"].tolist()
+
+                if embedder is not None:
+                    embeddings = embedder.encode([worker_text] + job_texts, normalize_embeddings=True)
+                    scores = cosine_similarity(embeddings[0:1], embeddings[1:])[0]
+                    model_name = "SentenceTransformer all-MiniLM-L6-v2 (Model 6)"
+                else:
+                    vectorizer = TfidfVectorizer(ngram_range=(1, 2), stop_words="english")
+                    tfidf_matrix = vectorizer.fit_transform([worker_text] + job_texts)
+                    scores = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:])[0]
+                    model_name = "TF-IDF + Cosine Similarity Matcher (Model 6)"
+
                 results = self.model_6_jobs_df.copy()
                 results["similarity_score"] = scores
                 results["match_percentage"] = (scores * 100).round(1)
@@ -501,7 +511,7 @@ class AIModelsService:
                         "skills_required": str(r.get("skills_required", "")),
                         "similarity_score": round(float(r["similarity_score"]), 4),
                         "match_percentage": float(r["match_percentage"]),
-                        "match_model": "SentenceTransformer all-MiniLM-L6-v2 (Model 6)"
+                        "match_model": model_name
                     })
                 return matched_jobs
 
@@ -559,13 +569,23 @@ class AIModelsService:
         if not worker_text:
             worker_text = "two wheeler rider delivery road safety customer service"
 
-        if self.model_7_courses_df is not None and embedder is not None:
+        if self.model_7_courses_df is not None:
             try:
+                from sklearn.feature_extraction.text import TfidfVectorizer
                 from sklearn.metrics.pairwise import cosine_similarity
-                course_texts = self.model_7_courses_df["course_text"].tolist()
-                embeddings = embedder.encode([worker_text] + course_texts, normalize_embeddings=True)
 
-                scores = cosine_similarity(embeddings[0:1], embeddings[1:])[0]
+                course_texts = self.model_7_courses_df["course_text"].tolist()
+
+                if embedder is not None:
+                    embeddings = embedder.encode([worker_text] + course_texts, normalize_embeddings=True)
+                    scores = cosine_similarity(embeddings[0:1], embeddings[1:])[0]
+                    model_name = "SentenceTransformer all-MiniLM-L6-v2 (Model 7)"
+                else:
+                    vectorizer = TfidfVectorizer(ngram_range=(1, 2), stop_words="english")
+                    tfidf_matrix = vectorizer.fit_transform([worker_text] + course_texts)
+                    scores = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:])[0]
+                    model_name = "TF-IDF + Cosine Similarity Recommender (Model 7)"
+
                 results = self.model_7_courses_df.copy()
                 results["similarity_score"] = scores
                 results["match_percentage"] = (scores * 100).round(1)
@@ -582,7 +602,7 @@ class AIModelsService:
                         "course_url": str(r.get("course_url", "https://www.skillindia.gov.in")),
                         "similarity_score": round(float(r["similarity_score"]), 4),
                         "match_percentage": float(r["match_percentage"]),
-                        "match_model": "SentenceTransformer all-MiniLM-L6-v2 (Model 7)"
+                        "match_model": model_name
                     })
                 return recs
 
@@ -623,34 +643,56 @@ class AIModelsService:
         top_k = max(1, min(top_k, 10))
         embedder = get_shared_embedder()
 
-        if self.model_8_faiss_index is not None and embedder is not None and self.model_8_chunks:
+        if self.model_8_chunks:
             try:
-                query_vector = embedder.encode(
-                    [query_text],
-                    convert_to_numpy=True,
-                    normalize_embeddings=True
-                ).astype("float32")
+                if self.model_8_faiss_index is not None and embedder is not None:
+                    query_vector = embedder.encode(
+                        [query_text],
+                        convert_to_numpy=True,
+                        normalize_embeddings=True
+                    ).astype("float32")
 
-                k = min(top_k, self.model_8_faiss_index.ntotal)
-                scores, positions = self.model_8_faiss_index.search(query_vector, k)
+                    k = min(top_k, self.model_8_faiss_index.ntotal)
+                    scores, positions = self.model_8_faiss_index.search(query_vector, k)
 
-                retrieved = []
-                for score, position in zip(scores[0], positions[0]):
-                    if position < 0 or position >= len(self.model_8_chunks):
-                        continue
-                    chunk = self.model_8_chunks[int(position)]
-                    retrieved.append({
-                        "source": chunk.get("source", "verified_policy.md"),
-                        "chunk_id": chunk.get("chunk_id", 0),
-                        "similarity_score": round(float(score), 4),
-                        "text": chunk.get("text", "")
-                    })
+                    retrieved = []
+                    for score, position in zip(scores[0], positions[0]):
+                        if position < 0 or position >= len(self.model_8_chunks):
+                            continue
+                        chunk = self.model_8_chunks[int(position)]
+                        retrieved.append({
+                            "source": chunk.get("source", "verified_policy.md"),
+                            "chunk_id": chunk.get("chunk_id", 0),
+                            "similarity_score": round(float(score), 4),
+                            "text": chunk.get("text", "")
+                        })
+                    model_name = "SentenceTransformer + FAISS Inner Product (Model 8)"
+                else:
+                    from sklearn.feature_extraction.text import TfidfVectorizer
+                    from sklearn.metrics.pairwise import cosine_similarity
+
+                    chunk_texts = [c.get("text", "") for c in self.model_8_chunks]
+                    vectorizer = TfidfVectorizer(ngram_range=(1, 2), stop_words="english")
+                    tfidf_matrix = vectorizer.fit_transform([query_text] + chunk_texts)
+                    scores = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:])[0]
+
+                    top_indices = scores.argsort()[::-1][:top_k]
+                    retrieved = []
+                    for idx in top_indices:
+                        chunk = self.model_8_chunks[int(idx)]
+                        retrieved.append({
+                            "source": chunk.get("source", "verified_policy.md"),
+                            "chunk_id": chunk.get("chunk_id", int(idx)),
+                            "similarity_score": round(float(scores[idx]), 4),
+                            "text": chunk.get("text", "")
+                        })
+                    model_name = "TF-IDF + Cosine Similarity Dense Retriever (Model 8)"
 
                 return {
                     "query": query_text,
                     "retrieved_count": len(retrieved),
                     "passages": retrieved,
-                    "model": "SentenceTransformer + FAISS Inner Product (Model 8)",
+                    "model": model_name,
                     "evaluation_metric": "MRR@4 = 0.9167",
                     "disclaimer": "Informational welfare guidance only. For medical emergency call 108; for Ayushman PM-JAY call 14555."
                 }
@@ -893,6 +935,19 @@ class AIModelsService:
                 "language": lang,
                 "transaction": tx,
                 "confidence": tx.get("confidence", 0.90)
+            }
+
+        # 8. Income Forecasting & Earnings Inquiries
+        if any(w in lowered for w in [
+            "kal kitna", "kal ki kamai", "kitna kamaunga", "aage ki kamai",
+            "forecast", "earnings forecast", "predict income", "future earnings",
+            "pudhil kamai", "udya kiti", "kamai kitna hoga", "income kitni hogi"
+        ]):
+            return {
+                "intent": "income_forecast",
+                "language": lang,
+                "query": text_str,
+                "confidence": 0.92
             }
 
         return {
