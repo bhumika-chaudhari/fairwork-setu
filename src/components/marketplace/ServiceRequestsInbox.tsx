@@ -15,6 +15,7 @@ interface ServiceRequestsInboxProps {
   workerId: string;
   workerTrade?: string;
   workerName?: string;
+  initialFilter?: SubTab;
 }
 
 type SubTab = 'all' | 'pending' | 'confirmed' | 'proposed' | 'completed';
@@ -95,13 +96,20 @@ export default function ServiceRequestsInbox({
   workerId,
   workerTrade = 'electrician',
   workerName = 'Ramesh Kumar',
+  initialFilter = 'all',
 }: ServiceRequestsInboxProps) {
   const { t } = useTranslation();
 
-  const [activeSubTab, setActiveSubTab] = useState<SubTab>('all');
+  const [activeSubTab, setActiveSubTab] = useState<SubTab>(initialFilter);
   const [bookings, setBookings] = useState<BookingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialFilter) {
+      setActiveSubTab(initialFilter);
+    }
+  }, [initialFilter]);
 
   // Modals state
   const [selectedBookingForDetail, setSelectedBookingForDetail] = useState<BookingRequest | null>(null);
@@ -327,14 +335,34 @@ export default function ServiceRequestsInbox({
           </span>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsSimulateModalOpen(true)}
-          className="py-1.5 px-3 rounded-xl bg-[#FDF8F0] border border-[#F1B96B] text-[#B34A26] text-xs font-bold hover:bg-[#FDF3EE] transition-all active:scale-95 shrink-0 flex items-center gap-1.5 self-start sm:self-auto"
-        >
-          <AppIcon name="sparkles" size={13} className="text-[#E5953E]" />
-          <span>+ Simulate Request</span>
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('pending')}
+            className={`py-1.5 px-3 rounded-xl border text-xs font-bold transition-all active:scale-95 shrink-0 flex items-center gap-1.5 ${
+              activeSubTab === 'pending'
+                ? 'bg-[#B34A26] text-white border-[#B34A26] shadow-xs'
+                : 'bg-[#FDF8F0] border-[#F1B96B] text-[#B34A26] hover:bg-[#FDF3EE]'
+            }`}
+            title="Open pending service requests for quick demonstration"
+          >
+            <AppIcon
+              name="flash"
+              size={13}
+              className={activeSubTab === 'pending' ? 'text-white' : 'text-[#E5953E]'}
+            />
+            <span>Demo Service Requests</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsSimulateModalOpen(true)}
+            className="py-1.5 px-3 rounded-xl bg-white border border-stone-200 text-stone-700 text-xs font-bold hover:bg-stone-50 transition-all active:scale-95 shrink-0 flex items-center gap-1.5"
+          >
+            <AppIcon name="sparkles" size={13} className="text-[#3A757D]" />
+            <span>+ Simulate Request</span>
+          </button>
+        </div>
       </div>
 
       {/* Error Alert if any action conflicts */}
@@ -404,7 +432,7 @@ export default function ServiceRequestsInbox({
           onClick={() => setActiveSubTab('proposed')}
           className={`py-1.5 px-3 rounded-full text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
             activeSubTab === 'proposed'
-              ? 'bg-[#E5953E] text-white shadow-xs'
+              ? 'bg-[#7C2D16] text-white shadow-xs'
               : 'bg-white text-stone-600 hover:bg-stone-100 border border-stone-200'
           }`}
         >
@@ -628,12 +656,12 @@ export default function ServiceRequestsInbox({
                 </div>
 
                 {/* WORKER ACTION BUTTONS BAR */}
-                <div className="pt-1 flex flex-wrap items-center justify-between gap-2 border-t border-stone-100">
+                <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-stone-100">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setSelectedBookingForDetail(booking)}
-                      className="py-2 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition-all"
+                      className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1E2B3E] text-xs font-extrabold border border-stone-300 shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-[#3A757D]"
                     >
                       View Request
                     </button>
@@ -641,7 +669,7 @@ export default function ServiceRequestsInbox({
                     <button
                       type="button"
                       onClick={() => setActiveConversationId(booking.id)}
-                      className="py-2 px-3 rounded-xl bg-[#3A757D]/10 hover:bg-[#3A757D]/20 text-[#3A757D] text-xs font-bold transition-all flex items-center gap-1.5"
+                      className="py-2 px-3 rounded-xl bg-[#EFF7F8] hover:bg-[#D8EDEE] text-[#073B3A] text-xs font-extrabold border border-[#3A757D]/30 transition-all flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-[#3A757D]"
                     >
                       <AppIcon name="message-circle" size={14} />
                       <span>Chat with {booking.customerName}</span>
@@ -654,7 +682,7 @@ export default function ServiceRequestsInbox({
                       <button
                         type="button"
                         onClick={() => handleReject(booking)}
-                        className="py-2 px-3 rounded-xl bg-stone-100 hover:bg-red-50 hover:text-red-700 text-stone-600 text-xs font-bold transition-all"
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-red-50 text-red-700 hover:text-red-800 text-xs font-extrabold border border-red-200 transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
                       >
                         Reject
                       </button>
@@ -662,7 +690,7 @@ export default function ServiceRequestsInbox({
                       <button
                         type="button"
                         onClick={() => handleOpenProposeTime(booking)}
-                        className="py-2 px-3 rounded-xl bg-[#FDF8F0] hover:bg-[#FDF3EE] text-[#7C2D16] text-xs font-bold transition-all border border-[#F1B96B]"
+                        className="py-2 px-3 rounded-xl bg-[#FDF8F0] hover:bg-[#FDF3EE] text-[#7C2D16] text-xs font-extrabold transition-all border border-[#F1B96B] shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#B34A26]"
                       >
                         Propose Another Time
                       </button>
@@ -670,9 +698,10 @@ export default function ServiceRequestsInbox({
                       <button
                         type="button"
                         onClick={() => handleAccept(booking)}
-                        className="py-2 px-4 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95"
+                        className="py-2 px-4 rounded-xl bg-[#073B3A] hover:bg-[#052E2D] text-white text-xs font-extrabold shadow-sm hover:shadow transition-all active:scale-95 border border-[#073B3A] focus:outline-none focus:ring-2 focus:ring-[#3A757D] flex items-center gap-1.5"
                       >
-                        Accept Request
+                        <AppIcon name="checkmark-circle" size={14} />
+                        <span>Accept Request</span>
                       </button>
                     </div>
                   )}
@@ -680,20 +709,26 @@ export default function ServiceRequestsInbox({
                   {/* Actions for CONFIRMED status */}
                   {isConfirmed && (
                     <div className="flex items-center gap-2">
-                      {booking.status === 'confirmed' && (
+                      {booking.status === 'confirmed' ? (
                         <button
                           type="button"
                           onClick={() => handleStartJob(booking)}
-                          className="py-2 px-3.5 rounded-xl bg-[#3A757D] hover:bg-[#2A5960] text-white text-xs font-bold shadow-xs active:scale-95 transition-all"
+                          className="py-2 px-3.5 rounded-xl bg-[#073B3A] hover:bg-[#052E2D] text-white text-xs font-extrabold shadow-sm hover:shadow active:scale-95 transition-all border border-[#073B3A] focus:outline-none focus:ring-2 focus:ring-[#3A757D] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                         >
-                          Start Job
+                          <AppIcon name="play" size={13} />
+                          <span>Start Job</span>
                         </button>
+                      ) : (
+                        <span className="py-1.5 px-3 rounded-xl bg-[#EFF7F8] border border-[#3A757D]/50 text-[#073B3A] text-xs font-extrabold flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>In Progress</span>
+                        </span>
                       )}
 
                       <button
                         type="button"
                         onClick={() => handleCompleteJob(booking)}
-                        className="py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-1.5"
+                        className="py-2 px-4 rounded-xl bg-[#B34A26] hover:bg-[#8B3518] text-white text-xs font-extrabold shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center gap-1.5 border border-[#8B3518] focus:outline-none focus:ring-2 focus:ring-[#B34A26] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <AppIcon name="checkmark-circle" size={14} />
                         <span>Mark as Completed</span>
@@ -703,8 +738,8 @@ export default function ServiceRequestsInbox({
 
                   {/* When status is Completed */}
                   {booking.status === 'completed' && (
-                    <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
-                      <AppIcon name="checkmark-circle" size={14} />
+                    <span className="text-xs font-extrabold text-[#073B3A] bg-[#EFF7F8] border border-[#3A757D]/30 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                      <AppIcon name="checkmark-circle" size={14} className="text-emerald-600" />
                       <span>Service Delivered & Verified</span>
                     </span>
                   )}

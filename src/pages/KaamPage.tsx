@@ -154,6 +154,11 @@ export default function KaamPage() {
   const [isAiRanked, setIsAiRanked] = useState(false);
   const [matchSuccessMessage, setMatchSuccessMessage] = useState<string | null>(null);
 
+  // Service Requests filter state for direct demo shortcut
+  const [requestsInitialFilter, setRequestsInitialFilter] = useState<
+    'all' | 'pending' | 'confirmed' | 'proposed' | 'completed'
+  >('all');
+
   const userId =
     'usr-' + (profile.name || 'worker').toLowerCase().replace(/[^a-z0-9]/g, '-');
 
@@ -524,7 +529,19 @@ export default function KaamPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+        <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('requests');
+              setRequestsInitialFilter('pending');
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FDF8F0] border border-[#F1B96B] text-[#B34A26] hover:bg-[#FDF3EE] text-xs font-bold transition-all shadow-xs active:scale-95"
+            title="Open Service Requests tab and filter by Pending Responses"
+          >
+            <AppIcon name="flash" size={13} className="text-[#E5953E]" />
+            <span>Demo Service Requests</span>
+          </button>
           <ListenButton track={pageSpeechTrack} size="sm" />
           <div className="md:hidden">
             <LanguageSelector variant="icon" />
@@ -715,21 +732,6 @@ export default function KaamPage() {
                     </button>
                   </div>
                 )}
-              </div>
-
-              {/* LIVE MODEL & SAMPLE DATA TRANSPARENCY NOTICE */}
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#EFF7F8] border border-[#3A757D]/25 text-xs text-[#1E2B3E]">
-                <div className="p-1 rounded-lg bg-[#3A757D]/10 text-[#3A757D] shrink-0 mt-0.5">
-                  <AppIcon name="sparkles" size={16} />
-                </div>
-                <div className="space-y-0.5">
-                  <p className="font-bold text-[#3A757D]">
-                    Live AI Model 6 Integration (Semantic Job Recommender)
-                  </p>
-                  <p className="text-[#1E2B3E]/80 leading-relaxed">
-                    Job recommendations and fit scores are calculated in real time using Setu's Model 6 (TF-IDF vector cosine similarity) against your profile skills, trade experience, and preferred location. Sample listings reflect realistic Indian informal and gig market roles.
-                  </p>
-                </div>
               </div>
 
               {/* Search Field */}
@@ -1322,6 +1324,7 @@ export default function KaamPage() {
           workerId={userId}
           workerTrade={profile.workType || 'electrician'}
           workerName={profile.name || 'Ramesh Kumar'}
+          initialFilter={requestsInitialFilter}
         />
       )}
 

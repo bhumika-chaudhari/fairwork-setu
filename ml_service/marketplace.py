@@ -452,43 +452,79 @@ DEFAULT_SERVICE_PROFILES: List[Dict[str, Any]] = [
 
 DEFAULT_BOOKINGS = [
     {
-        "id": "SRV-2026-RHL1",
+        "id": "SRV-2026-DES1",
         "workerId": "usr-ramesh-kumar",
         "workerName": "Ramesh Kumar",
         "workerTrade": "electrician",
-        "customerId": "cust-rahul-09",
-        "customerName": "Rahul S.",
-        "customerPhone": "+91 98220 54321",
+        "customerId": "cust-sunita-01",
+        "customerName": "Sunita Deshmukh",
+        "customerPhone": "+91 98221 43210",
         "serviceCategory": "Electrician",
-        "taskDescription": "Ceiling fan not working. Fan motor makes humming sound but blade does not rotate. Need repair or capacitor replacement.",
+        "taskDescription": "Main switchboard MCB tripping repeatedly when geyser and washing machine run together. Need load check and loose wire inspection.",
         "preferredDate": "Tomorrow",
-        "preferredTimeSlot": "10:00 AM",
-        "alternativeTimeSlot": "11:30 AM",
+        "preferredTimeSlot": "10:00 AM - 12:00 PM",
+        "alternativeTimeSlot": "01:00 PM - 02:30 PM",
         "proposedDate": None,
         "proposedTimeSlot": None,
-        "locality": "Mayur Colony, Kothrud, Pune",
-        "exactAddress": "Flat 302, Sai Shraddha Apts, Ideal Colony Lane 3, Kothrud",
+        "locality": "Ideal Colony, Kothrud, Pune",
+        "exactAddress": "Flat 402, Shanti Heights, Lane 4, Ideal Colony, Kothrud",
         "lat": 18.5085,
         "lng": 73.8120,
-        "distance": "1.4 km",
+        "distance": "1.2 km",
         "supportingImages": [],
-        "additionalNotes": "Please bring a test lamp and spare capacitor if possible.",
-        "indicativePrice": 250,
-        "priceNote": "Standard visit fee. Parts extra at MRP.",
+        "additionalNotes": "Please bring clip-on ammeter and 32A MCB replacement if needed.",
+        "indicativePrice": 350,
+        "priceNote": "Diagnostic inspection & MCB load balancing",
         "status": "requested",
         "statusHistory": [
             {
                 "status": "requested",
                 "timestamp": "2026-10-18T09:30:00Z",
                 "byRole": "customer",
-                "note": "Service booking request submitted by Rahul S."
+                "note": "Service booking request submitted by Sunita Deshmukh."
             }
         ],
         "createdAt": "2026-10-18T09:30:00Z",
         "updatedAt": "2026-10-18T09:30:00Z"
     },
     {
-        "id": "SRV-2026-PRY2",
+        "id": "SRV-2026-KUL2",
+        "workerId": "usr-ramesh-kumar",
+        "workerName": "Ramesh Kumar",
+        "workerTrade": "electrician",
+        "customerId": "cust-anand-02",
+        "customerName": "Anand Kulkarni",
+        "customerPhone": "+91 97640 12890",
+        "serviceCategory": "Electrician",
+        "taskDescription": "New ceiling fan hanging and wall-mount speed regulator installation in study room.",
+        "preferredDate": "Day After Tomorrow",
+        "preferredTimeSlot": "03:00 PM - 05:00 PM",
+        "alternativeTimeSlot": "05:30 PM - 07:00 PM",
+        "proposedDate": None,
+        "proposedTimeSlot": None,
+        "locality": "Paud Road, Kothrud, Pune",
+        "exactAddress": "Bunglow 12, Vanaz Corner, Paud Road, Kothrud",
+        "lat": 18.5042,
+        "lng": 73.8065,
+        "distance": "2.4 km",
+        "supportingImages": [],
+        "additionalNotes": "Fan box and down-rod are ready at home.",
+        "indicativePrice": 250,
+        "priceNote": "Standard fan fitting fee",
+        "status": "requested",
+        "statusHistory": [
+            {
+                "status": "requested",
+                "timestamp": "2026-10-18T10:15:00Z",
+                "byRole": "customer",
+                "note": "Service booking request submitted by Anand Kulkarni."
+            }
+        ],
+        "createdAt": "2026-10-18T10:15:00Z",
+        "updatedAt": "2026-10-18T10:15:00Z"
+    },
+    {
+        "id": "SRV-2026-PRY3",
         "workerId": "usr-ramesh-kumar",
         "workerName": "Ramesh Kumar",
         "workerTrade": "electrician",
@@ -496,8 +532,8 @@ DEFAULT_BOOKINGS = [
         "customerName": "Priya Sharma",
         "customerPhone": "+91 98901 22334",
         "serviceCategory": "Electrician",
-        "taskDescription": "Kitchen main switchboard sparking when induction stove is turned on. Need immediate safety inspection.",
-        "preferredDate": "2026-10-19",
+        "taskDescription": "Kitchen 16A power socket installation for dishwasher and microwave with proper earthing.",
+        "preferredDate": "Today",
         "preferredTimeSlot": "02:00 PM - 04:00 PM",
         "alternativeTimeSlot": "",
         "proposedDate": None,
@@ -508,9 +544,9 @@ DEFAULT_BOOKINGS = [
         "lng": 73.8155,
         "distance": "2.1 km",
         "supportingImages": [],
-        "additionalNotes": "Please inspect MCB trip rating as well.",
+        "additionalNotes": "Please inspect MCB rating and earth-pit connection.",
         "indicativePrice": 300,
-        "priceNote": "Safety inspection & repair",
+        "priceNote": "Heavy-appliance socket fitting",
         "status": "confirmed",
         "statusHistory": [
             {
@@ -523,14 +559,62 @@ DEFAULT_BOOKINGS = [
                 "status": "confirmed",
                 "timestamp": "2026-10-17T15:10:00Z",
                 "byRole": "worker",
-                "note": "Accepted by service provider."
+                "note": "Accepted by service provider Ramesh Kumar."
             }
         ],
         "createdAt": "2026-10-17T14:00:00Z",
         "updatedAt": "2026-10-17T15:10:00Z"
     },
     {
-        "id": "SRV-2026-AMT3",
+        "id": "SRV-2026-JOS4",
+        "workerId": "usr-ramesh-kumar",
+        "workerName": "Ramesh Kumar",
+        "workerTrade": "electrician",
+        "customerId": "cust-mahesh-04",
+        "customerName": "Mahesh Joshi",
+        "customerPhone": "+91 98233 77112",
+        "serviceCategory": "Electrician",
+        "taskDescription": "Sub-meter wiring check and distribution box cleanup. Work commenced.",
+        "preferredDate": "Today",
+        "preferredTimeSlot": "11:00 AM - 01:00 PM",
+        "alternativeTimeSlot": "",
+        "proposedDate": None,
+        "proposedTimeSlot": None,
+        "locality": "Karve Nagar, Pune",
+        "exactAddress": "Flat 201, Swapnapurti Apts, Cummins College Road, Karve Nagar",
+        "lat": 18.4912,
+        "lng": 73.8214,
+        "distance": "1.8 km",
+        "supportingImages": [],
+        "additionalNotes": "Work in progress at customer premises.",
+        "indicativePrice": 400,
+        "priceNote": "Sub-meter line wiring",
+        "status": "in_progress",
+        "statusHistory": [
+            {
+                "status": "requested",
+                "timestamp": "2026-10-17T16:00:00Z",
+                "byRole": "customer",
+                "note": "Booking requested."
+            },
+            {
+                "status": "confirmed",
+                "timestamp": "2026-10-17T16:40:00Z",
+                "byRole": "worker",
+                "note": "Booking confirmed."
+            },
+            {
+                "status": "in_progress",
+                "timestamp": "2026-10-18T05:30:00Z",
+                "byRole": "worker",
+                "note": "Worker commenced work on site."
+            }
+        ],
+        "createdAt": "2026-10-17T16:00:00Z",
+        "updatedAt": "2026-10-18T05:30:00Z"
+    },
+    {
+        "id": "SRV-2026-AMT5",
         "workerId": "usr-ramesh-kumar",
         "workerName": "Ramesh Kumar",
         "workerTrade": "electrician",
@@ -538,11 +622,11 @@ DEFAULT_BOOKINGS = [
         "customerName": "Amit Verma",
         "customerPhone": "+91 97654 33221",
         "serviceCategory": "Electrician",
-        "taskDescription": "Inverter battery backup wiring inspection and terminal cleanup.",
-        "preferredDate": "2026-10-20",
+        "taskDescription": "Inverter tubular battery backup wiring inspection and terminal cleanup.",
+        "preferredDate": "Tomorrow",
         "preferredTimeSlot": "11:00 AM - 01:00 PM",
         "alternativeTimeSlot": "",
-        "proposedDate": "2026-10-20",
+        "proposedDate": "Tomorrow",
         "proposedTimeSlot": "04:00 PM - 06:00 PM",
         "locality": "Bavdhan, Pune",
         "exactAddress": "B-404, Crystal Heights, Bavdhan",
@@ -570,6 +654,54 @@ DEFAULT_BOOKINGS = [
         ],
         "createdAt": "2026-10-18T08:00:00Z",
         "updatedAt": "2026-10-18T08:45:00Z"
+    },
+    {
+        "id": "SRV-2026-CMP6",
+        "workerId": "usr-ramesh-kumar",
+        "workerName": "Ramesh Kumar",
+        "workerTrade": "electrician",
+        "customerId": "cust-sneha-06",
+        "customerName": "Sneha Gaikwad",
+        "customerPhone": "+91 99212 90876",
+        "serviceCategory": "Electrician",
+        "taskDescription": "Living room LED cove lights strip replacement and 3-gang switchboard repair.",
+        "preferredDate": "Yesterday",
+        "preferredTimeSlot": "01:00 PM - 03:00 PM",
+        "alternativeTimeSlot": "",
+        "proposedDate": None,
+        "proposedTimeSlot": None,
+        "locality": "Mayur Colony, Kothrud, Pune",
+        "exactAddress": "Flat 102, Shreeram Complex, Mayur Colony, Kothrud",
+        "lat": 18.5065,
+        "lng": 73.8132,
+        "distance": "0.9 km",
+        "supportingImages": [],
+        "additionalNotes": "Job finished and tested. 5-star customer feedback received.",
+        "indicativePrice": 450,
+        "priceNote": "LED lighting and switchboard repair",
+        "status": "completed",
+        "statusHistory": [
+            {
+                "status": "requested",
+                "timestamp": "2026-10-16T10:00:00Z",
+                "byRole": "customer",
+                "note": "Booking submitted."
+            },
+            {
+                "status": "confirmed",
+                "timestamp": "2026-10-16T11:00:00Z",
+                "byRole": "worker",
+                "note": "Booking confirmed."
+            },
+            {
+                "status": "completed",
+                "timestamp": "2026-10-17T15:30:00Z",
+                "byRole": "worker",
+                "note": "Job completed satisfactorily by Ramesh Kumar. Payment settled."
+            }
+        ],
+        "createdAt": "2026-10-16T10:00:00Z",
+        "updatedAt": "2026-10-17T15:30:00Z"
     }
 ]
 
