@@ -15,6 +15,8 @@ import { NotificationProvider } from './hooks/NotificationContext';
 import NotificationCenterDrawer from './components/notifications/NotificationCenterDrawer';
 import { attachGlobalFeedback } from './lib/feedback';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 import OnboardingPage from './pages/OnboardingPage';
 import HomePage from './pages/HomePage';
 import KaamPage from './pages/KaamPage';
@@ -24,11 +26,17 @@ import KaushalPage from './pages/KaushalPage';
 import ProfilePage from './pages/ProfilePage';
 import HaqSetuPage from './pages/HaqSetuPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { AuthModal } from './components/AuthModal';
 
 import { useProfile } from './hooks/ProfileContext';
 
-function RequireOnboarding({ children }: { children: React.ReactNode }) {
-  const { ready, onboardingComplete } = useProfile();
+function GlobalAuthModal() {
+  const { isAuthModalOpen, closeAuthModal } = useProfile();
+  return <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />;
+}
+
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { ready, isAuthenticated, onboardingComplete } = useProfile();
   if (!ready) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-page">
@@ -39,8 +47,32 @@ function RequireOnboarding({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
   if (!onboardingComplete) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/onboarding" replace />;
+  }
+  return <>{children}</>;
+}
+
+function RequireAuthForOnboarding({ children }: { children: React.ReactNode }) {
+  const { ready, isAuthenticated, onboardingComplete } = useProfile();
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-page">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-mint border-t-deepEmerald" />
+          <span className="text-sm font-bold text-deepEmerald">Setu • सेतु</span>
+        </div>
+      </div>
+    );
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/signup" replace />;
+  }
+  if (onboardingComplete) {
+    return <Navigate to="/home" replace />;
   }
   return <>{children}</>;
 }
@@ -79,19 +111,28 @@ export default function App() {
                   <NotificationProvider>
                     <VoiceAssistantProvider>
                       <Routes>
-                        {/* First screen: Landing Page */}
+                        {/* Public Auth Routes */}
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/welcome" element={<LandingPage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/signup" element={<SignUpPage />} />
 
-                        {/* Information Entry / Profile Setup */}
-                        <Route path="/onboarding" element={<OnboardingPage />} />
+                        {/* Profile Setup / Onboarding for Authenticated Users */}
+                        <Route
+                          path="/onboarding"
+                          element={
+                            <RequireAuthForOnboarding>
+                              <OnboardingPage />
+                            </RequireAuthForOnboarding>
+                          }
+                        />
 
-                        {/* Main Dashboard & App Tabs (Protected by Onboarding) */}
+                        {/* Main Dashboard & App Tabs (Protected by Auth & Profile Completion) */}
                         <Route
                           element={
-                            <RequireOnboarding>
+                            <RequireAuth>
                               <TabLayout />
-                            </RequireOnboarding>
+                            </RequireAuth>
                           }
                         >
                           <Route path="/home" element={<HomePage />} />
@@ -111,13 +152,13 @@ export default function App() {
                           <Route path="/voice" element={<HomePage />} />
                         </Route>
 
-                        {/* Profile & Utility */}
+                        {/* Profile & Settings (Protected by Auth) */}
                         <Route
                           path="/profile"
                           element={
-                            <RequireOnboarding>
+                            <RequireAuth>
                               <ProfilePage />
-                            </RequireOnboarding>
+                            </RequireAuth>
                           }
                         />
                         <Route path="/404" element={<NotFoundPage />} />
@@ -126,7 +167,9 @@ export default function App() {
                       <UnifiedVoiceAssistantModal />
                       <NotificationCenterDrawer />
                       <AudioPlayerBar />
+                      <GlobalAuthModal />
                     </VoiceAssistantProvider>
+
                   </NotificationProvider>
                 </BrowserRouter>
             </div>

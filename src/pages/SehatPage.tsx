@@ -45,8 +45,8 @@ export default function SehatPage() {
   // Health Centres Preview Category Filter
   const [centresFilter, setCentresFilter] = useState('all');
 
-  const userName = profile?.name || 'Ramesh Kumar';
-  const userInitial = userName.trim().charAt(0).toUpperCase() || 'R';
+  const userName = profile?.name || 'Setu Worker';
+  const userInitial = userName.trim().charAt(0).toUpperCase() || 'S';
 
   // Facilities Query for Preview List
   const { data: previewFacilities = [] } = useQuery({

@@ -6,6 +6,7 @@ import ProgressBar from '../components/ProgressBar';
 import ModalPortal from '../components/ModalPortal';
 import { useProfile, type Gender } from '../hooks/ProfileContext';
 import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
+import { useTransactions } from '../hooks/TransactionContext';
 import {
   CITY_KEYS,
   SUGGESTED_SKILL_KEYS,
@@ -50,10 +51,22 @@ const SPEECH_SPEED_OPTIONS = [
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { profile, updateProfile, strength, logout } = useProfile();
+  const {
+    profile,
+    updateProfile,
+    strength,
+    logout,
+    user,
+    isCloudConnected,
+    openAuthModal,
+  } = useProfile();
+  const { syncWithCloud } = useTransactions();
   const { openAssistant } = useVoiceAssistant();
 
+  const [syncingCloud, setSyncingCloud] = useState(false);
+
   // Active Tab
+
   const [activeTab, setActiveTab] = useState<ProfileTab>('personal');
 
   // Personal Information
@@ -539,6 +552,80 @@ export default function ProfilePage() {
             </div>
           </div>
         </Card>
+
+        {/* Cloud Account & Database Sync Banner */}
+        <div
+          className={`p-4 rounded-2xl border transition-all ${
+            isCloudConnected
+              ? 'bg-gradient-to-r from-emerald-50/90 to-teal-50/70 border-emerald-200/80 text-emerald-950 shadow-xs'
+              : 'bg-gradient-to-r from-amber-50/90 to-orange-50/70 border-amber-200/80 text-amber-950 shadow-xs'
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-xs ${
+                  isCloudConnected ? 'bg-emerald-600 text-white' : 'bg-[#B34A26] text-white'
+                }`}
+              >
+                <AppIcon name={isCloudConnected ? 'shield-check' : 'user'} size={20} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider">
+                    {isCloudConnected ? '☁️ Supabase Cloud Synced' : '💾 Local Storage / Demo Mode'}
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      isCloudConnected
+                        ? 'bg-emerald-200/80 text-emerald-800'
+                        : 'bg-amber-200/80 text-amber-800'
+                    }`}
+                  >
+                    {isCloudConnected ? 'Active' : 'Offline Safe'}
+                  </span>
+                </div>
+                <p className="text-xs mt-0.5 opacity-90">
+                  {isCloudConnected
+                    ? `Signed in as ${user?.phone || user?.email || 'Authenticated Worker'}. Transactions and profile are backed up in PostgreSQL.`
+                    : 'Currently saving data on device. Sign in with Phone OTP or Email to sync across devices.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              {isCloudConnected ? (
+                <button
+                  type="button"
+                  disabled={syncingCloud}
+                  onClick={async () => {
+                    playTap();
+                    setSyncingCloud(true);
+                    await syncWithCloud();
+                    setTimeout(() => setSyncingCloud(false), 600);
+                  }}
+                  className="flex items-center gap-1.5 rounded-xl bg-white border border-emerald-300 px-3.5 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100 shadow-xs active:scale-95 transition-all"
+                >
+                  <AppIcon name="refresh" size={13} className={syncingCloud ? 'animate-spin' : ''} />
+                  <span>{syncingCloud ? 'Syncing...' : 'Sync Cloud'}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    playTap();
+                    openAuthModal();
+                  }}
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#8C3415] text-white px-4 py-2 text-xs font-bold shadow-sm hover:shadow-md active:scale-95 transition-all"
+                >
+                  <AppIcon name="user" size={14} />
+                  <span>Sign In / Cloud Sync</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
 
         {/* Validation Error Banner */}
         {validationError && (

@@ -4,7 +4,7 @@ import type { AIResponse, ModelInputMap, SkillPassportOutput } from '../modelReg
 export async function runSkillPassportGenerator(
   input: ModelInputMap['skillPassportGenerator']
 ): Promise<AIResponse<SkillPassportOutput>> {
-  const name = input.name || 'Ramesh Kumar';
+  const name = input.name || 'Setu Worker';
   const city = input.city || 'Pune';
   const years = input.years || 5;
 

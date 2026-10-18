@@ -686,7 +686,7 @@ export default function KaamPage() {
                         Worker Profile:
                       </span>
                       <span className="bg-white px-2 py-0.5 rounded-md border border-[#F4EBDD] font-medium text-[#1E2B3E]">
-                        {profile.name || 'Ramesh Kumar'}
+                        {profile.name || 'Setu Worker'}
                       </span>
                       <span className="bg-white px-2 py-0.5 rounded-md border border-[#F4EBDD] font-medium text-[#1E2B3E] capitalize">
                         {profile.workType || 'Delivery Partner'}
@@ -1323,7 +1323,7 @@ export default function KaamPage() {
         <ServiceRequestsInbox
           workerId={userId}
           workerTrade={profile.workType || 'electrician'}
-          workerName={profile.name || 'Ramesh Kumar'}
+          workerName={profile.name || 'Setu Worker'}
           initialFilter={requestsInitialFilter}
         />
       )}

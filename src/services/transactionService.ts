@@ -7,6 +7,8 @@ import type {
   DateFilterType,
   DaySummary,
 } from '../types/transaction';
+import { apiClient } from './apiClient';
+import { getAuthToken } from '../lib/supabaseClient';
 
 const STORAGE_KEY = 'setu_transactions';
 
@@ -356,8 +358,40 @@ export function generateDemoPastTransactions(): Transaction[] {
   return txs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 }
 
+const AUTH_USER_KEY = '@setu/auth_user_id';
+
+/**
+ * Derives current storage key scoped to authenticated user to isolate records.
+ */
+export function getCurrentUserStorageKey(): string {
+  try {
+    const raw = localStorage.getItem(AUTH_USER_KEY);
+    if (raw && raw.trim()) {
+      return `setu_transactions_${raw.trim()}`;
+    }
+  } catch {}
+  return STORAGE_KEY;
+}
+
+/**
+ * Sets or clears the active authenticated user ID for transaction scoping.
+ */
+export function setCurrentAuthUserId(userId: string | null): void {
+  try {
+    if (userId && userId.trim()) {
+      localStorage.setItem(AUTH_USER_KEY, userId.trim());
+    } else {
+      localStorage.removeItem(AUTH_USER_KEY);
+    }
+    window.dispatchEvent(new Event('setu_transactions_changed'));
+  } catch (err) {
+    console.error('Failed to update auth user id for transaction storage', err);
+  }
+}
+
 /**
  * Reset or seed stored transactions to demo data spanning the past 4-5 days.
+ * Only called explicitly (e.g. by reviewer clicking "Load Sample Data").
  */
 export function seedDemoTransactions(): Transaction[] {
   const demoData = generateDemoPastTransactions();
@@ -366,38 +400,101 @@ export function seedDemoTransactions(): Transaction[] {
 }
 
 /**
- * Safe local storage reader. Returns initialized demo transactions for past 4-5 days if storage is empty.
+ * Safe local storage reader. Returns stored transactions for current active user.
+ * Returns empty array [] if no transactions exist yet.
+ * Never automatically injects demo data into a genuine user's account.
  */
 export function getStoredTransactions(): Transaction[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const key = getCurrentUserStorageKey();
+    const raw = localStorage.getItem(key);
     if (!raw) {
-      const demoData = generateDemoPastTransactions();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoData));
-      return demoData;
+      return [];
     }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      const demoData = generateDemoPastTransactions();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(demoData));
-      return demoData;
+    if (!Array.isArray(parsed)) {
+      return [];
     }
     return parsed.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   } catch {
-    return generateDemoPastTransactions();
+    return [];
   }
 }
 
 /**
- * Save transactions to localStorage and dispatch custom event for cross-tab or component sync.
+ * Save transactions to user-scoped localStorage and dispatch custom event.
  */
 export function saveStoredTransactions(transactions: Transaction[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+    const key = getCurrentUserStorageKey();
+    localStorage.setItem(key, JSON.stringify(transactions));
     window.dispatchEvent(new Event('setu_transactions_changed'));
   } catch (err) {
     console.error('Failed to save transactions to localStorage', err);
   }
+}
+
+
+/**
+ * Syncs offline/local transactions to remote backend (if logged in) and updates local store with remote data.
+ */
+export async function syncTransactionsWithCloud(): Promise<Transaction[]> {
+  const token = await getAuthToken();
+  if (!token) {
+    return getStoredTransactions();
+  }
+
+  try {
+    const local = getStoredTransactions();
+    // Exclude synthetic demo records from committing to PostgreSQL
+    const genuineLocal = local.filter(
+      (tx) =>
+        !tx.id.startsWith('tx_demo_') &&
+        !tx.id.startsWith('sample_') &&
+        !tx.description?.includes('[Dev Sample]')
+    );
+
+    if (genuineLocal.length > 0) {
+      // Batch sync local transactions to cloud
+      await apiClient.post('/transactions/batch-sync', {
+        transactions: genuineLocal.map((tx) => ({
+          clientTxId: tx.id,
+          type: tx.type,
+          amount: tx.amount,
+          category: tx.category,
+          description: tx.description || '',
+          workRef: tx.workRef || null,
+          source: 'manual',
+          timestamp: tx.timestamp,
+        })),
+      });
+    }
+
+    // Pull down authoritative transaction list from cloud
+    const res = await apiClient.get('/transactions?limit=250');
+    if (res.data?.transactions && Array.isArray(res.data.transactions)) {
+      if (res.data.transactions.length > 0) {
+        const remoteTxs: Transaction[] = res.data.transactions.map((item: any) => ({
+          id: item.clientTxId || item.id,
+          type: item.type as TransactionType,
+          amount: Number(item.amount),
+          category: item.category as TransactionCategory,
+          description: item.description || '',
+          workRef: item.workRef || undefined,
+          timestamp: item.timestamp,
+          createdAt: item.createdAt || Date.now(),
+          updatedAt: item.updatedAt || Date.now(),
+        }));
+
+        saveStoredTransactions(remoteTxs);
+        return remoteTxs;
+      }
+    }
+  } catch (err) {
+    console.warn('[TransactionSync] Cloud sync failed or offline, continuing with local store:', err);
+  }
+
+  return getStoredTransactions();
 }
 
 /**
@@ -421,6 +518,27 @@ export function addTransaction(
   const existing = getStoredTransactions();
   const updated = [newTx, ...existing];
   saveStoredTransactions(updated);
+
+  // Background cloud push (non-blocking)
+  getAuthToken().then((token) => {
+    if (token) {
+      apiClient
+        .post('/transactions', {
+          clientTxId: newTx.id,
+          type: newTx.type,
+          amount: newTx.amount,
+          category: newTx.category,
+          description: newTx.description || '',
+          workRef: newTx.workRef || null,
+          source: 'manual',
+          timestamp: newTx.timestamp,
+        })
+        .catch((err) => {
+          console.warn('[TransactionService] Background push failed, transaction remains safe locally:', err);
+        });
+    }
+  });
+
   return newTx;
 }
 
@@ -447,6 +565,25 @@ export function updateTransaction(
 
   existing[idx] = updatedTx;
   saveStoredTransactions(existing);
+
+  // Background cloud push (non-blocking)
+  getAuthToken().then((token) => {
+    if (token && !id.startsWith('tx_demo_') && !id.startsWith('sample_')) {
+      apiClient
+        .put(`/transactions/${id}`, {
+          type: updatedTx.type,
+          amount: updatedTx.amount,
+          category: updatedTx.category,
+          description: updatedTx.description || '',
+          workRef: updatedTx.workRef || null,
+          timestamp: updatedTx.timestamp,
+        })
+        .catch((err) => {
+          console.warn('[TransactionService] Background update failed:', err);
+        });
+    }
+  });
+
   return updatedTx;
 }
 
@@ -458,16 +595,29 @@ export function deleteTransaction(id: string): boolean {
   const filtered = existing.filter((t) => t.id !== id);
   if (filtered.length === existing.length) return false;
   saveStoredTransactions(filtered);
+
+  // Background cloud delete (non-blocking)
+  getAuthToken().then((token) => {
+    if (token && !id.startsWith('tx_demo_') && !id.startsWith('sample_')) {
+      apiClient.delete(`/transactions/${id}`).catch((err) => {
+        console.warn('[TransactionService] Background delete failed:', err);
+      });
+    }
+  });
+
   return true;
 }
+
 
 /**
  * Clears all user transactions.
  */
 export function clearAllTransactions(): void {
-  localStorage.removeItem(STORAGE_KEY);
+  const key = getCurrentUserStorageKey();
+  localStorage.removeItem(key);
   window.dispatchEvent(new Event('setu_transactions_changed'));
 }
+
 
 /**
  * Development sample dataset clearly labeled as sample data.

@@ -18,4 +18,6 @@ project-documentation/ml_focused_report/
 .idea/
 android/.idea/
 android/local.properties
-
+*.db
+*.sqlite
+*.sqlite3

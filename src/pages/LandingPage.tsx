@@ -123,19 +123,58 @@ function SpotlightFeatureCard({
   );
 }
 
+function LandingAuthButton({
+  label,
+  icon = 'arrow-forward',
+  onClick,
+  delay = 0.45,
+}: {
+  label: string;
+  icon?: string;
+  onClick: () => void;
+  delay?: number;
+}) {
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      whileHover={{ scale: 1.015 }}
+      whileTap={{ scale: 0.97 }}
+      type="button"
+      onClick={onClick}
+      className="group relative overflow-hidden emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2.5 rounded-full px-6 text-base font-extrabold text-white shadow-xl shadow-emerald-950/25 active:shadow-md transition-all duration-300"
+    >
+      <motion.div
+        animate={{ x: ['-100%', '200%'] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.5 }}
+        className="pointer-events-none absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12"
+      />
+      <span className="relative z-10 truncate">{label}</span>
+      <div className="relative z-10 transition-transform duration-200 group-hover:translate-x-1 shrink-0">
+        <AppIcon name={icon} size={18} />
+      </div>
+    </motion.button>
+  );
+}
+
 export default function LandingPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { profile, onboardingComplete } = useProfile();
-
-  const handleGetStarted = () => {
-    playPop();
-    navigate('/onboarding');
-  };
+  const { profile, onboardingComplete, user, isAuthenticated, logout } = useProfile();
 
   const handleGoToDashboard = () => {
     playTap();
-    navigate('/home');
+    if (onboardingComplete) {
+      navigate('/home');
+    } else {
+      navigate('/onboarding');
+    }
+  };
+
+  const handleLogout = async () => {
+    playTap();
+    await logout();
   };
 
   return (
@@ -147,7 +186,7 @@ export default function LandingPage() {
 
       {/* Main container */}
       <div className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-4xl flex-1 flex-col px-5 py-4 md:py-8">
-        {/* Top bar with Sound Toggle, Language, and Profile Icon */}
+        {/* Top bar with Sound Toggle, Language, and Profile/Auth Icon */}
         <header className="flex items-center justify-between pb-3">
           <SetuLogo size="md" />
           <div className="flex items-center gap-2">
@@ -157,11 +196,15 @@ export default function LandingPage() {
               type="button"
               onClick={() => {
                 playTap();
-                navigate('/profile');
+                if (isAuthenticated) {
+                  navigate('/profile');
+                } else {
+                  navigate('/login');
+                }
               }}
               className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/80 backdrop-blur-xl shadow-sm border border-[#E9DFCE] text-deepEmerald hover:bg-white hover:text-[#B34A26] hover:border-[#E5953E]/50 transition-all active:scale-95"
-              title={t('profileScreen.title', 'Profile')}
-              aria-label={t('profileScreen.title', 'Profile')}
+              title={isAuthenticated ? t('profileScreen.title', 'Profile') : t('auth.logIn', 'Log In')}
+              aria-label={isAuthenticated ? t('profileScreen.title', 'Profile') : t('auth.logIn', 'Log In')}
             >
               <AppIcon name="person" size={18} />
             </button>
@@ -195,8 +238,6 @@ export default function LandingPage() {
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent" />
 
-
-
             <img
               src="/images/hero-illustration.jpg"
               alt={t('landing.heroAlt')}
@@ -215,43 +256,51 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons: Clear Separation of Log In and Sign Up */}
         <div className="mt-6 pt-2 space-y-2.5">
-          <motion.button
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
-            whileHover={{ scale: 1.015 }}
-            whileTap={{ scale: 0.97 }}
-            type="button"
-            onClick={handleGetStarted}
-            className="group relative overflow-hidden emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2 rounded-full text-base font-extrabold text-white shadow-xl shadow-emerald-950/25 active:shadow-md transition-all duration-300"
-          >
-            <motion.div
-              animate={{ x: ['-100%', '200%'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.5 }}
-              className="pointer-events-none absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12"
-            />
-            <span className="relative z-10">{t('landing.getStarted')}</span>
-            <div className="relative z-10 transition-transform duration-200 group-hover:translate-x-1">
-              <AppIcon name="arrow-forward" size={18} />
-            </div>
-          </motion.button>
+          {isAuthenticated && user ? (
+            /* Logged in state */
+            <div className="space-y-2.5">
+              <LandingAuthButton
+                label={`${t('landing.goToDashboard', 'Proceed to Dashboard')} ${profile.name ? `(${profile.name})` : ''}`}
+                icon="home"
+                onClick={handleGoToDashboard}
+                delay={0.1}
+              />
 
-          {onboardingComplete && (
-            <motion.button
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.55 }}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              type="button"
-              onClick={handleGoToDashboard}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/80 hover:bg-white/95 text-sm font-extrabold text-deepEmerald shadow-sm border border-[#E0D4C0] backdrop-blur-md hover:border-[#E5953E]/50 hover:shadow-md transition-all duration-300"
-            >
-              <AppIcon name="home" size={16} className="text-primary" />
-              <span>{t('landing.goToDashboard', 'Proceed to Dashboard')} ({profile.name}) →</span>
-            </motion.button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-white/70 hover:bg-white text-xs font-bold text-red-700 border border-red-200 shadow-xs transition-all"
+              >
+                <span>{t('auth.loggingOut', 'Log Out of Account')}</span>
+              </button>
+            </div>
+          ) : (
+            /* Unauthenticated state: Two Clear Options - Log In & Sign Up with 100% matched visual styling */
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Primary Sign Up (Get Started) */}
+              <LandingAuthButton
+                label={`${t('auth.signUp', 'Sign Up')} / ${t('landing.getStarted', 'Get Started')}`}
+                icon="arrow-forward"
+                onClick={() => {
+                  playPop();
+                  navigate('/signup');
+                }}
+                delay={0.45}
+              />
+
+              {/* Log In Option with identical styling */}
+              <LandingAuthButton
+                label={t('auth.logIn', 'Log In')}
+                icon="arrow-forward"
+                onClick={() => {
+                  playTap();
+                  navigate('/login');
+                }}
+                delay={0.5}
+              />
+            </div>
           )}
         </div>
 

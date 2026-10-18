@@ -21,6 +21,7 @@ import {
   clearAllTransactions as apiClearTx,
   loadSampleDevelopmentTransactions as apiLoadSample,
   computeFinancialSummary,
+  syncTransactionsWithCloud,
 } from '../services/transactionService';
 
 interface TransactionContextType {
@@ -39,6 +40,7 @@ interface TransactionContextType {
   deleteTransaction: (id: string) => Promise<boolean>;
   clearTransactions: () => void;
   loadSampleData: () => void;
+  syncWithCloud: () => Promise<void>;
   // Modal controllers
   isAddModalOpen: boolean;
   openAddModal: (type?: TransactionType, date?: string) => void;
@@ -69,8 +71,21 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
+  const syncWithCloud = useCallback(async () => {
+    try {
+      const synced = await syncTransactionsWithCloud();
+      if (synced && synced.length > 0) {
+        setTransactions(synced);
+      }
+    } catch (err) {
+      console.warn('[TransactionContext] Cloud sync error:', err);
+    }
+  }, []);
+
   useEffect(() => {
     refresh();
+    // Non-blocking background sync with Supabase PostgreSQL if authenticated
+    syncWithCloud();
 
     const handleStorageChange = () => {
       refresh();
@@ -82,7 +97,8 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('setu_transactions_changed', handleStorageChange);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [refresh]);
+  }, [refresh, syncWithCloud]);
+
 
   const summary = useMemo(() => {
     return computeFinancialSummary(transactions, selectedPeriod);
@@ -159,6 +175,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       deleteTransaction,
       clearTransactions,
       loadSampleData,
+      syncWithCloud,
       isAddModalOpen,
       openAddModal,
       closeAddModal,
@@ -178,6 +195,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       deleteTransaction,
       clearTransactions,
       loadSampleData,
+      syncWithCloud,
       isAddModalOpen,
       openAddModal,
       closeAddModal,
@@ -187,6 +205,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
       openEditModal,
       closeEditModal,
     ]
+
   );
 
   return (

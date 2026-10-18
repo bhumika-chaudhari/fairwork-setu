@@ -29,11 +29,9 @@ export default function OnboardingPage() {
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>(
-    (i18n.language as LanguageCode) || 'hi'
+    (i18n.language as LanguageCode) || 'en'
   );
-  const [fullName, setFullName] = useState(
-    onboardingComplete ? profile.name : profile.name === 'Ramesh Kumar' ? '' : profile.name
-  );
+  const [fullName, setFullName] = useState(profile.name || '');
   const [gender, setGender] = useState<Gender | null>(profile.gender || null);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl || '');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -109,18 +107,19 @@ export default function OnboardingPage() {
   const handleFinish = async () => {
     setSubmitted(true);
     await completeOnboarding({
-      name: fullName.trim() || 'Ramesh Kumar',
+      name: fullName.trim() || profile.name || 'Setu Worker',
       gender,
       avatarUrl,
       emergencyContact: phoneNumber.trim()
         ? `+91 ${phoneNumber.replace(/^\+91\s*/, '')}`
-        : '+91 98765 43210',
+        : (profile.emergencyContact || ''),
       experienceYears,
       workType,
       cityKey: cityInput ? `cities.${cityInput.toLowerCase()}` : 'cities.pune',
       skillKeys: selectedSkills,
       savingsGoal,
       weeklySaveGoal: Math.round(savingsGoal / 12),
+      preferredLanguage: selectedLanguage,
     });
 
     // Pause briefly so worker sees positive completion state
@@ -678,7 +677,7 @@ export default function OnboardingPage() {
                 {t('onboarding.profileCreated')}
               </h2>
               <p className="mt-1 text-sm text-textSecondary max-w-xs">
-                {t('onboarding.welcomeSubtitle', { name: fullName.trim() || 'Ramesh Kumar' })}
+                {t('onboarding.welcomeSubtitle', { name: fullName.trim() || profile.name || 'Setu Worker' })}
               </p>
               <div className="mt-6 flex items-center gap-2 text-xs font-bold text-terracotta">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-terracotta border-t-transparent" />

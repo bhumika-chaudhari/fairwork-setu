@@ -21,6 +21,9 @@ from marketplace import marketplace_router
 from health_service import health_router
 from ai_models_router import ai_models_router
 from notifications_router import notifications_router
+from database import init_db
+from user_router import user_router
+from transactions_router import transactions_router
 
 app = FastAPI(
     title="Setu Financial & Livelihood Marketplace Service",
@@ -37,10 +40,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def on_startup():
+    try:
+        init_db()
+        print("[Database] Schema initialized successfully.")
+    except Exception as e:
+        print(f"[Database] Warning: Schema initialization encountered an issue: {e}")
+
 app.include_router(marketplace_router)
 app.include_router(health_router)
 app.include_router(ai_models_router)
 app.include_router(notifications_router)
+app.include_router(user_router)
+app.include_router(transactions_router)
 
 
 

@@ -80,7 +80,7 @@ export default function KaushalPage() {
     setDownloading(true);
     try {
       downloadSkillPassportFile({
-        name: profile.name || 'Ramesh Kumar',
+        name: profile.name || 'Setu Worker',
         occupation,
         city: t(profile.cityKey),
         experienceYears: profile.experienceYears || 5,

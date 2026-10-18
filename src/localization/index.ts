@@ -64,20 +64,19 @@ export function getInitialLanguage(): LanguageCode {
     const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
     if (isSupportedLanguage(saved)) return saved;
   } catch {}
-  try {
-    const deviceCode = navigator.language?.split('-')[0];
-    if (isSupportedLanguage(deviceCode)) return deviceCode;
-  } catch {}
-  return 'hi';
+  // English is the strict default for all new users and first-time visitors.
+  // Device language or location must NOT automatically override this.
+  return 'en';
 }
 
 void i18n.use(initReactI18next).init({
   resources,
   lng: getInitialLanguage(),
-  fallbackLng: ['hi', 'en'],
+  fallbackLng: 'en',
   interpolation: { escapeValue: false },
   react: { useSuspense: false, bindI18n: 'languageChanged loaded' },
 });
+
 
 export async function initLanguage(): Promise<LanguageCode> {
   const lang = getInitialLanguage();

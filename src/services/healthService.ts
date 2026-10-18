@@ -7,7 +7,16 @@ import type {
   SavedHealthItem,
 } from '../types/health';
 
-const API_BASE = 'http://127.0.0.1:8000/health-service';
+const BASE_URL = (
+  import.meta.env.VITE_ML_API_URL ||
+  (typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000'
+    : '')
+).replace(/\/$/, '');
+
+const API_BASE = `${BASE_URL}/health-service`;
+
 
 // -------------------------------------------------------------------------
 // LOCAL FALLBACK DATA (Guarantees 100% offline & demo reliability)
