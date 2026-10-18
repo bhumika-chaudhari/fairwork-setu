@@ -497,20 +497,63 @@ class AIModelsService:
 
                 results = self.model_6_jobs_df.copy()
                 results["similarity_score"] = scores
-                results["match_percentage"] = (scores * 100).round(1)
+
+                # Calibrate percentage: if raw_score > 0, scale between 50% and 96% based on relative score
+                max_score = scores.max() if (len(scores) > 0 and scores.max() > 0) else 1.0
+                worker_skill_tokens = [
+                    s.lower().strip()
+                    for s in (skills if isinstance(skills, list) else str(skills).split(","))
+                    if len(s.strip()) > 1
+                ]
 
                 top_df = results.sort_values("similarity_score", ascending=False).head(top_k)
                 matched_jobs = []
                 for _, r in top_df.iterrows():
+                    raw_score = float(r["similarity_score"])
+                    if raw_score > 0 and max_score > 0:
+                        calibrated_pct = round((raw_score / max_score) * 44.0 + 52.0, 1)
+                    else:
+                        calibrated_pct = 32.0
+
+                    # Find matching skills between worker and job
+                    req_skills_str = str(r.get("skills_required", "")).lower()
+                    job_desc_str = (str(r.get("description", "")) + " " + str(r.get("title", ""))).lower()
+                    overlap = []
+                    for ws in worker_skill_tokens:
+                        ws_clean = ws.replace("-", " ")
+                        if ws_clean in req_skills_str or ws_clean in job_desc_str:
+                            overlap.append(ws.title())
+                        else:
+                            for part in ws_clean.split():
+                                if len(part) > 3 and (part in req_skills_str or part in job_desc_str):
+                                    if ws.title() not in overlap:
+                                        overlap.append(ws.title())
+
+                    job_title = str(r.get("title", ""))
+                    if calibrated_pct >= 75:
+                        if overlap:
+                            exp = f"Strong trade alignment: Directly matches your experience in {', '.join(overlap[:3])}."
+                        else:
+                            exp = f"High profile match: Your background closely aligns with {job_title} requirements."
+                    elif calibrated_pct >= 50:
+                        if overlap:
+                            exp = f"Transferable skill fit: Your skills in {', '.join(overlap[:2])} apply to this role."
+                        else:
+                            exp = f"Moderate fit: Good alternative opportunity matching your general trade profile."
+                    else:
+                        exp = "New domain opportunity: Requires distinct trade skills with on-the-job training."
+
                     matched_jobs.append({
                         "job_id": str(r.get("job_id", "")),
-                        "title": str(r.get("title", "")),
+                        "title": job_title,
                         "description": str(r.get("description", "")),
                         "location": str(r.get("location", "")),
                         "employment_type": str(r.get("employment_type", "full_time")),
                         "skills_required": str(r.get("skills_required", "")),
-                        "similarity_score": round(float(r["similarity_score"]), 4),
-                        "match_percentage": float(r["match_percentage"]),
+                        "similarity_score": round(raw_score, 4),
+                        "match_percentage": calibrated_pct,
+                        "matching_skills": overlap[:4],
+                        "match_explanation": exp,
                         "match_model": model_name
                     })
                 return matched_jobs

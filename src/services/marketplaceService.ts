@@ -9,7 +9,13 @@ import type {
   ActivitySummary,
 } from '../types/marketplace';
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = (
+  import.meta.env.VITE_ML_API_URL ||
+  (typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000'
+    : '')
+).replace(/\/$/, '');
 const LOCAL_STORAGE_APPS_KEY = 'setu_marketplace_applications';
 const LOCAL_STORAGE_BOOKINGS_KEY = 'setu_marketplace_bookings';
 const LOCAL_STORAGE_PROFILE_KEY = 'setu_worker_service_profile';
@@ -736,6 +742,166 @@ function getLocalDefaultJobs(filters?: any): JobListing[] {
       },
       isDemo: false,
       postedAt: '2026-10-14T09:15:00Z',
+    },
+    {
+      id: 'job-drv-06',
+      title: 'Commercial Auto & Cab Driver',
+      employer: 'City Mobility Fleet Partner',
+      category: 'driving',
+      description:
+        'Drive passenger auto rickshaw or commercial fleet cab across central city routes. Handle daily UPI earnings, guaranteed minimum fare incentive, and vehicle maintenance allowance.',
+      location: 'Swargate & Deccan, Pune',
+      serviceArea: 'Central Pune & Camp',
+      distance: '2.1 km',
+      workType: 'full_time',
+      compensation: {
+        amount: 650,
+        maxAmount: 1100,
+        unit: 'per_day',
+        isEstimate: true,
+        materialsExtra: false,
+      },
+      schedule: 'Flexible 8-hour shift (Morning or Evening Peak)',
+      requirements: ['Valid commercial driving badge or commercial license', 'Punctuality and clean traffic record'],
+      skills: ['Commercial driving', 'Route navigation', 'Customer interaction', 'UPI payment handling'],
+      deadline: '2026-11-25',
+      verificationStatus: 'verified_platform',
+      safetyInfo: 'Vehicle equipped with emergency SOS button and 24x7 roadside breakdown towing.',
+      contactChannel: {
+        type: 'platform_apply',
+        value: 'fleet.driver@citymobility.in',
+        verified: true,
+      },
+      isDemo: false,
+      postedAt: '2026-10-17T08:00:00Z',
+    },
+    {
+      id: 'job-plumb-07',
+      title: 'Plumbing & Water Motor Technician',
+      employer: 'JalSeva Rapid Home Services',
+      category: 'plumbing',
+      description:
+        'Attend on-demand residential repair calls: water pump motor installation, concealed pipe leakages, bathroom sanitary fittings, and overhead tank float valve replacements.',
+      location: 'Kothrud & Karve Nagar, Pune',
+      serviceArea: 'Pune West & South',
+      distance: '2.7 km',
+      workType: 'task_based',
+      compensation: {
+        amount: 600,
+        maxAmount: 1200,
+        unit: 'per_task',
+        isEstimate: true,
+        materialsExtra: true,
+      },
+      schedule: 'Flexible task-based assignments dispatched through Setu service network',
+      requirements: ['Minimum 2 years experience in CPVC/GI pipe joints', 'Own basic plumbing tool kit'],
+      skills: ['Pipe jointing', 'Leakage detection', 'Sanitary installation', 'Motor pump wiring check'],
+      deadline: '2026-11-30',
+      verificationStatus: 'community_posted',
+      safetyInfo: 'Safety glasses and anti-slip protective footwear required during pipe cutting.',
+      contactChannel: {
+        type: 'platform_apply',
+        value: 'support@jalsevaservices.com',
+        verified: true,
+      },
+      isDemo: false,
+      postedAt: '2026-10-16T14:20:00Z',
+    },
+    {
+      id: 'job-cook-08',
+      title: 'Healthy Home Cook & Meal Maker',
+      employer: 'Annapurna Daily Meal Network',
+      category: 'cooking',
+      description:
+        'Prepare authentic North Indian or Maharashtrian vegetarian meals (roti, dal, sabzi, rice) for private residential households and small co-living accommodations.',
+      location: 'Baner & Aundh, Pune',
+      serviceArea: 'Baner / Aundh / Pashan',
+      distance: '4.8 km',
+      workType: 'part_time',
+      compensation: {
+        amount: 12000,
+        maxAmount: 16000,
+        unit: 'per_month',
+        isEstimate: false,
+        materialsExtra: false,
+      },
+      schedule: 'Morning slot (7:00 AM – 10:30 AM) or Evening slot (6:30 PM – 9:00 PM)',
+      requirements: ['High standard of kitchen cleanliness and hygiene', 'Experience in fresh chapati & seasonal cooking'],
+      skills: ['North Indian cuisine', 'Maharashtrian cuisine', 'Kitchen hygiene', 'Time management'],
+      deadline: '2026-11-18',
+      verificationStatus: 'community_posted',
+      safetyInfo: 'Cookware and LPG connection checked for standard household safety standards.',
+      contactChannel: {
+        type: 'platform_apply',
+        value: 'meals@annapurnanetwork.in',
+        verified: true,
+      },
+      isDemo: false,
+      postedAt: '2026-10-15T11:00:00Z',
+    },
+    {
+      id: 'job-tech-09',
+      title: 'Smartphone & Hardware Repair Technician',
+      employer: 'QuickFix Multi-Brand Tech Hub',
+      category: 'technician',
+      description:
+        'Diagnose and repair smartphones, tablets, and mobile accessories: display glass touch replacement, battery replacement, charging port desoldering, and basic software flashing.',
+      location: 'FC Road & Deccan, Pune',
+      serviceArea: 'Central Pune & Shivajinagar',
+      distance: '1.5 km',
+      workType: 'full_time',
+      compensation: {
+        amount: 18000,
+        maxAmount: 24000,
+        unit: 'per_month',
+        isEstimate: false,
+        materialsExtra: false,
+      },
+      schedule: '11:00 AM – 8:30 PM (Tuesday Weekly Off)',
+      requirements: ['Certificate in Mobile Hardware Repair or 1+ year store experience', 'SMD rework station familiarity'],
+      skills: ['Screen replacement', 'SMD soldering', 'Charging port repair', 'Hardware troubleshooting'],
+      deadline: '2026-11-28',
+      verificationStatus: 'verified_platform',
+      safetyInfo: 'Anti-static wristbands, fume extractors, and ESD safety mats provided on all repair benches.',
+      contactChannel: {
+        type: 'platform_apply',
+        value: 'hiring@quickfixtech.in',
+        verified: true,
+      },
+      isDemo: false,
+      postedAt: '2026-10-17T16:45:00Z',
+    },
+    {
+      id: 'job-paint-10',
+      title: 'Interior Wall Painter & Surface Finisher',
+      employer: 'Beautiful Homes Project Partner',
+      category: 'painting',
+      description:
+        'Surface putty smoothing, primer coating, roll painting, and texture wall design for residential apartments and renovation projects. Material supplied by contractor.',
+      location: 'Viman Nagar & Kharadi, Pune',
+      serviceArea: 'East Pune Zone',
+      distance: '7.8 km',
+      workType: 'task_based',
+      compensation: {
+        amount: 750,
+        maxAmount: 1300,
+        unit: 'per_day',
+        isEstimate: true,
+        materialsExtra: false,
+      },
+      schedule: 'Contract shifts (9:00 AM – 6:00 PM), daily wage payout with site lunch provided',
+      requirements: ['Prior wall painting experience with roller and brush', 'Punctuality and surface prep care'],
+      skills: ['Wall putty smoothing', 'Primer application', 'Roller painting', 'Surface tape masking'],
+      deadline: '2026-11-22',
+      verificationStatus: 'community_posted',
+      safetyInfo: 'Dust respirators, scaffolding safety harnesses, and paint overalls provided on site.',
+      contactChannel: {
+        type: 'platform_apply',
+        value: 'projects@beautifulhomespune.com',
+        verified: true,
+      },
+      isDemo: false,
+      postedAt: '2026-10-18T07:15:00Z',
     },
   ];
 
