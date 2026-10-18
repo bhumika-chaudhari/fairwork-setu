@@ -4,4 +4,12 @@
     <string name="title_activity_main">FairWork Setu</string>
     <string name="package_name">com.fairwork.setu</string>
     <string name="custom_url_scheme">com.fairwork.setu</string>
+
+    <!-- App Shortcut Strings -->
+    <string name="shortcut_expense_short">Log Expense</string>
+    <string name="shortcut_expense_long">Kharcha Log Karein</string>
+    <string name="shortcut_income_short">Add Income</string>
+    <string name="shortcut_income_long">Kamai Log Karein</string>
+    <string name="shortcut_voice_short">Voice Log</string>
+    <string name="shortcut_voice_long">Bolkar Log Karein</string>
 </resources>
