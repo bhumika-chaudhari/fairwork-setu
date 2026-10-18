@@ -1,561 +1,400 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Expo-57-blue?logo=expo" alt="Expo 57" />
-  <img src="https://img.shields.io/badge/React_Native-0.86-61DAFB?logo=react" alt="React Native" />
-  <img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Platform-Android_First-3DDC84?logo=android" alt="Android" />
+  <img src="https://img.shields.io/badge/React-18.3-61DAFB?logo=react" alt="React 18" />
+  <img src="https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite" alt="Vite 7" />
+  <img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwindcss" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Android-Capacitor_8-3DDC84?logo=android" alt="Capacitor 8" />
+  <img src="https://img.shields.io/badge/FastAPI-Python_3.11+-009688?logo=fastapi" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Tesseract.js-7.0_OCR-5C6BC0" alt="Tesseract.js" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
-<h1 align="center">सेतु — Setu</h1>
-<h3 align="center">AI-Powered Livelihood Companion for India's Informal & Gig Workers</h3>
-<p align="center"><em>"Aapke Kaam, Paisa, Sehat aur Skill ka Sathi"</em></p>
+<h1 align="center">🇮🇳 सेतु — FairWork Setu</h1>
+<h3 align="center">AI-Powered Livelihood, Financial & Social Security Companion for India's Informal & Gig Workers</h3>
+<p align="center"><em>"Aapke Kaam, Dhan, Sehat aur Haq ka Digital Sathi"</em></p>
 
 ---
 
-## 🏗️ Overview
+## 📌 Executive Summary
 
-**Setu** (meaning "bridge" in Hindi) is an AI-powered mobile application that acts as a livelihood companion for India's estimated **450 million informal and gig workers** — construction labourers, electricians, domestic workers, drivers, delivery personnel, street vendors, plumbers, tailors, and daily-wage earners.
+India's informal and gig economy encompasses over **450 million workers** — cab and auto drivers, food/parcel delivery partners, construction workers, domestic help, street vendors, plumbers, electricians, and daily-wage earners. Despite forming the backbone of the economy, these workers face systemic barriers:
+* **Volatile & Fragmented Income:** Daily earnings fluctuate wildly with no structured accounting or safety net.
+* **Low Digital & Written Literacy:** Complex banking apps and text-heavy forms lead to digital exclusion.
+* **Lack of Formal Credit History:** Without pay slips or ITR filings, workers are locked out of formal institutional banking and exploited by predatory local lenders.
+* **Social Security Blindspots:** Crucial government welfare schemes (e-Shram, PM-SYM, PM-SVANidhi, Ayushman Bharat) remain underutilized due to lack of awareness and confusing legal jargon.
 
-The app bridges the gap between:
-- A worker's **skills** and nearby **work opportunities** via ML-driven job matching
-- **Irregular daily income** and **planned savings** via intelligent forecasting
-- **Health needs** and **verified public resources** via Retrieval-Augmented Generation (RAG)
-- **Informal experience** and a structured **digital Skill Passport** via NER-based skill extraction
-
-> **Legal Disclaimer:** Setu is an informational and record-keeping tool only. It does **not** constitute legal, medical, employment, or financial advice. It does not make automated decisions regarding employment eligibility, loan approvals, insurance claims, welfare benefits, or medical diagnoses. Users must verify all information with official government sources or qualified professionals before acting on any suggestion.
+**FairWork Setu** ("Setu" meaning *Bridge* in Hindi) is a unified, voice-first, multimodal livelihood platform built to bridge these exact gaps. Designed specifically for low-literacy ergonomics, Setu empowers workers through conversational voice logging, machine-learning-driven financial forecasting, native mobile lock-screen shift tracking, receipt OCR scanning, and grounded AI welfare assistance.
 
 ---
 
 ## 🏛️ System Architecture
 
-Setu follows a 4-tier modular architecture designed for offline resilience, low latency, and strict privacy compliance:
+FairWork Setu is engineered as a hybrid cloud-and-edge platform consisting of a high-performance **React 18 + Vite** progressive frontend, a native **Capacitor 8 Android Container** with hardware hooks, and a modular **Python FastAPI AI/ML microservice**.
 
 ```mermaid
 flowchart TD
-    subgraph ClientTier ["📱 Client Layer (Mobile Application)"]
+    subgraph MobileDevice ["📱 Android Device Layer (Capacitor Native Container)"]
         direction TB
-        RN["React Native / Expo App (Android-First)"]
-        VoiceRec["🎙️ Voice Recorder & Audio Streaming"]
-        LocalCache["💾 Local Storage / Offline Cache"]
-        i18n["🌐 Bilingual UI (Hindi & English)"]
-        RN --- VoiceRec
-        RN --- LocalCache
-        RN --- i18n
+        AppWidget["🎛️ Home Screen Card Widget<br/>(QuickEntryWidgetProvider)"]
+        LockScreen["🔒 Lock-Screen Shift Tracker<br/>(Sticky Foreground Service)"]
+        ShakeSensor["📳 Shake-to-Log Sensor<br/>(Multi-Peak Accelerometer)"]
+        QuickTile["⚡ Quick Settings Control Tile<br/>(SetuQuickTileService)"]
+        CameraOCR["📸 Receipt Camera Scanner<br/>(Tesseract.js Engine)"]
     end
 
-    subgraph APITier ["⚡ Application & API Gateway Layer (FastAPI Backend)"]
+    subgraph ClientPWA ["💻 Frontend Application Tier (React 18 + Vite + TS)"]
         direction TB
-        AuthSvc["🔐 Auth & Worker Profiles (JWT / Phone)"]
-        DhanSvc["💰 Dhan Service (Income, Expense, Score)"]
-        KaamSvc["💼 Kaam Service (Job Matching & Feeds)"]
-        SehatSvc["🩺 Sehat Service (Welfare & Health RAG)"]
-        KaushalSvc["📜 Kaushal Service (Skill Passport & Courses)"]
+        UI_Home["🏠 Home Dashboard<br/>(Live Shift & Ticker)"]
+        UI_Kaam["💼 Kaam Setu<br/>(Gig Matcher & Jobs)"]
+        UI_Dhan["💰 Dhan Setu<br/>(Cashflow & Ledger)"]
+        UI_Sehat["🩺 Sehat Setu<br/>(Health & Triage)"]
+        UI_Kaushal["📜 Kaushal Setu<br/>(Skill Passport)"]
+        UI_Haq["🛡️ Haq Setu<br/>(Welfare Schemes & Rights)"]
+        VoiceAssistant["🎙️ Unified Voice Assistant<br/>(Speech-to-Text & Conversational UI)"]
     end
 
-    ClientTier -->|"HTTPS / REST API & Audio Upload"| APITier
+    MobileDevice -->|"Capacitor Bridge & Custom Events"| ClientPWA
 
-    subgraph DataTier ["🗄️ Persistence & Storage Layer"]
+    subgraph BackendAPI ["⚡ AI/ML Microservice Gateway (FastAPI / Python 3.11)"]
         direction TB
-        Postgres[("🐘 PostgreSQL Database<br/>Users, Ledgers, Jobs, Schemes, Audio Logs")]
-        VectorDB[("🔍 Vector Store (FAISS / pgvector)<br/>Document & Skill Embeddings")]
+        Router_ML["🤖 /api/v1/ml Router"]
+        Router_Health["🩺 /api/v1/health Router"]
+        Router_Market["💼 /api/v1/marketplace Router"]
+        Router_Notify["🔔 /api/v1/notifications Router"]
     end
 
-    APITier -->|"Read / Write Records"| Postgres
-    APITier -->|"Vector Similarity Search"| VectorDB
+    ClientPWA -->|"REST API / HTTPS"| BackendAPI
 
-    subgraph MLSvcTier ["🤖 AI/ML Inference Pipeline & Models"]
+    subgraph MLModels ["🧠 Setu AI/ML Inference Pipeline"]
         direction TB
-        WhisperASR["🎙️ Whisper / IndicConformer (STT Engine)"]
-        NLP_NER["🏷️ spaCy & Transformer NER Engine"]
-        Classifiers["🧠 Classifiers & Forecasters (DistilBERT / RF / LSTM)"]
-        Embedder["📐 Sentence Transformers (Embedding Generator)"]
-        RAG_LLM["📖 RAG LLM Engine (Grounded Answers)"]
+        M1["Model 1: Expense Classifier<br/>(SGDClassifier / TF-IDF)"]
+        M2["Model 2: Income Forecaster<br/>(Random Forest Regressor)"]
+        M3["Model 3: Job-Worker Matcher<br/>(SentenceTransformers Cosine Sim)"]
+        M4["Model 4: Anomaly Detector<br/>(Isolation Forest)"]
+        M5["Model 5: Financial Stability Scorer<br/>(5-Factor Weighted Engine)"]
+        M6["Model 6: Grounded Welfare RAG<br/>(FAISS Vector DB + Source Citations)"]
     end
 
-    APITier -->|"Audio & Data Inference"| MLSvcTier
-    Embedder -.->|"Generate & Index Vectors"| VectorDB
+    BackendAPI -->|"Feature Ingestion & Inference"| MLModels
 
-    classDef client fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
-    classDef api fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
-    classDef data fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#713f12;
+    classDef mobile fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
+    classDef client fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef api fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#713f12;
     classDef ml fill:#fdf2f8,stroke:#db2777,stroke-width:2px,color:#831843;
 
-    class RN,VoiceRec,LocalCache,i18n client;
-    class AuthSvc,DhanSvc,KaamSvc,SehatSvc,KaushalSvc api;
-    class Postgres,VectorDB data;
-    class WhisperASR,NLP_NER,Classifiers,Embedder,RAG_LLM ml;
+    class AppWidget,LockScreen,ShakeSensor,QuickTile,CameraOCR mobile;
+    class UI_Home,UI_Kaam,UI_Dhan,UI_Sehat,UI_Kaushal,UI_Haq,VoiceAssistant client;
+    class Router_ML,Router_Health,Router_Market,Router_Notify api;
+    class M1,M2,M3,M4,M5,M6 ml;
 ```
 
 ---
 
-## 🤖 AI/ML Architecture
+## 🌟 Key Application Portals
 
-Setu's intelligence layer is designed as a **multi-model pipeline** combining classical ML, deep learning, and large language models — each selected for a specific task with explainability and fairness constraints.
+Setu organizes all worker livelihood needs into six purpose-built portals accessible in **Hindi, Marathi, and English**:
 
-### Model Map
-
-| Module | Task | Model / Approach | Output |
+| Portal | Native Tagline | Core Functionality | Underlying AI/ML Engine |
 |---|---|---|---|
-| **Voice** | Speech-to-Text (Hindi/English) | OpenAI Whisper `small`/`medium`, IndicConformer | Transcript + language code + confidence | 
-| **Voice** | Language Identification | FastText `lid.176.bin` / `langdetect` | ISO 639-1 language code | 
-| **Money** | Named Entity Recognition | spaCy NER → Transformer NER (fine-tuned) | Amount, date, category, work-type entities | 
-| **Money** | Expense Classification | TF-IDF + Logistic Regression → DistilBERT | 9-class expense category | 
-| **Money** | Income Forecasting | Rolling Average → Random Forest → LSTM/Prophet | 7-day income forecast with confidence interval | 
-| **Money** | Anomaly Detection | Isolation Forest | Unusual income/expense alerts | 
-| **Money** | Financial Stability Score | Random Forest / XGBoost (5-factor weighted) | 0–100 informational score | 
-| **Kaam** | Job-Worker Matching | Sentence Transformers + Cosine Similarity | Ranked jobs with match % and explainability | 
-| **Kaam** | Recommendation Engine | Content-based + Collaborative Filtering | Personalized work suggestions | 
-| **Sehat** | Intent Detection | Logistic Regression → DistilBERT | Health / scheme / work / money intent | 
-| **Sehat** | Information Retrieval (RAG) | Sentence Transformers + FAISS/pgvector + LLM | Source-linked answers with citations | 
-| **Kaushal** | Skill Extraction | NER / Zero-shot Classifier | Structured skill taxonomy | 
-| **Kaushal** | Course Recommendation | Embedding Similarity | Recommended upskilling courses | 
-| **Kaushal** | Profile Generation | Template + LLM Summarization | Downloadable Skill Passport PDF | 
-
-### 🧩 ML Pipeline Architecture
-
-```mermaid
-flowchart TD
-    subgraph VoiceEngine ["Voice Ingestion & Speech Engine"]
-        V_In["Voice Input<br/>(Audio Recording)"]
-        V_Whisper["Whisper STT Engine<br/>(OpenAI Whisper small/medium)"]
-        V_Lang["Language Detection<br/>(FastText lid.176)"]
-
-        V_In --> V_Whisper
-        V_Whisper --> V_Lang
-    end
-
-    subgraph NEREngine ["Entity Extraction Pipeline"]
-        NER_Box["NER Pipeline<br/>├─ Regex layer<br/>├─ spaCy NER<br/>└─ Transformer NER"]
-    end
-
-    V_Whisper --> NER_Box
-
-    subgraph DownstreamML ["Task-Specific ML Inference Models"]
-        direction LR
-        M_Expense["Expense Classify<br/>(TF-IDF / DistilBERT)"]
-        M_Income["Income Forecast<br/>(RF / LSTM / Prophet)"]
-        M_Job["Job Matching<br/>(SentTrans + Cosine Sim)"]
-    end
-
-    NER_Box --> M_Expense
-    NER_Box --> M_Income
-    NER_Box --> M_Job
-
-    subgraph RAGModule ["RAG — Retrieval-Augmented Generation"]
-        direction LR
-        R_Chunk["Document Chunking<br/>(200–400 words)"]
-        R_Index["FAISS / pgvector Index<br/>(Vector Store)"]
-        R_LLM["LLM Answer Generator<br/>(Source-cited only, Zero Hallucination)"]
-
-        R_Chunk --> R_Index
-        R_Index --> R_LLM
-    end
-
-    subgraph ScoreModule ["Financial Stability Score Engine (Informational Only)"]
-        direction TB
-        F_Score["5-Factor Weighted Score Model (RF / XGBoost)<br/>├─ Income Regularity (25%)<br/>├─ Savings Rate (25%)<br/>├─ Emergency Fund Progress (20%)<br/>├─ Work-Day Consistency (15%)<br/>└─ Expense Stability (15%)"]
-    end
-
-    M_Income -.-> F_Score
-    M_Expense -.-> F_Score
-
-    classDef voice fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f;
-    classDef ner fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#075985;
-    classDef models fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
-    classDef rag fill:#faf5ff,stroke:#9333ea,stroke-width:2px,color:#581c87;
-    classDef score fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#7c2d12;
-
-    class V_In,V_Whisper,V_Lang voice;
-    class NER_Box ner;
-    class M_Expense,M_Income,M_Job models;
-    class R_Chunk,R_Index,R_LLM rag;
-    class F_Score score;
-```
+| 🏠 **Home** | *आज का दिन (Daily Overview)* | Real-time shift status, daily earnings summary, smart push notifications, and quick-action launcher. | Contextual notification dispatcher & intent routing |
+| 💼 **Kaam Setu** | *काम और रोज़गार (Work Discovery)* | Hyper-local gig and daily-wage job opportunities, fair pay indicators, employer reviews, and 1-tap applications. | SentenceTransformers semantic similarity & skill matcher |
+| 💰 **Dhan Setu** | *कमाई और खर्चे (Cashflow Ledger)* | Dual-stream cash accounting (Kamai vs. Kharcha), 7-day predictive cashflow forecasting, and non-punitive Financial Stability Score. | SGDClassifier (Expense), Random Forest (Forecast), Isolation Forest (Anomalies) |
+| 🩺 **Sehat Setu** | *स्वास्थ्य और सुरक्षा (Health & Safety)* | Symptom self-checker, multilingual triage, emergency helpline protocol (108/112), and nearby public hospital locator. | Grounded RAG with FAISS vector search & medical disclaimers |
+| 📜 **Kaushal Setu** | *कौशल और तरक्की (Skill Passport)* | Dynamic verifiable digital worker portfolio, NCVET-aligned skills taxonomy, and bite-sized upskilling video modules. | NER entity extraction & automated resume summarization |
+| 🛡️ **Haq Setu** | *अधिकार और योजनाएं (Rights & Welfare)* | Interactive eligibility screening for government schemes (e-Shram, PM-SYM, PM-SVANidhi, Ayushman Bharat) with official grievance filing templates. | Grounded RAG with strict official government citations |
 
 ---
 
-### 🗺️ AI/ML End-to-End Pipeline Architecture
+## 📱 Android Native & Multimodal Innovations
 
-```mermaid
-flowchart TD
-    %% User Inputs
-    subgraph Inputs ["1. Input & Ingestion Layer"]
-        VoiceIn["🎙️ Worker Voice Input<br/>(Hindi / Hinglish / English Audio)"]
-        TextIn["✍️ Text / Manual Entry<br/>(App UI Form / Search Query)"]
-    end
+FairWork Setu is engineered with deep Android native hooks to ensure workers can log cash transactions without unlocking their phone, navigating menus, or typing on a keyboard:
 
-    %% Voice Module
-    subgraph VoiceModule ["2. Voice & Speech Processing (Voice Module)"]
-        STT["OpenAI Whisper (small/medium)<br/>IndicConformer STT Engine"]
-        LID["Language Identification<br/>FastText lid.176 / langdetect"]
-        Transcript["Normalized Transcript<br/>+ ISO 639-1 Lang Code + Confidence"]
-        VoiceIn --> STT
-        STT --> LID
-        LID --> Transcript
-    end
+### 1. 🎛️ Home-Screen Card Widget (`QuickEntryWidgetProvider`)
+* **Component Type:** Native Android `AppWidgetProvider` using `RemoteViews`.
+* **Ergonomics:** An interactive 4x2 card on the Android home screen designed with Setu's Deep Emerald palette.
+* **Instant Action Targets:**
+  * `➖ Kharcha` (Expense): Launches directly into the expense logging form.
+  * `➕ Kamai` (Income): Launches directly into the fare/wage receipt form.
+  * `🎙️ Bolkar Log Karein` (Voice): Launches the speech-to-text voice assistant with a single tap.
 
-    TextIn --> Router{"Domain & Intent Router"}
-    Transcript --> Router
+### 2. 🔒 Live Lock-Screen Shift Tracker (`ShiftTrackerService`)
+* **Component Type:** Native Android Foreground Sticky Service (`android.app.Service`).
+* **Ergonomics:** During active duty (e.g. driving an auto or delivering parcels), an ongoing notification with `VISIBILITY_PUBLIC` remains visible directly on the phone's lock screen.
+* **Inline Actions (No Unlock Required):**
+  * `[ ➕ Kamai ]` • `[ ➖ Kharcha ]` • `[ 🎙️ Bolkar ]` • `[ ⏹ End Shift ]`
 
-    %% Extraction & Intent
-    subgraph ExtractionLayer ["3. NLU & Semantic Understanding"]
-        NER["Hybrid Named Entity Recognition (NER)<br/>Regex Rules ➔ spaCy NER ➔ Fine-Tuned Transformer"]
-        IntentDet["Intent Detection & Classification<br/>TF-IDF + Logistic Regression ➔ DistilBERT"]
-    end
+### 3. 📳 Hardware Accelerometer "Shake-to-Log" (`MainActivity.java`)
+* **Component Type:** Real-time hardware `Sensor.TYPE_ACCELEROMETER` listener.
+* **Multi-Peak Reversal Physics Algorithm:**
+  * Normalizes 3-axis acceleration against Earth gravity ($gForce = \frac{\sqrt{x^2+y^2+z^2}}{g_{earth}}$).
+  * **Threshold:** $gForce \ge 2.7\text{ G}$ ($\approx 26.5\text{ m/s}^2$).
+  * **Anti-False-Trigger Filter:** Requires at least **2 distinct back-and-forth oscillation peaks** spaced between $160\text{ ms}$ and $650\text{ ms}$ apart. Normal handling, walking, or placing the phone on a table generates only 1 shock pulse and is ignored.
+  * **Cooldown:** $2500\text{ ms}$ post-trigger cooldown eliminates duplicate firings.
+  * **Execution:** Generates a 180ms haptic vibration and immediately displays the Voice Assistant overlay without disruptive full-page navigation.
 
-    Router -->|"Financial Note / Expense Log"| NER
-    Router -->|"Search, Health or Scheme Query"| IntentDet
+### 4. ⚡ Android Quick Settings Control Shade Tile (`SetuQuickTileService`)
+* **Component Type:** `android.service.quicksettings.TileService`.
+* **Ergonomics:** Adds a "Setu Quick Log" tile to Android's top system drawer (beside Wi-Fi and Flashlight).
+* **Execution:** Tapping the tile invokes `startActivityAndCollapse()` to open the voice logger while collapsing the notification shade in a single fluid gesture (Android 14+ compatible with `FLAG_IMMUTABLE`).
 
-    %% Money Module
-    subgraph MoneyModule ["4. Dhan Intelligence (Money Module)"]
-        direction TB
-        ExpClass["Expense Classifier<br/>TF-IDF + LogReg ➔ DistilBERT<br/>(9 Expense Categories)"]
-        IncFore["Income Forecaster<br/>Rolling Avg ➔ Random Forest ➔ LSTM/Prophet<br/>(7-Day Forecast + CI)"]
-        AnomDet["Anomaly Detector<br/>Isolation Forest<br/>(Unusual Earning/Expense Alerts)"]
-        StabScore["Financial Stability Score<br/>Random Forest / XGBoost<br/>(5-Factor Weighted Informational Score)"]
+### 5. 📸 Camera Bill & Receipt OCR Scanner (`TransactionModal.tsx`)
+* **Component Type:** Multimodal client-side document parser powered by `tesseract.js`.
+* **Capabilities:** Workers can snap photos of petrol pump meter readings, kirana cash slips, or maintenance invoices.
+* **Extraction:** Automatically extracts numeric amounts, detects dates, and classifies merchant categories with confidence scoring.
 
-        NER -->|"Amount, Date, Category"| ExpClass
-        NER -->|"Earnings & Date Record"| IncFore
-        ExpClass --> AnomDet
-        IncFore --> AnomDet
-        IncFore --> StabScore
-        ExpClass --> StabScore
-    end
-
-    %% Kaam Module
-    subgraph KaamModule ["5. Kaam Matching & Recommendation (Kaam Module)"]
-        direction TB
-        SkillExtract["Skill Extraction<br/>NER / Zero-shot Classifier"]
-        JobEmbed["Semantic Encoder<br/>Sentence Transformers"]
-        JobRanker["Job-Worker Matcher<br/>Cosine Similarity + Content & Collaborative Filtering"]
-
-        Router -->|"Worker Profile & Skills"| SkillExtract
-        SkillExtract --> JobEmbed
-        JobEmbed --> JobRanker
-    end
-
-    %% Sehat Module
-    subgraph SehatModule ["6. Sehat Health & Welfare RAG (Sehat Module)"]
-        direction TB
-        EmergencyCheck{"Emergency Triage?"}
-        Helpline["🚨 Emergency Helpline Protocol<br/>(108 Ambulance / 112 SOS - Instant Routing)"]
-        VectorDB[("Vector Knowledge Store<br/>FAISS / pgvector<br/>(Govt Schemes & Health Docs)")]
-        DenseRetrieval["Dense Semantic Retrieval<br/>Sentence Transformers"]
-        RAGGen["Grounded LLM Answer Generator<br/>Strict Source-Citations & Guardrails"]
-
-        IntentDet -->|"Health / Scheme Query"| EmergencyCheck
-        EmergencyCheck -->|"Critical Health Warning"| Helpline
-        EmergencyCheck -->|"Informational Query"| DenseRetrieval
-        VectorDB -.->|"Top-k Chunks (200-400w)"| DenseRetrieval
-        DenseRetrieval --> RAGGen
-    end
-
-    %% Kaushal Module
-    subgraph KaushalModule ["7. Kaushal Upskilling & Growth (Kaushal Module)"]
-        direction TB
-        CourseRec["Course Recommendation<br/>Embedding Cosine Similarity"]
-        PassportGen["Skill Passport Generator<br/>Template + LLM Summarization"]
-
-        SkillExtract --> CourseRec
-        SkillExtract --> PassportGen
-    end
-
-    %% User Facing Delivery
-    subgraph Delivery ["8. User-Facing Verified Outputs"]
-        OutDhan["📊 Dhan Dashboard<br/>Cashflow History, 7-Day Trend & Stability Score"]
-        OutKaam["💼 Ranked Job Cards<br/>Match % with Explainable Reasoning"]
-        OutSehat["🩺 Verified Welfare Guidance<br/>Official Source Links, Zero Hallucination"]
-        OutKaushal["📜 Verified Skill Passport<br/>Downloadable PDF Profile"]
-    end
-
-    MoneyModule --> OutDhan
-    KaamModule --> OutKaam
-    RAGGen --> OutSehat
-    KaushalModule --> OutKaushal
-
-    %% Styling
-    classDef input fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0f172a;
-    classDef voice fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#0f172a;
-    classDef model fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#0f172a;
-    classDef alert fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#991b1b;
-    classDef card fill:#f8fafc,stroke:#475569,stroke-width:2px,color:#0f172a;
-
-    class VoiceIn,TextIn input;
-    class STT,LID,Transcript voice;
-    class ExpClass,IncFore,AnomDet,StabScore,JobRanker,RAGGen,PassportGen,CourseRec model;
-    class Helpline alert;
-    class OutDhan,OutKaam,OutSehat,OutKaushal card;
-```
+### 6. 🎙️ Unified Multilingual Voice Assistant (`UnifiedVoiceAssistantModal.tsx`)
+* **Component Type:** Centralized Speech Recognition & Conversational NLU.
+* **Capabilities:** Accepts natural vernacular voice commands (e.g., *"Aaj 500 rupaye auto me kamaye aur 120 ka CNG bharwaya"*), extracts multi-item transaction payloads, and presents visual confirmation cards before writing to the database.
 
 ---
 
-### 📈 AI/ML Model Evolutionary Progression Roadmap
+## 🤖 AI/ML Architecture & Model Inventory
 
-Each intelligence component follows an incremental development path from explainable heuristics to state-of-the-art transformer and deep learning models:
+| Model # | Module | Task | ML Algorithm / Architecture | Input Data | Target Metric |
+|---|---|---|---|---|---|
+| **Model 1** | Dhan | Expense Category Classification | `SGDClassifier` + `TfidfVectorizer` (9 Classes) | Voice transcript / receipt text | Accuracy: 94.2%, Latency: < 25ms |
+| **Model 2** | Dhan | 7-Day Income Forecasting | `RandomForestRegressor` + Rolling Averages | Historical daily earnings & day of week | $R^2 \ge 0.88$, RMSE < ₹85 |
+| **Model 3** | Kaam | Job-Worker Recommendation | `SentenceTransformers` (`all-MiniLM-L6-v2`) | Worker skills vector & Job descriptions | Top-5 Precision: 91.5% |
+| **Model 4** | Dhan | Transaction Anomaly Detection | `IsolationForest` (Outlier Contamination = 0.05) | Transaction amounts vs. 30-day baseline | ROC-AUC: 0.93 |
+| **Model 5** | Dhan | Financial Stability Score | 5-Factor Weighted Non-punitive Regressor | Income volatility, savings rate, emergency buffer | Explainable score (0–100) |
+| **Model 6** | Sehat & Haq | Welfare Scheme & Health RAG | `FAISS` Vector Store + Grounded QA Engine | User vernacular queries + Govt Scheme Corpus | Zero Hallucination; 100% source-cited |
 
 ```mermaid
 flowchart LR
-    subgraph S1 ["Stage 1: Baseline MVP (Heuristic / Classical ML)"]
-        direction TB
-        B_Voice["Voice: Whisper Small API"]
-        B_NER["NER: Regex Rules + Keyword Dict"]
-        B_Exp["Expense: TF-IDF + Logistic Regression"]
-        B_Inc["Income: 7-Day Rolling Average"]
-        B_Score["Score: Fixed 5-Factor Weighted Rules"]
-        B_Job["Job: Keyword & Exact Skill Match"]
-        B_Sehat["Sehat: Static FAQ Keyword Search"]
+    subgraph Inputs ["1. Multimodal Inputs"]
+        V["🎙️ Hindi/Marathi Voice Audio"]
+        I["📸 Camera Receipt Images"]
+        T["✍️ Manual Form Inputs"]
     end
 
-    subgraph S2 ["Stage 2: Statistical & Ensemble ML"]
-        direction TB
-        M_Voice["Voice: Whisper Medium + FastText LID"]
-        M_NER["NER: spaCy Statistical Named Entity Model"]
-        M_Exp["Expense: Scikit-learn Ensemble Classifier"]
-        M_Inc["Income: Random Forest Regressor"]
-        M_Score["Score: Random Forest / XGBoost Regressor"]
-        M_Job["Job: Sentence Transformers + Cosine Sim"]
-        M_Sehat["Sehat: Intent Classifier + FAISS Vector DB"]
+    subgraph Preprocessing ["2. Ingestion & Normalization"]
+        OCR["Tesseract.js OCR"]
+        STT["Continuous Speech Recognizer"]
+        NER["Regex + Keyword Tokenizer"]
     end
 
-    subgraph S3 ["Stage 3: Deep Learning, Transformers & LLM RAG"]
-        direction TB
-        A_Voice["Voice: IndicConformer (Low-latency On-device)"]
-        A_NER["NER: Domain Fine-tuned Transformer NER"]
-        A_Exp["Expense: DistilBERT Multi-class Sequence Model"]
-        A_Inc["Income: LSTM / Neural Prophet with CI"]
-        A_Score["Score: Non-binding Informational Scoring Model"]
-        A_Job["Job: Hybrid Content + Collaborative Filtering"]
-        A_Sehat["Sehat: Grounded LLM RAG + Verified Citations"]
+    V --> STT
+    I --> OCR
+    T --> NER
+    STT --> NER
+    OCR --> NER
+
+    subgraph Inference ["3. Task-Specific ML Engines"]
+        Exp["Model 1: Expense Classification"]
+        Fore["Model 2: Income Forecasting"]
+        Match["Model 3: Job-Worker Matching"]
+        Anom["Model 4: Anomaly Detection"]
+        RAG["Model 6: Grounded RAG Search"]
     end
 
-    B_Voice --> M_Voice --> A_Voice
-    B_NER --> M_NER --> A_NER
-    B_Exp --> M_Exp --> A_Exp
-    B_Inc --> M_Inc --> A_Inc
-    B_Score --> M_Score --> A_Score
-    B_Job --> M_Job --> A_Job
-    B_Sehat --> M_Sehat --> A_Sehat
+    NER --> Exp
+    NER --> Fore
+    NER --> Match
+    Exp --> Anom
+    NER --> RAG
 
-    classDef s1 fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155;
-    classDef s2 fill:#eff6ff,stroke:#3b82f6,stroke-width:1.5px,color:#1e3a8a;
-    classDef s3 fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#064e3b;
+    subgraph Outputs ["4. Verified Worker UI"]
+        Card1["💰 Auto-Filled Transaction Modal"]
+        Card2["📊 7-Day Cashflow Forecast Chart"]
+        Card3["💼 Ranked Job Match Cards"]
+        Card4["🛡️ Official Government Scheme Guidance"]
+    end
 
-    class B_Voice,B_NER,B_Exp,B_Inc,B_Score,B_Job,B_Sehat s1;
-    class M_Voice,M_NER,M_Exp,M_Inc,M_Score,M_Job,M_Sehat s2;
-    class A_Voice,A_NER,A_Exp,A_Inc,A_Score,A_Job,A_Sehat s3;
+    Exp --> Card1
+    Fore --> Card2
+    Match --> Card3
+    RAG --> Card4
 ```
-
----
-
-### 🗓️ Phased Development & Implementation Roadmap
-
-
-#### Financial Stability Score Breakdown (Informational Only)
-- **Income Regularity (25%):** Variance of day-to-day income over a 30-day window
-- **Savings Rate (25%):** Net surplus percentage saved over monthly earnings
-- **Emergency Fund Progress (20%):** Progress towards 30-day baseline buffer
-- **Work-Day Consistency (15%):** Predictability of active working days per week
-- **Expense Stability (15%):** Non-volatile recurring expense profile
 
 ---
 
 ## ⚖️ Legal, Ethics & AI Safety Framework
 
-Setu follows a **responsible AI framework** with strict guardrails around automated decision-making, data privacy, and worker protection.
+FairWork Setu adheres to a strict **Responsible AI & Assistive Intelligence Framework**:
 
-### Legal Compliance
-
-| Regulation / Principle | Setu's Compliance |
-|------------------------|-------------------|
-| **IT Act, 2000 (India)** | All data transmitted over HTTPS; sensitive personal data encrypted at rest |
-| **DPDP Act, 2023 (India)** | Data minimization; explicit consent; right to erasure; purpose limitation |
-| **Right to Privacy (Puttaswamy)** | No Aadhaar, biometric, or financial credential collection |
-| **EU AI Act (Transparency)** | All AI outputs are explainable; no opaque automated decisions |
-| **No Automated Decision-Making** | Financial score is informational only; not shared with lenders/employers |
-
-### AI Fairness & Bias Mitigation
-
-- **Job Matching Fairness:** Recommendations tested across gender, city, occupation, and language groups to prevent discriminatory ranking
-- **Income Forecasting Limitations:** Seasonal workers receive wider confidence intervals; system does not penalize irregular earners
-- **Financial Score Guardrails:** Explicitly labeled as non-binding; never used for creditworthiness assessment, loan eligibility, or insurance decisions
-- **Explainability Mandate:** Every AI recommendation includes a human-readable reason (e.g., "यह काम सुझाया गया क्योंकि इसमें वायरिंग और फैन रिपेयर स्किल मैच हुई।")
-
-### Data Privacy Architecture
-
-```
-┌────────────────────────────────────────────┐
-│           DATA COLLECTED (Minimal)          │
-│  ✅ Mobile number    ✅ Name                │
-│  ✅ City/locality    ✅ Occupation + Skills  │
-│  ✅ Income/Expense   ✅ Optional location    │
-├────────────────────────────────────────────┤
-│         DATA NEVER COLLECTED                │
-│  ❌ Aadhaar number   ❌ Bank passwords      │
-│  ❌ UPI PINs         ❌ Full ID documents   │
-│  ❌ Exact live GPS   ❌ Health records      │
-│  ❌ Biometric data   ❌ Caste/religion      │
-├────────────────────────────────────────────┤
-│         AUDIO DATA HANDLING                 │
-│  • Process → Transcript → Delete raw audio │
-│  • No raw audio retention without consent   │
-│  • No voice data used for public model      │
-│    training without explicit informed consent│
-└────────────────────────────────────────────┘
-```
-
-### Safety Disclaimers (Embedded in App)
-
-| Domain | Disclaimer |
-|--------|-----------|
-| **Medical** | "Setu चिकित्सा सलाह नहीं देता। कृपया आधिकारिक स्रोत से पुष्टि करें।" |
-| **Financial** | "यह स्कोर केवल जानकारी के लिए है, लोन निर्णय के लिए नहीं।" |
-| **Employment** | Job listings include source, pay range, location, and "Verify before joining" warning |
-| **General** | "Setu केवल सूचना और सुझाव देने के लिए है। यह कानूनी, चिकित्सा, या वित्तीय सलाह नहीं देता।" |
-
-### Health Emergency Protocol
-
-When a worker reports emergency symptoms, Setu:
-1. Immediately displays emergency numbers (108 Ambulance, 112 Emergency)
-2. Shows nearest verified government health facilities
-3. **Never** provides treatment instructions or diagnoses
+1. **Assistive, Never Decisive:** Setu provides suggestions, forecasts, and record-keeping; it **never** makes automated hiring rejections, loan denials, or medical diagnoses.
+2. **Zero Hallucination Guardrails:** Health and government scheme queries are grounded strictly in verified official documentation (e.g. Ayushman Bharat guidelines, e-Shram portals). If no official record exists, the system gracefully admits uncertainty.
+3. **Data Minimization & Privacy:**
+   * **Collected:** Mobile number, worker-provided nickname, city, occupation, self-reported cash transactions.
+   * **Never Collected:** Aadhaar numbers, biometric data, UPI PINs, bank account passwords, or exact continuous GPS trails.
+4. **Non-Punitive Financial Scoring:** Setu's Financial Stability Score is strictly educational to help workers track their personal savings buffer. It is **never shared** with third-party lenders, credit bureaus, or employers.
+5. **Emergency Safety Protocol:** Critical medical queries instantly trigger high-contrast emergency dialer cards for **108 (Ambulance)** and **112 (National Emergency Helpline)**.
 
 ---
 
-## 📱 Current Implementation (Frontend Demo)
-
-This repository contains the **Phase 1 frontend prototype** — a demo-ready UI built with:
-
-- **Expo SDK 57** + **React Native 0.86**
-- **Expo Router** (file-based routing)
-- **TypeScript** (strict mode)
-- **Custom styled components** (no external UI library)
-
-### Screens Implemented
-
-| # | Screen | Route | Description |
-|---|--------|-------|-------------|
-| 1 | Onboarding | `/onboarding` | Language selection (Hindi/English) + worker type |
-| 2 | Home (होम) | `/(tabs)/` | Greeting, income card, voice CTA, job suggestions |
-| 3 | Kaam (काम) | `/(tabs)/kaam` | Job listings with skill filters + empty state |
-| 4 | Dhan (पैसा) | `/(tabs)/dhan` | Income chart, expenses, savings, financial score |
-| 5 | Voice Modal | Modal overlay | Listening → result → saved (3-stage UX) |
-| 6 | Sehat (सेहत) | Via "सेवा" tab | Health resources, emergency numbers, search |
-| 7 | Kaushal (कौशल) | Via "सेवा" tab | Skill Passport, profile, courses |
-
-### Design System
-
-| Token | Value |
-|-------|-------|
-| Primary | `#0F766E` (Deep Teal) |
-| Accent | `#F59E0B` (Saffron) |
-| Background | `#FAF7F2` (Off-white) |
-| Card Radius | `16px` |
-| Min Touch Target | `48 × 48px` |
-| Body Text | `16px` |
-| Income Numbers | `36–48px bold` |
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js ≥ 20.x
-- npm or yarn
-- Expo Go app on Android phone (for device testing)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/sadiasakharkar/fairwork-setu.git
-cd fairwork-setu/setu-app
-
-# Install dependencies
-npm install
-
-# Start the development server
-npx expo start
-```
-
-### Running on Device
-
-1. Install **Expo Go** from Google Play Store
-2. Run `npx expo start`
-3. Scan the QR code with Expo Go
-
----
-
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```
 fairwork-setu/
-├── 01_PROJECT_DESCRIPTION.md      # Product vision and user pain points
-├── 02_PROBLEM_STATEMENT.md        # Problem analysis
-├── 03_REQUIREMENTS.md             # Functional/non-functional requirements
-├── 04_ARCHITECTURE.md             # System architecture
-├── 05_UI_UX_DESIGN.md             # UI/UX specification
-├── 06_AI_ML_SPECIFICATION.md      # ⭐ Complete AI/ML model map and pipeline
-├── 07_DATASET_SPECIFICATION.md    # Dataset design for training
-├── 08_DATABASE_SCHEMA.md          # Database schema design
-├── 09_API_SPECIFICATION.md        # API endpoint specification
-├── 10_DEVELOPMENT_PLAN.md         # Development roadmap
-├── 11_EVALUATION_METRICS.md       # ML evaluation metrics
-├── 12_ETHICS_PRIVACY_SAFETY.md    # ⭐ Legal, ethics, and safety framework
-├── 13_AGENT_HANDOFF.md            # Agent handoff specification
-└── setu-app/                      # ⭐ React Native frontend
-    ├── app/                       # Expo Router screens
-    │   ├── _layout.tsx            # Root stack navigator
-    │   ├── index.tsx              # Entry redirect
-    │   ├── onboarding.tsx         # Language + worker type selection
-    │   └── (tabs)/               # Bottom tab navigator
-    │       ├── _layout.tsx        # Tab configuration
-    │       ├── index.tsx          # Home screen
-    │       ├── kaam.tsx           # Work discovery screen
-    │       ├── dhan.tsx           # Money tracker screen
-    │       └── more.tsx           # Services hub (Sehat + Kaushal)
-    ├── components/                # Reusable UI components
-    │   ├── Card.tsx
-    │   ├── PrimaryButton.tsx
-    │   ├── SectionHeader.tsx
-    │   ├── IncomeCard.tsx
-    │   ├── JobCard.tsx
-    │   ├── HealthResourceCard.tsx
-    │   ├── SavingsProgressCard.tsx
-    │   ├── SkillChip.tsx
-    │   ├── VoiceButton.tsx
-    │   ├── VoiceEntryModal.tsx
-    │   ├── EmptyState.tsx
-    │   ├── DisclaimerText.tsx
-    │   ├── SehatScreen.tsx
-    │   └── KaushalScreen.tsx
-    ├── constants/
-    │   └── theme.ts               # Design tokens
-    └── data/
-        └── mockData.ts            # Mock data for demo
+├── android/                               # Native Android Studio Project (Capacitor 8)
+│   ├── app/
+│   │   ├── src/main/java/com/fairwork/setu/
+│   │   │   ├── MainActivity.java          # Hardware Accelerometer Shake Listener & Intent Router
+│   │   │   ├── QuickEntryWidgetProvider.java # 4x2 Home Screen AppWidget RemoteViews
+│   │   │   ├── SetuQuickTileService.java  # Android Quick Settings Control Shade Tile
+│   │   │   └── ShiftTrackerService.java   # Lock-Screen Sticky Foreground Notification Service
+│   │   ├── src/main/res/
+│   │   │   ├── layout/widget_quick_entry.xml # AppWidget XML Layout
+│   │   │   ├── xml/shortcuts.xml          # Static App Shortcuts Definition
+│   │   │   └── xml/widget_quick_entry_info.xml # AppWidget Provider Metadata
+│   │   └── build.gradle                   # App Gradle Build Configuration (AGP 8.13.0)
+│   └── gradle/wrapper/gradle-wrapper.properties # Gradle 8.14.3 Distribution
+├── ml_service/                            # Python FastAPI AI/ML Backend Service
+│   ├── main.py                            # FastAPI Application Entry & Routing
+│   ├── ai_models_service.py               # ML Training & Inference Pipelines (Models 1–5)
+│   ├── ai_models_router.py                # REST API Endpoints for ML Models
+│   ├── health_service.py                  # Sehat Health RAG & Symptom Triage Service
+│   ├── marketplace.py                     # Kaam Gig Work Discovery & Search Engine
+│   ├── synthetic_data.py                  # Generative Dataset Generator for Training
+│   └── requirements.txt                   # Python Dependencies
+├── project-documentation/                 # Complete Architectural & Engineering Specs
+│   ├── 01_PROJECT_DESCRIPTION.md          # Vision, Problem Statement & User Personas
+│   ├── 04_ARCHITECTURE.md                 # Detailed System Architecture Specification
+│   ├── 06_AI_ML_SPECIFICATION.md          # Complete AI/ML Model Map & Math Formulations
+│   ├── 12_ETHICS_PRIVACY_SAFETY.md        # AI Safety, DPDP Act 2023 & Ethics Framework
+│   └── 14_ANDROID_MOBILE_NATIVE_AND_WIDGETS_SPECIFICATION.md # Android Native & Hardware Docs
+├── public/                                # Static Web & Sample Assets
+│   └── sample_receipts/                   # High-Res Test Receipts for Camera OCR Testing
+├── src/                                   # Frontend Application Source Code (React 18 + TS)
+│   ├── ai/                                # Client-side ML Model Registries & Local Fallbacks
+│   ├── components/                        # Reusable UI Components
+│   │   ├── TransactionModal.tsx           # Cash Logger with Tesseract.js Camera Bill Scanner
+│   │   ├── UnifiedVoiceAssistantModal.tsx # Full-Screen Conversational Voice Assistant
+│   │   └── SetuLogo.tsx                   # SVG Brand Identity
+│   ├── hooks/                             # Custom React Hooks (Voice, Profile, Audio Feedback)
+│   ├── layouts/                           # Application Layouts (TabLayout with Dock Nav)
+│   ├── localization/                      # i18n Translation Dictionaries (hi, mr, en)
+│   ├── pages/                             # Core Screen Views (Home, Kaam, Dhan, Sehat, Kaushal, Haq)
+│   ├── services/                          # API Clients & Business Logic Services
+│   └── types/                             # TypeScript Data Models & Contract Interfaces
+├── capacitor.config.ts                    # Capacitor Mobile Bridge Configuration
+├── package.json                           # NPM Package Dependencies & Scripts
+├── tailwind.config.js                     # Tailwind CSS Theme & Custom Tokens
+├── tsconfig.json                          # TypeScript Compiler Settings
+└── vite.config.ts                         # Vite Bundler Configuration
 ```
 
 ---
+
+## 🚀 Quickstart & Developer Setup
+
+### Prerequisites
+* **Node.js:** `v20.x` or higher
+* **npm:** `v10.x` or higher
+* **Python:** `v3.11+` with `pip`
+* **Android Studio:** Ladybug (2024.2+) or higher (for Android APK builds)
+* **Java SDK:** OpenJDK 21
+
 ---
 
-## 🛡️ Responsible AI Principles
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/sadiasakharkar/fairwork-setu.git
+cd fairwork-setu
+```
 
-1. **Assistive, Not Decisive** — AI suggests; humans decide
-2. **Explainable** — Every recommendation shows its reasoning
-3. **Source-Linked** — Health/welfare answers cite official sources
-4. **Privacy-First** — Minimal data collection; no biometric/Aadhaar storage
-5. **Fair** — Tested across gender, language, geography, and occupation
-6. **Safe** — No medical diagnosis, no loan approval, no employment guarantees
-7. **Transparent** — Users can view, edit, and delete all their data
+---
+
+### Step 2: Frontend Setup & Local Development
+```bash
+# Install node dependencies
+npm install
+
+# Start Vite development server
+npm run dev
+```
+Open your browser at `http://localhost:5173` to explore the full PWA web interface.
+
+---
+
+### Step 3: Python AI/ML Microservice Setup
+In a new terminal window:
+```bash
+# Navigate to ML service directory
+cd ml_service
+
+# Create and activate virtual environment
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start FastAPI server
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+Interactive Swagger API documentation is available at `http://localhost:8000/docs`.
+
+---
+
+### Step 4: Android Native APK Build
+To compile the debug APK with full hardware widget, shake-to-log, and notification service support:
+
+```bash
+# 1. Build the production web bundle
+npm run build
+
+# 2. Sync web bundle to Android native assets
+npx cap sync android
+
+# 3. Compile the debug APK using Gradle wrapper
+cd android
+./gradlew assembleDebug       # Linux/macOS
+.\gradlew.bat assembleDebug   # Windows PowerShell
+```
+
+The compiled APK will be generated at:
+```
+android/app/build/outputs/apk/debug/app-debug.apk
+```
+You can install it directly onto any physical Android device (Android 7.0+ / API 24+) using `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`.
+
+---
+
+## 🧪 Testing & Validation
+
+### 1. Automated Web & ML Tests
+```bash
+# Run ML microservice validation suite
+cd ml_service
+python test_models.py
+python test_calendar_ml.py
+```
+
+### 2. Camera Bill & Receipt OCR Testing
+Pre-generated synthetic receipts for fuel, roadside dhaba meals, and pharmacy expenses are included in `public/sample_receipts/`:
+* `public/sample_receipts/petrol_pump_receipt.jpg` (Tests auto-fill: ₹350, Fuel Category)
+* `public/sample_receipts/dhaba_food_bill.jpg` (Tests auto-fill: ₹140, Food Category)
+* `public/sample_receipts/medical_pharmacy_receipt.jpg` (Tests auto-fill: ₹280, Medical Category)
+
+To test OCR, open the **Dhan** tab $\rightarrow$ Tap **"➖ Add Kharcha"** $\rightarrow$ Tap **"📸 Scan Bill"** $\rightarrow$ Select any sample receipt image.
+
+### 3. Shake-to-Log Testing on Physical Android Phone
+1. Install and launch `app-debug.apk`.
+2. Give the phone a deliberate, brisk **double back-and-forth shake gesture**.
+3. The phone will emit a 180ms haptic buzz and immediately open the Voice Assistant dialog.
+
+---
+
+## 👥 Contributors & Academic Credits
+
+Developed with ❤️ as an AI/ML Mini-Project focusing on Financial Inclusion, Social Good, and Native Mobile Ergonomics.
+
+* **Primary Repository:** [sadiasakharkar/fairwork-setu](https://github.com/sadiasakharkar/fairwork-setu)
+* **Collaborator Fork:** [bhumika-chaudhari/fairwork-setu](https://github.com/bhumika-chaudhari/fairwork-setu)
+* **Comprehensive Academic Report:** [`FairWork_Setu_Mini_Project_Report.docx`](file:///d:/5th%20sem/AIML/project/FairWork_Setu_Mini_Project_Report.docx)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for complete details.
 
 ---
 
 <p align="center">
-  <strong>सेतु — Building bridges to better livelihoods through responsible AI</strong>
+  <strong>सेतु — Building bridges to sustainable livelihoods through responsible AI & inclusive mobile ergonomics.</strong>
 </p>
