@@ -1,24 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
 import { AppIcon } from '../lib/icons';
 import { formatInr } from '../localization';
 import ModalPortal from './ModalPortal';
-import { useTransactions } from '../hooks/TransactionContext';
-import { useProfile } from '../hooks/ProfileContext';
+import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import {
   SetuContinuousSpeechRecognizer,
-  processUserUtterance,
-  detectSpokenLanguage,
-  type AssistantMessage,
-  type AssistantPendingConfirmation,
-  type SupportedLanguage,
+  type AssistantJobCard,
+  type AssistantCourseCard,
+  type AssistantEmergencyAlert,
 } from '../services/voiceAssistantService';
 
 interface UnifiedVoiceAssistantModalProps {
-  visible: boolean;
-  onClose: () => void;
+  visible?: boolean;
+  onClose?: () => void;
   initialQuery?: string;
 }
 
@@ -35,41 +31,103 @@ const BCP47_LANGUAGE_MAP: Record<string, string> = {
   en: 'en-IN',
 };
 
-const SAMPLE_PROMPTS = [
-  { label: 'Spent ₹150 on food', text: 'I spent ₹150 on food today' },
-  { label: 'Earned ₹800 today', text: 'I earned ₹800 today' },
-  { label: '₹50 tea, ₹100 petrol, ₹200 grocery', text: 'Add expenses: ₹50 for tea, ₹100 for petrol, and ₹200 for groceries' },
-  { label: 'Spent this week?', text: 'How much did I spend this week?' },
-  { label: 'Electrician jobs near me', text: 'Find electrician jobs near me' },
-  { label: 'Fever since yesterday', text: 'I have a fever and weakness since yesterday' },
-];
+const SCREEN_PROMPTS: Record<string, Array<{ label: string; text: string }>> = {
+  kaam: [
+    { label: 'Show matching jobs', text: 'Show matching jobs for my profile' },
+    { label: 'My application status', text: 'Check my job application status' },
+    { label: 'Delivery openings', text: 'Find delivery partner jobs near me' },
+    { label: 'Electrician roles', text: 'Find residential electrician jobs' },
+  ],
+  dhan: [
+    { label: 'Spent this week?', text: 'How much did I spend this week?' },
+    { label: 'Forecast income', text: "Forecast tomorrow's income" },
+    { label: 'Spent ₹150 on food', text: 'I spent ₹150 on food today' },
+    { label: 'Earned ₹800 today', text: 'I earned ₹800 today' },
+  ],
+  sehat: [
+    { label: 'What to do for fever?', text: 'What should I do for fever and body ache?' },
+    { label: 'Nearest clinic / PHC', text: 'Where is the nearest government clinic or dispensary?' },
+    { label: 'Ayushman Bharat cover', text: 'How does Ayushman Bharat cover gig workers?' },
+    { label: 'Emergency ambulance', text: 'Call emergency ambulance 108' },
+  ],
+  kaushal: [
+    { label: 'Recommend a course', text: 'Recommend a skill course for me' },
+    { label: 'Electrician training', text: 'Show PMKVY electrician courses' },
+    { label: 'Solar technician', text: 'Show solar panel technician training' },
+    { label: 'Free certifications', text: 'What free government skill certificates can I earn?' },
+  ],
+  haq: [
+    { label: 'What are my rights?', text: 'What are my legal rights as a gig worker?' },
+    { label: 'Accident compensation', text: 'How do I claim accident compensation?' },
+    { label: 'Deactivation rules', text: 'Can a platform deactivate my account without notice?' },
+    { label: 'Draft grievance appeal', text: 'Help me draft an appeal against deactivation' },
+  ],
+  profile: [
+    { label: 'Who am I?', text: 'Who am I and what is my registered profile?' },
+    { label: 'Change language to Hindi', text: 'Change language to Hindi' },
+    { label: 'Change language to Marathi', text: 'Change language to Marathi' },
+    { label: 'Savings target progress', text: 'What is my current savings target?' },
+  ],
+  home: [
+    { label: 'Show matching jobs', text: 'Show matching jobs' },
+    { label: 'Spent ₹150 on food', text: 'I spent ₹150 on food today' },
+    { label: 'Earned ₹800 today', text: 'I earned ₹800 today' },
+    { label: 'Fever advice', text: 'What should I do for fever and weakness?' },
+    { label: 'Recommend course', text: 'Recommend a course for me' },
+  ],
+};
+
+const SCREEN_TITLES: Record<string, string> = {
+  home: 'Home Dashboard',
+  kaam: 'Work (Kaam)',
+  dhan: 'Money (Dhan)',
+  sehat: 'Health (Sehat)',
+  kaushal: 'Skills (Kaushal)',
+  haq: 'Rights (Haq Setu)',
+  profile: 'Profile & Settings',
+};
 
 export default function UnifiedVoiceAssistantModal({
-  visible,
-  onClose,
-  initialQuery,
+  visible: propVisible,
+  onClose: propOnClose,
+  initialQuery: propInitialQuery,
 }: UnifiedVoiceAssistantModalProps) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const { profile } = useProfile();
-  const { transactions, summary, addTransaction } = useTransactions();
 
-  // Assistant State
+  // Consume Centralized Voice Assistant Context
+  const {
+    isOpen: contextIsOpen,
+    closeAssistant: contextClose,
+    messages,
+    sendMessage,
+    isProcessing,
+    currentScreen,
+    pendingConfirmation,
+    confirmPending,
+    cancelPending,
+    clearMessages,
+    initialQuery: contextInitialQuery,
+  } = useVoiceAssistant();
+
+  // Combine prop and context states
+  const isOpen = propVisible !== undefined ? propVisible : contextIsOpen;
+  const handleClose = propOnClose || contextClose;
+  const activeInitialQuery = propInitialQuery || contextInitialQuery;
+
+  // Local UI & Recognition States
   const [mode, setMode] = useState<'voice' | 'chat'>('voice');
-  const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
   const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [silenceRemainingMs, setSilenceRemainingMs] = useState(5000);
   const [errorMessage, setErrorMessage] = useState('');
   const [hasSpeechSupport, setHasSpeechSupport] = useState(true);
-  const [pendingConfirmation, setPendingConfirmation] = useState<AssistantPendingConfirmation | null>(null);
 
   // References
   const recognizerRef = useRef<SetuContinuousSpeechRecognizer | null>(null);
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
-  const currentLang = (i18n.language || 'hi').toLowerCase().slice(0, 2);
+  const currentLang = (i18n.language || 'en').toLowerCase().slice(0, 2);
   const speechLang = BCP47_LANGUAGE_MAP[currentLang] || 'hi-IN';
 
   // Auto-scroll chat to bottom
@@ -79,32 +137,9 @@ export default function UnifiedVoiceAssistantModal({
     }
   }, [messages, interimTranscript, isProcessing]);
 
-  // Initial welcome message
-  useEffect(() => {
-    if (visible && messages.length === 0) {
-      const welcomeText =
-        currentLang === 'hi'
-          ? 'नमस्ते! मैं आपका सेतू आवाज सहायक हूँ। आप बोलकर कमाई, खर्चे दर्ज कर सकते हैं, काम ढूंढ सकते हैं या योजनाएं जान सकते हैं।'
-          : currentLang === 'mr'
-          ? 'नमस्कार! मी तुमचा सेतू आवाज सहाय्यक आहे. तुम्ही बोलून किंवा लिहून खर्च, कमाई, काम शोधू शकता.'
-          : 'Hello! I am your Setu AI Assistant. Speak or type to record expenses, track income, find jobs, or get health guidance.';
-
-      setMessages([
-        {
-          id: 'welcome-msg',
-          role: 'assistant',
-          text: welcomeText,
-          timestamp: new Date().toISOString(),
-          lang: currentLang as SupportedLanguage,
-          intent: 'welcome',
-        },
-      ]);
-    }
-  }, [visible, currentLang, messages.length]);
-
   // Speech recognizer initialization & lifecycle
   useEffect(() => {
-    if (!visible) {
+    if (!isOpen) {
       if (recognizerRef.current) {
         recognizerRef.current.cancel();
       }
@@ -113,12 +148,12 @@ export default function UnifiedVoiceAssistantModal({
       return;
     }
 
-    // Initialize continuous recognizer with configurable silence detection
     const userTimeoutSec = parseInt(
       localStorage.getItem('@setu/voice_silence_timeout') || '5',
       10
     );
-    const configuredSilenceMs = (isNaN(userTimeoutSec) || userTimeoutSec < 2 ? 5 : userTimeoutSec) * 1000;
+    const configuredSilenceMs =
+      (isNaN(userTimeoutSec) || userTimeoutSec < 2 ? 5 : userTimeoutSec) * 1000;
 
     const recognizer = new SetuContinuousSpeechRecognizer(
       {
@@ -133,25 +168,28 @@ export default function UnifiedVoiceAssistantModal({
           setIsListening(false);
           setInterimTranscript('');
           if (finalText.trim()) {
-            handleProcessUtterance(finalText.trim());
+            sendMessage(finalText.trim());
           }
         },
         onError: (err) => {
           setIsListening(false);
           if (err === 'speech_not_supported') {
             setHasSpeechSupport(false);
-            setErrorMessage('Speech recognition is not supported in this browser. Please use the text chat below.');
+            setErrorMessage(
+              'Speech recognition is not supported in this browser. Please type below.'
+            );
             setMode('chat');
           } else if (err === 'not-allowed') {
-            setErrorMessage('Microphone access denied. Please check browser microphone permissions or type below.');
+            setErrorMessage(
+              'Microphone access was denied. Please allow microphone permissions or type below.'
+            );
             setMode('chat');
           } else {
-            setErrorMessage(`Microphone error (${err}). You can speak again or type below.`);
+            setErrorMessage(`Microphone notice (${err}). You can speak again or type below.`);
           }
         },
         onStateChange: (state) => {
           setIsListening(state === 'listening');
-          setIsProcessing(state === 'processing');
         },
       },
       {
@@ -164,12 +202,10 @@ export default function UnifiedVoiceAssistantModal({
     setSilenceRemainingMs(configuredSilenceMs);
     setHasSpeechSupport(recognizer.isSupported());
 
-    // If initial query passed, execute directly
-    if (initialQuery) {
+    if (activeInitialQuery) {
       setMode('chat');
-      handleProcessUtterance(initialQuery);
+      sendMessage(activeInitialQuery);
     } else if (recognizer.isSupported()) {
-      // Start listening automatically
       setMode('voice');
       recognizer.start();
     } else {
@@ -180,574 +216,381 @@ export default function UnifiedVoiceAssistantModal({
       recognizer.destroy();
       recognizerRef.current = null;
     };
-  }, [visible, speechLang]);
+  }, [isOpen, speechLang, activeInitialQuery, sendMessage]);
 
-  // Process user utterance through conversational assistant service
-  const handleProcessUtterance = async (userText: string) => {
-    if (!userText.trim()) return;
-
-    const userMsgId = `user-${Date.now()}`;
-    const userMessage: AssistantMessage = {
-      id: userMsgId,
-      role: 'user',
-      text: userText,
-      timestamp: new Date().toISOString(),
-      lang: detectSpokenLanguage(userText),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInputText('');
-    setInterimTranscript('');
-    setIsProcessing(true);
-
-    try {
-      // Build context
-      const contextState = {
-        pendingConfirmation,
-        lastIntent: messages[messages.length - 1]?.intent || null,
-        userProfile: {
-          name: profile.name,
-          workType: profile.workType,
-          cityKey: profile.cityKey,
-          savingsGoal: profile.savingsGoal,
-        },
-        transactions,
-        summary: {
-          todayIncome: summary.todayIncome,
-          todayExpense: summary.todayExpense,
-          todayNet: summary.todayNet,
-          weeklyIncome: summary.weeklyIncome,
-          totalIncome: summary.totalIncome,
-          totalExpense: summary.totalExpense,
-          netForPeriod: summary.netForPeriod,
-        },
-      };
-
-      const reply = await processUserUtterance(userText, contextState);
-
-      // Check if user confirmed execution via voice
-      if (reply.intent === 'confirm_execution' && pendingConfirmation) {
-        await executeConfirmedTransactions(pendingConfirmation);
-        setPendingConfirmation(null);
-      } else if (reply.pendingConfirmation) {
-        setPendingConfirmation(reply.pendingConfirmation);
-      } else if (reply.intent === 'cancel_pending') {
-        setPendingConfirmation(null);
-      }
-
-      setMessages((prev) => [...prev, reply]);
-    } catch (err) {
-      console.error('Error processing assistant utterance:', err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `err-${Date.now()}`,
-          role: 'assistant',
-          text: 'I ran into an issue processing that. Please try again or type your command.',
-          timestamp: new Date().toISOString(),
-        },
-      ]);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Commit confirmed transactions into TransactionContext
-  const executeConfirmedTransactions = async (conf: AssistantPendingConfirmation) => {
-    try {
-      for (const item of conf.items) {
-        await addTransaction({
-          type: item.type,
-          amount: item.amount,
-          category: item.category,
-          description: item.description,
-          timestamp: item.dateStr || new Date().toISOString(),
-          source: 'voice',
-        });
-      }
-    } catch (err) {
-      console.error('Failed to commit confirmed transaction:', err);
-    }
-  };
-
-  // Manual Confirmation from UI Card
-  const handleConfirmAction = async () => {
-    if (!pendingConfirmation) return;
-    await executeConfirmedTransactions(pendingConfirmation);
-
-    const successMsg: AssistantMessage = {
-      id: `success-${Date.now()}`,
-      role: 'assistant',
-      text: `✓ Confirmed and added ${pendingConfirmation.items.length === 1 ? 'transaction' : `${pendingConfirmation.items.length} transactions`} totaling ${formatInr(pendingConfirmation.totalAmount)} into your records.`,
-      timestamp: new Date().toISOString(),
-      executedSummary: `Added ${formatInr(pendingConfirmation.totalAmount)}`,
-    };
-    setMessages((prev) => [...prev, successMsg]);
-    setPendingConfirmation(null);
-  };
-
-  const handleCancelAction = () => {
-    setPendingConfirmation(null);
-    const cancelMsg: AssistantMessage = {
-      id: `cancel-${Date.now()}`,
-      role: 'assistant',
-      text: 'Transaction cancelled. No changes were made to your records.',
-      timestamp: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, cancelMsg]);
-  };
-
-  const handleToggleVoice = () => {
+  const toggleListening = () => {
+    if (!recognizerRef.current) return;
     if (isListening) {
-      recognizerRef.current?.stopAndFinalize();
-    } else {
-      setMode('voice');
-      setErrorMessage('');
-      recognizerRef.current?.start();
-    }
-  };
-
-  const handleStopAndSend = () => {
-    if (recognizerRef.current && interimTranscript.trim()) {
       recognizerRef.current.stopAndFinalize();
-    } else if (interimTranscript.trim()) {
-      handleProcessUtterance(interimTranscript.trim());
+    } else {
+      setErrorMessage('');
+      recognizerRef.current.start();
     }
   };
 
-  if (!visible) return null;
+  const handleSendText = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    sendMessage(inputText.trim());
+    setInputText('');
+  };
+
+  const handlePromptClick = (text: string) => {
+    sendMessage(text);
+  };
+
+  if (!isOpen) return null;
+
+  const screenPrompts = SCREEN_PROMPTS[currentScreen] || SCREEN_PROMPTS.home;
+  const screenName = SCREEN_TITLES[currentScreen] || 'Setu App';
 
   return (
-    <ModalPortal
-      isOpen={visible}
-      onClose={() => {
-        recognizerRef.current?.cancel();
-        onClose();
-      }}
-      maxWidthClass="sm:max-w-xl"
-      panelClassName="bg-[#FFFDF9]/95 backdrop-blur-2xl border border-white/80 shadow-[0_20px_60px_rgba(7,59,58,0.2),inset_0_1px_1.5px_rgba(255,255,255,0.95)] rounded-t-[28px] sm:rounded-[32px] overflow-hidden"
-    >
-      <div className="flex flex-col w-full h-full max-h-[90vh] sm:max-h-[85vh] overflow-hidden">
-          {/* TOP PINNED HEADER */}
-          <div className="shrink-0 flex items-center justify-between px-5 py-3.5 border-b border-[#F4EBDD] bg-white/70 backdrop-blur-md">
-            <div className="flex items-center gap-2.5">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-clay">
-                <AppIcon name="mic" size={18} className="drop-shadow" />
-                {isListening && (
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-saffronGold opacity-75" />
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-terracotta border border-white" />
-                  </span>
-                )}
-              </div>
-              <div>
-                <h3 className="text-sm font-black text-deepEmerald leading-tight">
-                  {t('voice.assistantTitle', 'Setu Multilingual Assistant')}
-                </h3>
-                <p className="text-[10px] font-bold text-textMuted uppercase tracking-wider">
-                  {isListening
-                    ? `Listening (${(silenceRemainingMs / 1000).toFixed(1)}s silence window)`
-                    : isProcessing
-                    ? 'Processing with Setu AI...'
-                    : 'Online • Hindi / Marathi / English'}
-                </p>
-              </div>
+    <ModalPortal isOpen={isOpen} onClose={handleClose} maxWidthClass="sm:max-w-xl">
+      <div className="flex flex-col h-[85vh] max-h-[720px] bg-white rounded-3xl overflow-hidden shadow-2xl border border-[#F4EBDD]">
+        {/* Header Bar */}
+        <header className="shrink-0 px-5 py-3.5 bg-gradient-to-r from-white via-[#FDF8F0] to-white border-b border-[#F4EBDD] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-sm border border-[#F1B96B]/50">
+              <AppIcon name="mic" size={17} className="text-white drop-shadow" />
             </div>
-
-            <div className="flex items-center gap-2">
-              {/* Mode Toggle Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (mode === 'voice') {
-                    recognizerRef.current?.cancel();
-                    setMode('chat');
-                  } else {
-                    setMode('voice');
-                    recognizerRef.current?.start();
-                  }
-                }}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#F4EBDD]/60 hover:bg-[#F4EBDD] text-deepEmerald transition-colors"
-                title={mode === 'voice' ? 'Switch to text chat' : 'Switch to voice listening'}
-              >
-                <AppIcon name={mode === 'voice' ? 'chatbubble-ellipses' : 'mic'} size={13} />
-                <span>{mode === 'voice' ? 'Type' : 'Voice'}</span>
-              </button>
-
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  recognizerRef.current?.cancel();
-                  onClose();
-                }}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/70 hover:bg-rose-50 text-textSecondary hover:text-rose-600 transition-colors border border-white/80 active:scale-95"
-                aria-label="Close Assistant"
-              >
-                ✕
-              </button>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-extrabold text-[#1E2B3E] text-sm sm:text-base font-serif">
+                  Setu Voice Assistant
+                </h3>
+                {/* Active Screen Context Pill */}
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF7F8] text-[#3A757D] border border-[#3A757D]/30">
+                  📍 {screenName}
+                </span>
+              </div>
+              <p className="text-[11px] text-stone-500">
+                Speaks Hindi, Marathi & English • Context-aware across Setu
+              </p>
             </div>
           </div>
 
-          {/* MAIN CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 py-3 space-y-3">
-            {/* VOICE RECORDING HERO SCREEN (When in voice mode) */}
-            {mode === 'voice' && (
-              <div className="flex flex-col items-center py-4 text-center">
-                {/* Luminous Pulsing Microphone Visualizer */}
-                <div
-                  onClick={handleToggleVoice}
-                  className="relative my-3 flex items-center justify-center cursor-pointer select-none group"
-                >
-                  {isListening && (
-                    <>
-                      <div className="absolute h-36 w-36 rounded-full bg-saffronGold/20 animate-pulse-ring" />
-                      <div className="absolute h-28 w-28 rounded-full bg-terracotta/15 animate-ping" />
-                    </>
-                  )}
-                  <div
-                    className={`relative z-10 flex h-20 w-20 items-center justify-center rounded-full text-white shadow-clay transition-transform duration-200 group-hover:scale-105 group-active:scale-95 ${
-                      isListening
-                        ? 'bg-gradient-to-br from-[#B34A26] to-[#7C2D16] ring-4 ring-saffronGold/50'
-                        : 'bg-[#5A6B65]'
-                    }`}
-                  >
-                    <AppIcon name="mic" size={32} className="text-white drop-shadow" />
-                  </div>
-                </div>
+          <div className="flex items-center gap-1.5">
+            {/* Clear Chat Button */}
+            <button
+              type="button"
+              onClick={clearMessages}
+              className="p-1.5 rounded-xl hover:bg-stone-100 text-stone-400 hover:text-stone-600 transition-colors text-xs font-semibold"
+              title="Clear Conversation"
+            >
+              <AppIcon name="trash" size={16} />
+            </button>
 
-                {/* Status & 5-Second Silence Countdown Indicator */}
-                <div className="w-full max-w-xs mt-2">
-                  <h4 className="text-base font-black text-deepEmerald">
-                    {isListening ? 'Listening to your voice...' : 'Microphone Paused'}
-                  </h4>
-                  <p className="text-xs text-textSecondary mt-0.5 leading-snug">
-                    {isListening
-                      ? 'Speak naturally with pauses. Will submit after 5 seconds of silence, or tap below to send instantly.'
-                      : 'Tap the microphone to start speaking.'}
-                  </p>
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={handleClose}
+              className="p-1.5 rounded-xl hover:bg-stone-100 text-stone-500 transition-colors"
+              aria-label="Close Assistant"
+            >
+              <AppIcon name="close" size={20} />
+            </button>
+          </div>
+        </header>
 
-                  {/* Visual Silence Progress Bar */}
-                  {isListening && (
-                    <div className="mt-3 w-full bg-[#E8DCCB] h-2 rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className="bg-gradient-to-r from-saffronGold to-terracotta h-full transition-all duration-100 ease-linear"
-                        style={{ width: `${(silenceRemainingMs / 5000) * 100}%` }}
-                      />
-                    </div>
-                  )}
-                </div>
+        {/* Conversation Message History */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-stone-50/50">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex flex-col ${
+                msg.role === 'user' ? 'items-end' : 'items-start'
+              }`}
+            >
+              <div
+                className={`max-w-[88%] rounded-2xl p-3.5 text-xs sm:text-sm leading-relaxed shadow-xs whitespace-pre-line ${
+                  msg.role === 'user'
+                    ? 'bg-[#B34A26] text-white rounded-br-xs font-medium'
+                    : 'bg-white text-[#1E2B3E] border border-[#F4EBDD] rounded-bl-xs'
+                }`}
+              >
+                {msg.text}
 
-                {/* Real-time Interim Transcript Preview */}
-                {interimTranscript && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-4 w-full rounded-2xl bg-white/80 border border-[#E5953E]/40 p-3.5 shadow-sm text-left"
-                  >
-                    <span className="text-[10px] font-black uppercase tracking-wider text-terracotta">
-                      Live Transcript (Continuous)
+                {/* Render Job Cards if Present (Model 6) */}
+                {msg.jobResults && msg.jobResults.length > 0 && (
+                  <div className="mt-3 space-y-2 pt-2 border-t border-stone-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                      Matched Openings (Model 6)
                     </span>
-                    <p className="text-sm font-semibold text-deepEmerald mt-1 italic">
-                      "{interimTranscript}"
-                    </p>
-                  </motion.div>
-                )}
-
-                {/* Error message if microphone issue */}
-                {errorMessage && (
-                  <div className="mt-3 w-full rounded-xl bg-amber-50 border border-amber-200 p-2.5 text-xs text-amber-900 font-medium">
-                    {errorMessage}
-                  </div>
-                )}
-
-                {/* Voice Action Buttons */}
-                <div className="mt-4 flex items-center justify-center gap-2.5 w-full max-w-sm">
-                  {isListening && interimTranscript && (
-                    <button
-                      type="button"
-                      onClick={handleStopAndSend}
-                      className="flex-1 emerald-gradient-btn rounded-full py-2.5 px-4 text-xs font-extrabold text-white shadow-sm hover:scale-[1.02] active:scale-95"
-                    >
-                      Send Now (Don't Wait 5s) →
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      recognizerRef.current?.cancel();
-                      setIsListening(false);
-                      setMode('chat');
-                    }}
-                    className="px-4 py-2.5 rounded-full text-xs font-bold text-textSecondary hover:text-deepEmerald bg-white/80 border border-[#F4EBDD]"
-                  >
-                    Type Instead
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* CONVERSATION MESSAGE THREAD */}
-            <div className="space-y-3 pt-2">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
-                >
-                  {/* Bubble */}
-                  <div
-                    className={`max-w-[88%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-medium leading-relaxed shadow-sm ${
-                      msg.role === 'user'
-                        ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white rounded-br-xs'
-                        : 'bg-white/90 text-deepEmerald border border-[#F4EBDD] rounded-bl-xs'
-                    }`}
-                  >
-                    <p className="whitespace-pre-line">{msg.text}</p>
-                  </div>
-
-                  {/* ACTION CARD: PENDING TRANSACTION CONFIRMATION */}
-                  {msg.pendingConfirmation && pendingConfirmation && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="mt-2 w-full max-w-md rounded-2xl bg-white border-2 border-[#E5953E] p-3.5 shadow-lifted"
-                    >
-                      <div className="flex items-center justify-between pb-2 border-b border-[#F4EBDD]">
-                        <span className="text-[11px] font-black uppercase tracking-wider text-terracotta">
-                          Confirm Action Before Saving
-                        </span>
-                        <span className="text-xs font-extrabold text-deepEmerald">
-                          Total: {formatInr(msg.pendingConfirmation.totalAmount)}
-                        </span>
-                      </div>
-
-                      {/* Items List */}
-                      <div className="mt-2 space-y-2">
-                        {msg.pendingConfirmation.items.map((it, idx) => (
-                          <div
-                            key={it.id || idx}
-                            className="flex items-center justify-between p-2 rounded-xl bg-[#FAF5EE] text-xs font-bold"
-                          >
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                                  it.type === 'income'
-                                    ? 'bg-emerald-100 text-emerald-800'
-                                    : 'bg-rose-100 text-rose-800'
-                                }`}
-                              >
-                                {it.type}
-                              </span>
-                              <span className="text-deepEmerald truncate max-w-[150px]">
-                                {it.description}
-                              </span>
-                            </div>
-                            <span className="text-sm font-black text-deepEmerald">
-                              {formatInr(it.amount)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Note for worker */}
-                      <p className="text-[10px] text-textMuted mt-2 italic">
-                        Say "Yes / Haan / Confirm" or tap below. Say "Change that to ₹xxx" to adjust amount.
-                      </p>
-
-                      {/* Confirmation Buttons */}
-                      <div className="mt-3 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={handleConfirmAction}
-                          className="flex-1 emerald-gradient-btn rounded-xl py-2 px-3 text-xs font-bold text-white shadow-sm hover:scale-[1.02] active:scale-95"
-                        >
-                          Confirm & Save ✓
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleCancelAction}
-                          className="px-3 py-2 rounded-xl text-xs font-bold text-textSecondary hover:bg-rose-50 hover:text-rose-700 bg-[#F4EBDD]/50 border border-transparent"
-                        >
-                          Cancel ✕
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* ACTION CARD: JOB RESULTS */}
-                  {msg.jobResults && msg.jobResults.length > 0 && (
-                    <div className="mt-2 w-full max-w-md space-y-2">
+                    <div className="grid grid-cols-1 gap-2">
                       {msg.jobResults.map((job) => (
                         <div
                           key={job.id}
-                          className="p-3 rounded-2xl bg-white/95 border border-[#F4EBDD] shadow-xs flex items-center justify-between hover:border-terracotta/40 transition-colors"
+                          className="rounded-xl border border-[#F4EBDD] bg-[#FDF8F0]/70 p-2.5 space-y-1"
                         >
-                          <div>
-                            <h5 className="text-xs font-black text-deepEmerald">{job.title}</h5>
-                            <p className="text-[11px] text-textSecondary">{job.employer} • {job.location}</p>
-                            <span className="text-xs font-extrabold text-terracotta">{job.pay}</span>
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-bold text-[#1E2B3E] text-xs">
+                                  {job.title}
+                                </span>
+                                {job.matchScore && (
+                                  <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">
+                                    {job.matchScore}% Match
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-[#7C2D16] block">
+                                {job.employer} • {job.location}
+                              </span>
+                            </div>
+                            <span className="text-[11px] font-black text-[#1E2B3E] shrink-0">
+                              {job.pay}
+                            </span>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onClose();
-                              navigate('/kaam');
-                            }}
-                            className="px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#F4EBDD] hover:bg-terracotta hover:text-white text-deepEmerald transition-colors"
-                          >
-                            View Job →
-                          </button>
+                          {job.explanation && (
+                            <p className="text-[10px] text-stone-600 bg-white/70 p-1.5 rounded-lg border border-[#F4EBDD]/60">
+                              💡 {job.explanation}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* ACTION CARD: SKILL COURSE RESULTS */}
-                  {msg.courseResults && msg.courseResults.length > 0 && (
-                    <div className="mt-2 w-full max-w-md space-y-2">
-                      {msg.courseResults.map((course) => (
+                {/* Render Course Recommendations if Present (Model 7) */}
+                {msg.courseResults && msg.courseResults.length > 0 && (
+                  <div className="mt-3 space-y-2 pt-2 border-t border-stone-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                      Accredited Skill Courses (Model 7)
+                    </span>
+                    <div className="grid grid-cols-1 gap-2">
+                      {msg.courseResults.map((c) => (
                         <div
-                          key={course.id}
-                          className="p-3 rounded-2xl bg-white/95 border border-[#F4EBDD] shadow-xs flex items-center justify-between hover:border-terracotta/40 transition-colors"
+                          key={c.id}
+                          className="rounded-xl border border-[#F4EBDD] bg-[#FDF8F0]/70 p-2.5 space-y-1"
                         >
-                          <div>
-                            <span className="text-[9px] font-extrabold text-terracotta uppercase">{course.provider}</span>
-                            <h5 className="text-xs font-black text-deepEmerald">{course.title}</h5>
-                            <p className="text-[10px] text-textSecondary line-clamp-1">{course.skills}</p>
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <span className="font-bold text-[#1E2B3E] text-xs block">
+                                {c.title}
+                              </span>
+                              <span className="text-[10px] text-[#7C2D16] block">
+                                {c.provider}
+                              </span>
+                            </div>
+                            {c.url && (
+                              <a
+                                href={c.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2 py-0.5 rounded-lg bg-[#B34A26] text-white text-[10px] font-bold hover:bg-[#7C2D16] shrink-0"
+                              >
+                                View Course
+                              </a>
+                            )}
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onClose();
-                              navigate('/kaushal');
-                            }}
-                            className="px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#F4EBDD] hover:bg-terracotta hover:text-white text-deepEmerald transition-colors shrink-0 ml-2"
-                          >
-                            Explore →
-                          </button>
+                          <span className="text-[10px] text-stone-500 block">
+                            Skills: {c.skills}
+                          </span>
                         </div>
                       ))}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* ACTION CARD: HEALTH EMERGENCY ALERT */}
-                  {msg.emergencyAlert && (
-                    <div className="mt-2 w-full max-w-md p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-500 shadow-md">
-                      <div className="flex items-center gap-2 text-rose-800 font-black text-xs uppercase tracking-wider">
-                        <AppIcon name="warning" size={16} className="text-rose-600" />
-                        <span>Emergency Assistance</span>
-                      </div>
-                      <p className="text-xs text-rose-950 font-medium mt-1 leading-relaxed">
-                        {msg.emergencyAlert.advice}
-                      </p>
-                      <div className="mt-3 flex items-center gap-2">
-                        <a
-                          href={`tel:${msg.emergencyAlert.primaryNumber}`}
-                          className="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs text-center shadow-sm flex items-center justify-center gap-1.5"
-                        >
-                          <AppIcon name="call" size={13} />
-                          <span>Call 112 (Police & Emergency)</span>
-                        </a>
-                        <a
-                          href={`tel:${msg.emergencyAlert.secondaryNumber}`}
-                          className="flex-1 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs text-center shadow-sm flex items-center justify-center gap-1.5"
-                        >
-                          <AppIcon name="call" size={13} />
-                          <span>Call 108 (Ambulance)</span>
-                        </a>
-                      </div>
+                {/* Render Emergency Alert if Present */}
+                {msg.emergencyAlert && (
+                  <div className="mt-3 p-3 rounded-xl bg-red-50 border border-red-200 text-red-900 space-y-2">
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-red-700">
+                      <AppIcon name="alert-circle" size={16} />
+                      <span>Immediate Emergency Actions</span>
                     </div>
-                  )}
-
-                  {/* ACTION CARD: NAVIGATION SHORTCUT */}
-                  {msg.navigationAction && (
-                    <div className="mt-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onClose();
-                          navigate(msg.navigationAction!.route);
-                        }}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-terracotta hover:underline"
+                    <div className="flex items-center gap-2 pt-1">
+                      <a
+                        href={`tel:${msg.emergencyAlert.primaryNumber}`}
+                        className="flex-1 py-1.5 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs text-center shadow-xs"
                       >
-                        <span>{msg.navigationAction.label}</span> →
-                      </button>
+                        Call 112 (National SOS)
+                      </a>
+                      <a
+                        href={`tel:${msg.emergencyAlert.secondaryNumber}`}
+                        className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs text-center shadow-xs"
+                      >
+                        Call 108 (Ambulance)
+                      </a>
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                )}
 
-              {isProcessing && (
-                <div className="flex items-center gap-2 text-xs font-bold text-textMuted py-2">
-                  <div className="h-2 w-2 rounded-full bg-terracotta animate-ping" />
-                  <span>Setu AI is analyzing...</span>
-                </div>
-              )}
+                {/* Render Navigation Action Button */}
+                {msg.navigationAction && (
+                  <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigate(msg.navigationAction!.route);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-[#B34A26] text-white text-xs font-bold shadow-xs hover:bg-[#7C2D16] transition-all flex items-center gap-1.5"
+                    >
+                      <span>{msg.navigationAction.label}</span>
+                      <AppIcon name="arrow-forward" size={13} />
+                    </button>
+                  </div>
+                )}
+              </div>
 
-              <div ref={chatBottomRef} />
+              <span className="text-[10px] text-stone-400 mt-1 px-1">
+                {new Date(msg.timestamp).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
             </div>
-          </div>
+          ))}
 
-          {/* BOTTOM SUGGESTION PILLS (Quick Taps) */}
-          <div className="shrink-0 px-4 py-2 bg-[#F9F4EC]/80 border-t border-[#F4EBDD] overflow-x-auto no-scrollbar flex items-center gap-1.5">
-            {SAMPLE_PROMPTS.map((prompt, i) => (
+          {/* Pending Transaction Confirmation Card */}
+          {pendingConfirmation && (
+            <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-4 space-y-3 shadow-xs animate-fadeIn">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold text-amber-900 flex items-center gap-1.5">
+                  <AppIcon name="wallet" size={15} />
+                  <span>Transaction Confirmation Required</span>
+                </span>
+                <span className="text-xs font-mono font-bold text-amber-800 bg-white/80 px-2 py-0.5 rounded border border-amber-200">
+                  {formatInr(pendingConfirmation.totalAmount)}
+                </span>
+              </div>
+
+              <p className="text-xs text-stone-700">
+                {pendingConfirmation.summaryText}. Would you like to confirm and save this into your financial ledger?
+              </p>
+
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={confirmPending}
+                  className="flex-1 py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5"
+                >
+                  <AppIcon name="checkmark" size={14} />
+                  <span>Confirm & Save</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelPending}
+                  className="py-2 px-3 rounded-xl bg-white border border-stone-200 hover:bg-stone-50 text-stone-700 font-bold text-xs transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Interim transcript while user is speaking */}
+          {interimTranscript && (
+            <div className="flex flex-col items-end">
+              <div className="max-w-[85%] rounded-2xl p-3 bg-[#B34A26]/80 text-white text-xs sm:text-sm italic animate-pulse">
+                {interimTranscript}...
+              </div>
+            </div>
+          )}
+
+          {/* Processing spinner indicator */}
+          {isProcessing && (
+            <div className="flex items-center gap-2 p-2 text-xs text-stone-500 font-medium">
+              <div className="w-2 h-2 rounded-full bg-[#B34A26] animate-ping" />
+              <span>Setu Assistant analyzing request...</span>
+            </div>
+          )}
+
+          <div ref={chatBottomRef} />
+        </div>
+
+        {/* Error notification banner */}
+        {errorMessage && (
+          <div className="px-4 py-2 bg-rose-50 border-t border-rose-200 text-rose-800 text-xs flex items-center justify-between">
+            <span>{errorMessage}</span>
+            <button
+              type="button"
+              onClick={() => setErrorMessage('')}
+              className="text-rose-700 font-bold hover:underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Contextual Sample Suggestions for Current Screen */}
+        <div className="shrink-0 px-4 py-2 bg-white border-t border-[#F4EBDD] overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-bold text-stone-400 shrink-0 uppercase">
+              Try:
+            </span>
+            {screenPrompts.map((p, idx) => (
               <button
-                key={i}
+                key={idx}
                 type="button"
-                onClick={() => handleProcessUtterance(prompt.text)}
-                className="whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold bg-white border border-[#E8DCCB] text-textSecondary hover:border-terracotta hover:text-deepEmerald transition-colors active:scale-95 shrink-0"
+                onClick={() => handlePromptClick(p.text)}
+                className="px-2.5 py-1 rounded-full bg-stone-100 hover:bg-[#FDF8F0] hover:text-[#B34A26] border border-stone-200 hover:border-[#F1B96B] text-[11px] font-semibold text-stone-700 whitespace-nowrap transition-all shadow-2xs"
               >
-                {prompt.label}
+                {p.label}
               </button>
             ))}
           </div>
+        </div>
 
-          {/* BOTTOM TYPED / MIC INPUT BAR */}
-          <div className="shrink-0 p-3 sm:p-4 bg-white/90 border-t border-[#F4EBDD] flex items-center gap-2">
+        {/* Bottom Input & Voice Controls */}
+        <footer className="shrink-0 p-4 bg-white border-t border-[#F4EBDD] space-y-3">
+          {/* Mode Switcher & Listening Wave */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {/* Mic Status Indicator / Toggle */}
+              {hasSpeechSupport && (
+                <button
+                  type="button"
+                  onClick={toggleListening}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    isListening
+                      ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse'
+                      : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                  }`}
+                >
+                  <AppIcon name="mic" size={14} className={isListening ? 'text-rose-600' : ''} />
+                  <span>{isListening ? `Listening (${Math.ceil(silenceRemainingMs / 1000)}s)` : 'Tap to Speak'}</span>
+                </button>
+              )}
+
+              {/* Audio waveform visualizer when listening */}
+              {isListening && (
+                <div className="flex items-center gap-0.5 h-4">
+                  <span className="w-1 bg-[#B34A26] h-2 rounded-full animate-pulse" />
+                  <span className="w-1 bg-[#B34A26] h-4 rounded-full animate-bounce" />
+                  <span className="w-1 bg-[#B34A26] h-3 rounded-full animate-pulse" />
+                  <span className="w-1 bg-[#B34A26] h-4 rounded-full animate-bounce" />
+                </div>
+              )}
+            </div>
+
+            <span className="text-[10px] text-stone-400 font-medium">
+              Lang: {currentLang.toUpperCase()} (Voice + Text)
+            </span>
+          </div>
+
+          {/* Text input form for typed queries */}
+          <form onSubmit={handleSendText} className="flex items-center gap-2">
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && inputText.trim()) {
-                  handleProcessUtterance(inputText.trim());
-                }
-              }}
-              placeholder="Speak or type (e.g. 'Spent 150 on food', 'Electrician jobs')..."
-              className="flex-1 rounded-full border border-[#E8DCCB] bg-[#FFFDF9] px-4 py-2.5 text-xs sm:text-sm font-medium text-deepEmerald placeholder:text-textMuted focus:border-terracotta focus:outline-none shadow-xs"
+              placeholder={`Ask about ${screenName} or speak Hindi/Marathi/English...`}
+              className="flex-1 rounded-2xl border border-[#F4EBDD] bg-stone-50 px-4 py-2.5 text-xs sm:text-sm font-medium text-[#1E2B3E] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#B34A26]/40 focus:bg-white"
             />
-
-            {/* Quick Voice Mic Toggle Button inside bar */}
             <button
-              type="button"
-              onClick={handleToggleVoice}
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-warm transition-transform active:scale-95 ${
-                isListening
-                  ? 'bg-rose-600 ring-2 ring-rose-300'
-                  : 'bg-gradient-to-br from-[#B34A26] to-[#7C2D16]'
-              }`}
-              title={isListening ? 'Stop listening' : 'Start voice input'}
-              aria-label="Toggle Microphone"
-            >
-              <AppIcon name="mic" size={18} />
-            </button>
-
-            {/* Send Button for typed message */}
-            <button
-              type="button"
-              disabled={!inputText.trim()}
-              onClick={() => {
-                if (inputText.trim()) {
-                  handleProcessUtterance(inputText.trim());
-                }
-              }}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#073B3A] text-white shadow-warm disabled:opacity-40 transition-transform active:scale-95"
+              type="submit"
+              disabled={!inputText.trim() || isProcessing}
+              className="p-2.5 rounded-2xl bg-[#B34A26] hover:bg-[#7C2D16] text-white disabled:opacity-40 transition-all shadow-xs active:scale-95"
               aria-label="Send Message"
             >
-              <AppIcon name="paper-plane" size={16} />
+              <AppIcon name="arrow-forward" size={18} />
             </button>
-          </div>
-        </div>
-      </ModalPortal>
-    );
-  }
+          </form>
+        </footer>
+      </div>
+    </ModalPortal>
+  );
+}

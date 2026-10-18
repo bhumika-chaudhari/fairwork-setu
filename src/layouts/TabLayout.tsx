@@ -5,8 +5,8 @@ import { AppIcon } from '../lib/icons';
 import SetuLogo from '../components/SetuLogo';
 import LanguageSelector from '../components/LanguageSelector';
 import SoundToggle from '../components/SoundToggle';
-import VoiceEntryModal from '../components/VoiceEntryModal';
 import { useProfile } from '../hooks/ProfileContext';
+import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import { playTap, playSelect } from '../lib/feedback';
 
 const tabs = [
@@ -22,11 +22,8 @@ export default function TabLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { profile, logout } = useProfile();
-  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
-
-  // If user navigates directly to /voice, show modal
-  const isVoiceRoute = location.pathname === '/voice';
+  const { profile } = useProfile();
+  const { openAssistant } = useVoiceAssistant();
 
   return (
     <div className="flex min-h-screen flex-col bg-transparent">
@@ -74,7 +71,7 @@ export default function TabLayout() {
               type="button"
               onClick={() => {
                 playTap();
-                setVoiceModalOpen(true);
+                openAssistant();
               }}
               className="emerald-gradient-btn flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95"
               aria-label="Voice Entry"
@@ -122,7 +119,7 @@ export default function TabLayout() {
           type="button"
           onClick={() => {
             playTap();
-            setVoiceModalOpen(true);
+            openAssistant();
           }}
           className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-lifted ring-4 ring-white/80 border border-[#E5953E]/50 transition-all duration-300 hover:scale-105 active:scale-95"
           aria-label="Quick Voice Entry"
@@ -179,17 +176,6 @@ export default function TabLayout() {
           ))}
         </nav>
       </div>
-
-      {/* Global Voice Entry Modal */}
-      <VoiceEntryModal
-        visible={voiceModalOpen || isVoiceRoute}
-        onClose={() => {
-          setVoiceModalOpen(false);
-          if (isVoiceRoute) {
-            navigate(-1);
-          }
-        }}
-      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Card from '../components/Card';
 import ProgressBar from '../components/ProgressBar';
 import ModalPortal from '../components/ModalPortal';
 import { useProfile, type Gender } from '../hooks/ProfileContext';
+import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import {
   CITY_KEYS,
   SUGGESTED_SKILL_KEYS,
@@ -49,6 +50,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { profile, updateProfile, strength, logout } = useProfile();
+  const { openAssistant } = useVoiceAssistant();
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<ProfileTab>('personal');
@@ -426,6 +428,19 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                playTap();
+                openAssistant();
+              }}
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white px-3.5 py-1.5 text-xs font-bold shadow-xs transition-all hover:scale-105 active:scale-95"
+              aria-label="Voice Assistant"
+            >
+              <AppIcon name="mic" size={14} className="text-white drop-shadow" />
+              <span>Voice</span>
+            </button>
+
             <button
               type="button"
               onClick={() => {

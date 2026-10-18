@@ -6,7 +6,7 @@ import LanguageSelector from '../components/LanguageSelector';
 import AccountDeactivationWizard from '../components/haq/AccountDeactivationWizard';
 import GrievanceTracker from '../components/haq/GrievanceTracker';
 import LegalSourcesLibrary from '../components/haq/LegalSourcesLibrary';
-import VoiceEntryModal from '../components/VoiceEntryModal';
+import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import ModalPortal from '../components/ModalPortal';
 import { readTextAloud } from '../lib/speechSynthesis';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
@@ -15,8 +15,8 @@ type HaqView = 'overview' | 'deactivation_wizard' | 'cases' | 'rights';
 
 export default function HaqSetuPage() {
   const { t, i18n } = useTranslation();
+  const { openAssistant } = useVoiceAssistant();
   const [currentView, setCurrentView] = useState<HaqView>('overview');
-  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
   const [missingPaymentModalOpen, setMissingPaymentModalOpen] = useState(false);
   const [penaltyModalOpen, setPenaltyModalOpen] = useState(false);
   const [somethingElseModalOpen, setSomethingElseModalOpen] = useState(false);
@@ -152,7 +152,7 @@ export default function HaqSetuPage() {
 
                 <button
                   type="button"
-                  onClick={() => setVoiceModalOpen(true)}
+                  onClick={() => openAssistant()}
                   className="shrink-0 px-4 py-2 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#7C2D16] hover:brightness-105 text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
                   aria-label="Talk to Setu"
                 >
@@ -553,7 +553,7 @@ export default function HaqSetuPage() {
             <button
               onClick={() => {
                 setSomethingElseModalOpen(false);
-                setVoiceModalOpen(true);
+                openAssistant();
               }}
               className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-[#B34A26] hover:bg-[#7C2D16] flex items-center justify-center gap-2 shadow-sm"
             >
@@ -583,12 +583,6 @@ export default function HaqSetuPage() {
           </button>
         </div>
       </ModalPortal>
-
-      {/* Voice Assistant Modal */}
-      <VoiceEntryModal
-        visible={voiceModalOpen}
-        onClose={() => setVoiceModalOpen(false)}
-      />
     </div>
   );
 }

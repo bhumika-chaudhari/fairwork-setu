@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import JobCard from '../components/JobCard';
 import Card from '../components/Card';
 import VoiceButton from '../components/VoiceButton';
-import VoiceEntryModal from '../components/VoiceEntryModal';
+import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import LanguageSelector from '../components/LanguageSelector';
 import SoundToggle from '../components/SoundToggle';
 import { playTap } from '../lib/feedback';
@@ -27,6 +27,7 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { profile, strength } = useProfile();
+  const { openAssistant } = useVoiceAssistant();
   const {
     transactions,
     summary,
@@ -38,7 +39,6 @@ export default function HomePage() {
     editingTransaction,
     closeEditModal,
   } = useTransactions();
-  const [voiceModalVisible, setVoiceModalVisible] = useState(false);
 
   const jobsQuery = useQuery({ queryKey: ['jobs'], queryFn: getJobs });
   const healthQuery = useQuery({ queryKey: ['health'], queryFn: getHealthResources });
@@ -301,7 +301,7 @@ export default function HomePage() {
 
               <button
                 type="button"
-                onClick={() => setVoiceModalVisible(true)}
+                onClick={() => openAssistant()}
                 className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#B34A26] to-[#7C2D16] hover:brightness-105 transition-all shadow-xs active:scale-95 flex items-center gap-1.5"
                 aria-label="Talk to Setu"
               >
@@ -421,12 +421,6 @@ export default function HomePage() {
           </section>
         </div>
       </div>
-
-      {/* Voice Entry Modal */}
-      <VoiceEntryModal
-        visible={voiceModalVisible}
-        onClose={() => setVoiceModalVisible(false)}
-      />
 
       {/* Manual / Preset Transaction Modal */}
       <TransactionModal
