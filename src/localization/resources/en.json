@@ -303,7 +303,7 @@
     "tryAgainVoice": "Try voice microphone again"
   },
   "profileScreen": {
-    "title": "Profile",
+    "title": "Profile & Settings",
     "photo": "Profile Photo",
     "changePhoto": "Change photo",
     "name": "Full Name",
@@ -347,7 +347,25 @@
     "logoutPromptSub": "You will be returned to the welcome screen. Your saved transactions and profile will remain safe on your device.",
     "confirmLogout": "Yes, Log Out",
     "accountSession": "Session & Demo Controls",
-    "reloadDemo": "Reload 5-Day Demo Data"
+    "reloadDemo": "Reload 5-Day Demo Data",
+    "tabsPersonal": "Personal",
+    "tabsWork": "Work & Skills",
+    "tabsLanguage": "Language & Audio",
+    "tabsPrivacy": "Privacy & Data",
+    "tabsPreferences": "App Preferences",
+    "readOnlyBadge": "System / Verified",
+    "editableBadge": "Editable",
+    "voiceRate": "Assistant Speech Speed",
+    "voiceSilence": "Listening Silence Window",
+    "privacyMaskTitle": "Privacy Masking on Home Dashboard",
+    "privacyMaskSub": "Hide exact rupee balances when in public or shared transit",
+    "exportProfile": "Export Profile (JSON)",
+    "exportSuccess": "Profile data exported successfully!",
+    "offlineStatus": "Offline Mode & Local Storage",
+    "offlineOnline": "Online • Local cache synced",
+    "offlineOffline": "Offline • Working from local cache",
+    "weeklySaveGoal": "Weekly Savings Target (₹)",
+    "weeklySaveGoalHint": "Your weekly goal to put aside towards emergency fund"
   },
   "availability": {
     "anytime": "Any time",

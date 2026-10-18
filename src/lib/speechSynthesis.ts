@@ -21,7 +21,21 @@ export function readTextAloud(
 
   const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.lang = lang;
-  utterance.rate = 0.95; // Slightly slower for better comprehension among workers
+
+  // Read rate from configured preference or fallback
+  let rate = 0.95;
+  try {
+    const stored = localStorage.getItem('@setu/speech_rate');
+    if (stored) {
+      const parsed = parseFloat(stored);
+      if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 2.0) {
+        rate = parsed;
+      }
+    }
+  } catch {
+    // fallback
+  }
+  utterance.rate = rate;
   utterance.pitch = 1.0;
 
   // Try to find matching voice
@@ -43,6 +57,23 @@ export function readTextAloud(
 
   window.speechSynthesis.speak(utterance);
   return true;
+}
+
+export function getSpeechRate(): number {
+  try {
+    const val = localStorage.getItem('@setu/speech_rate');
+    return val ? parseFloat(val) : 0.95;
+  } catch {
+    return 0.95;
+  }
+}
+
+export function setSpeechRate(rate: number): void {
+  try {
+    localStorage.setItem('@setu/speech_rate', String(rate));
+  } catch {
+    // ignore
+  }
 }
 
 export function stopSpeaking() {

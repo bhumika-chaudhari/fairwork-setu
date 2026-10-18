@@ -540,7 +540,7 @@
     }
   },
   "profileScreen": {
-    "title": "[partial] Your profile",
+    "title": "Profile & Settings",
     "photo": "[partial] Photo",
     "name": "[partial] Name",
     "nameHint": "[partial] Use a name you are comfortable sharing.",
@@ -578,7 +578,25 @@
     "validationContact": "कृपया वैध 10-अंकों का फ़ोन नंबर दर्ज करें।",
     "gender": "लिंग / Gender (वैकल्पिक)",
     "stabilityGood": "अच्छा",
-    "preferredLanguage": "পছন্দের ভাষা"
+    "preferredLanguage": "পছন্দের ভাষা",
+    "tabsPersonal": "Personal",
+    "tabsWork": "Work & Skills",
+    "tabsLanguage": "Language & Audio",
+    "tabsPrivacy": "Privacy & Data",
+    "tabsPreferences": "App Preferences",
+    "readOnlyBadge": "System / Verified",
+    "editableBadge": "Editable",
+    "voiceRate": "Assistant Speech Speed",
+    "voiceSilence": "Listening Silence Window",
+    "privacyMaskTitle": "Privacy Masking on Home Dashboard",
+    "privacyMaskSub": "Hide exact rupee balances when in public or shared transit",
+    "exportProfile": "Export Profile (JSON)",
+    "exportSuccess": "Profile data exported successfully!",
+    "offlineStatus": "Offline Mode & Local Storage",
+    "offlineOnline": "Online • Local cache synced",
+    "offlineOffline": "Offline • Working from local cache",
+    "weeklySaveGoal": "Weekly Savings Target (₹)",
+    "weeklySaveGoalHint": "Your weekly goal to put aside towards emergency fund"
   },
   "availability": {
     "anytime": "[partial] Any time",

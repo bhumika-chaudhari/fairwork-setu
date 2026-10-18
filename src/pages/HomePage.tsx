@@ -9,6 +9,7 @@ import VoiceButton from '../components/VoiceButton';
 import VoiceEntryModal from '../components/VoiceEntryModal';
 import LanguageSelector from '../components/LanguageSelector';
 import SoundToggle from '../components/SoundToggle';
+import { playTap } from '../lib/feedback';
 import ProgressBar from '../components/ProgressBar';
 import ProgressRing from '../components/ProgressRing';
 import ListenButton from '../components/ListenButton';
@@ -81,55 +82,49 @@ export default function HomePage() {
     lang: i18n.language,
   };
 
+  // Privacy Mask helper for financial figures when enabled in Profile/Settings
+  const formatAmount = (amount: number) => {
+    if (profile.privacyMaskEarnings) return '••••';
+    return formatInr(amount);
+  };
+
   return (
     <div className="space-y-4 px-4 pt-3 pb-8">
-      {/* Top Header with greeting, notification bell and profile */}
-      <header className="flex items-start justify-between gap-3 pt-1 pb-2">
+      {/* Top Header with greeting, sound toggle, language switcher and profile icon */}
+      <header className="flex items-center justify-between gap-3 pt-1 pb-2">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => navigate('/profile')}
-            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-lg font-black text-white shadow-glass ring-2 ring-white/80 transition-transform hover:scale-105 active:scale-95 overflow-hidden"
-            aria-label="Profile"
-          >
+          <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-lg font-black text-white shadow-glass ring-2 ring-white/80 overflow-hidden">
             {profile.avatarUrl ? (
               <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full object-cover" />
             ) : (
               profile.name.charAt(0) || 'R'
             )}
-          </button>
+          </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-lg md:text-xl font-extrabold text-deepEmerald leading-tight">
-                {t('home.greeting', { name: profile.name })}
-              </h1>
-              <button
-                type="button"
-                onClick={() => navigate('/profile')}
-                className="inline-flex items-center gap-1 rounded-full bg-white/70 backdrop-blur-md border border-[#F4EBDD] px-2.5 py-0.5 text-[11px] font-bold text-deepEmerald hover:bg-white transition-all shadow-xs"
-                title={t('profileScreen.editProfile')}
-              >
-                <AppIcon name="create-outline" size={11} className="text-primary" />
-                <span>{t('profileScreen.editProfile')}</span>
-              </button>
-            </div>
+            <h1 className="text-lg md:text-xl font-extrabold text-deepEmerald leading-tight">
+              {t('home.greeting', { name: profile.name })}
+            </h1>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Notification bell */}
-          <button
-            type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/70 backdrop-blur-xl shadow-glass border border-[#F4EBDD] hover:bg-white text-deepEmerald transition-all active:scale-95"
-            aria-label="Notifications"
-          >
-            <AppIcon name="sparkles" size={18} className="text-saffronGold" />
-            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-saffron ring-2 ring-white" />
-          </button>
           {/* Sound & Haptics toggle */}
           <SoundToggle />
-          {/* Language button */}
+          {/* Language switcher */}
           <LanguageSelector variant="icon" />
+          {/* Primary Top-Right Profile Icon Button */}
+          <button
+            type="button"
+            onClick={() => {
+              playTap();
+              navigate('/profile');
+            }}
+            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/70 backdrop-blur-xl shadow-glass border border-[#F4EBDD] hover:bg-white text-deepEmerald hover:text-[#B34A26] hover:border-[#E5953E]/50 transition-all active:scale-95"
+            title={t('profileScreen.title', 'Profile & Settings')}
+            aria-label={t('profileScreen.title', 'Profile & Settings')}
+          >
+            <AppIcon name="person" size={18} />
+          </button>
         </div>
       </header>
 
@@ -152,14 +147,14 @@ export default function HomePage() {
                     {t('home.todayIncome')}
                   </span>
                   <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
-                    {t('common.currency', { amount: formatInr(todayInc) })}
+                    {t('common.currency', { amount: formatAmount(todayInc) })}
                   </p>
                 </div>
                 <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-1 text-[11px] font-bold text-success border border-[#2E7D32]/30 self-start">
                   <span>{weekDelta >= 0 ? '↑' : '↓'}</span>
                   <span>
                     {weekDelta >= 0 ? '+' : '−'}
-                    {t('common.currency', { amount: formatInr(Math.abs(weekDelta)) })}
+                    {t('common.currency', { amount: formatAmount(Math.abs(weekDelta)) })}
                   </span>
                 </div>
               </Card>
@@ -171,10 +166,10 @@ export default function HomePage() {
                     {t('home.savings')}
                   </span>
                   <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
-                    {t('common.currency', { amount: formatInr(savingsSaved) })}
+                    {t('common.currency', { amount: formatAmount(savingsSaved) })}
                   </p>
                   <span className="text-[11px] text-textMuted font-medium block mt-1">
-                    {t('home.savingsTarget', { amount: formatInr(savingsTarget) })}
+                    {t('home.savingsTarget', { amount: formatAmount(savingsTarget) })}
                   </span>
                 </div>
                 <div className="shrink-0 pl-2">
@@ -203,8 +198,8 @@ export default function HomePage() {
                       {t('home.todaySummary')}
                     </span>
                     <p className="text-[11px] text-textSecondary mt-0.5">
-                      <span className="font-semibold text-success">+{t('common.currency', { amount: formatInr(todayInc) })}</span>{' '}
-                      <span className="text-danger font-semibold">−{t('common.currency', { amount: formatInr(todayExpense) })}</span>
+                      <span className="font-semibold text-success">+{t('common.currency', { amount: formatAmount(todayInc) })}</span>{' '}
+                      <span className="text-danger font-semibold">−{t('common.currency', { amount: formatAmount(todayExpense) })}</span>
                     </p>
                   </div>
                 </div>
@@ -215,7 +210,7 @@ export default function HomePage() {
                       {t('home.netForToday')}
                     </span>
                     <span className={`text-base font-black ${netForToday >= 0 ? 'text-deepEmerald' : 'text-danger'}`}>
-                      {netForToday >= 0 ? '+' : '−'}{t('common.currency', { amount: formatInr(Math.abs(netForToday)) })}
+                      {netForToday >= 0 ? '+' : '−'}{t('common.currency', { amount: formatAmount(Math.abs(netForToday)) })}
                     </span>
                   </div>
                   <ListenButton track={homeFinancialTrack} size="sm" />
@@ -407,10 +402,14 @@ export default function HomePage() {
                   <span className="rounded-full bg-warmAmber/20 border border-warmAmber/40 px-2 py-0.5 text-[10px] font-black text-terracotta">
                     {t('dhan.aiForecastNotice')}
                   </span>
-                  <span className="inline-flex items-center gap-0.5 text-xs font-bold text-primary hover:underline">
-                    <span>{t('profileScreen.editProfile')}</span>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/dhan')}
+                    className="inline-flex items-center gap-0.5 text-xs font-bold text-primary hover:underline"
+                  >
+                    <span>{t('tabs.dhan', 'Money')}</span>
                     <AppIcon name="chevron-forward" size={11} />
-                  </span>
+                  </button>
                 </div>
               </div>
               <ProgressBar

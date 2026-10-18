@@ -97,28 +97,14 @@ export default function TabLayout() {
                 navigate('/profile');
               }}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] font-bold text-white shadow-warm ring-2 ring-white transition-all hover:scale-105 active:scale-95 overflow-hidden"
-              aria-label="Profile"
+              title={t('profileScreen.title', 'Profile & Settings')}
+              aria-label={t('profileScreen.title', 'Profile & Settings')}
             >
               {profile.avatarUrl ? (
                 <img src={profile.avatarUrl} alt={profile.name} className="h-full w-full object-cover" />
               ) : (
                 profile.name.charAt(0) || 'R'
               )}
-            </button>
-
-            {/* Logout button */}
-            <button
-              type="button"
-              onClick={async () => {
-                playTap();
-                await logout();
-                navigate('/');
-              }}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/60 hover:bg-rose-50 text-textSecondary hover:text-rose-600 transition-all border border-white/80 shadow-xs active:scale-95"
-              title={t('profileScreen.logout', 'Log Out')}
-              aria-label="Log Out"
-            >
-              <AppIcon name="close" size={16} />
             </button>
           </div>
         </div>

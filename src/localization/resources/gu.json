@@ -552,7 +552,7 @@
     }
   },
   "profileScreen": {
-    "title": "પ્રોફાઇલ",
+    "title": "Profile & Settings",
     "photo": "પ્રોફાઇલ ફોટો",
     "name": "પૂરું નામ",
     "nameHint": "તમારું કાનૂની અથવા પસંદગીનું નામ",
@@ -596,7 +596,25 @@
     "validationContact": "કૃપા કરીને માન્ય સંપર્ક નંબર દાખલ કરો",
     "updateSuccess": "પ્રોફાઇલ સફળતાપૂર્વક અપડેટ થઈ!",
     "stabilityGood": "સારું",
-    "preferredLanguage": "પસંદગીની ભાષા"
+    "preferredLanguage": "પસંદગીની ભાષા",
+    "tabsPersonal": "Personal",
+    "tabsWork": "Work & Skills",
+    "tabsLanguage": "Language & Audio",
+    "tabsPrivacy": "Privacy & Data",
+    "tabsPreferences": "App Preferences",
+    "readOnlyBadge": "System / Verified",
+    "editableBadge": "Editable",
+    "voiceRate": "Assistant Speech Speed",
+    "voiceSilence": "Listening Silence Window",
+    "privacyMaskTitle": "Privacy Masking on Home Dashboard",
+    "privacyMaskSub": "Hide exact rupee balances when in public or shared transit",
+    "exportProfile": "Export Profile (JSON)",
+    "exportSuccess": "Profile data exported successfully!",
+    "offlineStatus": "Offline Mode & Local Storage",
+    "offlineOnline": "Online • Local cache synced",
+    "offlineOffline": "Offline • Working from local cache",
+    "weeklySaveGoal": "Weekly Savings Target (₹)",
+    "weeklySaveGoalHint": "Your weekly goal to put aside towards emergency fund"
   },
   "availability": {
     "anytime": "કોઈપણ સમયે",

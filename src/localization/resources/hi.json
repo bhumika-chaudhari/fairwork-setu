@@ -304,7 +304,7 @@
     "tryAgainVoice": "माइक्रोफ़ोन फिर से आज़माएं"
   },
   "profileScreen": {
-    "title": "प्रोफ़ाइल",
+    "title": "प्रोफ़ाइल और सेटिंग्स",
     "photo": "फ़ोटो",
     "changePhoto": "फ़ोटो बदलें",
     "name": "पूरा नाम",
@@ -348,7 +348,25 @@
     "logoutPromptSub": "आप स्वागत स्क्रीन पर वापस चले जाएंगे। आपके सहेजे गए लेन-देन और जानकारी डिवाइस पर सुरक्षित रहेगी।",
     "confirmLogout": "हाँ, लॉग आउट करें",
     "accountSession": "सत्र एवं डेमो नियंत्रण",
-    "reloadDemo": "पिछले 5 दिनों का डेमो डेटा पुनः लोड करें"
+    "reloadDemo": "पिछले 5 दिनों का डेमो डेटा पुनः लोड करें",
+    "tabsPersonal": "व्यक्तिगत",
+    "tabsWork": "काम और कौशल",
+    "tabsLanguage": "भाषा और आवाज़",
+    "tabsPrivacy": "गोपनीयता और डेटा",
+    "tabsPreferences": "ऐप प्राथमिकताएं",
+    "readOnlyBadge": "सिस्टम / सत्यापित",
+    "editableBadge": "संपादन योग्य",
+    "voiceRate": "सहायक बोलने की गति",
+    "voiceSilence": "आवाज़ रुकने का समय",
+    "privacyMaskTitle": "होम डैशबोर्ड पर गोपनीयता मोड",
+    "privacyMaskSub": "सार्वजनिक स्थानों पर सटीक रुपये छिपाएं",
+    "exportProfile": "प्रोफ़ाइल डेटा निर्यात करें (JSON)",
+    "exportSuccess": "प्रोफ़ाइल सफलतापूर्वक निर्यात की गई!",
+    "offlineStatus": "ऑफ़लाइन मोड और स्थानीय भंडारण",
+    "offlineOnline": "ऑनलाइन • स्थानीय डेटा सिंक",
+    "offlineOffline": "ऑफ़लाइन • स्थानीय कैश सक्रिय",
+    "weeklySaveGoal": "साप्ताहिक बचत लक्ष्य (₹)",
+    "weeklySaveGoalHint": "आपातकालीन फंड के लिए आपकी साप्ताहिक बचत"
   },
   "availability": {
     "anytime": "किसी भी समय",

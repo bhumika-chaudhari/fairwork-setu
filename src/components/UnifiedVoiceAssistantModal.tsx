@@ -113,7 +113,13 @@ export default function UnifiedVoiceAssistantModal({
       return;
     }
 
-    // Initialize continuous recognizer with 5s silence detection
+    // Initialize continuous recognizer with configurable silence detection
+    const userTimeoutSec = parseInt(
+      localStorage.getItem('@setu/voice_silence_timeout') || '5',
+      10
+    );
+    const configuredSilenceMs = (isNaN(userTimeoutSec) || userTimeoutSec < 2 ? 5 : userTimeoutSec) * 1000;
+
     const recognizer = new SetuContinuousSpeechRecognizer(
       {
         onInterim: (text) => {
@@ -149,12 +155,13 @@ export default function UnifiedVoiceAssistantModal({
         },
       },
       {
-        silenceDurationMs: 5000,
+        silenceDurationMs: configuredSilenceMs,
         language: speechLang,
       }
     );
 
     recognizerRef.current = recognizer;
+    setSilenceRemainingMs(configuredSilenceMs);
     setHasSpeechSupport(recognizer.isSupported());
 
     // If initial query passed, execute directly

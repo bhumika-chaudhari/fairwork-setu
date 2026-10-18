@@ -147,12 +147,24 @@ export default function LandingPage() {
 
       {/* Main container */}
       <div className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-4xl flex-1 flex-col px-5 py-4 md:py-8">
-        {/* Top bar with Sound Toggle */}
+        {/* Top bar with Sound Toggle, Language, and Profile Icon */}
         <header className="flex items-center justify-between pb-3">
           <SetuLogo size="md" />
           <div className="flex items-center gap-2">
             <SoundToggle />
             <LanguageSelector variant="icon" />
+            <button
+              type="button"
+              onClick={() => {
+                playTap();
+                navigate('/profile');
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/80 backdrop-blur-xl shadow-sm border border-[#E9DFCE] text-deepEmerald hover:bg-white hover:text-[#B34A26] hover:border-[#E5953E]/50 transition-all active:scale-95"
+              title={t('profileScreen.title', 'Profile')}
+              aria-label={t('profileScreen.title', 'Profile')}
+            >
+              <AppIcon name="person" size={18} />
+            </button>
           </div>
         </header>
 

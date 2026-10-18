@@ -21,6 +21,10 @@ export interface ProfileState {
   emergencyContact: string;
   savingsGoal: number;
   weeklySaveGoal: number;
+  preferredLanguage?: string;
+  speechRate?: number;
+  voiceSilenceTimeout?: number;
+  privacyMaskEarnings?: boolean;
 }
 
 export const defaultProfile: ProfileState = {
@@ -38,6 +42,10 @@ export const defaultProfile: ProfileState = {
   emergencyContact: '+91 98765 43210',
   savingsGoal: 10000,
   weeklySaveGoal: 350,
+  preferredLanguage: 'en',
+  speechRate: 0.95,
+  voiceSilenceTimeout: 5,
+  privacyMaskEarnings: false,
 };
 
 function computeStrength(profile: ProfileState): number {
