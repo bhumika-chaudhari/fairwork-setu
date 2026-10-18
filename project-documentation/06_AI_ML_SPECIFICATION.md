@@ -1,5 +1,8 @@
 # AI/ML Specification
 
+> [!NOTE]
+> For the complete deep-dive documentation of all 10 models with step-by-step mathematical formulations, input/output JSON schemas, and viva defense cheat-sheets, see **[15_COMPLETE_AI_ML_MODELS_AND_VIVA_GUIDE.md](file:///d:/5th%20sem/AIML/project/project-documentation/15_COMPLETE_AI_ML_MODELS_AND_VIVA_GUIDE.md)**.
+
 ## 1. AI/ML objectives
 
 Setu uses AI/ML to reduce typing, understand worker needs, predict income patterns, match workers to opportunities, and retrieve useful information.

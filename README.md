@@ -519,12 +519,13 @@ fairwork-setu/
 │   ├── synthetic_data.py                  # Realistic Worker Data Generator
 │   ├── test_models.py                     # Automated ML Pipeline Unit Tests
 │   └── requirements.txt                   # Python Dependencies
-├── project-documentation/                 # 14 Comprehensive Technical Specifications
+├── project-documentation/                 # 15 Comprehensive Technical Specifications
 │   ├── 01_PROJECT_DESCRIPTION.md          # Vision, Problem Statement & Personas
 │   ├── 04_ARCHITECTURE.md                 # Detailed System Architecture Specification
 │   ├── 06_AI_ML_SPECIFICATION.md          # Complete AI/ML Model Map & Math
 │   ├── 12_ETHICS_PRIVACY_SAFETY.md        # AI Safety, DPDP Act 2023 & Ethics
-│   └── 14_ANDROID_MOBILE_NATIVE_AND_WIDGETS_SPECIFICATION.md # Native Android Docs
+│   ├── 14_ANDROID_MOBILE_NATIVE_AND_WIDGETS_SPECIFICATION.md # Native Android Docs
+│   └── 15_COMPLETE_AI_ML_MODELS_AND_VIVA_GUIDE.md # Models Deep-Dive & Master Viva Guide
 ├── public/                                # Static Web Assets
 │   └── sample_receipts/                   # High-Res Test Receipts for Camera OCR Testing
 ├── src/                                   # Frontend Application (React 18 + TypeScript)
@@ -658,6 +659,7 @@ Complete architectural specifications are available in [`project-documentation/`
 * [`06_AI_ML_SPECIFICATION.md`](file:///d:/5th%20sem/AIML/project/project-documentation/06_AI_ML_SPECIFICATION.md): Mathematical Formulations of Models 1–6
 * [`12_ETHICS_PRIVACY_SAFETY.md`](file:///d:/5th%20sem/AIML/project/project-documentation/12_ETHICS_PRIVACY_SAFETY.md): DPDP Act 2023 & Ethical AI Framework
 * [`14_ANDROID_MOBILE_NATIVE_AND_WIDGETS_SPECIFICATION.md`](file:///d:/5th%20sem/AIML/project/project-documentation/14_ANDROID_MOBILE_NATIVE_AND_WIDGETS_SPECIFICATION.md): Android Native & Hardware Innovations
+* ⭐ [`15_COMPLETE_AI_ML_MODELS_AND_VIVA_GUIDE.md`](file:///d:/5th%20sem/AIML/project/project-documentation/15_COMPLETE_AI_ML_MODELS_AND_VIVA_GUIDE.md): **Complete AI/ML Models Deep-Dive, Mathematical Formulations, JSON Examples & Master Viva Voce Defense Guide**
 * Academic Project Report: [`FairWork_Setu_Mini_Project_Report.docx`](file:///d:/5th%20sem/AIML/project/FairWork_Setu_Mini_Project_Report.docx)
 
 ---
