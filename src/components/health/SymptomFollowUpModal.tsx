@@ -143,7 +143,7 @@ export default function SymptomFollowUpModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center bg-[#1E2B3E]/60 backdrop-blur-xs sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center bg-[#231F20]/60 backdrop-blur-xs sm:p-4 animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -160,14 +160,14 @@ export default function SymptomFollowUpModal({
 
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#3A757D]/15 text-[#3A757D] border border-[#3A757D]/25 shadow-xs">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FEF4E8] text-[#B34A26] border border-[#E5953E]/30 shadow-xs">
                 <AppIcon name={categoryIcon} size={20} />
               </div>
               <div className="min-w-0">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#3A757D] block">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#B34A26] block">
                   {step === 'questions' ? 'Health Check-In' : 'Assessment Result'}
                 </span>
-                <h3 className="text-base sm:text-lg font-extrabold text-[#1E2B3E] font-serif truncate">
+                <h3 className="text-base sm:text-lg font-extrabold text-deepEmerald font-serif truncate">
                   {categoryTitle}
                 </h3>
               </div>
@@ -210,7 +210,7 @@ export default function SymptomFollowUpModal({
 
               {/* 1. Onset */}
               <div>
-                <label className="block text-xs font-bold text-[#1E2B3E] mb-1.5">
+                <label className="block text-xs font-bold text-deepEmerald mb-1.5">
                   1. When did this symptom start?
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -238,7 +238,7 @@ export default function SymptomFollowUpModal({
 
               {/* 2. Severity */}
               <div>
-                <label className="block text-xs font-bold text-[#1E2B3E] mb-1.5">
+                <label className="block text-xs font-bold text-deepEmerald mb-1.5">
                   2. How severe does it feel?
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -272,7 +272,7 @@ export default function SymptomFollowUpModal({
 
               {/* 3. Trend */}
               <div>
-                <label className="block text-xs font-bold text-[#1E2B3E] mb-1.5">
+                <label className="block text-xs font-bold text-deepEmerald mb-1.5">
                   3. Is it getting better or worse?
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -299,7 +299,7 @@ export default function SymptomFollowUpModal({
 
               {/* 4. Red Flag Warning Signs Check */}
               <div>
-                <label className="block text-xs font-bold text-[#1E2B3E] mb-1">
+                <label className="block text-xs font-bold text-deepEmerald mb-1">
                   4. Do you have any of these warning signs?
                 </label>
                 <p className="text-[11px] text-stone-500 mb-2">
@@ -384,16 +384,16 @@ export default function SymptomFollowUpModal({
                   </div>
                 </div>
               ) : (
-                <div className="rounded-2xl bg-[#EBF5F3] border border-[#C6E2D8] p-3.5">
+                <div className="rounded-2xl bg-[#FEF4E8] border border-[#E5953E]/35 p-3.5">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3A757D] text-white shadow-xs">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-xs">
                       <AppIcon name="heart-pulse" size={14} />
                     </div>
-                    <h4 className="text-xs font-extrabold text-[#1E2B3E]">
+                    <h4 className="text-xs font-extrabold text-deepEmerald">
                       What this means for your shift
                     </h4>
                   </div>
-                  <p className="text-xs text-[#231F20]/85 leading-relaxed font-medium">
+                  <p className="text-xs text-[#4A423D] leading-relaxed font-medium">
                     {guidance.summary}
                   </p>
                 </div>
@@ -401,8 +401,8 @@ export default function SymptomFollowUpModal({
 
               {/* Recommended Next Steps */}
               <div>
-                <h5 className="text-xs font-extrabold text-[#1E2B3E] mb-2 flex items-center gap-1.5">
-                  <AppIcon name="checkmark-circle" size={15} className="text-[#3A757D]" />
+                <h5 className="text-xs font-extrabold text-deepEmerald mb-2 flex items-center gap-1.5">
+                  <AppIcon name="checkmark-circle" size={15} className="text-[#B34A26]" />
                   <span>Recommended Next Steps:</span>
                 </h5>
                 <ul className="space-y-1.5">
@@ -420,13 +420,13 @@ export default function SymptomFollowUpModal({
 
               {/* Practical Self-Care Tips */}
               <div>
-                <h5 className="text-xs font-extrabold text-[#1E2B3E] mb-2 flex items-center gap-1.5">
+                <h5 className="text-xs font-extrabold text-deepEmerald mb-2 flex items-center gap-1.5">
                   <AppIcon name="sparkles" size={14} className="text-[#E5953E]" />
                   <span>Self-Care on Shift:</span>
                 </h5>
-                <div className="rounded-2xl bg-amber-50/80 border border-amber-200/80 p-3 space-y-1.5">
+                <div className="rounded-2xl bg-[#FEF9EC] border border-[#F1B96B]/50 p-3 space-y-1.5">
                   {guidance.selfCareSteps.map((stepItem, idx) => (
-                    <p key={idx} className="text-xs text-amber-950 flex items-start gap-1.5 leading-relaxed">
+                    <p key={idx} className="text-xs text-[#231F20] flex items-start gap-1.5 leading-relaxed font-medium">
                       <span className="text-[#B34A26] font-bold">•</span>
                       <span>{stepItem}</span>
                     </p>
@@ -475,7 +475,7 @@ export default function SymptomFollowUpModal({
                   onClose();
                   onOpenFacilities(guidance?.suggestedFacilityType);
                 }}
-                className="flex-1 py-2.5 px-3 rounded-xl text-xs font-extrabold text-white bg-[#3A757D] hover:bg-[#2A5960] shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
+                className="flex-1 py-2.5 px-3 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-[#B34A26] to-[#7C2D16] hover:brightness-105 shadow-sm flex items-center justify-center gap-1.5 active:scale-98"
               >
                 <AppIcon name="hospital" size={14} />
                 <span>Find Nearby {guidance?.suggestedFacilityType?.toUpperCase() || 'CARE'}</span>
@@ -487,7 +487,7 @@ export default function SymptomFollowUpModal({
                   onClose();
                   onOpenAssistant(`I have ${categoryTitle.toLowerCase()}. What precautions should I take?`);
                 }}
-                className="py-2.5 px-3 rounded-xl text-xs font-bold text-[#1E2B3E] bg-white hover:bg-stone-50 border border-stone-300 flex items-center justify-center gap-1.5 active:scale-98"
+                className="py-2.5 px-3 rounded-xl text-xs font-bold text-deepEmerald bg-white hover:bg-stone-50 border border-[#F4EBDD] flex items-center justify-center gap-1.5 active:scale-98 shadow-xs"
               >
                 <AppIcon name="ai" size={14} />
                 <span>Ask Setu AI</span>

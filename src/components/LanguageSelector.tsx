@@ -8,6 +8,7 @@ import {
 } from '../localization';
 import { AppIcon } from '../lib/icons';
 import ModalPortal from './ModalPortal';
+import { playPop } from '../lib/feedback';
 
 export default function LanguageSelector({
   variant = 'grid',
@@ -20,6 +21,7 @@ export default function LanguageSelector({
   const current = (i18n.language as LanguageCode) || 'en';
 
   const select = async (code: LanguageCode) => {
+    playPop();
     await changeAppLanguage(code);
     setOpen(false);
     setToastVisible(true);

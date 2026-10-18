@@ -9,6 +9,7 @@ import { SpeechProvider } from './lib/speechSynthesisContext';
 import AudioPlayerBar from './components/AudioPlayerBar';
 import AtmosphericBackground from './components/AtmosphericBackground';
 import TabLayout from './layouts/TabLayout';
+import { attachGlobalFeedback } from './lib/feedback';
 import LandingPage from './pages/LandingPage';
 import OnboardingPage from './pages/OnboardingPage';
 import HomePage from './pages/HomePage';
@@ -47,6 +48,8 @@ export default function App() {
 
   useEffect(() => {
     initLanguage().finally(() => setReady(true));
+    const detachFeedback = attachGlobalFeedback();
+    return () => detachFeedback();
   }, []);
 
   if (!ready) {

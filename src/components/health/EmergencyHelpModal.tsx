@@ -34,7 +34,7 @@ export default function EmergencyHelpModal({ onClose, locality = 'Kothrud, Pune'
                 <span className="text-[10px] font-black uppercase tracking-wider text-red-600 block">
                   Immediate Assistance
                 </span>
-                <h3 className="text-base sm:text-lg font-black text-[#1E2B3E] font-serif">
+                <h3 className="text-base sm:text-lg font-black text-deepEmerald font-serif">
                   National Emergency Help
                 </h3>
               </div>
@@ -58,7 +58,7 @@ export default function EmergencyHelpModal({ onClose, locality = 'Kothrud, Pune'
               <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">
                 Tell the Operator Your Location:
               </span>
-              <p className="text-xs font-black text-[#1E2B3E] truncate mt-0.5">
+              <p className="text-xs font-black text-deepEmerald truncate mt-0.5">
                 {locality}
               </p>
             </div>
@@ -110,7 +110,7 @@ export default function EmergencyHelpModal({ onClose, locality = 'Kothrud, Pune'
 
           {/* SECONDARY SPECIALIST HELPLINES */}
           <div>
-            <h4 className="text-xs font-extrabold text-[#1E2B3E] mb-2">
+            <h4 className="text-xs font-extrabold text-deepEmerald mb-2">
               Specialist Helplines:
             </h4>
             <div className="grid grid-cols-3 gap-2">
@@ -138,7 +138,7 @@ export default function EmergencyHelpModal({ onClose, locality = 'Kothrud, Pune'
                 href="tel:14416"
                 className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-center hover:bg-stone-100 transition-all"
               >
-                <span className="block text-sm font-black text-[#3A757D]">14416</span>
+                <span className="block text-sm font-black text-[#E5A823]">14416</span>
                 <span className="block text-[10px] font-semibold text-stone-600 mt-0.5">
                   Tele-MANAS
                 </span>
@@ -148,7 +148,7 @@ export default function EmergencyHelpModal({ onClose, locality = 'Kothrud, Pune'
 
           {/* RAPID ACTION FIRST AID PROTOCOLS */}
           <div className="space-y-2 pt-1 border-t border-stone-200">
-            <h4 className="text-xs font-extrabold text-[#1E2B3E]">
+            <h4 className="text-xs font-extrabold text-deepEmerald">
               Rapid Emergency Guidance:
             </h4>
 

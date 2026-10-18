@@ -1,4 +1,5 @@
 import { AppIcon } from '../lib/icons';
+import { playNotification } from '../lib/feedback';
 
 export default function VoiceButton({
   onPress,
@@ -14,6 +15,11 @@ export default function VoiceButton({
   const dimension = Math.max(size, 44);
   const ringSize = dimension + 12;
   const outerRingSize = dimension + 24;
+
+  const handleClick = () => {
+    playNotification();
+    onPress();
+  };
 
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
@@ -32,7 +38,7 @@ export default function VoiceButton({
       {/* Main button */}
       <button
         type="button"
-        onClick={onPress}
+        onClick={handleClick}
         className="relative z-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] via-[#943818] to-[#7C2D16] text-white shadow-[0_12px_32px_rgba(179,74,38,0.45),inset_0_1.5px_2px_rgba(255,255,255,0.6)] border border-[#E5953E]/50 transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-glow"
         style={{ width: dimension, height: dimension }}
         aria-label="Voice entry"

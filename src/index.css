@@ -38,6 +38,15 @@ select {
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+[role="button"],
+input,
+select {
+  touch-action: manipulation;
 }
 
 /* Smooth scrolling */

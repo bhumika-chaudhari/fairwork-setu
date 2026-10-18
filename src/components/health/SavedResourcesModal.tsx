@@ -51,10 +51,10 @@ export default function SavedResourcesModal({
                 <AppIcon name="bookmark-check" size={20} />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-extrabold text-[#1E2B3E] font-serif">
+                <h3 className="text-base sm:text-lg font-extrabold text-deepEmerald font-serif">
                   Saved Health Resources
                 </h3>
-                <p className="text-xs text-[#231F20]/75">
+                <p className="text-xs text-textSecondary">
                   Your bookmarked clinics, welfare schemes, and safety tips.
                 </p>
               </div>
@@ -72,8 +72,8 @@ export default function SavedResourcesModal({
 
         {/* Privacy Note */}
         <div className="px-5 pt-3 mb-1 shrink-0">
-          <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-start gap-2 shadow-xs">
-            <AppIcon name="shield-checkmark" size={16} className="text-emerald-700 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-2xl bg-[#FEF9EC] border border-[#F1B96B]/50 text-xs text-[#231F20] flex items-start gap-2 shadow-xs">
+            <AppIcon name="shield-checkmark" size={16} className="text-[#E5A823] shrink-0 mt-0.5" />
             <p className="leading-relaxed">
               <strong>Privacy Assurance:</strong> Your saved items are stored strictly locally on your device. They are never shared with gig platforms or advertisers.
             </p>
@@ -94,21 +94,21 @@ export default function SavedResourcesModal({
             items.map((item) => (
               <div
                 key={item.id}
-                className="rounded-2xl border border-stone-200 bg-white p-3.5 shadow-xs flex items-center justify-between gap-3 hover:border-stone-300 transition-all"
+                className="rounded-2xl border border-[#F4EBDD] bg-white p-3.5 shadow-xs flex items-center justify-between gap-3 hover:border-[#E5953E]/50 transition-all"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-black uppercase text-[#B34A26] bg-[#B34A26]/10 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-black uppercase text-[#B34A26] bg-[#FEF4E8] px-2 py-0.5 rounded border border-[#E5953E]/30">
                       {item.type}
                     </span>
                     <span className="text-[10px] text-stone-400">
                       Saved {new Date(item.savedAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <h4 className="text-xs font-bold text-[#1E2B3E] truncate mt-1">
+                  <h4 className="text-xs font-bold text-deepEmerald truncate mt-1">
                     {item.title}
                   </h4>
-                  <p className="text-[11px] text-stone-500 truncate mt-0.5">
+                  <p className="text-[11px] text-stone-500 truncate mt-0.5 font-medium">
                     {item.subtitle}
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export default function SavedResourcesModal({
                       if (item.type === 'facility') onOpenFacility(item.data);
                       if (item.type === 'scheme') onOpenScheme(item.data);
                     }}
-                    className="py-1 px-2.5 rounded-lg text-xs font-bold text-[#3A757D] bg-[#3A757D]/10 hover:bg-[#3A757D]/20"
+                    className="py-1 px-2.5 rounded-lg text-xs font-bold text-[#B34A26] bg-[#FEF4E8] hover:bg-[#FEF4E8]/80 border border-[#E5953E]/30"
                   >
                     View
                   </button>

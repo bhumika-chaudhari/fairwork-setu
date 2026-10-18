@@ -81,14 +81,14 @@ export default function NearbyFacilitiesModal({
         <div className="shrink-0 px-5 pt-3 pb-3 border-b border-[#F4EBDD] bg-white">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#3A757D] text-white shadow-xs">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-xs">
                 <AppIcon name="hospital" size={20} />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-extrabold text-[#1E2B3E] font-serif">
+                <h3 className="text-base sm:text-lg font-extrabold text-deepEmerald font-serif">
                   Verified Nearby Healthcare
                 </h3>
-                <p className="text-xs text-[#231F20]/75">
+                <p className="text-xs text-textSecondary">
                   Government hospitals, primary health centres, and generic pharmacies.
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function NearbyFacilitiesModal({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search facility name, OPD service, or address..."
-                className="w-full rounded-xl border border-stone-200 bg-stone-50 py-2 pl-9 pr-8 text-xs font-medium text-[#1E2B3E] placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3A757D]/30"
+                className="w-full rounded-xl border border-stone-200 bg-stone-50 py-2 pl-9 pr-8 text-xs font-medium text-[#231F20] placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E5953E]/35"
               />
               <span className="absolute left-3 top-2.5 text-stone-400">
                 <AppIcon name="search-outline" size={15} />
@@ -132,7 +132,7 @@ export default function NearbyFacilitiesModal({
             <select
               value={selectedLocality}
               onChange={(e) => setSelectedLocality(e.target.value)}
-              className="rounded-xl border border-stone-200 bg-stone-50 px-2.5 py-2 text-xs font-semibold text-[#1E2B3E] focus:outline-none"
+              className="rounded-xl border border-stone-200 bg-stone-50 px-2.5 py-2 text-xs font-semibold text-[#231F20] focus:outline-none"
             >
               {LOCALITY_OPTIONS.map((loc) => (
                 <option key={loc.id} value={loc.id}>
@@ -151,7 +151,7 @@ export default function NearbyFacilitiesModal({
                 onClick={() => setSelectedType(cat.id)}
                 className={`py-1.5 px-3 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                   selectedType === cat.id
-                    ? 'bg-[#3A757D] text-white shadow-xs'
+                    ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-xs'
                     : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                 }`}
               >
@@ -165,7 +165,7 @@ export default function NearbyFacilitiesModal({
         <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-3 space-y-3">
           {isLoading ? (
             <div className="py-12 text-center text-xs text-stone-500 flex flex-col items-center gap-2">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#3A757D] border-t-transparent" />
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#B34A26] border-t-transparent" />
               <span>Locating verified healthcare centres...</span>
             </div>
           ) : facilities.length === 0 ? (
@@ -195,13 +195,13 @@ export default function NearbyFacilitiesModal({
                 <div
                   key={facility.id}
                   onClick={() => setSelectedFacilityDetail(facility)}
-                  className="rounded-2xl border border-[#F4EBDD] bg-white p-4 shadow-sm hover:shadow-md hover:border-[#3A757D]/40 transition-all cursor-pointer space-y-2.5"
+                  className="rounded-2xl border border-[#F4EBDD] bg-white p-4 shadow-sm hover:shadow-md hover:border-[#E5953E]/60 transition-all cursor-pointer space-y-2.5"
                 >
                   {/* Top Bar: Title, badges, and bookmark */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#3A757D] bg-[#3A757D]/10 px-2 py-0.5 rounded-md">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#B34A26] bg-[#FEF4E8] px-2 py-0.5 rounded-md border border-[#E5953E]/30">
                           {facility.categoryLabel}
                         </span>
                         {facility.is24x7 && (
@@ -216,7 +216,7 @@ export default function NearbyFacilitiesModal({
                         )}
                       </div>
 
-                      <h4 className="text-sm font-extrabold text-[#1E2B3E] mt-1 truncate">
+                      <h4 className="text-sm font-extrabold text-deepEmerald mt-1 truncate">
                         {facility.name}
                       </h4>
 
@@ -269,7 +269,7 @@ export default function NearbyFacilitiesModal({
                         <a
                           href={`tel:${facility.phone.replace(/[^0-9]/g, '')}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="py-1 px-2.5 rounded-lg text-xs font-bold text-white bg-[#B34A26] hover:bg-[#7C2D16] flex items-center gap-1 shadow-xs"
+                          className="py-1 px-2.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-[#B34A26] to-[#7C2D16] hover:brightness-105 flex items-center gap-1 shadow-xs"
                         >
                           <AppIcon name="call" size={12} />
                           <span>Call</span>
@@ -281,7 +281,7 @@ export default function NearbyFacilitiesModal({
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="py-1 px-2.5 rounded-lg text-xs font-bold text-[#3A757D] bg-[#3A757D]/10 hover:bg-[#3A757D]/20 flex items-center gap-1"
+                        className="py-1 px-2.5 rounded-lg text-xs font-bold text-[#B34A26] bg-[#FEF4E8] hover:bg-[#FEF4E8]/80 flex items-center gap-1 border border-[#E5953E]/30"
                       >
                         <AppIcon name="navigation" size={12} />
                         <span>Directions</span>
@@ -305,10 +305,10 @@ export default function NearbyFacilitiesModal({
             <div className="p-5 space-y-3">
               <div className="flex items-start justify-between border-b border-stone-200 pb-2.5">
                 <div>
-                  <span className="text-[10px] font-black uppercase text-[#3A757D] bg-[#3A757D]/10 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-black uppercase text-[#B34A26] bg-[#FEF4E8] px-2 py-0.5 rounded border border-[#E5953E]/30">
                     {selectedFacilityDetail.categoryLabel}
                   </span>
-                  <h4 className="text-base font-extrabold text-[#1E2B3E] mt-1">
+                  <h4 className="text-base font-extrabold text-deepEmerald mt-1">
                     {selectedFacilityDetail.name}
                   </h4>
                 </div>
@@ -343,7 +343,7 @@ export default function NearbyFacilitiesModal({
               </div>
 
               <div>
-                <strong className="block text-xs text-[#1E2B3E] mb-1">
+                <strong className="block text-xs text-deepEmerald mb-1">
                   Available Facilities & Services:
                 </strong>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -361,7 +361,7 @@ export default function NearbyFacilitiesModal({
               <div className="pt-2 flex gap-2">
                 <a
                   href={`tel:${selectedFacilityDetail.phone.replace(/[^0-9]/g, '')}`}
-                  className="flex-1 py-2.5 rounded-xl bg-[#B34A26] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
+                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
                 >
                   <AppIcon name="call" size={14} />
                   <span>Call {selectedFacilityDetail.phone}</span>
@@ -370,7 +370,7 @@ export default function NearbyFacilitiesModal({
                   href={selectedFacilityDetail.directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-2.5 rounded-xl bg-[#3A757D] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md"
+                  className="flex-1 py-2.5 rounded-xl bg-[#FEF4E8] text-[#B34A26] border border-[#E5953E]/40 text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#FEF4E8]/80"
                 >
                   <AppIcon name="navigation" size={14} />
                   <span>Open Maps</span>
