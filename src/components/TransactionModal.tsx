@@ -8,6 +8,7 @@ import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
 import { classifyExpenseText, extractTransactionEntities } from '../services/aiModelsClient';
 import ModalPortal from './ModalPortal';
 import { playPop, playTap } from '../lib/feedback';
+import Tesseract from 'tesseract.js';
 
 
 const INCOME_CATEGORIES: TransactionCategory[] = [
@@ -118,49 +119,140 @@ export default function TransactionModal({
     }
   };
 
-  // Feature 4: Camera Bill & Receipt OCR Scanner
+  // Feature 4: Camera Bill & Receipt OCR Scanner (Tesseract OCR Engine)
   const [isScanningReceipt, setIsScanningReceipt] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
   const [scannedReceiptPreview, setScannedReceiptPreview] = useState<string | null>(null);
 
-  const handleReceiptScan = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const parseReceiptOcr = (text: string): { amount: string; category: TransactionCategory; desc: string } => {
+    const clean = text.toLowerCase();
+
+    // 1. Amount Extraction Strategy
+    let amount: string | null = null;
+
+    // Strategy A: Explicit "total amount", "total", "cash paid", "net" followed by digits
+    const totalMatch = clean.match(/(?:total\s*(?:amount)?|cash\s*(?:paid|received)?|net\s*payable|amount\s*due)[\s\S]{0,35}?(?:rs\.?|re\.?|inr|₹|:)?\s*([0-9]+(?:\.[0-9]{1,2})?)/i);
+    if (totalMatch && parseFloat(totalMatch[1]) > 0) {
+      amount = totalMatch[1];
+    } else {
+      // Strategy B: Any currency match (Rs. / Re. / ₹ / INR)
+      const currencyMatches = [...clean.matchAll(/(?:rs\.?|re\.?|inr|₹)\s*([0-9]+(?:\.[0-9]{1,2})?)/gi)];
+      if (currencyMatches.length > 0) {
+        const nums = currencyMatches.map((m) => parseFloat(m[1])).filter((n) => n > 0 && n < 100000);
+        if (nums.length > 0) {
+          amount = Math.max(...nums).toString();
+        }
+      }
+    }
+
+    // Strategy C: Any standalone 2-to-5 digit number
+    if (!amount) {
+      const standaloneMatches = clean.match(/\b([1-9][0-9]{1,4}(?:\.[0-9]{1,2})?)\b/g);
+      if (standaloneMatches && standaloneMatches.length > 0) {
+        const nums = standaloneMatches.map(Number).filter((n) => n >= 10 && n <= 50000);
+        if (nums.length > 0) {
+          amount = Math.max(...nums).toString();
+        }
+      }
+    }
+
+    // Format amount cleanly
+    if (amount) {
+      const parsed = parseFloat(amount);
+      if (!isNaN(parsed) && parsed > 0) {
+        amount = parsed % 1 === 0 ? parsed.toString() : parsed.toFixed(2);
+      }
+    }
+
+    // 2. Category & Description Strategy based on OCR vocabulary
+    let category: TransactionCategory = 'other';
+    let desc = 'Receipt Expense (OCR)';
+
+    if (/petrol|diesel|fuel|indian\s*oil|hpcl|bharat\s*petroleum|pump|motor\s*spirit|cng|lpg|shell|speed/i.test(clean)) {
+      category = 'travel_fuel';
+      desc = 'Petrol / Fuel Bill (Receipt OCR)';
+    } else if (/dhaba|food|chai|thali|roti|tea|restaurant|hotel|canteen|bhoj|lunch|dinner|snack|bakery|mithai|sweets|dal|biryani|paneer|curry/i.test(clean)) {
+      category = 'food';
+      desc = 'Food & Dhaba Bill (Receipt OCR)';
+    } else if (/garage|repair|tool|mechanic|service|puncture|tyre|tire|spares|hardware|battery|oil|brake|chain/i.test(clean)) {
+      category = 'tools';
+      desc = 'Vehicle Repair & Garage (Receipt OCR)';
+    } else if (/medical|pharma|medicine|dawa|clinic|doctor|hospital|chemist|tablet|capsule|syrup|health/i.test(clean)) {
+      category = 'medical';
+      desc = 'Medical & Pharmacy Bill (Receipt OCR)';
+    } else if (/rent|kiraya|room|shop|house|bada/i.test(clean)) {
+      category = 'rent';
+      desc = 'Rent / Kiraya (Receipt OCR)';
+    }
+
+    return {
+      amount: amount || '100',
+      category,
+      desc,
+    };
+  };
+
+  const handleReceiptScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsScanningReceipt(true);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setScannedReceiptPreview(reader.result as string);
+    setOcrProgress(10);
+    setValidationError(null);
 
-      // Intelligent Receipt OCR Extractor
-      setTimeout(() => {
-        const fileName = (file.name || '').toLowerCase();
-        let detectedAmount = '350';
-        let detectedDesc = 'Petrol Fuel Bill (Receipt OCR)';
-        let detectedCat: TransactionCategory = 'travel_fuel';
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setScannedReceiptPreview(previewUrl);
 
-        if (fileName.includes('food') || fileName.includes('chai') || fileName.includes('lunch') || fileName.includes('hotel')) {
-          detectedAmount = '140';
-          detectedDesc = 'Khana / Food Bill (Receipt OCR)';
-          detectedCat = 'food';
-        } else if (fileName.includes('tool') || fileName.includes('repair') || fileName.includes('garage')) {
-          detectedAmount = '550';
-          detectedDesc = 'Vehicle Garage & Tools (Receipt OCR)';
-          detectedCat = 'tools';
-        } else if (fileName.includes('med') || fileName.includes('dawa') || fileName.includes('pharma')) {
-          detectedAmount = '280';
-          detectedDesc = 'Dawa / Medical Bill (Receipt OCR)';
-          detectedCat = 'medical';
+    try {
+      // Execute true Optical Character Recognition on the image
+      const result = await Tesseract.recognize(file, 'eng', {
+        logger: (m) => {
+          if (m.status === 'recognizing text' && typeof m.progress === 'number') {
+            setOcrProgress(Math.round(m.progress * 100));
+          }
+        },
+      });
+
+      const recognizedText = result?.data?.text || '';
+      console.log('Real Tesseract OCR Extracted Text:', recognizedText);
+
+      // Parse entities from the recognized text
+      const parsed = parseReceiptOcr(recognizedText);
+
+      setType('expense');
+      setAmount(parsed.amount);
+      setDescription(parsed.desc);
+      setCategory(parsed.category);
+
+      // Validate with AI Model 1
+      try {
+        const aiRes = await classifyExpenseText(recognizedText || parsed.desc);
+        if (aiRes && aiRes.category) {
+          const mapped = mapModel1ToTxCategory(aiRes.category);
+          setCategory(mapped);
+          setAiSuggestedCat({
+            raw: aiRes.category,
+            mapped,
+            confidence: Math.round(aiRes.confidence * 100),
+          });
         }
+      } catch {
+        // Fallback to parsed category
+      }
 
-        setType('expense');
-        setAmount(detectedAmount);
-        setDescription(detectedDesc);
-        setCategory(detectedCat);
-        setIsScanningReceipt(false);
-        playPop();
-      }, 1000);
-    };
-    reader.readAsDataURL(file);
+      playPop();
+    } catch (err: any) {
+      console.error('OCR Recognition Error:', err);
+      // Fallback if image was unreadable
+      setType('expense');
+      setAmount('150');
+      setDescription('Receipt Expense (Manual Check Needed)');
+      setCategory('other');
+    } finally {
+      setIsScanningReceipt(false);
+      setOcrProgress(0);
+    }
   };
 
   // Real-time AI Category suggestion for expense description (Model 1)
@@ -444,9 +536,20 @@ export default function TransactionModal({
 
               {/* Scanning status banner */}
               {isScanningReceipt && (
-                <div className="flex items-center gap-2 mt-2 p-2 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-bold animate-pulse">
-                  <span className="animate-spin">🔄</span>
-                  <span>AI Bill Scanner reading receipt & extracting expense amount...</span>
+                <div className="flex items-center gap-2 mt-2 p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 font-bold shadow-xs">
+                  <span className="animate-spin text-base">🔄</span>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <span>{ocrProgress > 0 ? `AI OCR Scanning Text (${ocrProgress}%)` : 'Initializing AI Optical Character Recognition...'}</span>
+                      <span className="font-mono text-[10px] text-amber-700">{ocrProgress}%</span>
+                    </div>
+                    <div className="w-full bg-amber-200 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-amber-600 h-full transition-all duration-200 rounded-full"
+                        style={{ width: `${Math.max(ocrProgress, 12)}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
 

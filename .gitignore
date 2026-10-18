@@ -13,6 +13,7 @@ research/
 project-documentation/ml_focused_report/
 *.docx
 *.pdf
+*.traineddata
 .idea/
 android/.idea/
 android/local.properties
