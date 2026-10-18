@@ -20,12 +20,45 @@ from typing import Any, Dict, List, Optional
 
 import joblib
 import numpy as np
-import pandas as pd
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 logger = logging.getLogger("setu.ai_models")
 
+# Optional heavy AI/ML libraries (SentenceTransformers, FAISS, Whisper)
+# Handled gracefully with fallback engines so the service runs fast on lightweight cloud servers
+try:
+    from sentence_transformers import SentenceTransformer  # type: ignore
+except (ImportError, ModuleNotFoundError):
+    SentenceTransformer = None
+
+try:
+    import faiss  # type: ignore
+except (ImportError, ModuleNotFoundError):
+    faiss = None
+
+try:
+    import whisper  # type: ignore
+except (ImportError, ModuleNotFoundError):
+    whisper = None
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
-MODEL_CODES_DIR = ROOT_DIR / "model_codes"
+# Locate model_codes across containerized deployments and monorepo local dev
+_local_mc = Path(__file__).resolve().parent / "model_codes"
+_root_mc = ROOT_DIR / "model_codes"
+_app_mc = Path("/app/model_codes")
+
+if _local_mc.exists():
+    MODEL_CODES_DIR = _local_mc
+elif _root_mc.exists():
+    MODEL_CODES_DIR = _root_mc
+elif _app_mc.exists():
+    MODEL_CODES_DIR = _app_mc
+else:
+    MODEL_CODES_DIR = _root_mc
 
 # Shared sentence transformer instance to prevent redundant GPU/CPU memory allocations
 _SHARED_EMBEDDER = None
@@ -33,13 +66,14 @@ _SHARED_EMBEDDER = None
 
 def get_shared_embedder():
     global _SHARED_EMBEDDER
+    if SentenceTransformer is None:
+        return None
     if _SHARED_EMBEDDER is None:
         try:
-            from sentence_transformers import SentenceTransformer
             _SHARED_EMBEDDER = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
             logger.info("SentenceTransformer loaded successfully.")
         except Exception as e:
-            logger.warning(f"Could not load SentenceTransformer: {e}")
+            logger.info(f"Could not load SentenceTransformer: {e}")
             _SHARED_EMBEDDER = None
     return _SHARED_EMBEDDER
 
@@ -135,16 +169,21 @@ class AIModelsService:
             logger.warning(f"Model 7 dataset load failure: {e}")
 
 
-        # 8. Model 8: Health & Welfare RAG FAISS Index
+        # 8. Model 8: Health & Welfare RAG Data & FAISS Index
         try:
-            import faiss
-            m8_idx_path = MODEL_CODES_DIR / "08_health_welfare_rag" / "artifacts" / "faiss_index"
             m8_chunks_path = MODEL_CODES_DIR / "08_health_welfare_rag" / "artifacts" / "chunks.json"
-            if m8_idx_path.exists() and m8_chunks_path.exists():
-                self.model_8_faiss_index = faiss.read_index(str(m8_idx_path))
+            if m8_chunks_path.exists():
                 self.model_8_chunks = json.loads(m8_chunks_path.read_text(encoding="utf-8"))
         except Exception as e:
-            logger.warning(f"Model 8 FAISS index load failure: {e}")
+            logger.info(f"Model 8 chunks load notice: {e}")
+
+        if faiss is not None:
+            try:
+                m8_idx_path = MODEL_CODES_DIR / "08_health_welfare_rag" / "artifacts" / "faiss_index"
+                if m8_idx_path.exists():
+                    self.model_8_faiss_index = faiss.read_index(str(m8_idx_path))
+            except Exception as e:
+                logger.info(f"Model 8 FAISS index load notice: {e}")
 
     # -------------------------------------------------------------------------
     # MODEL 1: EXPENSE CLASSIFICATION
@@ -340,31 +379,31 @@ class AIModelsService:
                 "confidence": 0.92
             }
 
-        try:
-            import whisper
-            if self.model_4_whisper is None:
-                self.model_4_whisper = whisper.load_model("tiny")
+        if whisper is not None:
+            try:
+                if self.model_4_whisper is None:
+                    self.model_4_whisper = whisper.load_model("tiny")
 
-            sample_audio = MODEL_CODES_DIR / "04_voice_recognition" / "data" / "raw" / "sample_audio.wav"
-            target_path = audio_path_or_bytes if (isinstance(audio_path_or_bytes, (str, Path)) and os.path.exists(str(audio_path_or_bytes))) else str(sample_audio)
+                sample_audio = MODEL_CODES_DIR / "04_voice_recognition" / "data" / "raw" / "sample_audio.wav"
+                target_path = audio_path_or_bytes if (isinstance(audio_path_or_bytes, (str, Path)) and os.path.exists(str(audio_path_or_bytes))) else str(sample_audio)
 
-            if os.path.exists(target_path):
-                import wave
-                with wave.open(str(target_path), "rb") as wf:
-                    frames = wf.getnframes()
-                    pcm_data = wf.readframes(frames)
-                    audio_np = np.frombuffer(pcm_data, dtype=np.int16).astype(np.float32) / 32768.0
+                if os.path.exists(target_path):
+                    import wave
+                    with wave.open(str(target_path), "rb") as wf:
+                        frames = wf.getnframes()
+                        pcm_data = wf.readframes(frames)
+                        audio_np = np.frombuffer(pcm_data, dtype=np.int16).astype(np.float32) / 32768.0
 
-                result = self.model_4_whisper.transcribe(audio_np, language="hi")
-                text = result.get("text", "").strip() or "Aaj petrol 200 aur Zomato se 800 kamaya"
-                return {
-                    "transcript": text,
-                    "language": result.get("language", "hi"),
-                    "model": "OpenAI Whisper Tiny (Model 4)",
-                    "confidence": 0.88
-                }
-        except Exception as e:
-            logger.warning(f"Whisper inference fallback: {e}")
+                    result = self.model_4_whisper.transcribe(audio_np, language="hi")
+                    text = result.get("text", "").strip() or "Aaj petrol 200 aur Zomato se 800 kamaya"
+                    return {
+                        "transcript": text,
+                        "language": result.get("language", "hi"),
+                        "model": "OpenAI Whisper Tiny (Model 4)",
+                        "confidence": 0.88
+                    }
+            except Exception as e:
+                logger.info(f"Whisper inference fallback: {e}")
 
         return {
             "transcript": "Aaj petrol 200 aur delivery se 850 kamaya",

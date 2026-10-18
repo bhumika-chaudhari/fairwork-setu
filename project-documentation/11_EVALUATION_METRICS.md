@@ -78,15 +78,15 @@ Where:
 ### Formulas
 
 \[
-MAE = rac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|
+MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|
 \]
 
 \[
-RMSE = \sqrt{rac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
+RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}
 \]
 
 \[
-MAPE = rac{100}{n}\sum_{i=1}^{n}\left|rac{y_i - \hat{y}_i}{y_i}ight|
+MAPE = \frac{100}{n}\sum_{i=1}^{n}\left|\frac{y_i - \hat{y}_i}{y_i}\right|
 \]
 
 ### Target
