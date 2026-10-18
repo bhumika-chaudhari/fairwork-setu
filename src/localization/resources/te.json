@@ -70,10 +70,11 @@
     "more": "సేవలు",
     "sehat": "ఆరోగ్యం",
     "kaushal": "నైపుణ్యం",
-    "voice": "आवाज़"
+    "voice": "आवाज़",
+    "haqSetu": "హక్కులు (హక్)"
   },
   "home": {
-    "greeting": "నమస్కారం, {{name}} 👋",
+    "greeting": "నమస్కారం, {{name}}",
     "todayOverview": "నేటి సారాంశం",
     "todayIncome": "నేటి ఆదాయం",
     "weekDeltaUp": "↑ ₹{{amount}} గత వారం కంటే",
@@ -218,7 +219,7 @@
     "callPhone": "కాల్ చేయండి {{phone}}"
   },
   "kaushal": {
-    "title": "నైపుణ్య పాస్‌పోర్ట్",
+    "title": "నైపుణ్యం",
     "downloadPdf": "PDF డౌన్‌లోడ్",
     "jobsDone": "పూర్తైన పనులు",
     "experience": "అనుభవం",
@@ -676,5 +677,9 @@
     "startDate": "प्रारंभ तिथि",
     "endDate": "अंतिम तिथि",
     "voiceSource": "आवाज़"
+  },
+  "haqSetu": {
+    "heroTitle": "ఈరోజు మేము మీకు ఎలా సహాయపడగలం?",
+    "heroSubtitle": "పని సమస్య ఉందా? ఏమి జరిగిందో చెప్పండి. మీ ఎంపికలను అర్థం చేసుకోవడానికి మేము సహాయం చేస్తాము."
   }
 }

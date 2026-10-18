@@ -112,9 +112,6 @@ export default function HomePage() {
                 <span>{t('profileScreen.editProfile')}</span>
               </button>
             </div>
-            <p className="text-xs text-textSecondary font-medium mt-0.5">
-              {t('home.subGreeting')}
-            </p>
           </div>
         </div>
 

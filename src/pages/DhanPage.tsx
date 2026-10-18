@@ -209,17 +209,19 @@ export default function DhanPage() {
   return (
     <div className="space-y-4 px-4 pt-3 pb-8">
       {/* Header */}
-      <header className="flex items-center justify-between pb-1">
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white font-black text-base shadow-glass border border-[#F1B96B]/40">
-            D
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-1">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white font-extrabold text-lg shadow-md border border-[#F1B96B]/40">
+            <AppIcon name="wallet" size={22} className="text-white drop-shadow" />
           </div>
-          <h1 className="text-xl font-extrabold text-deepEmerald">
-            {t('dhan.title')}
-          </h1>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2B3E] font-serif">
+              {t('tabs.dhan', 'Money')}
+            </h1>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <ListenButton track={financialTrack} size="sm" />
           <div className="md:hidden">
             <LanguageSelector variant="icon" />

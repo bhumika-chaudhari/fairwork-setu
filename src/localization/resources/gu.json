@@ -70,10 +70,11 @@
     "more": "સેવાઓ",
     "sehat": "સ્વાસ્થ્ય",
     "kaushal": "કૌશલ્ય",
-    "voice": "અવાજ"
+    "voice": "અવાજ",
+    "haqSetu": "હક (અધિકાર)"
   },
   "home": {
-    "greeting": "નમસ્તે, {{name}} 👋",
+    "greeting": "નમસ્તે, {{name}}",
     "todayOverview": "આજનો અહેવાલ",
     "todayIncome": "આજની આવક",
     "weekDeltaUp": "+ ₹{{amount}} ગયા અઠવાડિયા કરતાં",
@@ -143,7 +144,7 @@
     "applyWithProfile": "સેતુ પ્રોફાઇલથી અરજી કરો"
   },
   "dhan": {
-    "title": "મારું ધન",
+    "title": "ધન",
     "weeklyIncome": "સાપ્તાહિક આવક",
     "income": "આવક",
     "expense": "ખર્ચ",
@@ -694,5 +695,9 @@
     "startDate": "શરૂઆત તારીખ",
     "endDate": "અંતિમ તારીખ",
     "voiceSource": "અવાજ"
+  },
+  "haqSetu": {
+    "heroTitle": "આજે અમે તમને કેવી રીતે મદદ કરી શકીએ?",
+    "heroSubtitle": "કામની કોઈ સમસ્યા છે? અમને જણાવો શું થયું. અમે વિકલ્પો સમજવામાં અને આગળનું પગલું લેવામાં મદદ કરીશું."
   }
 }

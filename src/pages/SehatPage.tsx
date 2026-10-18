@@ -73,21 +73,20 @@ export default function SehatPage() {
 
   return (
     <div className="space-y-4 px-2 sm:px-4 pt-1 sm:pt-3 pb-16 animate-fade-in font-sans">
-      {/* 1. TOP BAR: AVATAR, GREETING, SPARKLE, LANGUAGE SELECTOR, LISTEN */}
-      <header className="flex items-center justify-between gap-2 pb-1">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#7C2D16] text-white font-black text-sm shadow-sm border border-[#F1B96B]/50">
-            {userInitial}
+      {/* Top Header */}
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-1">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white font-extrabold text-lg shadow-md border border-[#F1B96B]/40">
+            <AppIcon name="heart" size={22} className="text-white drop-shadow" />
           </div>
-          <div className="min-w-0">
-            <h1 className="text-base sm:text-lg font-extrabold text-[#1E2B3E] truncate flex items-center gap-1.5 font-serif">
-              <span>👋</span>
-              <span>Hello, {userName}</span>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2B3E] font-serif">
+              {t('tabs.sehat', 'Health')}
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           {/* Quick Assistant Sparkle */}
           <button
             type="button"

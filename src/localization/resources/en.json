@@ -86,12 +86,12 @@
     "aiLab": "AI Lab",
     "sehat": "Health",
     "kaushal": "Skills",
-    "haqSetu": "Haq Setu",
+    "haqSetu": "Rights (Hak)",
     "more": "Services",
     "voice": "Voice"
   },
   "home": {
-    "greeting": "Hello, {{name}} 👋",
+    "greeting": "Hello, {{name}}",
     "greetingMorning": "Good morning, {{name}}!",
     "subGreeting": "Keep going, you're doing great!",
     "todayOverview": "Today's overview",
@@ -155,7 +155,7 @@
     "applyWithProfile": "Apply with Setu Profile"
   },
   "dhan": {
-    "title": "My Dhan",
+    "title": "Money",
     "todaySummary": "Today's Summary",
     "todayIncome": "Today's Income",
     "todayExpenses": "Today's Expenses",
@@ -241,7 +241,7 @@
     "callPhone": "Call {{phone}}"
   },
   "kaushal": {
-    "title": "Kaushal",
+    "title": "Skills",
     "viewPassport": "View Skill Passport",
     "editSkills": "Edit Skills",
     "saveSkills": "Save Skills",
@@ -598,5 +598,9 @@
     "offlineFallback": "Client Numerical Engine Active (Offline Fallback)",
     "syntheticNotice": "Synthetic Demo Mode Active (Deterministic Seed 42)",
     "realDataNotice": "Trained on Real Recorded Transactions"
+  },
+  "haqSetu": {
+    "heroTitle": "How can we help you today?",
+    "heroSubtitle": "Facing a work problem? Tell us what happened. We'll help you understand your options and take the next step."
   }
 }

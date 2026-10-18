@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
 import ListenButton from '../components/ListenButton';
+import LanguageSelector from '../components/LanguageSelector';
 import AccountDeactivationWizard from '../components/haq/AccountDeactivationWizard';
 import GrievanceTracker from '../components/haq/GrievanceTracker';
 import LegalSourcesLibrary from '../components/haq/LegalSourcesLibrary';
@@ -38,6 +39,27 @@ export default function HaqSetuPage() {
 
   return (
     <div className="space-y-6 px-4 py-4 md:py-6 md:px-0">
+      {/* Top Header matching all other main tabs */}
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-1">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white font-extrabold text-lg shadow-md border border-[#F1B96B]/40">
+            <AppIcon name="shield-checkmark" size={22} className="text-white drop-shadow" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2B3E] font-serif">
+              {t('tabs.haqSetu', 'Rights (Hak)')}
+            </h1>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-end sm:self-auto">
+          <ListenButton track={speechTrack} size="sm" />
+          <div className="md:hidden">
+            <LanguageSelector variant="icon" />
+          </div>
+        </div>
+      </header>
+
       {/* Top Breadcrumb / Mode Bar if in Wizard */}
       {currentView === 'deactivation_wizard' ? (
         <AccountDeactivationWizard
@@ -53,21 +75,12 @@ export default function HaqSetuPage() {
             <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 rounded-full bg-[#E5953E]/10 blur-2xl pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-4">
               <div className="space-y-2 max-w-2xl">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B34A26]/10 text-[#B34A26] border border-[#B34A26]/20 text-xs font-bold uppercase tracking-wider">
-                  <AppIcon name="shield-checkmark" size={14} />
-                  <span>Haq Setu • Worker Rights & Recovery</span>
-                </div>
-                <h1 className="text-2xl md:text-3xl font-extrabold text-[#1E2B3E] font-serif tracking-tight">
-                  {headingText}
-                </h1>
+                <h2 className="text-xl md:text-2xl font-bold text-[#1E2B3E] font-serif tracking-tight">
+                  {t('haqSetu.heroTitle', headingText)}
+                </h2>
                 <p className="text-sm md:text-base text-[#231F20]/80 leading-relaxed font-normal">
-                  {supportingCopy}
+                  {t('haqSetu.heroSubtitle', supportingCopy)}
                 </p>
-              </div>
-
-              {/* Listen Aloud Button */}
-              <div className="self-start">
-                <ListenButton track={speechTrack} size="md" />
               </div>
             </div>
 

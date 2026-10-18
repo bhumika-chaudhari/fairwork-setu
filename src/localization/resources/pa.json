@@ -70,10 +70,11 @@
     "more": "ਸੇਵਾ",
     "sehat": "ਸਿਹਤ",
     "kaushal": "ਹੁਨਰ",
-    "voice": "आवाज़"
+    "voice": "आवाज़",
+    "haqSetu": "ਹੱਕ (ਅਧਿਕਾਰ)"
   },
   "home": {
-    "greeting": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ, {{name}} 👋",
+    "greeting": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ, {{name}}",
     "todayOverview": "ਅੱਜ ਦਾ ਸਾਰ",
     "todayIncome": "ਅੱਜ ਦੀ ਕਮਾਈ",
     "weekDeltaUp": "↑ ₹{{amount}} ਪਿਛਲੇ ਹਫ਼ਤੇ ਤੋਂ",
@@ -218,7 +219,7 @@
     "callPhone": "ਕਾਲ ਕਰੋ {{phone}}"
   },
   "kaushal": {
-    "title": "ਹੁਨਰ ਪਾਸਪੋਰਟ",
+    "title": "ਹੁਨਰ",
     "downloadPdf": "PDF ਡਾਊਨਲੋਡ",
     "jobsDone": "ਪੂਰੇ ਕੰਮ",
     "experience": "ਤਜਰਬਾ",
@@ -676,5 +677,9 @@
     "startDate": "प्रारंभ तिथि",
     "endDate": "अंतिम तिथि",
     "voiceSource": "आवाज़"
+  },
+  "haqSetu": {
+    "heroTitle": "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?",
+    "heroSubtitle": "ਕੰਮ ਦੀ ਕੋਈ ਸਮੱਸਿਆ ਹੈ? ਸਾਨੂੰ ਦੱਸੋ ਕੀ ਹੋਇਆ। ਅਸੀਂ ਤੁਹਾਡੇ ਵਿਕਲਪਾਂ ਨੂੰ ਸਮਝਣ ਅਤੇ ਅਗਲਾ ਕਦਮ ਚੁੱਕਣ ਵਿੱਚ ਮਦਦ ਕਰਾਂਗੇ।"
   }
 }

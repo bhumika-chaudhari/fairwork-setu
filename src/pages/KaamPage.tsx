@@ -22,6 +22,7 @@ import ServiceRequestsInbox from '../components/marketplace/ServiceRequestsInbox
 import ServiceProfileEditor from '../components/marketplace/ServiceProfileEditor';
 import ConversationModal from '../components/marketplace/ConversationModal';
 import ListenButton from '../components/ListenButton';
+import LanguageSelector from '../components/LanguageSelector';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
 import { matchJobsWithWorker, type Model6JobMatch } from '../services/aiModelsClient';
 
@@ -277,13 +278,16 @@ export default function KaamPage() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-[#1E2B3E] font-serif">
-              Work
+              {t('tabs.kaam', 'Work')}
             </h1>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <ListenButton track={pageSpeechTrack} size="sm" />
+          <div className="md:hidden">
+            <LanguageSelector variant="icon" />
+          </div>
         </div>
       </header>
 
