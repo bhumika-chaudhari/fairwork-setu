@@ -71,10 +71,10 @@ export default function SafetyTipsModal({ onClose }: SafetyTipsModalProps) {
                 <AppIcon name="shield-checkmark" size={20} />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-extrabold text-[#1E2B3E] font-serif">
+                <h3 className="text-base sm:text-lg font-extrabold text-deepEmerald font-serif">
                   Workplace Safety & Health Guidance
                 </h3>
-                <p className="text-xs text-[#231F20]/75">
+                <p className="text-xs text-textSecondary">
                   Practical, evidence-informed advice for informal and gig occupations.
                 </p>
               </div>
@@ -99,7 +99,7 @@ export default function SafetyTipsModal({ onClose }: SafetyTipsModalProps) {
               onClick={() => setSelectedCategory(cat.id)}
               className={`py-1.5 px-3 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
                 selectedCategory === cat.id
-                  ? 'bg-[#B34A26] text-white shadow-xs'
+                  ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-xs'
                   : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
               }`}
             >
@@ -122,14 +122,14 @@ export default function SafetyTipsModal({ onClose }: SafetyTipsModalProps) {
               return (
                 <div
                   key={tip.id}
-                  className="rounded-2xl border border-[#F4EBDD] bg-[#FDF8F0]/40 p-4 space-y-3 shadow-xs hover:border-[#E5953E]/50 transition-all"
+                  className="rounded-2xl border border-[#F4EBDD] bg-white/95 p-4 space-y-3 shadow-xs hover:border-[#E5953E]/50 transition-all"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#3A757D] bg-white px-2 py-0.5 rounded-md border border-stone-200">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#B34A26] bg-[#FEF4E8] px-2 py-0.5 rounded-md border border-[#E5953E]/30">
                         {tip.categoryLabel}
                       </span>
-                      <h4 className="text-sm font-bold text-[#1E2B3E] mt-1.5">
+                      <h4 className="text-sm font-bold text-deepEmerald mt-1.5">
                         {tip.title}
                       </h4>
                     </div>

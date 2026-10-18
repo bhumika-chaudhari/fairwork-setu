@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
 import SetuLogo from '../components/SetuLogo';
 import LanguageSelector from '../components/LanguageSelector';
+import SoundToggle from '../components/SoundToggle';
 import VoiceEntryModal from '../components/VoiceEntryModal';
 import { useProfile } from '../hooks/ProfileContext';
+import { playTap, playSelect } from '../lib/feedback';
 
 const tabs = [
   { to: '/home', key: 'tabs.home', icon: 'home' },
@@ -43,6 +45,7 @@ export default function TabLayout() {
               <NavLink
                 key={tab.to}
                 to={tab.to}
+                onClick={() => playSelect()}
                 className={({ isActive }) =>
                   `flex items-center gap-1.5 rounded-full px-2.5 lg:px-3.5 py-1.5 text-xs lg:text-sm font-bold transition-all duration-200 ${
                     isActive
@@ -65,12 +68,15 @@ export default function TabLayout() {
             ))}
           </nav>
 
-          {/* Right Action Icons: Mic, Language, Profile */}
-          <div className="flex items-center gap-3">
+          {/* Right Action Icons: Mic, Sound Toggle, Language, Profile */}
+          <div className="flex items-center gap-2.5">
             {/* Quick Mic Action */}
             <button
               type="button"
-              onClick={() => setVoiceModalOpen(true)}
+              onClick={() => {
+                playTap();
+                setVoiceModalOpen(true);
+              }}
               className="emerald-gradient-btn flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95"
               aria-label="Voice Entry"
             >
@@ -78,13 +84,19 @@ export default function TabLayout() {
               <span>{t('tabs.voice')}</span>
             </button>
 
+            {/* Sound & Haptics Global Toggle */}
+            <SoundToggle />
+
             {/* Language dropdown */}
             <LanguageSelector variant="icon" />
 
             {/* Profile Avatar button */}
             <button
               type="button"
-              onClick={() => navigate('/profile')}
+              onClick={() => {
+                playTap();
+                navigate('/profile');
+              }}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] font-bold text-white shadow-warm ring-2 ring-white transition-all hover:scale-105 active:scale-95 overflow-hidden"
               aria-label="Profile"
             >
@@ -99,6 +111,7 @@ export default function TabLayout() {
             <button
               type="button"
               onClick={async () => {
+                playTap();
                 await logout();
                 navigate('/');
               }}
@@ -117,16 +130,22 @@ export default function TabLayout() {
         <Outlet />
       </main>
 
-      {/* Mobile Floating Action Button (FAB) for Quick Voice Entry positioned above floating dock */}
-      <button
-        type="button"
-        onClick={() => setVoiceModalOpen(true)}
-        className="fixed bottom-24 right-4 z-40 md:hidden flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-lifted ring-4 ring-white/80 border border-[#E5953E]/50 transition-all duration-300 hover:scale-105 active:scale-95"
-        aria-label="Quick Voice Entry"
-        title={t('home.voiceA11y')}
-      >
-        <AppIcon name="mic" size={20} className="text-white drop-shadow" />
-      </button>
+      {/* Mobile Floating Action Buttons (FABs) positioned above bottom dock */}
+      <div className="fixed bottom-24 right-4 z-40 md:hidden flex flex-col items-center gap-2.5">
+        <SoundToggle size="sm" />
+        <button
+          type="button"
+          onClick={() => {
+            playTap();
+            setVoiceModalOpen(true);
+          }}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-lifted ring-4 ring-white/80 border border-[#E5953E]/50 transition-all duration-300 hover:scale-105 active:scale-95"
+          aria-label="Quick Voice Entry"
+          title={t('home.voiceA11y')}
+        >
+          <AppIcon name="mic" size={20} className="text-white drop-shadow" />
+        </button>
+      </div>
 
       {/* Mobile Floating Apple-Inspired Liquid Glass Dock (< md) */}
       <div className="fixed bottom-3 inset-x-3 z-40 md:hidden flex justify-center pointer-events-none pb-[env(safe-area-inset-bottom)]">
@@ -139,6 +158,7 @@ export default function TabLayout() {
             <NavLink
               key={tab.to}
               to={tab.to}
+              onClick={() => playSelect()}
               className={({ isActive }) =>
                 `relative flex flex-1 min-w-0 flex-col items-center justify-center h-full rounded-[16px] sm:rounded-[20px] py-0.5 px-0.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   isActive

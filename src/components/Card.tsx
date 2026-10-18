@@ -10,7 +10,7 @@ const variants: Record<string, string> = {
   success:
     'bg-gradient-to-br from-white/95 via-[#F1F8F3]/90 to-[#2E7D32]/15 backdrop-blur-2xl border border-[#2E7D32]/30 text-textPrimary hover:border-[#2E7D32]/50',
   health:
-    'bg-gradient-to-br from-white/95 via-[#EFF7F8]/90 to-[#3A757D]/20 backdrop-blur-2xl border border-[#3A757D]/40 text-textPrimary hover:border-dustyTeal',
+    'bg-gradient-to-br from-white/95 via-[#FEF4E8]/90 to-[#B34A26]/15 backdrop-blur-2xl border border-[#E5953E]/40 text-textPrimary hover:border-[#B34A26]',
   warning:
     'bg-gradient-to-br from-white/95 via-[#FEF9EC]/90 to-[#E5A823]/20 backdrop-blur-2xl border border-[#E5A823]/45 text-textPrimary hover:border-safetyYellow',
   soft:

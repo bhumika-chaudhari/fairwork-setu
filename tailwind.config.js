@@ -50,8 +50,8 @@ export default {
         warningSoft: '#FEF9EC',
         danger: '#B34A26',      // Terracotta
         dangerSoft: '#FDF3EE',
-        health: '#3A757D',      // Dusty Teal
-        healthSoft: '#EFF7F8',
+        health: '#B34A26',      // Terracotta
+        healthSoft: '#FEF4E8',  // Soft saffron
         border: '#F4EBDD',      // Soft Border
         glassBorder: 'rgba(244, 235, 221, 0.88)',
       },

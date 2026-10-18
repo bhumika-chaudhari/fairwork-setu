@@ -1,10 +1,15 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import SetuLogo from '../components/SetuLogo';
 import LanguageSelector from '../components/LanguageSelector';
 import { AppIcon } from '../lib/icons';
 import { useProfile } from '../hooks/ProfileContext';
+
+import SoundToggle from '../components/SoundToggle';
+import { playTap, playPop } from '../lib/feedback';
+
 
 const FEATURE_CARDS = [
   {
@@ -14,6 +19,7 @@ const FEATURE_CARDS = [
     bg: 'bg-[#EFF7F8]',
     border: 'border-[#3A757D]/35',
     iconColor: 'text-[#3A757D]',
+    spotlight: 'rgba(58, 117, 125, 0.16)',
     title: 'Kaam',
     sub: 'Nearby jobs & skill matching',
   },
@@ -24,6 +30,7 @@ const FEATURE_CARDS = [
     bg: 'bg-[#FEF4E8]',
     border: 'border-[#E5953E]/45',
     iconColor: 'text-[#B34A26]',
+    spotlight: 'rgba(229, 149, 62, 0.18)',
     title: 'Dhan',
     sub: 'Track income, save money',
   },
@@ -34,6 +41,7 @@ const FEATURE_CARDS = [
     bg: 'bg-[#FDF3EE]',
     border: 'border-[#B34A26]/30',
     iconColor: 'text-[#B34A26]',
+    spotlight: 'rgba(179, 74, 38, 0.16)',
     title: 'Sehat',
     sub: 'Health & welfare support',
   },
@@ -44,35 +52,140 @@ const FEATURE_CARDS = [
     bg: 'bg-[#FEF9EC]',
     border: 'border-[#E5A823]/40',
     iconColor: 'text-[#E5A823]',
+    spotlight: 'rgba(229, 168, 35, 0.18)',
     title: 'Kaushal',
     sub: 'Build your skill passport',
   },
 ] as const;
+
+function SpotlightFeatureCard({
+  card,
+  idx,
+  t,
+}: {
+  card: (typeof FEATURE_CARDS)[number];
+  idx: number;
+  t: (key: string) => string;
+}) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.2 + idx * 0.08, ease: 'easeOut' }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onMouseMove={handleMouseMove}
+      onClick={() => playTap()}
+      className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/75 backdrop-blur-xl p-3.5 shadow-sm border border-[#E9DFCE] hover:border-[#E5953E]/50 transition-all duration-300 overflow-hidden cursor-pointer"
+    >
+      {/* Dynamic Cursor Spotlight Effect */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-[22px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              160px circle at ${mouseX}px ${mouseY}px,
+              ${card.spotlight},
+              transparent 80%
+            )
+          `,
+        }}
+      />
+
+      {/* Top Glass Rim Line */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+
+      {/* Icon */}
+      <div
+        className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${card.bg} ${card.border} border shadow-xs transition-all duration-300 group-hover:scale-110 group-hover:shadow-md`}
+      >
+        <AppIcon name={card.icon} size={20} className={card.iconColor} />
+      </div>
+
+      <div className="relative min-w-0">
+        <span className="block text-sm font-bold text-deepEmerald leading-tight transition-colors duration-200 group-hover:text-black">
+          {t(card.key)}
+        </span>
+        <span className="block text-[11px] text-textMuted leading-tight mt-0.5 truncate font-medium">
+          {t(card.subKey)}
+        </span>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { profile, onboardingComplete } = useProfile();
 
+  const handleGetStarted = () => {
+    playPop();
+    navigate('/onboarding');
+  };
+
+  const handleGoToDashboard = () => {
+    playTap();
+    navigate('/home');
+  };
+
   return (
-    <div className="relative min-h-screen w-full bg-transparent overflow-x-hidden flex flex-col justify-between">
-      {/* Ambient background glows */}
-      <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-[#E5953E]/18 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-[#B34A26]/14 blur-3xl" />
+    <div className="relative min-h-screen w-full bg-gradient-to-b from-[#FDF8F0] via-[#F8EFE2] to-[#FAF5EC] overflow-x-hidden flex flex-col justify-between selection:bg-amber-200">
+      {/* Living Atmospheric Glow Orbs */}
+      <motion.div
+        animate={{
+          scale: [1, 1.18, 1],
+          opacity: [0.35, 0.48, 0.35],
+          x: [0, 25, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        className="pointer-events-none absolute -top-32 -left-32 h-[480px] w-[480px] rounded-full bg-[#E5953E] blur-[120px]"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.25, 1],
+          opacity: [0.28, 0.4, 0.28],
+          x: [0, -25, 0],
+          y: [0, 20, 0],
+        }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="pointer-events-none absolute top-1/3 -right-32 h-[480px] w-[480px] rounded-full bg-[#E5953E]/60 blur-[130px]"
+      />
+      <motion.div
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.2, 0.32, 0.2],
+        }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="pointer-events-none absolute bottom-10 left-1/4 h-[380px] w-[380px] rounded-full bg-[#B34A26] blur-[140px]"
+      />
 
       {/* Main container */}
       <div className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-4xl flex-1 flex-col px-5 py-4 md:py-8">
-        {/* Top bar matching reference Screen 1 */}
+        {/* Top bar with Sound Toggle */}
         <header className="flex items-center justify-between pb-3">
           <SetuLogo size="md" />
-          <LanguageSelector variant="icon" />
+          <div className="flex items-center gap-2">
+            <SoundToggle />
+            <LanguageSelector variant="icon" />
+          </div>
         </header>
 
-        {/* Hero Headline and subtitle */}
+        {/* Hero Headline & Subtitle */}
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
           className="mt-3"
         >
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-deepEmerald leading-[1.25]">
@@ -85,64 +198,59 @@ export default function LandingPage() {
 
         {/* Hero Illustration */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.12 }}
+          transition={{ duration: 0.55, delay: 0.12, ease: 'easeOut' }}
           className="my-5 flex justify-center"
         >
-          <div className="relative w-full overflow-hidden rounded-[26px] bg-white/50 backdrop-blur-2xl p-2.5 shadow-glass border border-white/80">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            className="group relative w-full overflow-hidden rounded-[28px] bg-white/55 backdrop-blur-2xl p-2.5 shadow-2xl shadow-[#7C2D16]/10 border border-white/80 ring-1 ring-[#D8CCB5]/60"
+          >
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent" />
+
+
+
             <img
               src="/images/hero-illustration.jpg"
               alt={t('landing.heroAlt')}
-              className="h-auto w-full rounded-[20px] object-cover transition-transform duration-300 hover:scale-[1.01]"
+              className="h-auto w-full rounded-[22px] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
               loading="eager"
             />
-            {/* Subtle soft gradient fade at bottom of image */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 rounded-b-[20px] bg-gradient-to-t from-white/40 to-transparent" />
-          </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 rounded-b-[22px] bg-gradient-to-t from-[#F4E9D8]/80 via-[#F4E9D8]/30 to-transparent" />
+          </motion.div>
         </motion.div>
 
-        {/* Four Feature Cards Grid (2x2 matching reference image) */}
+        {/* Feature Cards Grid */}
         <div className="grid grid-cols-2 gap-3 md:gap-4 my-2">
           {FEATURE_CARDS.map((card, idx) => (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.2 + idx * 0.07 }}
-              className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/70 backdrop-blur-xl p-3.5 shadow-glass border border-[#F4EBDD] transition-all duration-300 hover:border-[#E5953E]/40 hover:bg-white/85 hover:shadow-glassHover overflow-hidden"
-            >
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
-              <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${card.bg} ${card.border} border shadow-xs`}
-              >
-                <AppIcon name={card.icon} size={20} className={card.iconColor} />
-              </div>
-              <div className="min-w-0">
-                <span className="block text-sm font-bold text-deepEmerald leading-tight">
-                  {t(card.key)}
-                </span>
-                <span className="block text-[11px] text-textMuted leading-tight mt-0.5 truncate">
-                  {t(card.subKey)}
-                </span>
-              </div>
-            </motion.div>
+            <SpotlightFeatureCard key={card.title} card={card} idx={idx} t={t} />
           ))}
         </div>
 
-        {/* Action Buttons (Get Started + Quick Dashboard shortcut if already onboarded) */}
+        {/* Action Buttons */}
         <div className="mt-6 pt-2 space-y-2.5">
           <motion.button
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
+            whileHover={{ scale: 1.015 }}
+            whileTap={{ scale: 0.97 }}
             type="button"
-            onClick={() => navigate('/onboarding')}
-            className="emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2 rounded-full text-base font-extrabold text-white shadow-lifted hover:brightness-105 active:scale-95 transition-all"
+            onClick={handleGetStarted}
+            className="group relative overflow-hidden emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2 rounded-full text-base font-extrabold text-white shadow-xl shadow-emerald-950/25 active:shadow-md transition-all duration-300"
           >
-            <span>{t('landing.getStarted')}</span>
-            <AppIcon name="arrow-forward" size={18} />
+            <motion.div
+              animate={{ x: ['-100%', '200%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.5 }}
+              className="pointer-events-none absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12"
+            />
+            <span className="relative z-10">{t('landing.getStarted')}</span>
+            <div className="relative z-10 transition-transform duration-200 group-hover:translate-x-1">
+              <AppIcon name="arrow-forward" size={18} />
+            </div>
           </motion.button>
 
           {onboardingComplete && (
@@ -150,9 +258,11 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.55 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
               type="button"
-              onClick={() => navigate('/home')}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/80 hover:bg-white text-sm font-extrabold text-deepEmerald shadow-xs border border-[#F4EBDD] backdrop-blur-md hover:shadow-sm active:scale-95 transition-all"
+              onClick={handleGoToDashboard}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/80 hover:bg-white/95 text-sm font-extrabold text-deepEmerald shadow-sm border border-[#E0D4C0] backdrop-blur-md hover:border-[#E5953E]/50 hover:shadow-md transition-all duration-300"
             >
               <AppIcon name="home" size={16} className="text-primary" />
               <span>{t('landing.goToDashboard', 'Proceed to Dashboard')} ({profile.name}) →</span>
@@ -160,7 +270,7 @@ export default function LandingPage() {
           )}
         </div>
 
-        {/* Bottom Language Selector Pills row */}
+        {/* Bottom Language Selector */}
         <footer className="mt-5 pb-3">
           <div className="flex items-center justify-center gap-2 overflow-x-auto py-1">
             <span className="text-xs text-textMuted mr-1">🌐</span>

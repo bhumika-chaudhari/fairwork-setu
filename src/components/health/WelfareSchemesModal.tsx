@@ -105,7 +105,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
                 <AppIcon name="hand-heart" size={20} />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-extrabold text-[#1E2B3E] font-serif">
+                <h3 className="text-base sm:text-lg font-extrabold text-deepEmerald font-serif">
                   Health Benefits & Welfare Schemes
                 </h3>
                 <p className="text-xs text-[#231F20]/75">
@@ -194,7 +194,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
                         </span>
                       </div>
 
-                      <h4 className="text-sm font-extrabold text-[#1E2B3E] mt-1">
+                      <h4 className="text-sm font-extrabold text-deepEmerald mt-1">
                         {scheme.name}
                       </h4>
                       {scheme.hindiName && (
@@ -251,7 +251,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
                   <span className="text-[10px] font-black uppercase text-[#B34A26] bg-[#B34A26]/10 px-2 py-0.5 rounded">
                     Official Government Scheme
                   </span>
-                  <h4 className="text-base font-extrabold text-[#1E2B3E] mt-1">
+                  <h4 className="text-base font-extrabold text-deepEmerald mt-1">
                     {selectedSchemeDetail.name}
                   </h4>
                   {selectedSchemeDetail.hindiName && (
@@ -283,7 +283,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
 
               {/* Benefits */}
               <div>
-                <h5 className="text-xs font-extrabold text-[#1E2B3E] mb-1.5">
+                <h5 className="text-xs font-extrabold text-deepEmerald mb-1.5">
                   Key Benefits & Support:
                 </h5>
                 <ul className="space-y-1">
@@ -298,7 +298,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
 
               {/* Eligibility Criteria */}
               <div>
-                <h5 className="text-xs font-extrabold text-[#1E2B3E] mb-1.5">
+                <h5 className="text-xs font-extrabold text-deepEmerald mb-1.5">
                   Eligibility Criteria:
                 </h5>
                 <ul className="space-y-1">
@@ -313,7 +313,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
 
               {/* Required Documents */}
               <div>
-                <h5 className="text-xs font-extrabold text-[#1E2B3E] mb-1.5">
+                <h5 className="text-xs font-extrabold text-deepEmerald mb-1.5">
                   Required Documents:
                 </h5>
                 <div className="flex flex-wrap gap-1.5">
@@ -365,7 +365,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
             <div className="p-5 sm:p-6 space-y-4 overflow-y-auto max-h-[85vh]">
               <div className="flex items-center justify-between border-b border-stone-200 pb-2.5">
                 <div>
-                  <h4 className="text-base font-extrabold text-[#1E2B3E]">
+                  <h4 className="text-base font-extrabold text-deepEmerald">
                     Guided Scheme Eligibility Check
                   </h4>
                   <p className="text-[11px] text-stone-500">
@@ -385,7 +385,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
                 <div className="space-y-4">
                   {/* Q1: Ration Card */}
                   <div>
-                    <label className="block text-xs font-bold text-[#1E2B3E] mb-1.5">
+                    <label className="block text-xs font-bold text-deepEmerald mb-1.5">
                       1. Which Ration Card does your family hold?
                     </label>
                     <div className="grid grid-cols-2 gap-2 text-xs">
@@ -413,7 +413,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
 
                   {/* Q2: e-Shram */}
                   <div>
-                    <label className="block text-xs font-bold text-[#1E2B3E] mb-1.5">
+                    <label className="block text-xs font-bold text-deepEmerald mb-1.5">
                       2. Are you registered on the e-Shram portal with a UAN number?
                     </label>
                     <div className="grid grid-cols-3 gap-2 text-xs">
@@ -440,7 +440,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
 
                   {/* Q3: State */}
                   <div>
-                    <label className="block text-xs font-bold text-[#1E2B3E] mb-1.5">
+                    <label className="block text-xs font-bold text-deepEmerald mb-1.5">
                       3. Where is your primary work and residence?
                     </label>
                     <div className="grid grid-cols-2 gap-2 text-xs">
@@ -492,7 +492,7 @@ export default function WelfareSchemesModal({ onClose }: WelfareSchemesModalProp
                   </div>
 
                   <div>
-                    <h5 className="text-xs font-extrabold text-[#1E2B3E] mb-1">
+                    <h5 className="text-xs font-extrabold text-deepEmerald mb-1">
                       Recommended Next Steps to Claim:
                     </h5>
                     <ul className="space-y-1">

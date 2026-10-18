@@ -8,6 +8,7 @@ import Card from '../components/Card';
 import VoiceButton from '../components/VoiceButton';
 import VoiceEntryModal from '../components/VoiceEntryModal';
 import LanguageSelector from '../components/LanguageSelector';
+import SoundToggle from '../components/SoundToggle';
 import ProgressBar from '../components/ProgressBar';
 import ProgressRing from '../components/ProgressRing';
 import ListenButton from '../components/ListenButton';
@@ -153,6 +154,8 @@ export default function HomePage() {
             <AppIcon name="sparkles" size={18} className="text-saffronGold" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-saffron ring-2 ring-white" />
           </button>
+          {/* Sound & Haptics toggle */}
+          <SoundToggle />
           {/* Language button */}
           <LanguageSelector variant="icon" />
         </div>
@@ -480,7 +483,7 @@ export default function HomePage() {
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2B3E] truncate">
+                  <h3 className="text-xs sm:text-sm font-bold text-deepEmerald truncate">
                     {t('home.addByVoice', 'Voice Assistant')}
                   </h3>
                   <p className="text-[11px] text-[#231F20]/70 truncate">
@@ -513,7 +516,7 @@ export default function HomePage() {
                   <AppIcon name="shield-checkmark" size={20} />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2B3E] font-serif truncate">
+                  <h3 className="text-xs sm:text-sm font-bold text-deepEmerald font-serif truncate">
                     Need help with a work problem?
                   </h3>
                   <p className="text-[11px] sm:text-xs text-[#231F20]/75 truncate">
@@ -552,7 +555,7 @@ export default function HomePage() {
                 onClick={() => navigate('/sehat')}
                 className="flex items-center gap-3 p-3.5 cursor-pointer hover:border-[#E5953E]/60 mb-0"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF7F8] text-[#3A757D]">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#FEF4E8] text-[#B34A26] border border-[#E5953E]/30">
                   <AppIcon name="medical" size={22} />
                 </div>
                 <div className="flex-1 min-w-0">

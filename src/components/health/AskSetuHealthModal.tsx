@@ -145,7 +145,7 @@ export default function AskSetuHealthModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center bg-[#1E2B3E]/60 backdrop-blur-xs sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center bg-[#231F20]/60 backdrop-blur-xs sm:p-4 animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -160,12 +160,12 @@ export default function AskSetuHealthModal({
           <div className="w-10 h-1 bg-stone-300 rounded-full mx-auto mb-2 sm:hidden" />
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#3A757D] to-[#1E2B3E] text-white shadow-xs">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-xs">
                 <AppIcon name="ai" size={20} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-extrabold text-[#1E2B3E] font-serif">
+                  <h3 className="text-base font-extrabold text-deepEmerald font-serif">
                     Ask Setu — Health Assistant
                   </h3>
                   <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -275,7 +275,7 @@ export default function AskSetuHealthModal({
                             href={c.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#3A757D] hover:underline bg-[#3A757D]/10 px-2 py-0.5 rounded-md"
+                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#B34A26] hover:underline bg-[#FEF4E8] px-2 py-0.5 rounded-md border border-[#E5953E]/30"
                           >
                             <span>{c.title}</span>
                             <AppIcon name="external-link" size={10} />
@@ -294,7 +294,7 @@ export default function AskSetuHealthModal({
 
           {loading && (
             <div className="flex items-center gap-2 p-3 bg-white rounded-2xl border border-stone-200 max-w-[50%]">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#3A757D] border-t-transparent" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#B34A26] border-t-transparent" />
               <span className="text-xs text-stone-500 font-medium">Setu is thinking...</span>
             </div>
           )}
@@ -321,10 +321,10 @@ export default function AskSetuHealthModal({
                     ? 'Listening... Speak in Hindi, Marathi, or English'
                     : 'Ask about symptoms, clinics, schemes, or hydration...'
                 }
-                className={`w-full rounded-2xl border py-2.5 pl-3.5 pr-10 text-xs font-medium text-[#1E2B3E] placeholder:text-stone-400 focus:outline-none focus:ring-2 ${
+                className={`w-full rounded-2xl border py-2.5 pl-3.5 pr-10 text-xs font-medium text-[#231F20] placeholder:text-stone-400 focus:outline-none focus:ring-2 ${
                   isListening
                     ? 'border-red-400 bg-red-50 text-red-900 focus:ring-red-400'
-                    : 'border-stone-300 bg-white focus:ring-[#3A757D]/30'
+                    : 'border-stone-300 bg-white focus:ring-[#E5953E]/35'
                 }`}
               />
 
@@ -334,7 +334,7 @@ export default function AskSetuHealthModal({
                 className={`absolute right-2.5 top-2 p-1 rounded-full transition-all ${
                   isListening
                     ? 'bg-red-600 text-white animate-pulse'
-                    : 'text-stone-400 hover:text-[#3A757D] hover:bg-stone-100'
+                    : 'text-stone-400 hover:text-[#B34A26] hover:bg-stone-100'
                 }`}
                 title="Speak question"
               >
