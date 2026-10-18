@@ -1,0 +1,12 @@
+# Ignore backend Python service and ML artifacts (deployed separately on Render)
+ml_service/
+standalone_ml_models/
+*.py
+__pycache__/
+*.pyc
+
+# Ignore docs, reports, and presentation assets
+presentation_docs/
+project-documentation/
+report_assets/
+*.docx
