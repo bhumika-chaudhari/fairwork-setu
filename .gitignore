@@ -14,6 +14,7 @@ project-documentation/ml_focused_report/
 *.docx
 *.pdf
 *.traineddata
+.vscode/
 .idea/
 android/.idea/
 android/local.properties

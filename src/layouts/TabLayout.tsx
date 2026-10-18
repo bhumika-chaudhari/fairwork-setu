@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
 import SetuLogo from '../components/SetuLogo';
@@ -25,6 +25,25 @@ export default function TabLayout() {
   const location = useLocation();
   const { profile } = useProfile();
   const { openAssistant } = useVoiceAssistant();
+
+  // Listen for Native Shake-to-Log & Quick Tile Voice Triggers
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get('action') === 'voice') {
+      openAssistant();
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('action');
+        return next;
+      }, { replace: true });
+    }
+  }, [searchParams, openAssistant, setSearchParams]);
+
+  useEffect(() => {
+    const handleVoiceEvent = () => openAssistant();
+    window.addEventListener('setu-open-voice', handleVoiceEvent);
+    return () => window.removeEventListener('setu-open-voice', handleVoiceEvent);
+  }, [openAssistant]);
 
   return (
     <div className="flex min-h-screen flex-col bg-transparent">

@@ -21,8 +21,8 @@ public class MainActivity extends BridgeActivity implements SensorEventListener 
     // Shake Detector Variables
     private SensorManager sensorManager;
     private Sensor accelerometer;
-    private static final float SHAKE_THRESHOLD_GRAVITY = 2.7F;
-    private static final int SHAKE_SLOP_TIME_MS = 1500;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 2.0F;
+    private static final int SHAKE_SLOP_TIME_MS = 1000;
     private long lastShakeTimestamp = 0;
 
     @Override
@@ -83,9 +83,15 @@ public class MainActivity extends BridgeActivity implements SensorEventListener 
                 try {
                     if (getBridge() != null && getBridge().getWebView() != null) {
                         WebView webView = getBridge().getWebView();
-                        String js = "if (window.location) { " +
-                                    "  window.location.href = '" + route + "'; " +
-                                    "}";
+                        String js;
+                        if (route.contains("action=voice")) {
+                            js = "try { window.dispatchEvent(new CustomEvent('setu-open-voice')); } catch(e){} " +
+                                 "if (window.location && !window.location.search.includes('action=voice')) { " +
+                                 "  window.location.href = '" + route + "'; " +
+                                 "}";
+                        } else {
+                            js = "if (window.location) { window.location.href = '" + route + "'; }";
+                        }
                         webView.evaluateJavascript(js, null);
                         pendingRoute = null;
                     }
