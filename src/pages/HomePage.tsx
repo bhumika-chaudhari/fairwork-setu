@@ -158,409 +158,455 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* TOP SUMMARY: 2 Columns Side-by-Side (Income + Savings) */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="space-y-2.5"
-      >
-        <div className="grid grid-cols-2 gap-3">
-          {/* Card 1: Today's Income */}
-          <Card className="mb-0 p-3.5 flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-semibold text-textMuted">
-                {t('home.todayIncome')}
-              </span>
-              <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
-                {t('common.currency', { amount: formatInr(todayInc) })}
-              </p>
-            </div>
-            <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-1 text-[11px] font-bold text-success border border-[#2E7D32]/30 self-start">
-              <span>{weekDelta >= 0 ? '↑' : '↓'}</span>
-              <span>
-                {weekDelta >= 0 ? '+' : '−'}
-                {t('common.currency', { amount: formatInr(Math.abs(weekDelta)) })}
-              </span>
-            </div>
-          </Card>
+      {/* RESPONSIVE DESKTOP/LAPTOP 2-COLUMN DASHBOARD GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+        {/* LEFT COLUMN: Financial Snapshot, Fast Entry, 4 AI ML Models, Recommended Jobs */}
+        <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+          {/* TOP SUMMARY: 2 Columns Side-by-Side (Income + Savings) */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="space-y-2.5"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {/* Card 1: Today's Income */}
+              <Card className="mb-0 p-3.5 flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-semibold text-textMuted">
+                    {t('home.todayIncome')}
+                  </span>
+                  <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
+                    {t('common.currency', { amount: formatInr(todayInc) })}
+                  </p>
+                </div>
+                <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-1 text-[11px] font-bold text-success border border-[#2E7D32]/30 self-start">
+                  <span>{weekDelta >= 0 ? '↑' : '↓'}</span>
+                  <span>
+                    {weekDelta >= 0 ? '+' : '−'}
+                    {t('common.currency', { amount: formatInr(Math.abs(weekDelta)) })}
+                  </span>
+                </div>
+              </Card>
 
-          {/* Card 2: Savings Progress */}
-          <Card className="mb-0 p-3.5 flex items-center justify-between">
-            <div>
-              <span className="text-xs font-semibold text-textMuted">
-                {t('home.savings')}
-              </span>
-              <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
-                {t('common.currency', { amount: formatInr(savingsSaved) })}
-              </p>
-              <span className="text-[11px] text-textMuted font-medium block mt-1">
-                {t('home.savingsTarget', { amount: formatInr(savingsTarget) })}
-              </span>
+              {/* Card 2: Savings Progress */}
+              <Card className="mb-0 p-3.5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold text-textMuted">
+                    {t('home.savings')}
+                  </span>
+                  <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
+                    {t('common.currency', { amount: formatInr(savingsSaved) })}
+                  </p>
+                  <span className="text-[11px] text-textMuted font-medium block mt-1">
+                    {t('home.savingsTarget', { amount: formatInr(savingsTarget) })}
+                  </span>
+                </div>
+                <div className="shrink-0 pl-2">
+                  <ProgressRing
+                    progress={savingsPercent / 100}
+                    size={54}
+                    stroke={5}
+                    color="#B34A26"
+                    trackColor="#FDF3EE"
+                  />
+                </div>
+              </Card>
             </div>
-            <div className="shrink-0 pl-2">
-              <ProgressRing
-                progress={savingsPercent / 100}
-                size={54}
-                stroke={5}
+
+            {/* Today's Summary & Fast Income/Expense Entry */}
+            <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-4 shadow-glass border border-[#F4EBDD] space-y-3">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FEF4E8] text-terracotta border border-warmAmber/30 shadow-xs">
+                    <AppIcon name="wallet" size={17} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-deepEmerald block leading-tight">
+                      {t('home.todaySummary')}
+                    </span>
+                    <p className="text-[11px] text-textSecondary mt-0.5">
+                      <span className="font-semibold text-success">+{t('common.currency', { amount: formatInr(todayInc) })}</span>{' '}
+                      <span className="text-danger font-semibold">−{t('common.currency', { amount: formatInr(todayExpense) })}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-right pl-2">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-textMuted block">
+                      {t('home.netForToday')}
+                    </span>
+                    <span className={`text-base font-black ${netForToday >= 0 ? 'text-deepEmerald' : 'text-danger'}`}>
+                      {netForToday >= 0 ? '+' : '−'}{t('common.currency', { amount: formatInr(Math.abs(netForToday)) })}
+                    </span>
+                  </div>
+                  <ListenButton track={homeFinancialTrack} size="sm" />
+                </div>
+              </div>
+
+              {/* Quick Action Buttons: Add Income and Add Expense */}
+              <div className="grid grid-cols-2 gap-2.5 pt-1.5 border-t border-[#F4EBDD]">
+                <button
+                  type="button"
+                  onClick={() => openAddModal('income')}
+                  className="emerald-gradient-btn flex items-center justify-center gap-1.5 sm:gap-2 rounded-full py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-lifted hover:brightness-105 active:scale-95 transition-all group"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-black text-white">
+                    +
+                  </span>
+                  <span className="truncate text-xs sm:text-sm font-black text-white tracking-tight">
+                    {t('home.addIncome')}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openAddModal('expense')}
+                  className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white/95 backdrop-blur-xl py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-glass hover:bg-white hover:shadow-glassHover active:scale-95 transition-all border border-rose-300/80 group"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-xs font-black text-rose-700 border border-rose-200">
+                    −
+                  </span>
+                  <span className="truncate text-xs sm:text-sm font-black text-black tracking-tight">
+                    {t('home.addExpense')}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* SECTION: AI FINANCIAL INSIGHTS (4 Working ML Models) */}
+          <section className="pt-1">
+            <div className="mb-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-terracotta/10 text-terracotta">
+                  <AppIcon name="sparkles" size={14} />
+                </div>
+                <h2 className="text-base font-extrabold text-deepEmerald">
+                  {t('home.aiInsights', 'AI Financial Insights')}
+                </h2>
+                <span className="rounded-full bg-[#F1F8F3] px-2 py-0.5 text-[10px] font-extrabold text-success border border-[#2E7D32]/30">
+                  4 Models
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/ai-lab')}
+                className="text-xs font-bold text-terracotta hover:underline inline-flex items-center gap-0.5"
+              >
+                <span>Open AI Lab</span> →
+              </button>
+            </div>
+
+            {/* 2x2 Grid of Liquid Glass ML Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Model 1: Linear Regression Balance Forecast */}
+              <div
+                onClick={() => navigate('/ai-lab?tab=linear')}
+                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
+                      1. Linear Regression
+                    </span>
+                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
+                      R²: {linearQuery.data?.metrics?.r2_score ?? '0.88'}
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
+                    7-Day Balance Projection
+                  </h3>
+                  <p className="text-xl font-black text-deepEmerald mt-1">
+                    {formatInr(linearQuery.data?.next_day_prediction ?? 3460)}
+                  </p>
+                </div>
+                <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
+                  <span className="text-textSecondary">
+                    {(linearQuery.data?.delta_amount ?? 0) >= 0 ? 'Expected gain' : 'Expected net'}:
+                  </span>
+                  <span
+                    className={`font-bold ${
+                      (linearQuery.data?.delta_amount ?? 0) >= 0 ? 'text-success' : 'text-danger'
+                    }`}
+                  >
+                    {(linearQuery.data?.delta_amount ?? 0) >= 0 ? '↑ +' : '↓ −'}
+                    {formatInr(Math.abs(linearQuery.data?.delta_amount ?? 260))}
+                  </span>
+                </div>
+              </div>
+
+              {/* Model 2: Logistic Regression Budget Risk */}
+              <div
+                onClick={() => navigate('/ai-lab?tab=logistic')}
+                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
+                      2. Logistic Regression
+                    </span>
+                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
+                      AUC: {logisticQuery.data?.metrics?.roc_auc ?? '0.99'}
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
+                    Budget Risk Classifier
+                  </h3>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <p className="text-xl font-black text-deepEmerald">
+                      {logisticQuery.data?.probability_percent ?? 40.8}%
+                    </p>
+                    <span className="text-xs font-bold text-textMuted">over-budget risk</span>
+                  </div>
+                </div>
+                <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
+                  <span className="text-textSecondary">Status:</span>
+                  <span
+                    className={`font-black px-2 py-0.5 rounded-full text-[10px] ${
+                      logisticQuery.data?.risk_level === 'Low'
+                        ? 'bg-[#F1F8F3] text-success border border-[#2E7D32]/30'
+                        : logisticQuery.data?.risk_level === 'Moderate'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-[#FDF3EE] text-danger border border-[#B34A26]/30'
+                    }`}
+                  >
+                    {logisticQuery.data?.predicted_label ?? 'Within Budget'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Model 3: PyTorch LSTM Sequence Forecaster */}
+              <div
+                onClick={() => navigate('/ai-lab?tab=lstm')}
+                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
+                      3. PyTorch LSTM
+                    </span>
+                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
+                      Deep Learning
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
+                    Sequence Cash Flow Forecaster
+                  </h3>
+                  <p className="text-xl font-black text-deepEmerald mt-1">
+                    {formatInr(lstmQuery.data?.next_day_predicted_net ?? 295)}
+                    <span className="text-xs font-semibold text-textMuted ml-1">tomorrow net</span>
+                  </p>
+                </div>
+                <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
+                  <span className="text-textSecondary">Test MAE:</span>
+                  <span className="font-bold text-deepEmerald">
+                    ₹{lstmQuery.data?.metrics?.test_mae?.toFixed(0) ?? 197} (35 Epochs)
+                  </span>
+                </div>
+              </div>
+
+              {/* Model 4: K-Means Clustering Spending Discovery */}
+              <div
+                onClick={() => navigate('/ai-lab?tab=kmeans')}
+                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
+                      4. K-Means Clustering
+                    </span>
+                    <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
+                      k = 3 Archetypes
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-deepEmerald mt-1">
+                    Spending Pattern Discovery
+                  </h3>
+                  <p className="text-sm font-extrabold text-deepEmerald mt-1.5 truncate">
+                    {kmeansQuery.data?.prominent_cluster?.title ?? 'Essential Living & Operational'}
+                  </p>
+                </div>
+                <div className="mt-2 pt-2 border-t border-white/50 flex items-center justify-between text-[11px]">
+                  <span className="text-textSecondary">Total Analyzed:</span>
+                  <span className="font-bold text-deepEmerald">
+                    {kmeansQuery.data?.total_analyzed ?? 180} transactions
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* SECTION: Recommended For You (2 Job Cards) */}
+          <section className="pt-1">
+            <div className="mb-2.5 flex items-center justify-between">
+              <h2 className="text-base font-extrabold text-deepEmerald">
+                {t('home.jobSuggestions')}
+              </h2>
+              <button
+                type="button"
+                onClick={() => navigate('/kaam')}
+                className="text-xs font-bold text-primaryTeal hover:underline"
+              >
+                {t('common.seeAll')} →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {jobs.map((job) => (
+                <JobCard key={job.id} job={job} compact />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* RIGHT COLUMN: Voice Assistant, Haq Setu Protection, Nearby Health Support, Profile Strength */}
+        <div className="lg:col-span-5 xl:col-span-4 space-y-4">
+          {/* COMPACT VOICE ACTION PILL */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+          >
+            <div className="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-white via-[#FDF8F0] to-white border border-[#F1B96B]/50 shadow-xs">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-xs">
+                  <AppIcon name="mic" size={18} className="text-white drop-shadow" />
+                  <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5953E] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E5953E]" />
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2B3E] truncate">
+                    {t('home.addByVoice', 'Voice Assistant')}
+                  </h3>
+                  <p className="text-[11px] text-[#231F20]/70 truncate">
+                    {t('home.addByVoiceHint', 'Tap to record income, expense or question')}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setVoiceModalVisible(true)}
+                className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#B34A26] to-[#7C2D16] hover:brightness-105 transition-all shadow-xs active:scale-95 flex items-center gap-1.5"
+                aria-label="Talk to Setu"
+              >
+                <AppIcon name="mic" size={13} />
+                <span>Talk to Setu</span>
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Haq Setu Compact Shortcut */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.1 }}
+          >
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-white via-[#FDF8F0] to-white border border-[#F4EBDD] p-3.5 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF8F0] border border-[#F1B96B]/60 text-[#B34A26]">
+                  <AppIcon name="shield-checkmark" size={20} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#1E2B3E] font-serif truncate">
+                    Need help with a work problem?
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-[#231F20]/75 truncate">
+                    Get help with account issues, payments and worker rights.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/haq')}
+                className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-[#B34A26] hover:bg-[#7C2D16] transition-all shadow-sm active:scale-95 flex items-center gap-1"
+              >
+                <span>Open Haq Setu</span>
+                <AppIcon name="arrow-forward" size={13} />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* SECTION: Nearby Health Support Card */}
+          {nearby && (
+            <section className="pt-1">
+              <div className="mb-2.5 flex items-center justify-between">
+                <h2 className="text-base font-extrabold text-deepEmerald">
+                  {t('home.healthSupport')}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => navigate('/sehat')}
+                  className="text-xs font-bold text-primaryTeal hover:underline"
+                >
+                  {t('common.seeAll')} →
+                </button>
+              </div>
+
+              <Card
+                onClick={() => navigate('/sehat')}
+                className="flex items-center gap-3 p-3.5 cursor-pointer hover:border-[#E5953E]/60 mb-0"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF7F8] text-[#3A757D]">
+                  <AppIcon name="medical" size={22} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold text-deepEmerald truncate">
+                    {nearby.nameKey ? t(nearby.nameKey) : nearby.name}
+                  </h3>
+                  <p className="text-xs text-textSecondary mt-0.5">
+                    {nearby.distance} • {nearby.servicesKey ? t(nearby.servicesKey) : (nearby.services?.[0] || nearby.categoryLabel)}
+                  </p>
+                </div>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surfaceAlt text-textMuted">
+                  <AppIcon name="chevron-forward" size={16} />
+                </div>
+              </Card>
+            </section>
+          )}
+
+          {/* Profile Strength & AI Forecast banner */}
+          <section className="pt-1">
+            <Card
+              onClick={() => navigate('/profile')}
+              variant="accent"
+              className="p-4 cursor-pointer mb-0"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <span className="text-xs font-bold text-deepEmerald">
+                    {t('home.profileReady', { percent: strength })}
+                  </span>
+                  <p className="text-[11px] text-textSecondary mt-0.5">
+                    {summary.hasSufficientHistory
+                      ? t('dhan.expectedRange', { min: formatInr(summary.forecastMin), max: formatInr(summary.forecastMax) })
+                      : t('dhan.aiForecastInsufficient')}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="rounded-full bg-warmAmber/20 border border-warmAmber/40 px-2 py-0.5 text-[10px] font-black text-terracotta">
+                    {t('dhan.aiForecastNotice')}
+                  </span>
+                  <span className="inline-flex items-center gap-0.5 text-xs font-bold text-primary hover:underline">
+                    <span>{t('profileScreen.editProfile')}</span>
+                    <AppIcon name="chevron-forward" size={11} />
+                  </span>
+                </div>
+              </div>
+              <ProgressBar
+                progress={strength / 100}
                 color="#B34A26"
                 trackColor="#FDF3EE"
               />
-            </div>
-          </Card>
+            </Card>
+          </section>
         </div>
-
-        {/* Today's Summary & Fast Income/Expense Entry */}
-        <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-4 shadow-glass border border-[#F4EBDD] space-y-3">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FEF4E8] text-terracotta border border-warmAmber/30 shadow-xs">
-                <AppIcon name="wallet" size={17} />
-              </div>
-              <div>
-                <span className="text-xs font-bold text-deepEmerald block leading-tight">
-                  {t('home.todaySummary')}
-                </span>
-                <p className="text-[11px] text-textSecondary mt-0.5">
-                  <span className="font-semibold text-success">+{t('common.currency', { amount: formatInr(todayInc) })}</span>{' '}
-                  <span className="text-danger font-semibold">−{t('common.currency', { amount: formatInr(todayExpense) })}</span>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-right pl-2">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase text-textMuted block">
-                  {t('home.netForToday')}
-                </span>
-                <span className={`text-base font-black ${netForToday >= 0 ? 'text-deepEmerald' : 'text-danger'}`}>
-                  {netForToday >= 0 ? '+' : '−'}{t('common.currency', { amount: formatInr(Math.abs(netForToday)) })}
-                </span>
-              </div>
-              <ListenButton track={homeFinancialTrack} size="sm" />
-            </div>
-          </div>
-
-          {/* Quick Action Buttons: Add Income and Add Expense */}
-          <div className="grid grid-cols-2 gap-2.5 pt-1.5 border-t border-[#F4EBDD]">
-            <button
-              type="button"
-              onClick={() => openAddModal('income')}
-              className="emerald-gradient-btn flex items-center justify-center gap-1.5 sm:gap-2 rounded-full py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-lifted hover:brightness-105 active:scale-95 transition-all group"
-            >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-black text-white">
-                +
-              </span>
-              <span className="truncate text-xs sm:text-sm font-black text-white tracking-tight">
-                {t('home.addIncome')}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => openAddModal('expense')}
-              className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white/95 backdrop-blur-xl py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-glass hover:bg-white hover:shadow-glassHover active:scale-95 transition-all border border-rose-300/80 group"
-            >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-100/90 text-xs font-black text-rose-700 border border-rose-200">
-                −
-              </span>
-              <span className="truncate text-xs sm:text-sm font-black text-black tracking-tight">
-                {t('home.addExpense')}
-              </span>
-            </button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* CENTRAL VOICE ENTRY CARD matching reference Screen 3 */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-      >
-        <div
-          onClick={() => setVoiceModalVisible(true)}
-          className="relative overflow-hidden rounded-[28px] bg-white/70 backdrop-blur-2xl p-6 shadow-glass border border-[#F4EBDD] cursor-pointer transition-all duration-300 hover:shadow-glassHover hover:bg-white/85 active:scale-[0.99] group text-center"
-        >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-          {/* Ambient soft glow */}
-          <div className="pointer-events-none absolute inset-x-0 -top-10 h-36 bg-saffronGold/20 blur-3xl" />
-
-          {/* Central Pulsing Mic Button */}
-          <div className="my-2 flex justify-center">
-            <VoiceButton
-              onPress={() => setVoiceModalVisible(true)}
-              size={76}
-            />
-          </div>
-
-          <h2 className="mt-2 text-lg font-black text-deepEmerald group-hover:text-primary transition-colors">
-            {t('home.addByVoice')}
-          </h2>
-          <p className="mt-0.5 text-xs text-textSecondary font-medium">
-            {t('home.addByVoiceHint')}
-          </p>
-        </div>
-      </motion.div>
-
-      {/* SECTION: AI FINANCIAL INSIGHTS (4 Working ML Models) */}
-      <section className="pt-2">
-        <div className="mb-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-terracotta/10 text-terracotta">
-              <AppIcon name="sparkles" size={14} />
-            </div>
-            <h2 className="text-base font-extrabold text-deepEmerald">
-              {t('home.aiInsights', 'AI Financial Insights')}
-            </h2>
-            <span className="rounded-full bg-[#F1F8F3] px-2 py-0.5 text-[10px] font-extrabold text-success border border-[#2E7D32]/30">
-              4 Models
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate('/ai-lab')}
-            className="text-xs font-bold text-terracotta hover:underline inline-flex items-center gap-0.5"
-          >
-            <span>Open AI Lab</span> →
-          </button>
-        </div>
-
-        {/* 2x2 Grid of Liquid Glass ML Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* Model 1: Linear Regression Balance Forecast */}
-          <div
-            onClick={() => navigate('/ai-lab?tab=linear')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                  1. Linear Regression
-                </span>
-                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                  R²: {linearQuery.data?.metrics?.r2_score ?? '0.88'}
-                </span>
-              </div>
-              <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                7-Day Balance Projection
-              </h3>
-              <p className="text-xl font-black text-deepEmerald mt-1">
-                {formatInr(linearQuery.data?.next_day_prediction ?? 3460)}
-              </p>
-            </div>
-            <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
-              <span className="text-textSecondary">
-                {(linearQuery.data?.delta_amount ?? 0) >= 0 ? 'Expected gain' : 'Expected net'}:
-              </span>
-              <span
-                className={`font-bold ${
-                  (linearQuery.data?.delta_amount ?? 0) >= 0 ? 'text-success' : 'text-danger'
-                }`}
-              >
-                {(linearQuery.data?.delta_amount ?? 0) >= 0 ? '↑ +' : '↓ −'}
-                {formatInr(Math.abs(linearQuery.data?.delta_amount ?? 260))}
-              </span>
-            </div>
-          </div>
-
-          {/* Model 2: Logistic Regression Budget Risk */}
-          <div
-            onClick={() => navigate('/ai-lab?tab=logistic')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                  2. Logistic Regression
-                </span>
-                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                  AUC: {logisticQuery.data?.metrics?.roc_auc ?? '0.99'}
-                </span>
-              </div>
-              <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                Budget Risk Classifier
-              </h3>
-              <div className="flex items-baseline gap-2 mt-1">
-                <p className="text-xl font-black text-deepEmerald">
-                  {logisticQuery.data?.probability_percent ?? 40.8}%
-                </p>
-                <span className="text-xs font-bold text-textMuted">over-budget risk</span>
-              </div>
-            </div>
-            <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
-              <span className="text-textSecondary">Status:</span>
-              <span
-                className={`font-black px-2 py-0.5 rounded-full text-[10px] ${
-                  logisticQuery.data?.risk_level === 'Low'
-                    ? 'bg-[#F1F8F3] text-success border border-[#2E7D32]/30'
-                    : logisticQuery.data?.risk_level === 'Moderate'
-                    ? 'bg-amber-100 text-amber-800'
-                    : 'bg-[#FDF3EE] text-danger border border-[#B34A26]/30'
-                }`}
-              >
-                {logisticQuery.data?.predicted_label ?? 'Within Budget'}
-              </span>
-            </div>
-          </div>
-
-          {/* Model 3: PyTorch LSTM Sequence Forecaster */}
-          <div
-            onClick={() => navigate('/ai-lab?tab=lstm')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                  3. PyTorch LSTM
-                </span>
-                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                  Deep Learning
-                </span>
-              </div>
-              <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                Sequence Cash Flow Forecaster
-              </h3>
-              <p className="text-xl font-black text-deepEmerald mt-1">
-                {formatInr(lstmQuery.data?.next_day_predicted_net ?? 295)}
-                <span className="text-xs font-semibold text-textMuted ml-1">tomorrow net</span>
-              </p>
-            </div>
-            <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
-              <span className="text-textSecondary">Test MAE:</span>
-              <span className="font-bold text-deepEmerald">
-                ₹{lstmQuery.data?.metrics?.test_mae?.toFixed(0) ?? 197} (35 Epochs)
-              </span>
-            </div>
-          </div>
-
-          {/* Model 4: K-Means Clustering Spending Discovery */}
-          <div
-            onClick={() => navigate('/ai-lab?tab=kmeans')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
-                  4. K-Means Clustering
-                </span>
-                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
-                  k = 3 Archetypes
-                </span>
-              </div>
-              <h3 className="text-xs font-bold text-deepEmerald mt-1">
-                Spending Pattern Discovery
-              </h3>
-              <p className="text-sm font-extrabold text-deepEmerald mt-1.5 truncate">
-                {kmeansQuery.data?.prominent_cluster?.title ?? 'Essential Living & Operational'}
-              </p>
-            </div>
-            <div className="mt-2 pt-2 border-t border-white/50 flex items-center justify-between text-[11px]">
-              <span className="text-textSecondary">Total Analyzed:</span>
-              <span className="font-bold text-deepEmerald">
-                {kmeansQuery.data?.total_analyzed ?? 180} transactions
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION: Recommended For You (2 Job Cards) */}
-      <section className="pt-2">
-        <div className="mb-2.5 flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-deepEmerald">
-            {t('home.jobSuggestions')}
-          </h2>
-          <button
-            type="button"
-            onClick={() => navigate('/kaam')}
-            className="text-xs font-bold text-primaryTeal hover:underline"
-          >
-            {t('common.seeAll')} →
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {jobs.map((job) => (
-            <JobCard key={job.id} job={job} compact />
-          ))}
-        </div>
-      </section>
-
-      {/* SECTION: Nearby Health Support Card matching reference Screen 3 */}
-      {nearby && (
-        <section className="pt-2">
-          <div className="mb-2.5 flex items-center justify-between">
-            <h2 className="text-base font-extrabold text-deepEmerald">
-              {t('home.healthSupport')}
-            </h2>
-            <button
-              type="button"
-              onClick={() => navigate('/sehat')}
-              className="text-xs font-bold text-primaryTeal hover:underline"
-            >
-              {t('common.seeAll')} →
-            </button>
-          </div>
-
-          <Card
-            onClick={() => navigate('/sehat')}
-            className="flex items-center gap-3 p-3.5 cursor-pointer hover:border-[#E5953E]/60"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF7F8] text-[#3A757D]">
-              <AppIcon name="medical" size={22} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-bold text-deepEmerald truncate">
-                {t(nearby.nameKey)}
-              </h3>
-              <p className="text-xs text-textSecondary mt-0.5">
-                {nearby.distance} • {t(nearby.servicesKey)}
-              </p>
-            </div>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surfaceAlt text-textMuted">
-              <AppIcon name="chevron-forward" size={16} />
-            </div>
-          </Card>
-        </section>
-      )}
-
-      {/* Profile Strength & AI Forecast banner */}
-      <section className="pt-1">
-        <Card
-          onClick={() => navigate('/profile')}
-          variant="accent"
-          className="p-4 cursor-pointer"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <span className="text-xs font-bold text-deepEmerald">
-                {t('home.profileReady', { percent: strength })}
-              </span>
-              <p className="text-[11px] text-textSecondary mt-0.5">
-                {summary.hasSufficientHistory
-                  ? t('dhan.expectedRange', { min: formatInr(summary.forecastMin), max: formatInr(summary.forecastMax) })
-                  : t('dhan.aiForecastInsufficient')}
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="rounded-full bg-warmAmber/20 border border-warmAmber/40 px-2 py-0.5 text-[10px] font-black text-terracotta">
-                {t('dhan.aiForecastNotice')}
-              </span>
-              <span className="inline-flex items-center gap-0.5 text-xs font-bold text-primary hover:underline">
-                <span>{t('profileScreen.editProfile')}</span>
-                <AppIcon name="chevron-forward" size={11} />
-              </span>
-            </div>
-          </div>
-          <ProgressBar
-            progress={strength / 100}
-            color="#B34A26"
-            trackColor="#FDF3EE"
-          />
-        </Card>
-      </section>
+      </div>
 
       {/* Voice Entry Modal */}
       <VoiceEntryModal

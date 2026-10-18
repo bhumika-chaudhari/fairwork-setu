@@ -2,7 +2,7 @@ import { AppIcon } from '../lib/icons';
 
 export default function VoiceButton({
   onPress,
-  size = 72,
+  size = 56,
   isListening = false,
   className = '',
 }: {
@@ -11,9 +11,9 @@ export default function VoiceButton({
   isListening?: boolean;
   className?: string;
 }) {
-  const dimension = Math.max(size, 48);
-  const ringSize = dimension + 20;
-  const outerRingSize = dimension + 40;
+  const dimension = Math.max(size, 44);
+  const ringSize = dimension + 12;
+  const outerRingSize = dimension + 24;
 
   return (
     <div className={`relative flex items-center justify-center ${className}`}>

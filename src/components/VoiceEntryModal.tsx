@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppIcon } from '../lib/icons';
 import { formatInr } from '../localization';
 import Card from './Card';
 import PrimaryButton from './PrimaryButton';
+import ModalPortal from './ModalPortal';
 import {
   isWebSpeechAvailable,
   createSpeechRecognizer,
@@ -45,6 +47,7 @@ export default function VoiceEntryModal({
   onClose: () => void;
 }) {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const { addTransaction } = useTransactions();
   const [stage, setStage] = useState<VoiceStage>('listening');
   const [transcript, setTranscript] = useState('');
@@ -215,33 +218,30 @@ export default function VoiceEntryModal({
   if (!visible) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-deepEmerald/30 p-4 backdrop-blur-xl animate-fade-in"
-      onClick={onClose}
+    <ModalPortal
+      isOpen={visible}
+      onClose={onClose}
+      maxWidthClass="sm:max-w-md"
     >
-      <div
-        className="relative w-full max-w-md rounded-[32px] bg-white/80 p-6 shadow-glassModal border border-white/90 backdrop-blur-3xl max-h-[92vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-        {/* Top Header with title and close button */}
-        <div className="flex items-center justify-between border-b border-border/40 pb-3">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-mint animate-pulse" />
-            <h2 className="text-lg font-extrabold text-deepEmerald">
-              {stage === 'listening' ? t('voice.listening') : t('voice.title')}
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 hover:bg-white text-textMuted hover:text-deepEmerald border border-white/80 transition-all active:scale-95"
-            aria-label="Close"
-          >
-            ✕
-          </button>
+      {/* Top Header with title and close button */}
+      <div className="shrink-0 px-6 pt-4 pb-3 border-b border-border/40 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="flex h-2.5 w-2.5 rounded-full bg-mint animate-pulse" />
+          <h2 className="text-lg font-extrabold text-deepEmerald">
+            {stage === 'listening' ? t('voice.listening') : t('voice.title')}
+          </h2>
         </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 hover:bg-white text-textMuted hover:text-deepEmerald border border-white/80 transition-all active:scale-95"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+      </div>
 
+      <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4">
         <AnimatePresence mode="wait">
           {/* STAGE 1: LISTENING matching reference Screen 6 */}
           {stage === 'listening' && (
@@ -313,6 +313,45 @@ export default function VoiceEntryModal({
                   "{transcript || 'Today I earned 500 rupees and spent 150 on food.'}"
                 </p>
               </div>
+
+              {/* Haq Setu Intent Recommendation */}
+              {(transcript.toLowerCase().includes('deactivat') ||
+                transcript.toLowerCase().includes('suspend') ||
+                transcript.toLowerCase().includes('block') ||
+                transcript.toLowerCase().includes('band') ||
+                transcript.toLowerCase().includes('penalty') ||
+                transcript.toLowerCase().includes('complaint') ||
+                transcript.toLowerCase().includes('rights') ||
+                transcript.toLowerCase().includes('haq') ||
+                transcript.toLowerCase().includes('paisa nahi') ||
+                transcript.toLowerCase().includes('salary') ||
+                transcript.toLowerCase().includes('board') ||
+                transcript.toLowerCase().includes('law')) && (
+                <div className="rounded-2xl bg-gradient-to-r from-[#FDF8F0] via-white to-[#FDF8F0] border-2 border-[#B34A26] p-3.5 shadow-sm space-y-2 text-left">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#B34A26]/10 text-[#B34A26] flex items-center justify-center">
+                      <AppIcon name="shield-alert" size={16} />
+                    </div>
+                    <span className="text-xs font-bold text-[#7C2D16]">
+                      Worker Rights & Account Issue Detected
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#231F20]/80 leading-relaxed">
+                    It sounds like you are facing an account deactivation, missing payment, or penalty issue. Haq Setu can help evaluate your case and prepare an appeal.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      navigate('/haq');
+                    }}
+                    className="w-full py-2 px-3 rounded-xl bg-[#B34A26] hover:bg-[#7C2D16] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
+                  >
+                    <AppIcon name="shield-checkmark" size={14} />
+                    <span>Open Haq Setu (हक़ सेतु)</span>
+                  </button>
+                </div>
+              )}
 
               {/* Two Extracted Amount Cards Side-by-Side matching reference Screen 6 */}
               <div className="grid grid-cols-2 gap-3">
@@ -526,6 +565,6 @@ export default function VoiceEntryModal({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </ModalPortal>
   );
 }

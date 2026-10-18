@@ -5,6 +5,7 @@ import Card from '../components/Card';
 import PrimaryButton from '../components/PrimaryButton';
 import ProgressBar from '../components/ProgressBar';
 import SkillChip from '../components/SkillChip';
+import ModalPortal from '../components/ModalPortal';
 import { useProfile, type Gender } from '../hooks/ProfileContext';
 import {
   CITY_KEYS,
@@ -171,7 +172,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen w-full bg-transparent px-4 py-4 md:py-8 pb-28">
-      <div className="mx-auto w-full max-w-md md:max-w-xl space-y-4">
+      <div className="mx-auto w-full max-w-5xl space-y-5">
         {/* Top Header matching reference Screen 9 */}
         <header className="flex items-center justify-between border-b border-softBorder pb-3">
           <button
@@ -196,63 +197,6 @@ export default function ProfilePage() {
           </button>
         </header>
 
-        {/* Profile Photo Avatar & Strength Card matching reference Screen 9 */}
-        <Card className="p-5">
-          <div className="flex items-center gap-4 mb-4">
-            <input
-              id="profile-photo-input"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handlePhotoUpload}
-            />
-            <label
-              htmlFor="profile-photo-input"
-              className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-2xl font-black text-white shadow-card ring-2 ring-white overflow-hidden group"
-              title="Upload photo / Selfie"
-            >
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
-              ) : (
-                name.charAt(0) || 'R'
-              )}
-              <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-saffronGold text-deepNavy shadow-xs border border-white">
-                <AppIcon name="camera-outline" size={13} />
-              </div>
-            </label>
-            <div>
-              <h2 className="text-base font-extrabold text-warmCocoa">{name}</h2>
-              <p className="text-xs font-semibold text-terracotta mt-0.5">
-                {t(`workerTypes.${workType}`)} • {t(cityKey)}
-              </p>
-              <label
-                htmlFor="profile-photo-input"
-                className="text-xs font-bold text-terracotta hover:underline mt-1 block cursor-pointer"
-              >
-                {t('profileScreen.changePhoto')}
-              </label>
-            </div>
-          </div>
-
-          {/* Strength Bar */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-warmCocoa">
-                {t('profileScreen.strength', { percent: strength })}
-              </span>
-              <span className="text-[11px] font-bold text-success">{t('profileScreen.stabilityGood')}</span>
-            </div>
-            <ProgressBar
-              progress={strength / 100}
-              color="#B34A26"
-              trackColor="#FDF3EE"
-            />
-            <p className="text-[11px] text-textMuted mt-1">
-              {t('profileScreen.strengthHint')}
-            </p>
-          </div>
-        </Card>
-
         {/* Validation Error Banner */}
         {validationError && (
           <div className="rounded-2xl bg-danger/10 border border-danger/30 p-3.5 flex items-center gap-2.5 text-danger text-xs font-bold animate-fade-in">
@@ -261,357 +205,445 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* FORM INPUTS matching reference Screen 9 */}
-        <div className="space-y-4">
-          {/* Full Name */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.name')}
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-            />
-          </div>
+        {/* 2-Column Responsive Layout for Tablet & Desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 items-start">
+          {/* Left Column (md:col-span-5): Identity, Strength, Language, Session Controls */}
+          <div className="md:col-span-5 space-y-4">
+            {/* Profile Photo Avatar & Strength Card */}
+            <Card className="p-5">
+              <div className="flex items-center gap-4 mb-4">
+                <input
+                  id="profile-photo-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoUpload}
+                />
+                <label
+                  htmlFor="profile-photo-input"
+                  className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-2xl font-black text-white shadow-card ring-2 ring-white overflow-hidden group"
+                  title="Upload photo / Selfie"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
+                  ) : (
+                    name.charAt(0) || 'R'
+                  )}
+                  <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-saffronGold text-deepNavy shadow-xs border border-white">
+                    <AppIcon name="camera-outline" size={13} />
+                  </div>
+                </label>
+                <div>
+                  <h2 className="text-base font-extrabold text-warmCocoa">{name}</h2>
+                  <p className="text-xs font-semibold text-terracotta mt-0.5">
+                    {t(`workerTypes.${workType}`)} • {t(cityKey)}
+                  </p>
+                  <label
+                    htmlFor="profile-photo-input"
+                    className="text-xs font-bold text-terracotta hover:underline mt-1 block cursor-pointer"
+                  >
+                    {t('profileScreen.changePhoto')}
+                  </label>
+                </div>
+              </div>
 
-          {/* Gender Selection (Optional) */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-bold text-warmCocoa">
-                {t('gender.label')}{' '}
-                <span className="text-[11px] font-normal text-textMuted">
-                  ({t('gender.optionalBadge')})
-                </span>
+              {/* Strength Bar */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold text-warmCocoa">
+                    {t('profileScreen.strength', { percent: strength })}
+                  </span>
+                  <span className="text-[11px] font-bold text-success">{t('profileScreen.stabilityGood')}</span>
+                </div>
+                <ProgressBar
+                  progress={strength / 100}
+                  color="#B34A26"
+                  trackColor="#FDF3EE"
+                />
+                <p className="text-[11px] text-textMuted mt-1">
+                  {t('profileScreen.strengthHint')}
+                </p>
+              </div>
+            </Card>
+
+            {/* Preferred Language Card */}
+            <Card className="p-4 md:p-5">
+              <label className="block text-xs font-bold text-warmCocoa mb-2">
+                {t('profileScreen.preferredLanguage')}
               </label>
-              <span className="text-[10px] text-textMuted">
-                {t('gender.noRestrictionNotice')}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {genderOptions.map((opt) => {
-                const isSelected = gender === opt.id;
-                return (
+              <div className="flex flex-wrap gap-1.5">
+                {SUPPORTED_LANGUAGE_CODES.slice(0, 5).map((code) => (
                   <button
-                    key={opt.id}
+                    key={code}
                     type="button"
-                    onClick={() => setGender(isSelected ? null : opt.id)}
-                    className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
-                      isSelected
+                    onClick={() => handleLangSelect(code)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all active:scale-95 ${
+                      selectedLang === code
                         ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
-                        : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
+                        : 'bg-warmCream/60 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
                     }`}
                   >
-                    <AppIcon name={opt.icon} size={14} />
-                    <span>{t(opt.labelKey)}</span>
+                    {LANGUAGE_NATIVE_NAMES[code]}
                   </button>
-                );
-              })}
-            </div>
-            <p className="mt-1 text-[11px] text-textMuted">
-              {t('gender.helperText')}
-            </p>
-          </div>
+                ))}
+              </div>
+            </Card>
 
-          {/* City */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.city')}
-            </label>
-            <select
-              value={cityKey}
-              onChange={(e) => setCityKey(e.target.value)}
-              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-            >
-              {CITY_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {t(k)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Preferred Language */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.preferredLanguage')}
-            </label>
-            <div className="flex flex-wrap gap-1.5">
-              {SUPPORTED_LANGUAGE_CODES.slice(0, 5).map((code) => (
+            {/* Account & Session Controls */}
+            <div className="rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 border border-softBorder shadow-card space-y-3">
+              <h3 className="text-xs font-bold text-textMuted uppercase tracking-wider">
+                {t('profileScreen.accountSession', 'Session & Demo Controls')}
+              </h3>
+              <div className="flex flex-col gap-2">
                 <button
-                  key={code}
                   type="button"
-                  onClick={() => handleLangSelect(code)}
-                  className={`rounded-full px-3 py-1 text-xs font-bold transition-all active:scale-95 ${
-                    selectedLang === code
-                      ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
-                      : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
-                  }`}
+                  onClick={handleResetDemoData}
+                  className="flex items-center justify-center gap-1.5 rounded-2xl bg-warmCream/60 hover:bg-white text-terracotta border border-warmAmber/40 py-2.5 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
                 >
-                  {LANGUAGE_NATIVE_NAMES[code]}
+                  <AppIcon name="refresh" size={15} />
+                  <span>{t('profileScreen.reloadDemo', 'Reload 5-Day Demo Data')}</span>
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Work Type */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.workType')}
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {workerTypeOptions.map((opt) => (
                 <button
-                  key={opt.type}
                   type="button"
-                  onClick={() => setWorkType(opt.type)}
-                  className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
-                    workType === opt.type
-                      ? 'bg-terracotta/10 border-2 border-terracotta text-warmCocoa shadow-card'
-                      : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
-                  }`}
+                  onClick={() => setShowLogoutConfirm(true)}
+                  className="flex items-center justify-center gap-1.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 py-2.5 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
                 >
-                  <AppIcon name={opt.icon} size={15} />
-                  <span className="truncate">{t(opt.labelKey)}</span>
+                  <AppIcon name="close" size={15} className="text-rose-600" />
+                  <span>{t('profileScreen.logout', 'Log Out')}</span>
                 </button>
-              ))}
+              </div>
             </div>
           </div>
 
-          {/* Editable Skills */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.skills')}
-            </label>
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {skillKeys.map((sk) => (
-                <span
-                  key={sk}
-                  className="inline-flex items-center gap-1 rounded-full bg-warmAmber/20 border border-warmAmber/30 px-3 py-1 text-xs font-bold text-warmCocoa"
+          {/* Right Column (md:col-span-7): Personal, Work, Availability & Pay */}
+          <div className="md:col-span-7 space-y-4">
+            {/* Personal Details Card */}
+            <Card className="p-4 md:p-5 space-y-3.5">
+              <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider border-b border-softBorder pb-2">
+                Personal Information
+              </h3>
+
+              {/* Full Name */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.name')}
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
+                />
+              </div>
+
+              {/* Gender Selection */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-bold text-warmCocoa">
+                    {t('gender.label')}{' '}
+                    <span className="text-[11px] font-normal text-textMuted">
+                      ({t('gender.optionalBadge')})
+                    </span>
+                  </label>
+                  <span className="text-[10px] text-textMuted">
+                    {t('gender.noRestrictionNotice')}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {genderOptions.map((opt) => {
+                    const isSelected = gender === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setGender(isSelected ? null : opt.id)}
+                        className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
+                          isSelected
+                            ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
+                            : 'bg-warmCream/60 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
+                        }`}
+                      >
+                        <AppIcon name={opt.icon} size={14} />
+                        <span>{t(opt.labelKey)}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1 text-[11px] text-textMuted">
+                  {t('gender.helperText')}
+                </p>
+              </div>
+
+              {/* City */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.city')}
+                </label>
+                <select
+                  value={cityKey}
+                  onChange={(e) => setCityKey(e.target.value)}
+                  className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
                 >
-                  <span>{t(sk)}</span>
+                  {CITY_KEYS.map((k) => (
+                    <option key={k} value={k}>
+                      {t(k)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Emergency Contact */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.emergencyContact')}
+                </label>
+                <input
+                  type="tel"
+                  value={emergencyContact}
+                  onChange={(e) => setEmergencyContact(e.target.value)}
+                  placeholder="+91 98765 43210"
+                  className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
+                />
+              </div>
+            </Card>
+
+            {/* Work & Skills Card */}
+            <Card className="p-4 md:p-5 space-y-3.5">
+              <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider border-b border-softBorder pb-2">
+                Work & Skills
+              </h3>
+
+              {/* Work Type */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.workType')}
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {workerTypeOptions.map((opt) => (
+                    <button
+                      key={opt.type}
+                      type="button"
+                      onClick={() => setWorkType(opt.type)}
+                      className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
+                        workType === opt.type
+                          ? 'bg-terracotta/10 border-2 border-terracotta text-warmCocoa shadow-card'
+                          : 'bg-warmCream/60 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
+                      }`}
+                    >
+                      <AppIcon name={opt.icon} size={15} />
+                      <span className="truncate">{t(opt.labelKey)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Editable Skills */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.skills')}
+                </label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {skillKeys.map((sk) => (
+                    <span
+                      key={sk}
+                      className="inline-flex items-center gap-1 rounded-full bg-warmAmber/20 border border-warmAmber/30 px-3 py-1 text-xs font-bold text-warmCocoa"
+                    >
+                      <span>{t(sk)}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSkillKey(sk)}
+                        className="text-textMuted hover:text-danger ml-1"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                  {customSkills.map((sk) => (
+                    <span
+                      key={sk}
+                      className="inline-flex items-center gap-1 rounded-full bg-warmAmber/20 border border-warmAmber/30 px-3 py-1 text-xs font-bold text-terracotta"
+                    >
+                      <span>{sk}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomSkill(sk)}
+                        className="text-textMuted hover:text-danger ml-1"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+
+                {/* Add Custom Skill field */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newSkillText}
+                    onChange={(e) => setNewSkillText(e.target.value)}
+                    placeholder={t('profileScreen.skillPlaceholder')}
+                    className="flex-1 rounded-xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary focus:ring-2 focus:ring-terracotta/30 focus:outline-none shadow-inner"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddCustomSkill();
+                      }
+                    }}
+                  />
                   <button
                     type="button"
-                    onClick={() => handleRemoveSkillKey(sk)}
-                    className="text-textMuted hover:text-danger ml-1"
+                    onClick={handleAddCustomSkill}
+                    className="rounded-xl bg-gradient-to-r from-[#B34A26] to-[#7C2D16] px-3.5 py-2 text-xs font-bold text-white shadow-card hover:brightness-110 active:scale-95 transition-all"
                   >
-                    ✕
+                    + {t('common.add')}
                   </button>
-                </span>
-              ))}
-              {customSkills.map((sk) => (
-                <span
-                  key={sk}
-                  className="inline-flex items-center gap-1 rounded-full bg-warmAmber/20 border border-warmAmber/30 px-3 py-1 text-xs font-bold text-terracotta"
-                >
-                  <span>{sk}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCustomSkill(sk)}
-                    className="text-textMuted hover:text-danger ml-1"
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-            </div>
+                </div>
+              </div>
+            </Card>
 
-            {/* Add Custom Skill field */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newSkillText}
-                onChange={(e) => setNewSkillText(e.target.value)}
-                placeholder={t('profileScreen.skillPlaceholder')}
-                className="flex-1 rounded-xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary focus:ring-2 focus:ring-terracotta/30 focus:outline-none shadow-inner"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddCustomSkill();
-                  }
-                }}
-              />
+            {/* Availability & Financial Preferences Card */}
+            <Card className="p-4 md:p-5 space-y-3.5">
+              <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider border-b border-softBorder pb-2">
+                Availability & Compensation
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Experience Years */}
+                <div>
+                  <label className="block text-xs font-bold text-warmCocoa mb-1">
+                    {t('profileScreen.experience')}
+                  </label>
+                  <input
+                    type="number"
+                    value={experienceYears}
+                    onChange={(e) => setExperienceYears(e.target.value)}
+                    className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
+                  />
+                </div>
+
+                {/* Savings Goal */}
+                <div>
+                  <label className="block text-xs font-bold text-warmCocoa mb-1">
+                    {t('profileScreen.savingsGoal')} (₹)
+                  </label>
+                  <input
+                    type="number"
+                    value={savingsGoal}
+                    onChange={(e) => setSavingsGoal(e.target.value)}
+                    placeholder="10000"
+                    className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Availability */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.availability')}
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {AVAILABILITY_OPTIONS.map((av) => (
+                    <button
+                      key={av.id}
+                      type="button"
+                      onClick={() => setAvailability(av.id)}
+                      className={`rounded-xl p-2.5 text-xs font-bold text-center transition-all active:scale-95 ${
+                        availability === av.id
+                          ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
+                          : 'bg-warmCream/60 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
+                      }`}
+                    >
+                      {t(`availability.${av.id}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Expected Daily Pay Range */}
+              <div>
+                <label className="block text-xs font-bold text-warmCocoa mb-1">
+                  {t('profileScreen.payRange')} (₹ / day)
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    value={payMin}
+                    onChange={(e) => setPayMin(e.target.value)}
+                    placeholder="Min (e.g. 400)"
+                    className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
+                  />
+                  <input
+                    type="number"
+                    value={payMax}
+                    onChange={(e) => setPayMax(e.target.value)}
+                    placeholder="Max (e.g. 700)"
+                    className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </Card>
+
+            {/* Save & Cancel Action Buttons */}
+            <div className="pt-1 flex items-center gap-3">
               <button
                 type="button"
-                onClick={handleAddCustomSkill}
-                className="rounded-xl bg-gradient-to-r from-[#B34A26] to-[#7C2D16] px-3.5 py-2 text-xs font-bold text-white shadow-card hover:brightness-110 active:scale-95 transition-all"
+                onClick={handleCancel}
+                disabled={isSaving}
+                className="flex-1 rounded-full border border-softBorder bg-cleanWhite/90 backdrop-blur-md py-3 text-xs font-bold text-textSecondary hover:bg-cleanWhite transition-all shadow-xs active:scale-95"
               >
-                + {t('common.add')}
+                {t('profileScreen.cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="emerald-gradient-btn flex-[2] flex items-center justify-center gap-2 rounded-full py-3 text-xs font-bold text-white shadow-card hover:shadow-cardHover border border-saffronGold/30 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
+              >
+                {isSaving && (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                )}
+                <span>{isSaving ? t('profileScreen.saving') : t('profileScreen.saveChanges')}</span>
               </button>
             </div>
-          </div>
-
-          {/* Experience Years */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.experience')}
-            </label>
-            <input
-              type="number"
-              value={experienceYears}
-              onChange={(e) => setExperienceYears(e.target.value)}
-              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-            />
-          </div>
-
-          {/* Availability */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.availability')}
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {AVAILABILITY_OPTIONS.map((av) => (
-                <button
-                  key={av.id}
-                  type="button"
-                  onClick={() => setAvailability(av.id)}
-                  className={`rounded-xl p-2.5 text-xs font-bold text-center transition-all active:scale-95 ${
-                    availability === av.id
-                      ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
-                      : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
-                  }`}
-                >
-                  {t(`availability.${av.id}`)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Expected Daily Pay Range */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.payRange')} (₹ / day)
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="number"
-                value={payMin}
-                onChange={(e) => setPayMin(e.target.value)}
-                placeholder="Min (e.g. 400)"
-                className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-              />
-              <input
-                type="number"
-                value={payMax}
-                onChange={(e) => setPayMax(e.target.value)}
-                placeholder="Max (e.g. 700)"
-                className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Emergency Contact */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.emergencyContact')}
-            </label>
-            <input
-              type="tel"
-              value={emergencyContact}
-              onChange={(e) => setEmergencyContact(e.target.value)}
-              placeholder="+91 98765 43210"
-              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-            />
-          </div>
-
-          {/* Savings Goal */}
-          <div>
-            <label className="block text-xs font-bold text-warmCocoa mb-1">
-              {t('profileScreen.savingsGoal')}
-            </label>
-            <input
-              type="number"
-              value={savingsGoal}
-              onChange={(e) => setSavingsGoal(e.target.value)}
-              placeholder="10000"
-              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
-            />
-          </div>
-
-          {/* Save & Cancel Action Buttons */}
-          <div className="pt-3 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleCancel}
-              disabled={isSaving}
-              className="flex-1 rounded-full border border-softBorder bg-cleanWhite/80 backdrop-blur-md py-3 text-xs font-bold text-textSecondary hover:bg-cleanWhite transition-all shadow-xs active:scale-95"
-            >
-              {t('profileScreen.cancel')}
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving}
-              className="emerald-gradient-btn flex-[2] flex items-center justify-center gap-2 rounded-full py-3 text-xs font-bold text-white shadow-card hover:shadow-cardHover border border-saffronGold/30 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
-            >
-              {isSaving && (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              )}
-              <span>{isSaving ? t('profileScreen.saving') : t('profileScreen.saveChanges')}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Account & Session Controls */}
-        <div className="rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 border border-softBorder shadow-card space-y-3">
-          <h3 className="text-xs font-bold text-textMuted uppercase tracking-wider">
-            {t('profileScreen.accountSession', 'Session & Demo Controls')}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <button
-              type="button"
-              onClick={handleResetDemoData}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-cleanWhite/90 hover:bg-white text-terracotta border border-warmAmber/40 py-3 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
-            >
-              <AppIcon name="refresh" size={15} />
-              <span>{t('profileScreen.reloadDemo', 'Reload 5-Day Demo Data')}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowLogoutConfirm(true)}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 py-3 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
-            >
-              <AppIcon name="close" size={15} className="text-rose-600" />
-              <span>{t('profileScreen.logout', 'Log Out')}</span>
-            </button>
           </div>
         </div>
 
         {/* Logout Confirmation Modal */}
-        {showLogoutConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-deepNavy/35 backdrop-blur-md animate-fade-in">
-            <div className="w-full max-w-sm rounded-3xl bg-cleanWhite/95 backdrop-blur-2xl p-6 shadow-lifted border border-softBorder space-y-4 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 border border-rose-200">
-                <AppIcon name="close" size={26} />
-              </div>
-              <div>
-                <h3 className="text-base font-black text-warmCocoa">
-                  {t('profileScreen.logoutPromptTitle', 'Log Out of Setu?')}
-                </h3>
-                <p className="text-xs text-textSecondary mt-1">
-                  {t('profileScreen.logoutPromptSub', 'You will be returned to the welcome screen. Your saved transactions and details will remain safe in local storage.')}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowLogoutConfirm(false)}
-                  className="flex-1 rounded-full border border-softBorder bg-cleanWhite/80 py-2.5 text-xs font-bold text-textSecondary hover:bg-white transition-all shadow-xs active:scale-95"
-                >
-                  {t('common.cancel', 'Cancel')}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="flex-1 rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white shadow-card hover:bg-rose-700 transition-all active:scale-95"
-                >
-                  {t('profileScreen.confirmLogout', 'Yes, Log Out')}
-                </button>
-              </div>
+        <ModalPortal
+          isOpen={showLogoutConfirm}
+          onClose={() => setShowLogoutConfirm(false)}
+          maxWidthClass="sm:max-w-sm"
+        >
+          <div className="p-6 space-y-4 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 border border-rose-200">
+              <AppIcon name="close" size={26} />
+            </div>
+            <div>
+              <h3 className="text-base font-black text-warmCocoa">
+                {t('profileScreen.logoutPromptTitle', 'Log Out of Setu?')}
+              </h3>
+              <p className="text-xs text-textSecondary mt-1">
+                {t('profileScreen.logoutPromptSub', 'You will be returned to the welcome screen. Your saved transactions and details will remain safe in local storage.')}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 rounded-full border border-softBorder bg-cleanWhite/80 py-2.5 text-xs font-bold text-textSecondary hover:bg-white transition-all shadow-xs active:scale-95"
+              >
+                {t('common.cancel', 'Cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex-1 rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white shadow-card hover:bg-rose-700 transition-all active:scale-95"
+              >
+                {t('profileScreen.confirmLogout', 'Yes, Log Out')}
+              </button>
             </div>
           </div>
-        )}
+        </ModalPortal>
 
         {demoResetSuccess && (
           <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 animate-fade-in">

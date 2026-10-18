@@ -7,6 +7,7 @@ import {
   type LanguageCode,
 } from '../localization';
 import { AppIcon } from '../lib/icons';
+import ModalPortal from './ModalPortal';
 
 export default function LanguageSelector({
   variant = 'grid',
@@ -66,35 +67,29 @@ export default function LanguageSelector({
       )}
 
       {/* Language Modal */}
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E2B3E]/30 p-4 backdrop-blur-xl animate-fade-in"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-sm rounded-[30px] bg-white/90 p-6 shadow-glassModal border border-[#F4EBDD] backdrop-blur-3xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-            <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🌐</span>
-                <h3 className="text-base font-extrabold text-deepEmerald">
-                  {t('common.chooseLanguage')}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="text-textMuted hover:text-deepEmerald"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="max-h-[60vh] overflow-y-auto">{chips}</div>
+      <ModalPortal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        maxWidthClass="sm:max-w-sm"
+      >
+        <div className="shrink-0 px-6 pt-4 pb-3 border-b border-border/40 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🌐</span>
+            <h3 className="text-base font-extrabold text-deepEmerald">
+              {t('common.chooseLanguage')}
+            </h3>
           </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="text-textMuted hover:text-deepEmerald"
+            aria-label="Close"
+          >
+            ✕
+          </button>
         </div>
-      )}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4 max-h-[60vh]">{chips}</div>
+      </ModalPortal>
 
       {/* Toast Confirmation */}
       {toastVisible && (

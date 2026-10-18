@@ -18,6 +18,7 @@ import SehatPage from './pages/SehatPage';
 import KaushalPage from './pages/KaushalPage';
 import ProfilePage from './pages/ProfilePage';
 import AiLabPage from './pages/AiLabPage';
+import HaqSetuPage from './pages/HaqSetuPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 import { useProfile } from './hooks/ProfileContext';
@@ -96,6 +97,9 @@ export default function App() {
                     <Route path="/skills" element={<Navigate to="/kaushal" replace />} />
                     <Route path="/ai-lab" element={<AiLabPage />} />
                     <Route path="/ml" element={<Navigate to="/ai-lab" replace />} />
+                    <Route path="/haq" element={<HaqSetuPage />} />
+                    <Route path="/haq-setu" element={<Navigate to="/haq" replace />} />
+                    <Route path="/rights" element={<Navigate to="/haq" replace />} />
                     <Route path="/voice" element={<HomePage />} />
                   </Route>
 

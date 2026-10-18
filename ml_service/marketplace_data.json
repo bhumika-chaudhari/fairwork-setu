@@ -1,0 +1,557 @@
+{
+  "jobs": [
+    {
+      "id": "job-del-01",
+      "title": "Quick Delivery Partner (Two-Wheeler)",
+      "employer": "Swiggy Express Fleet",
+      "category": "delivery",
+      "description": "Deliver grocery, meal, and retail packages within a 4 km zone. Weekly payout, flexible shifts, and platform accident insurance coverage.",
+      "location": "Kothrud & Deccan, Pune",
+      "serviceArea": "Pune West Zone",
+      "distance": "1.8 km",
+      "workType": "shift_based",
+      "compensation": {
+        "amount": 450,
+        "maxAmount": 750,
+        "unit": "per_day",
+        "isEstimate": true,
+        "materialsExtra": false
+      },
+      "schedule": "Flexible 4 or 8-hour shifts (Morning / Evening / Peak dinner)",
+      "requirements": [
+        "Valid driving license",
+        "Two-wheeler with insurance",
+        "Smartphone with GPS"
+      ],
+      "skills": [
+        "Two-wheeler riding",
+        "GPS Navigation",
+        "Customer Communication"
+      ],
+      "deadline": "2026-11-15",
+      "verificationStatus": "verified_platform",
+      "safetyInfo": "Includes standard 24/7 emergency SOS and accidental medical cover up to ₹2 Lakhs.",
+      "contactChannel": {
+        "type": "platform_apply",
+        "value": "delivery.support@swiggy.in",
+        "verified": true
+      },
+      "isDemo": false,
+      "postedAt": "2026-10-16T10:00:00Z"
+    },
+    {
+      "id": "job-elec-02",
+      "title": "Residential Maintenance Electrician",
+      "employer": "Shree Ganesh Housing Society Co-op",
+      "category": "electrician",
+      "description": "Handle routine electrical maintenance, meter panel troubleshooting, and household inverter repairs for a 120-flat community.",
+      "location": "Bavdhan, Pune",
+      "serviceArea": "Bavdhan / Pashan",
+      "distance": "3.2 km",
+      "workType": "part_time",
+      "compensation": {
+        "amount": 14000,
+        "maxAmount": 18000,
+        "unit": "per_month",
+        "isEstimate": false,
+        "materialsExtra": true
+      },
+      "schedule": "Monday to Saturday, 9:00 AM – 1:30 PM",
+      "requirements": [
+        "Wireman license or ITI Electrician certificate",
+        "Minimum 2 years experience in 3-phase wiring"
+      ],
+      "skills": [
+        "MCB repair",
+        "Inverter wiring",
+        "Safety grounding",
+        "Pump panel check"
+      ],
+      "deadline": "2026-10-31",
+      "verificationStatus": "community_posted",
+      "safetyInfo": "All high-voltage works require dual-man safety protocol. Gloves & multimeter provided.",
+      "contactChannel": {
+        "type": "platform_apply",
+        "value": "society.committee@shreeganesh.org",
+        "verified": true
+      },
+      "isDemo": false,
+      "postedAt": "2026-10-15T08:30:00Z"
+    },
+    {
+      "id": "job-ware-03",
+      "title": "Inventory Sorter & Packing Associate",
+      "employer": "BlueDart E-Commerce Hub",
+      "category": "warehouse",
+      "description": "Barcode scanning, sorting incoming parcels by pincode, and safe pallet loading in modern climate-monitored distribution hub.",
+      "location": "Hingewadi Phase 2, Pune",
+      "serviceArea": "Hingewadi MIDC",
+      "distance": "6.5 km",
+      "workType": "full_time",
+      "compensation": {
+        "amount": 550,
+        "maxAmount": 650,
+        "unit": "per_day",
+        "isEstimate": false,
+        "materialsExtra": false
+      },
+      "schedule": "Fixed 8-hour shift with tea breaks and attendance incentive",
+      "requirements": [
+        "Basic numerical literacy",
+        "Ability to lift up to 15 kg boxes",
+        "Punctuality"
+      ],
+      "skills": [
+        "Barcode scanning",
+        "Inventory packing",
+        "Dispatch verification"
+      ],
+      "deadline": "2026-11-20",
+      "verificationStatus": "verified_platform",
+      "safetyInfo": "Safety steel-toe shoes provided on site. Free company pick-and-drop bus from Katraj & Swargate.",
+      "contactChannel": {
+        "type": "platform_apply",
+        "value": "hubjobs.pune@bluedart.com",
+        "verified": true
+      },
+      "isDemo": false,
+      "postedAt": "2026-10-17T12:00:00Z"
+    },
+    {
+      "id": "job-clean-04",
+      "title": "Commercial Office Deep Cleaning Specialist",
+      "employer": "CleanSpace Facility Services",
+      "category": "cleaning",
+      "description": "Floor scrubbing, glass cleaning, and sanitization of modern co-working premises. High-grade mechanical vacuum and polishing machines used.",
+      "location": "Shivaji Nagar, Pune",
+      "serviceArea": "Central Pune",
+      "distance": "4.1 km",
+      "workType": "task_based",
+      "compensation": {
+        "amount": 800,
+        "maxAmount": 1200,
+        "unit": "per_task",
+        "isEstimate": true,
+        "materialsExtra": false
+      },
+      "schedule": "Early morning or weekend contract slots (flexible bookings)",
+      "requirements": [
+        "Prior housekeeping or deep-cleaning experience",
+        "Reliable transport"
+      ],
+      "skills": [
+        "Vacuum operation",
+        "Glass cleaning",
+        "Floor scrubbing",
+        "Safe chemical handling"
+      ],
+      "deadline": "2026-11-10",
+      "verificationStatus": "demo_listing",
+      "safetyInfo": "Full protective aprons, face shields, and rubber gloves supplied.",
+      "contactChannel": {
+        "type": "platform_apply",
+        "value": "support@cleanspace.co.in",
+        "verified": false
+      },
+      "isDemo": true,
+      "postedAt": "2026-10-18T06:00:00Z"
+    },
+    {
+      "id": "job-tail-05",
+      "title": "Boutique Alteration & Stitching Master",
+      "employer": "Ananya Designer Boutique",
+      "category": "tailor",
+      "description": "Blouse cutting, fall-pico, kurti alterations, and custom garment fitting. Clean, well-lit studio with modern electric sewing machines.",
+      "location": "Karve Nagar, Pune",
+      "serviceArea": "Karve Road / Warje",
+      "distance": "2.9 km",
+      "workType": "full_time",
+      "compensation": {
+        "amount": 16000,
+        "maxAmount": 22000,
+        "unit": "per_month",
+        "isEstimate": false,
+        "materialsExtra": false
+      },
+      "schedule": "10:30 AM – 7:30 PM (Sunday Half Day)",
+      "requirements": [
+        "Minimum 3 years tailoring experience",
+        "Expertise in bridal blouse fitting and measurements"
+      ],
+      "skills": [
+        "Garment cutting",
+        "Interlocking machine",
+        "Embroidery attachment",
+        "Fitting alterations"
+      ],
+      "deadline": "2026-11-05",
+      "verificationStatus": "community_posted",
+      "safetyInfo": "Ergonomic seating and well-ventilated workshop.",
+      "contactChannel": {
+        "type": "platform_apply",
+        "value": "ananya.boutique@gmail.com",
+        "verified": true
+      },
+      "isDemo": false,
+      "postedAt": "2026-10-14T09:15:00Z"
+    }
+  ],
+  "service_profiles": [
+    {
+      "id": "sp-ramesh-elec",
+      "userId": "usr-ramesh-77",
+      "displayName": "Ramesh Shinde",
+      "trade": "electrician",
+      "skills": [
+        "House Wiring",
+        "Inverter Fitting",
+        "Short Circuit Repair",
+        "Ceiling Fan & Geyser"
+      ],
+      "shortDescription": "Certified wireman with 9 years of trusted residential service across Kothrud. Prompt arrival, transparent pricing, and quality guaranteed.",
+      "yearsOfExperience": 9,
+      "serviceCategories": [
+        "electrician",
+        "appliance_repair"
+      ],
+      "approximateServiceArea": "Kothrud, Karve Nagar & Deccan, Pune",
+      "serviceRadiusKm": 7,
+      "languages": [
+        "Marathi",
+        "Hindi",
+        "Basic English"
+      ],
+      "qualifications": [
+        "ITI Wireman License #MH-PUN-8841",
+        "Govt. Vocational Certificate"
+      ],
+      "pricing": {
+        "type": "visit_fee",
+        "indicativePrice": 250,
+        "maxPrice": 450,
+        "description": "₹250 initial visit and diagnostic fee. Repair charges estimated honestly upfront before starting work.",
+        "materialsExtra": true
+      },
+      "availability": {
+        "workingDays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat"
+        ],
+        "timeSlots": [
+          "09:00 - 13:00",
+          "14:00 - 18:00"
+        ],
+        "unavailableDates": []
+      },
+      "completedJobsCount": 47,
+      "rating": 4.9,
+      "reviewsCount": 42,
+      "isPublished": true,
+      "isPaused": false,
+      "verificationStatus": "verified_trade",
+      "updatedAt": "2026-10-18T10:00:00Z"
+    },
+    {
+      "id": "sp-sunita-tailor",
+      "userId": "usr-sunita-42",
+      "displayName": "Sunita Kamble",
+      "trade": "tailor",
+      "skills": [
+        "Blouse Stitching",
+        "Kurti Fitting",
+        "School Uniforms",
+        "Fall-Pico",
+        "Curtain Hemming"
+      ],
+      "shortDescription": "Master tailor with 12 years experience. Doorstep pickup & delivery available for custom women's tailoring and quick alterations.",
+      "yearsOfExperience": 12,
+      "serviceCategories": [
+        "tailor"
+      ],
+      "approximateServiceArea": "Aundh, Baner & Pashan, Pune",
+      "serviceRadiusKm": 8,
+      "languages": [
+        "Marathi",
+        "Hindi"
+      ],
+      "qualifications": [
+        "Diploma in Fashion & Garment Making"
+      ],
+      "pricing": {
+        "type": "per_task",
+        "indicativePrice": 350,
+        "maxPrice": 900,
+        "description": "Simple blouse from ₹350, lining blouse ₹550. Fast 48-hr delivery.",
+        "materialsExtra": false
+      },
+      "availability": {
+        "workingDays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat"
+        ],
+        "timeSlots": [
+          "10:00 - 14:00",
+          "16:00 - 20:00"
+        ],
+        "unavailableDates": []
+      },
+      "completedJobsCount": 63,
+      "rating": 4.8,
+      "reviewsCount": 58,
+      "isPublished": true,
+      "isPaused": false,
+      "verificationStatus": "verified_trade",
+      "updatedAt": "2026-10-17T14:30:00Z"
+    },
+    {
+      "id": "sp-vikram-plumber",
+      "userId": "usr-vikram-19",
+      "displayName": "Vikram Jadhav",
+      "trade": "plumber",
+      "skills": [
+        "Tap & Valve Replacement",
+        "Bathroom Leakage Fix",
+        "Water Tank Cleaning",
+        "Basin & Commode Fitting"
+      ],
+      "shortDescription": "Quick response plumbing expert. Carries standard CPVC fittings, washers, and sealant for 1-visit resolution.",
+      "yearsOfExperience": 6,
+      "serviceCategories": [
+        "plumber"
+      ],
+      "approximateServiceArea": "Hadapsar, Magarpatta & Fatima Nagar, Pune",
+      "serviceRadiusKm": 10,
+      "languages": [
+        "Hindi",
+        "Marathi"
+      ],
+      "qualifications": [
+        "Plumbing Apprentice Certificate - MSME"
+      ],
+      "pricing": {
+        "type": "visit_fee",
+        "indicativePrice": 200,
+        "maxPrice": 400,
+        "description": "₹200 inspection fee. Fixed fair rate card for valve/pipe replacements.",
+        "materialsExtra": true
+      },
+      "availability": {
+        "workingDays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "timeSlots": [
+          "08:30 - 12:30",
+          "13:30 - 17:30"
+        ],
+        "unavailableDates": []
+      },
+      "completedJobsCount": 38,
+      "rating": 4.7,
+      "reviewsCount": 34,
+      "isPublished": true,
+      "isPaused": false,
+      "verificationStatus": "verified_trade",
+      "updatedAt": "2026-10-18T08:00:00Z"
+    },
+    {
+      "id": "sp-anil-mechanic",
+      "userId": "usr-anil-63",
+      "displayName": "Anil Rathod",
+      "trade": "mechanic",
+      "skills": [
+        "Two-Wheeler Servicing",
+        "Puncture Repair",
+        "Engine Oil Change",
+        "Brake & Clutch Tuning",
+        "Roadside Assistance"
+      ],
+      "shortDescription": "Mobile two-wheeler mechanic. Ready with mobile kit for roadside breakdown or doorstep servicing within 5 km.",
+      "yearsOfExperience": 8,
+      "serviceCategories": [
+        "mechanic"
+      ],
+      "approximateServiceArea": "Warje, Vadgaon & Sinhagad Road, Pune",
+      "serviceRadiusKm": 6,
+      "languages": [
+        "Hindi",
+        "Marathi"
+      ],
+      "qualifications": [
+        "Automobile ITI Mechanic"
+      ],
+      "pricing": {
+        "type": "per_task",
+        "indicativePrice": 300,
+        "maxPrice": 850,
+        "description": "General doorstep service ₹300 (oil & parts extra at MRP). Roadside puncture ₹120.",
+        "materialsExtra": true
+      },
+      "availability": {
+        "workingDays": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat"
+        ],
+        "timeSlots": [
+          "09:00 - 13:00",
+          "14:00 - 19:00"
+        ],
+        "unavailableDates": []
+      },
+      "completedJobsCount": 51,
+      "rating": 4.9,
+      "reviewsCount": 49,
+      "isPublished": true,
+      "isPaused": false,
+      "verificationStatus": "demo_profile",
+      "updatedAt": "2026-10-16T11:00:00Z"
+    }
+  ],
+  "applications": [],
+  "bookings": [
+    {
+      "id": "SRV-2026-RHL1",
+      "workerId": "usr-ramesh-kumar",
+      "workerName": "Ramesh Kumar",
+      "workerTrade": "electrician",
+      "customerId": "cust-rahul-09",
+      "customerName": "Rahul S.",
+      "customerPhone": "+91 98220 54321",
+      "serviceCategory": "Electrician",
+      "taskDescription": "Ceiling fan not working. Fan motor makes humming sound but blade does not rotate. Need repair or capacitor replacement.",
+      "preferredDate": "Tomorrow",
+      "preferredTimeSlot": "10:00 AM",
+      "alternativeTimeSlot": "11:30 AM",
+      "proposedDate": null,
+      "proposedTimeSlot": null,
+      "locality": "Mayur Colony, Kothrud, Pune",
+      "exactAddress": "Flat 302, Sai Shraddha Apts, Ideal Colony Lane 3, Kothrud",
+      "lat": 18.5085,
+      "lng": 73.812,
+      "distance": "1.4 km",
+      "supportingImages": [],
+      "additionalNotes": "Please bring a test lamp and spare capacitor if possible.",
+      "indicativePrice": 250,
+      "priceNote": "Standard visit fee. Parts extra at MRP.",
+      "status": "confirmed",
+      "statusHistory": [
+        {
+          "status": "requested",
+          "timestamp": "2026-10-18T09:30:00Z",
+          "byRole": "customer",
+          "note": "Service booking request submitted by Rahul S."
+        },
+        {
+          "status": "confirmed",
+          "timestamp": "2026-10-18T10:02:15.507974Z",
+          "byRole": "worker",
+          "note": "Accepted by Ramesh Kumar. Scheduled for Tomorrow (10:00 AM)."
+        }
+      ],
+      "createdAt": "2026-10-18T09:30:00Z",
+      "updatedAt": "2026-10-18T10:02:15.507974Z"
+    },
+    {
+      "id": "SRV-2026-PRY2",
+      "workerId": "usr-ramesh-kumar",
+      "workerName": "Ramesh Kumar",
+      "workerTrade": "electrician",
+      "customerId": "cust-priya-14",
+      "customerName": "Priya Sharma",
+      "customerPhone": "+91 98901 22334",
+      "serviceCategory": "Electrician",
+      "taskDescription": "Kitchen main switchboard sparking when induction stove is turned on. Need immediate safety inspection.",
+      "preferredDate": "2026-10-19",
+      "preferredTimeSlot": "02:00 PM - 04:00 PM",
+      "alternativeTimeSlot": "",
+      "proposedDate": null,
+      "proposedTimeSlot": null,
+      "locality": "Dahanukar Colony, Kothrud, Pune",
+      "exactAddress": "Row House 7, Nisarg Meadows, Dahanukar Colony, Kothrud",
+      "lat": 18.4975,
+      "lng": 73.8155,
+      "distance": "2.1 km",
+      "supportingImages": [],
+      "additionalNotes": "Please inspect MCB trip rating as well.",
+      "indicativePrice": 300,
+      "priceNote": "Safety inspection & repair",
+      "status": "confirmed",
+      "statusHistory": [
+        {
+          "status": "requested",
+          "timestamp": "2026-10-17T14:00:00Z",
+          "byRole": "customer",
+          "note": "Booking requested."
+        },
+        {
+          "status": "confirmed",
+          "timestamp": "2026-10-17T15:10:00Z",
+          "byRole": "worker",
+          "note": "Accepted by service provider."
+        }
+      ],
+      "createdAt": "2026-10-17T14:00:00Z",
+      "updatedAt": "2026-10-17T15:10:00Z"
+    },
+    {
+      "id": "SRV-2026-AMT3",
+      "workerId": "usr-ramesh-kumar",
+      "workerName": "Ramesh Kumar",
+      "workerTrade": "electrician",
+      "customerId": "cust-amit-21",
+      "customerName": "Amit Verma",
+      "customerPhone": "+91 97654 33221",
+      "serviceCategory": "Electrician",
+      "taskDescription": "Inverter battery backup wiring inspection and terminal cleanup.",
+      "preferredDate": "2026-10-20",
+      "preferredTimeSlot": "11:00 AM - 01:00 PM",
+      "alternativeTimeSlot": "",
+      "proposedDate": "2026-10-20",
+      "proposedTimeSlot": "04:00 PM - 06:00 PM",
+      "locality": "Bavdhan, Pune",
+      "exactAddress": "B-404, Crystal Heights, Bavdhan",
+      "lat": 18.514,
+      "lng": 73.778,
+      "distance": "3.8 km",
+      "supportingImages": [],
+      "additionalNotes": "Needs alternative time confirmation.",
+      "indicativePrice": 350,
+      "priceNote": "Battery wiring check",
+      "status": "alternative_time_proposed",
+      "statusHistory": [
+        {
+          "status": "requested",
+          "timestamp": "2026-10-18T08:00:00Z",
+          "byRole": "customer",
+          "note": "Booking submitted."
+        },
+        {
+          "status": "alternative_time_proposed",
+          "timestamp": "2026-10-18T08:45:00Z",
+          "byRole": "worker",
+          "note": "Worker proposed alternative slot 04:00 PM - 06:00 PM."
+        }
+      ],
+      "createdAt": "2026-10-18T08:00:00Z",
+      "updatedAt": "2026-10-18T08:45:00Z"
+    }
+  ],
+  "conversations": {}
+}

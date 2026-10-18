@@ -7,6 +7,7 @@ import { buildJobSpeechText } from '../lib/speechContextualContent';
 import Card from './Card';
 import PrimaryButton from './PrimaryButton';
 import ListenButton from './ListenButton';
+import ModalPortal from './ModalPortal';
 
 export default function JobCard({
   job,
@@ -150,123 +151,119 @@ export default function JobCard({
       </Card>
 
       {/* Job Details Modal */}
-      {modalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-deepNavy/35 p-4 backdrop-blur-xl animate-fade-in"
-          onClick={() => setModalOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-lg rounded-[32px] bg-cleanWhite/95 p-6 shadow-modal backdrop-blur-3xl border border-softBorder max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-            <div className="flex items-start justify-between gap-3 border-b border-softBorder pb-4">
-              <div className="flex items-center gap-3">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl font-black text-xl shadow-glass ${logoBg}`}>
-                  {logoText}
-                </div>
-                <div>
-                  <h2 className="text-xl font-extrabold text-warmCocoa">{t(job.titleKey)}</h2>
-                  <p className="text-sm text-textSecondary">{t(job.employerKey)} • {t(job.locationKey)}</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-warmCream/80 hover:bg-white text-textMuted hover:text-warmCocoa border border-softBorder transition-all"
-              >
-                ✕
-              </button>
+      <ModalPortal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        maxWidthClass="sm:max-w-lg"
+      >
+        {/* Pinned Header */}
+        <div className="shrink-0 px-6 pt-4 pb-3 border-b border-softBorder flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl font-black text-xl shadow-glass ${logoBg}`}>
+              {logoText}
             </div>
-
-            <div className="mt-4 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-warmAmber/20 backdrop-blur-md p-3 border border-warmAmber/30 shadow-xs">
-                  <span className="text-xs text-textMuted font-semibold">{t('kaam.payRate')}</span>
-                  <p className="text-lg font-black text-warmCocoa">
-                    {t('kaam.payRange', { min: formatInr(job.payMin), max: formatInr(job.payMax) })}
-                  </p>
-                  <span className="text-xs font-bold text-terracotta">{t(job.payTypeKey)}</span>
-                </div>
-                <div className="rounded-2xl bg-saffronGold/15 backdrop-blur-md p-3 border border-saffronGold/30 shadow-xs">
-                  <span className="text-xs text-textMuted font-semibold">{t('kaam.aiMatchScore')}</span>
-                  <p className="text-lg font-black text-warmCocoa">{t('kaam.skillMatch', { percent: job.skillMatch })}</p>
-                  <span className="text-xs font-bold text-success">{t('kaam.verifiedHighFit')}</span>
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-md p-3.5 border border-softBorder shadow-xs">
-                <h4 className="text-xs font-bold text-textPrimary uppercase tracking-wider mb-1">
-                  {t('kaam.whyMatch')}
-                </h4>
-                <p className="text-sm text-textSecondary">{getAiExplanation()}</p>
-              </div>
-
-              <div>
-                <h4 className="text-xs font-bold text-textPrimary uppercase tracking-wider mb-2">
-                  {t('kaam.skillsRequirements')}
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {job.skillKeys.map((sk) => (
-                    <span
-                      key={sk}
-                      className="rounded-full bg-warmAmber/20 px-3 py-1 text-xs font-semibold text-terracotta border border-warmAmber/30"
-                    >
-                      ✓ {t(sk)}
-                    </span>
-                  ))}
-                  <span className="rounded-full bg-saffronGold/20 px-3 py-1 text-xs font-semibold text-warmCocoa border border-saffronGold/30">
-                    {t(job.workTypeKey)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons: Apply, WhatsApp, Call */}
-              <div className="space-y-2.5 pt-2">
-                {applied ? (
-                  <div className="rounded-2xl bg-successSoft p-4 text-center">
-                    <p className="font-bold text-success">{t('kaam.applySuccess')}</p>
-                    <p className="text-xs text-textSecondary mt-1">
-                      {t('kaam.applySuccessBody')}
-                    </p>
-                  </div>
-                ) : (
-                  <PrimaryButton
-                    title={t('kaam.applyWithProfile')}
-                    onPress={() => setApplied(true)}
-                  />
-                )}
-
-                {/* Direct WhatsApp Contact Button */}
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(
-                    i18n.language === 'en'
-                      ? `Hello! I saw your job listing on Setu: ${t(job.titleKey)} (${t(job.employerKey)}). Pay: ₹${job.payMin} - ₹${job.payMax} (${t(job.payTypeKey)}). I am available to work. Please contact me.`
-                      : i18n.language === 'mr'
-                      ? `नमस्कार! मी सेतु ॲपवर तुमची कामाची संधी पाहिली: ${t(job.titleKey)} (${t(job.employerKey)}). मोबदला: ₹${job.payMin} - ₹${job.payMax} (${t(job.payTypeKey)}). मी कामासाठी उपलब्ध आहे. कृपया माझ्याशी संपर्क साधावा.`
-                      : `नमस्ते! मैंने सेतु ऐप पर आपकी नौकरी देखी: ${t(job.titleKey)} (${t(job.employerKey)}). वेतन: ₹${job.payMin} - ₹${job.payMax} (${t(job.payTypeKey)}). मैं काम के लिए उपलब्ध हूँ। कृपया मुझसे संपर्क करें।`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-xs font-bold text-white shadow-card transition-all hover:brightness-105 active:scale-[0.98]"
-                >
-                  <AppIcon name="logo-whatsapp" size={15} />
-                  <span>{t('kaam.chatWhatsApp')}</span>
-                </a>
-
-                {/* Direct Phone Call */}
-                <a
-                  href="tel:9876543210"
-                  className="flex w-full items-center justify-center gap-1.5 rounded-full border border-softBorder bg-cleanWhite/90 px-4 py-2.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white transition-all active:scale-[0.98]"
-                >
-                  <AppIcon name="call" size={14} />
-                  <span>{t('kaam.callEmployer')}</span>
-                </a>
-              </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-warmCocoa">{t(job.titleKey)}</h2>
+              <p className="text-sm text-textSecondary">{t(job.employerKey)} • {t(job.locationKey)}</p>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setModalOpen(false)}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-warmCream/80 hover:bg-white text-textMuted hover:text-warmCocoa border border-softBorder transition-all"
+            aria-label="Close"
+          >
+            ✕
+          </button>
         </div>
-      )}
+
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-warmAmber/20 backdrop-blur-md p-3 border border-warmAmber/30 shadow-xs">
+              <span className="text-xs text-textMuted font-semibold">{t('kaam.payRate')}</span>
+              <p className="text-lg font-black text-warmCocoa">
+                {t('kaam.payRange', { min: formatInr(job.payMin), max: formatInr(job.payMax) })}
+              </p>
+              <span className="text-xs font-bold text-terracotta">{t(job.payTypeKey)}</span>
+            </div>
+            <div className="rounded-2xl bg-saffronGold/15 backdrop-blur-md p-3 border border-saffronGold/30 shadow-xs">
+              <span className="text-xs text-textMuted font-semibold">{t('kaam.aiMatchScore')}</span>
+              <p className="text-lg font-black text-warmCocoa">{t('kaam.skillMatch', { percent: job.skillMatch })}</p>
+              <span className="text-xs font-bold text-success">{t('kaam.verifiedHighFit')}</span>
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-md p-3.5 border border-softBorder shadow-xs">
+            <h4 className="text-xs font-bold text-textPrimary uppercase tracking-wider mb-1">
+              {t('kaam.whyMatch')}
+            </h4>
+            <p className="text-sm text-textSecondary">{getAiExplanation()}</p>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-bold text-textPrimary uppercase tracking-wider mb-2">
+              {t('kaam.skillsRequirements')}
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {job.skillKeys.map((sk) => (
+                <span
+                  key={sk}
+                  className="rounded-full bg-warmAmber/20 px-3 py-1 text-xs font-semibold text-terracotta border border-warmAmber/30"
+                >
+                  ✓ {t(sk)}
+                </span>
+              ))}
+              <span className="rounded-full bg-saffronGold/20 px-3 py-1 text-xs font-semibold text-warmCocoa border border-saffronGold/30">
+                {t(job.workTypeKey)}
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons: Apply, WhatsApp, Call */}
+          <div className="space-y-2.5 pt-2">
+            {applied ? (
+              <div className="rounded-2xl bg-successSoft p-4 text-center">
+                <p className="font-bold text-success">{t('kaam.applySuccess')}</p>
+                <p className="text-xs text-textSecondary mt-1">
+                  {t('kaam.applySuccessBody')}
+                </p>
+              </div>
+            ) : (
+              <PrimaryButton
+                title={t('kaam.applyWithProfile')}
+                onPress={() => setApplied(true)}
+              />
+            )}
+
+            {/* Direct WhatsApp Contact Button */}
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(
+                i18n.language === 'en'
+                  ? `Hello! I saw your job listing on Setu: ${t(job.titleKey)} (${t(job.employerKey)}). Pay: ₹${job.payMin} - ₹${job.payMax} (${t(job.payTypeKey)}). I am available to work. Please contact me.`
+                  : i18n.language === 'mr'
+                  ? `नमस्कार! मी सेतु ॲपवर तुमची कामाची संधी पाहिली: ${t(job.titleKey)} (${t(job.employerKey)}). मोबदला: ₹${job.payMin} - ₹${job.payMax} (${t(job.payTypeKey)}). मी कामासाठी उपलब्ध आहे. कृपया माझ्याशी संपर्क साधावा.`
+                  : `नमस्ते! मैंने सेतु ऐप पर आपकी नौकरी देखी: ${t(job.titleKey)} (${t(job.employerKey)}). वेतन: ₹${job.payMin} - ₹${job.payMax} (${t(job.payTypeKey)}). मैं काम के लिए उपलब्ध हूँ। कृपया मुझसे संपर्क करें।`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-xs font-bold text-white shadow-card transition-all hover:brightness-105 active:scale-[0.98]"
+            >
+              <AppIcon name="logo-whatsapp" size={15} />
+              <span>{t('kaam.chatWhatsApp')}</span>
+            </a>
+
+            {/* Direct Phone Call */}
+            <a
+              href="tel:9876543210"
+              className="flex w-full items-center justify-center gap-1.5 rounded-full border border-softBorder bg-cleanWhite/90 px-4 py-2.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white transition-all active:scale-[0.98]"
+            >
+              <AppIcon name="call" size={14} />
+              <span>{t('kaam.callEmployer')}</span>
+            </a>
+          </div>
+        </div>
+      </ModalPortal>
     </>
   );
 }

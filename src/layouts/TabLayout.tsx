@@ -14,6 +14,7 @@ const tabs = [
   { to: '/ai-lab', key: 'tabs.aiLab', icon: 'sparkles' },
   { to: '/sehat', key: 'tabs.sehat', icon: 'heart' },
   { to: '/kaushal', key: 'tabs.kaushal', icon: 'school' },
+  { to: '/haq', key: 'tabs.haqSetu', icon: 'shield-checkmark' },
 ] as const;
 
 export default function TabLayout() {
@@ -30,20 +31,20 @@ export default function TabLayout() {
     <div className="flex min-h-screen flex-col bg-transparent">
       {/* Desktop Top Navigation Bar (>= md) */}
       <header className="sticky top-0 z-40 hidden md:block w-full border-b border-white/80 bg-white/75 backdrop-blur-2xl shadow-[0_8px_30px_rgba(7,59,58,0.06),inset_0_1px_1.5px_rgba(255,255,255,0.95)]">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <div className="cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]" onClick={() => navigate('/home')}>
             <SetuLogo size="md" />
           </div>
 
           {/* Nav Links */}
-          <nav className="flex items-center gap-1.5 p-1 rounded-full bg-white/50 backdrop-blur-xl border border-white/80 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
+          <nav className="flex items-center gap-1 p-1 rounded-full bg-white/50 backdrop-blur-xl border border-white/80 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]">
             {tabs.map((tab) => (
               <NavLink
                 key={tab.to}
                 to={tab.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-all duration-200 ${
+                  `flex items-center gap-1.5 rounded-full px-2.5 lg:px-3.5 py-1.5 text-xs lg:text-sm font-bold transition-all duration-200 ${
                     isActive
                       ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-[#E5953E]/50'
                       : 'text-textSecondary hover:bg-white/80 hover:text-deepEmerald active:scale-95'
@@ -54,7 +55,7 @@ export default function TabLayout() {
                   <>
                     <AppIcon
                       name={tab.icon}
-                      size={17}
+                      size={16}
                       className={isActive ? 'text-saffronGold drop-shadow-[0_1px_4px_rgba(229,149,62,0.4)]' : 'text-textMuted'}
                     />
                     <span>{t(tab.key)}</span>
@@ -112,21 +113,19 @@ export default function TabLayout() {
       </header>
 
       {/* Main Page Content */}
-      <main className="flex-1 w-full mx-auto max-w-5xl md:px-6 md:py-6 pb-28 md:pb-8">
-        <div className="mx-auto w-full max-w-md md:max-w-2xl lg:max-w-4xl">
-          <Outlet />
-        </div>
+      <main className="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 md:py-6 pb-28 md:pb-12">
+        <Outlet />
       </main>
 
       {/* Mobile Floating Action Button (FAB) for Quick Voice Entry positioned above floating dock */}
       <button
         type="button"
         onClick={() => setVoiceModalOpen(true)}
-        className="fixed bottom-24 right-5 z-40 md:hidden flex h-13 w-13 items-center justify-center rounded-full emerald-gradient-btn p-3.5 text-white shadow-lifted ring-4 ring-white/70 backdrop-blur-xl transition-all duration-300 hover:scale-105 active:scale-95"
+        className="fixed bottom-24 right-4 z-40 md:hidden flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-lifted ring-4 ring-white/80 border border-[#E5953E]/50 transition-all duration-300 hover:scale-105 active:scale-95"
         aria-label="Quick Voice Entry"
         title={t('home.voiceA11y')}
       >
-        <AppIcon name="mic" size={22} className="text-white drop-shadow" />
+        <AppIcon name="mic" size={20} className="text-white drop-shadow" />
       </button>
 
       {/* Mobile Floating Apple-Inspired Liquid Glass Dock (< md) */}
@@ -134,31 +133,31 @@ export default function TabLayout() {
         <nav
           role="navigation"
           aria-label="Bottom Navigation"
-          className="pointer-events-auto flex h-[66px] w-full max-w-md items-center justify-around rounded-[30px] bg-white/85 backdrop-blur-3xl border border-[#F4EBDD] shadow-dock p-1.5 transition-all duration-300"
+          className="pointer-events-auto flex h-[66px] w-full max-w-lg items-center justify-around rounded-[30px] bg-white/90 backdrop-blur-3xl border border-[#F4EBDD] shadow-dock p-1 transition-all duration-300"
         >
           {tabs.map((tab) => (
             <NavLink
               key={tab.to}
               to={tab.to}
               className={({ isActive }) =>
-                `relative flex flex-1 flex-col items-center justify-center h-full rounded-[22px] py-1 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                `relative flex flex-1 min-w-0 flex-col items-center justify-center h-full rounded-[16px] sm:rounded-[20px] py-0.5 px-0.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   isActive
                     ? 'bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-[#E5953E]/50 scale-[1.02]'
-                    : 'text-textSecondary hover:text-deepEmerald active:scale-95 hover:bg-white/40'
+                    : 'text-textSecondary hover:text-warmCocoa active:scale-95 hover:bg-white/40'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className="flex h-7 w-7 items-center justify-center transition-transform">
+                  <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center transition-transform shrink-0">
                     <AppIcon
                       name={tab.icon}
-                      size={19}
+                      size={16}
                       className={isActive ? 'text-saffronGold drop-shadow-[0_1px_4px_rgba(229,149,62,0.4)]' : 'text-textMuted'}
                     />
                   </div>
                   <span
-                    className={`text-[9.5px] leading-tight tracking-tight truncate max-w-[52px] text-center transition-all ${
+                    className={`text-[8px] leading-tight tracking-tight truncate w-full max-w-full text-center px-0.5 transition-all ${
                       isActive
                         ? 'font-black text-white'
                         : 'font-semibold text-textSecondary'
@@ -167,7 +166,7 @@ export default function TabLayout() {
                     {t(tab.key)}
                   </span>
                   {isActive && (
-                    <span className="absolute bottom-1 h-1 w-1 rounded-full bg-saffronGold shadow-[0_0_6px_#E5953E]" />
+                    <span className="absolute bottom-0.5 h-1 w-1 rounded-full bg-saffronGold shadow-[0_0_6px_#E5953E]" />
                   )}
                 </>
               )}

@@ -5,6 +5,7 @@ import { useTransactions } from '../hooks/TransactionContext';
 import type { Transaction, TransactionType, TransactionCategory } from '../types/transaction';
 import { CATEGORY_ICONS, CATEGORY_TRANSLATION_KEYS } from '../services/transactionService';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
+import ModalPortal from './ModalPortal';
 
 const INCOME_CATEGORIES: TransactionCategory[] = [
   'work_earnings',
@@ -188,36 +189,32 @@ export default function TransactionModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E2B3E]/30 p-4 backdrop-blur-xl animate-fade-in"
-      onClick={onClose}
+    <ModalPortal
+      isOpen={true}
+      onClose={onClose}
+      maxWidthClass="sm:max-w-lg"
     >
-      <div
-        className="relative w-full max-w-lg rounded-[32px] bg-white/90 p-6 shadow-glassModal border border-[#F4EBDD] backdrop-blur-3xl max-h-[92vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
+      {/* Pinned Header */}
+      <div className="shrink-0 flex items-center justify-between px-5 pt-3 pb-3 border-b border-[#F4EBDD]">
           <div className="flex items-center gap-2.5">
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-glass ${
+              className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm ${
                 type === 'income'
                   ? 'bg-successSoft/90 text-success border border-[#2E7D32]/40'
-                  : 'bg-danger/15 text-danger border border-danger/30'
+                  : 'bg-[#FDF3EE] text-[#B34A26] border border-[#B34A26]/30'
               }`}
             >
               <AppIcon name={type === 'income' ? 'arrow-up' : 'arrow-down'} size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-black text-deepEmerald">
+              <h2 className="text-base sm:text-lg font-black text-deepEmerald leading-tight">
                 {editingTx
                   ? t('transactions.editTitle')
                   : type === 'income'
                   ? t('transactions.addIncome')
                   : t('transactions.addExpense')}
               </h2>
-              <p className="text-xs text-textSecondary font-medium">
+              <p className="text-[11px] sm:text-xs text-textSecondary font-medium">
                 {editingTx
                   ? t('transactions.editSub')
                   : type === 'income'
@@ -229,21 +226,22 @@ export default function TransactionModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 hover:bg-white text-textMuted hover:text-deepEmerald border border-white/80 transition-all active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FDF8F0] hover:bg-[#F4EBDD] text-textMuted hover:text-deepEmerald border border-[#F4EBDD] transition-all active:scale-95"
           >
             ✕
           </button>
         </div>
 
-        {/* Validation Error Banner */}
-        {validationError && (
-          <div className="mb-4 flex items-center gap-2 rounded-2xl bg-danger/15 border border-danger/30 p-3 text-xs font-bold text-danger backdrop-blur-md">
-            <AppIcon name="alert-circle" size={16} />
-            <span>{validationError}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form Container with isolated scrollable body and pinned footer */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 space-y-4">
+            {/* Validation Error Banner */}
+            {validationError && (
+              <div className="flex items-center gap-2 rounded-2xl bg-[#FDF3EE] border border-[#B34A26]/30 p-3 text-xs font-bold text-[#B34A26] backdrop-blur-md">
+                <AppIcon name="alert-circle" size={16} />
+                <span>{validationError}</span>
+              </div>
+            )}
           {/* Transaction Type Segmented Toggle */}
           <div>
             <label className="block text-xs font-bold text-deepEmerald mb-1.5">
@@ -415,20 +413,22 @@ export default function TransactionModal({
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="pt-2 flex items-center justify-end gap-2 border-t border-border/40">
+          </div>
+
+          {/* Pinned Action Buttons Footer */}
+          <div className="shrink-0 px-5 py-3 border-t border-[#F4EBDD] bg-[#FDF8F0] flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-full px-5 py-2.5 text-xs font-bold text-textSecondary hover:bg-white/60 transition-all active:scale-95"
+              className="rounded-full px-5 py-2.5 text-xs font-bold text-textSecondary hover:bg-white transition-all active:scale-95"
             >
               {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="emerald-gradient-btn flex items-center gap-1.5 rounded-full px-7 py-2.5 text-xs font-bold text-white transition-all active:scale-95 disabled:opacity-50"
+              className="emerald-gradient-btn flex items-center gap-1.5 rounded-full px-6 py-2.5 text-xs font-bold text-white shadow-lifted transition-all active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -439,7 +439,6 @@ export default function TransactionModal({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </ModalPortal>
   );
 }

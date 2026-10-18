@@ -8,6 +8,7 @@ import PrimaryButton from '../components/PrimaryButton';
 import DisclaimerText from '../components/DisclaimerText';
 import SkillChip from '../components/SkillChip';
 import LanguageSelector from '../components/LanguageSelector';
+import ModalPortal from '../components/ModalPortal';
 import { AppIcon } from '../lib/icons';
 import { getSkillCourses, getWorkerStats } from '../services/workerService';
 import { useProfile } from '../hooks/ProfileContext';
@@ -212,233 +213,275 @@ export default function KaushalPage() {
         </div>
       </header>
 
-      {/* WORKER SUMMARY CARD matching reference Screen 8 */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-      >
-        <Card className="p-4">
-          <div className="flex items-center gap-3.5 mb-3">
-            {/* Worker Photo Avatar */}
-            <div className="relative shrink-0">
-              {profile.avatarUrl ? (
-                <img
-                  src={profile.avatarUrl}
-                  alt={profile.name}
-                  className="h-14 w-14 rounded-full object-cover shadow-card ring-2 ring-white"
-                />
-              ) : (
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-xl font-black text-white shadow-card ring-2 ring-white">
-                  {profile.name.charAt(0) || 'R'}
-                </div>
-              )}
-              <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-saffronGold text-deepNavy shadow-xs border border-white">
-                <AppIcon name="checkmark-circle" size={12} />
-              </div>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base font-extrabold text-warmCocoa leading-tight truncate">
-                  {profile.name}
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => navigate('/profile')}
-                  className="text-xs font-bold text-terracotta hover:underline shrink-0"
-                >
-                  {t('profileScreen.editProfile')}
-                </button>
-              </div>
-              <p className="text-xs font-bold text-terracotta mt-0.5">
-                {occupation} • {t(profile.cityKey)}
-              </p>
-              <p className="text-[11px] text-textMuted font-medium mt-0.5">
-                {profile.experienceYears} yrs experience • Hindi, Marathi, English
-              </p>
-            </div>
-          </div>
-
-          {/* Skill Chips from actual profile state */}
-          <div className="space-y-2 pt-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-textMuted uppercase tracking-wider">
-                {t('kaushal.declaredSkills')} ({userDeclaredSkillLabels.length})
-              </span>
-              <button
-                type="button"
-                onClick={() => setEditSkillsModalOpen(true)}
-                className="text-[11px] font-bold text-terracotta hover:underline flex items-center gap-1"
-              >
-                <AppIcon name="create-outline" size={12} />
-                <span>{t('kaushal.editSkills')}</span>
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {userDeclaredSkillLabels.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-full bg-warmAmber/20 border border-warmAmber/30 px-2.5 py-1 text-xs font-bold text-warmCocoa shadow-xs"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Work History / Completed Stats Row */}
-          <div className="mt-3.5 grid grid-cols-3 divide-x divide-softBorder rounded-2xl bg-warmCream/60 backdrop-blur-md p-2.5 border border-softBorder shadow-xs">
-            <div className="text-center">
-              <span className="text-base font-black text-warmCocoa">48</span>
-              <span className="block text-[10px] font-semibold text-textMuted uppercase">
-                {t('kaushal.jobsDone')}
-              </span>
-            </div>
-            <div className="text-center">
-              <span className="text-base font-black text-warmCocoa">₹750</span>
-              <span className="block text-[10px] font-semibold text-textMuted uppercase">
-                {t('dhan.avgDailyIncome')}
-              </span>
-            </div>
-            <div className="text-center">
-              <span className="text-base font-black text-warmCocoa">⭐ 4.8</span>
-              <span className="block text-[10px] font-semibold text-textMuted uppercase">
-                {t('kaushal.rating')}
-              </span>
-            </div>
-          </div>
-        </Card>
-      </motion.div>
-
-      {/* SKILL PASSPORT PREVIEW CARD */}
-      <Card
-        onClick={() => setPassportModalOpen(true)}
-        variant="emerald"
-        className="p-4 cursor-pointer hover:shadow-cardHover transition-all"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-saffronGold shadow-card border border-warmAmber/30">
-              <AppIcon name="document-text" size={22} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-extrabold text-warmCocoa">
-                  {t('kaushal.passportPreview')}
-                </h3>
-                <span className="rounded-full bg-saffronGold/20 border border-saffronGold/40 px-2 py-0.5 text-[10px] font-bold text-warmCocoa">
-                  {t('kaushal.verified')}
-                </span>
-              </div>
-              <p className="text-xs text-textSecondary mt-0.5">
-                {profile.name} • {occupation} • 4 Verified Competencies
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            className="flex items-center gap-1 rounded-full bg-cleanWhite/90 backdrop-blur-md px-3 py-1.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white border border-softBorder"
+      {/* 2-Column Responsive Layout for Desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+        {/* Left Column: Worker Summary, Skill Passport Preview, Functional Actions & Disclaimer */}
+        <div className="lg:col-span-6 xl:col-span-6 space-y-4">
+          {/* WORKER SUMMARY CARD matching reference Screen 8 */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
           >
-            <span className="text-warmCocoa font-bold">{t('kaushal.viewPassport')}</span>
-            <AppIcon name="chevron-forward" size={13} className="text-warmCocoa" />
-          </button>
-        </div>
-      </Card>
-
-      {/* AI SUMMARY CARD */}
-      <Card variant="warning" className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta">
-            <AppIcon name="sparkles" size={14} />
-          </div>
-          <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
-            {t('kaushal.aiSummaryTitle')}
-          </h3>
-        </div>
-        <p className="text-xs text-textPrimary leading-relaxed">
-          {t('kaushal.aiSummary')}
-        </p>
-      </Card>
-
-      {/* RECOMMENDED COURSES */}
-      <div>
-        <h3 className="text-sm font-extrabold text-warmCocoa mb-2.5">
-          {t('kaushal.recommended')}
-        </h3>
-        <div className="space-y-2.5">
-          {(coursesQuery.data ?? []).map((course) => (
-            <Card key={course.id} className="mb-0 p-3.5 flex items-center justify-between gap-3 hover:border-terracotta/40">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-warmAmber/20 text-terracotta">
-                  <AppIcon name={course.icon} size={18} />
+            <Card className="p-4 md:p-5">
+              <div className="flex items-center gap-3.5 mb-3">
+                {/* Worker Photo Avatar */}
+                <div className="relative shrink-0">
+                  {profile.avatarUrl ? (
+                    <img
+                      src={profile.avatarUrl}
+                      alt={profile.name}
+                      className="h-14 w-14 rounded-full object-cover shadow-card ring-2 ring-white"
+                    />
+                  ) : (
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-xl font-black text-white shadow-card ring-2 ring-white">
+                      {profile.name.charAt(0) || 'R'}
+                    </div>
+                  )}
+                  <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-saffronGold text-deepNavy shadow-xs border border-white">
+                    <AppIcon name="checkmark-circle" size={12} />
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs font-bold text-warmCocoa truncate">
-                    {t(course.titleKey)}
-                  </h4>
-                  <p className="text-[11px] text-textMuted mt-0.5">
-                    {course.provider} • {t(course.durationKey)} • {t(course.levelKey)}
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-base font-extrabold text-warmCocoa leading-tight truncate">
+                      {profile.name}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/profile')}
+                      className="text-xs font-bold text-terracotta hover:underline shrink-0"
+                    >
+                      {t('profileScreen.editProfile')}
+                    </button>
+                  </div>
+                  <p className="text-xs font-bold text-terracotta mt-0.5">
+                    {occupation} • {t(profile.cityKey)}
+                  </p>
+                  <p className="text-[11px] text-textMuted font-medium mt-0.5">
+                    {profile.experienceYears} yrs experience • Hindi, Marathi, English
                   </p>
                 </div>
               </div>
-              <span className="shrink-0 rounded-full bg-successSoft px-2.5 py-0.5 text-[11px] font-bold text-success border border-success/30">
-                {t('kaushal.free')}
-              </span>
+
+              {/* Skill Chips from actual profile state */}
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-textMuted uppercase tracking-wider">
+                    {t('kaushal.declaredSkills')} ({userDeclaredSkillLabels.length})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setEditSkillsModalOpen(true)}
+                    className="text-[11px] font-bold text-terracotta hover:underline flex items-center gap-1"
+                  >
+                    <AppIcon name="create-outline" size={12} />
+                    <span>{t('kaushal.editSkills')}</span>
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {userDeclaredSkillLabels.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-full bg-warmAmber/20 border border-warmAmber/30 px-2.5 py-1 text-xs font-bold text-warmCocoa shadow-xs"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Work History / Completed Stats Row */}
+              <div className="mt-3.5 grid grid-cols-3 divide-x divide-softBorder rounded-2xl bg-warmCream/60 backdrop-blur-md p-2.5 border border-softBorder shadow-xs">
+                <div className="text-center">
+                  <span className="text-base font-black text-warmCocoa">48</span>
+                  <span className="block text-[10px] font-semibold text-textMuted uppercase">
+                    {t('kaushal.jobsDone')}
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span className="text-base font-black text-warmCocoa">₹750</span>
+                  <span className="block text-[10px] font-semibold text-textMuted uppercase">
+                    {t('dhan.avgDailyIncome')}
+                  </span>
+                </div>
+                <div className="text-center">
+                  <span className="text-base font-black text-warmCocoa">⭐ 4.8</span>
+                  <span className="block text-[10px] font-semibold text-textMuted uppercase">
+                    {t('kaushal.rating')}
+                  </span>
+                </div>
+              </div>
             </Card>
-          ))}
-        </div>
-      </div>
+          </motion.div>
 
-      {/* FUNCTIONAL ACTIONS: WHATSAPP SHARE + DOWNLOAD PDF + COPY LINK */}
-      <div className="space-y-2 pt-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(buildShareText())}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-5 font-bold text-white shadow-card transition-all hover:brightness-110 active:scale-[0.98] border border-green-300/40"
+          {/* SKILL PASSPORT PREVIEW CARD */}
+          <Card
+            onClick={() => setPassportModalOpen(true)}
+            variant="emerald"
+            className="p-4 cursor-pointer hover:shadow-cardHover transition-all"
           >
-            <AppIcon name="logo-whatsapp" size={18} />
-            <span>{t('kaushal.shareWhatsApp')}</span>
-          </a>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-saffronGold shadow-card border border-warmAmber/30">
+                  <AppIcon name="document-text" size={22} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-extrabold text-warmCocoa">
+                      {t('kaushal.passportPreview')}
+                    </h3>
+                    <span className="rounded-full bg-saffronGold/20 border border-saffronGold/40 px-2 py-0.5 text-[10px] font-bold text-warmCocoa">
+                      {t('kaushal.verified')}
+                    </span>
+                  </div>
+                  <p className="text-xs text-textSecondary mt-0.5">
+                    {profile.name} • {occupation} • 4 Verified Competencies
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="flex items-center gap-1 rounded-full bg-cleanWhite/90 backdrop-blur-md px-3 py-1.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white border border-softBorder"
+              >
+                <span className="text-warmCocoa font-bold">{t('kaushal.viewPassport')}</span>
+                <AppIcon name="chevron-forward" size={13} className="text-warmCocoa" />
+              </button>
+            </div>
+          </Card>
 
-          <PrimaryButton
-            title={downloading ? t('kaushal.downloadMessage') : t('kaushal.downloadPdf')}
-            onPress={handleDownloadPdf}
-            icon={<AppIcon name="download-outline" size={18} />}
-            disabled={downloading}
-          />
+          {/* FUNCTIONAL ACTIONS: WHATSAPP SHARE + DOWNLOAD PDF + COPY LINK */}
+          <div className="space-y-2 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(buildShareText())}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#22c55e] to-[#16a34a] px-5 font-bold text-white shadow-card transition-all hover:brightness-110 active:scale-[0.98] border border-green-300/40"
+              >
+                <AppIcon name="logo-whatsapp" size={18} />
+                <span>{t('kaushal.shareWhatsApp')}</span>
+              </a>
+
+              <PrimaryButton
+                title={downloading ? t('kaushal.downloadMessage') : t('kaushal.downloadPdf')}
+                onPress={handleDownloadPdf}
+                icon={<AppIcon name="download-outline" size={18} />}
+                disabled={downloading}
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="flex w-full items-center justify-center gap-1.5 rounded-full border border-softBorder bg-cleanWhite/90 backdrop-blur-md py-2.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white transition-all active:scale-[0.98]"
+            >
+              <AppIcon name="copy-outline" size={14} className="text-terracotta" />
+              <span>{t('kaushal.copyLink')}</span>
+            </button>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="pt-1">
+            <DisclaimerText text={t('kaushal.disclaimer')} variant="info" />
+          </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleCopyLink}
-          className="flex w-full items-center justify-center gap-1.5 rounded-full border border-softBorder bg-cleanWhite/90 backdrop-blur-md py-2.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white transition-all active:scale-[0.98]"
-        >
-          <AppIcon name="copy-outline" size={14} className="text-terracotta" />
-          <span>{t('kaushal.copyLink')}</span>
-        </button>
-      </div>
+        {/* Right Column: AI Summary, Verified Competencies Showcase, Recommended Courses */}
+        <div className="lg:col-span-6 xl:col-span-6 space-y-4">
+          {/* AI SUMMARY CARD */}
+          <Card variant="warning" className="p-4 md:p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta">
+                <AppIcon name="sparkles" size={14} />
+              </div>
+              <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
+                {t('kaushal.aiSummaryTitle')}
+              </h3>
+            </div>
+            <p className="text-xs text-textPrimary leading-relaxed">
+              {t('kaushal.aiSummary')}
+            </p>
+          </Card>
 
-      {/* Disclaimer */}
-      <div className="pt-1">
-        <DisclaimerText text={t('kaushal.disclaimer')} variant="info" />
+          {/* VERIFIED COMPETENCIES SHOWCASE */}
+          <Card className="p-4 md:p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-100 text-success">
+                  <AppIcon name="shield-checkmark" size={14} />
+                </div>
+                <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
+                  {t('kaushal.verifiedCompetencies')}
+                </h3>
+              </div>
+              <span className="rounded-full bg-saffronGold/20 px-2 py-0.5 text-[10px] font-bold text-warmCocoa border border-saffronGold/30">
+                100% {t('kaushal.authenticated')}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              {VERIFIED_COMPETENCIES.map((comp) => (
+                <div
+                  key={comp}
+                  className="flex items-center justify-between p-2.5 rounded-2xl bg-warmCream/60 border border-softBorder text-xs"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-success font-black text-xs shrink-0">
+                      ✓
+                    </span>
+                    <span className="font-semibold text-warmCocoa">{comp}</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-terracotta shrink-0 font-mono">
+                    {t('kaushal.authenticated')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* RECOMMENDED COURSES */}
+          <div>
+            <h3 className="text-sm font-extrabold text-warmCocoa mb-2.5 px-1">
+              {t('kaushal.recommended')}
+            </h3>
+            <div className="space-y-2.5">
+              {(coursesQuery.data ?? []).map((course) => (
+                <Card key={course.id} className="mb-0 p-3.5 flex items-center justify-between gap-3 hover:border-terracotta/40">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-warmAmber/20 text-terracotta">
+                      <AppIcon name={course.icon} size={18} />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-warmCocoa truncate">
+                        {t(course.titleKey)}
+                      </h4>
+                      <p className="text-[11px] text-textMuted mt-0.5">
+                        {course.provider} • {t(course.durationKey)} • {t(course.levelKey)}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-successSoft px-2.5 py-0.5 text-[11px] font-bold text-success border border-success/30">
+                    {t('kaushal.free')}
+                  </span>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ========================================================================= */}
       {/* FULL SKILL PASSPORT PREVIEW MODAL */}
       {/* ========================================================================= */}
-      {passportModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-deepNavy/35 backdrop-blur-md p-4 animate-fade-in"
-          onClick={() => setPassportModalOpen(false)}
-        >
-          <div
-            className="w-full max-w-lg rounded-3xl bg-cleanWhite/95 backdrop-blur-2xl p-6 shadow-modal border border-softBorder max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-softBorder pb-3 mb-4">
+      <ModalPortal
+        isOpen={passportModalOpen}
+        onClose={() => setPassportModalOpen(false)}
+        maxWidthClass="sm:max-w-lg"
+      >
+        {/* Pinned Header */}
+        <div className="shrink-0 flex items-center justify-between px-5 pt-3 pb-3 border-b border-softBorder">
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-warmCocoa text-base">
                   {t('kaushal.previewTitle')}
@@ -456,7 +499,8 @@ export default function KaushalPage() {
               </button>
             </div>
 
-            <div className="space-y-4 text-center">
+            {/* Scrollable Body */}
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 space-y-4 text-center">
               {/* Avatar and Identity */}
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-2xl font-black text-white shadow-card ring-2 ring-saffronGold">
                 {profile.avatarUrl ? (
@@ -552,41 +596,36 @@ export default function KaushalPage() {
                   ))}
                 </div>
               </div>
-
-              {/* Modal Actions */}
-              <div className="pt-2 space-y-2">
-                <PrimaryButton
-                  title={downloading ? t('kaushal.downloadMessage') : t('kaushal.downloadPdf')}
-                  onPress={handleDownloadPdf}
-                  icon={<AppIcon name="download-outline" size={18} />}
-                  disabled={downloading}
-                />
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="w-full rounded-full border border-softBorder bg-cleanWhite py-2.5 text-xs font-bold text-warmCocoa hover:bg-warmCream/60 transition-all"
-                >
-                  {t('kaushal.copyLink')}
-                </button>
-              </div>
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* Pinned Modal Actions Footer */}
+            <div className="shrink-0 px-5 py-3 border-t border-softBorder bg-warmCream/40 space-y-2">
+              <PrimaryButton
+                title={downloading ? t('kaushal.downloadMessage') : t('kaushal.downloadPdf')}
+                onPress={handleDownloadPdf}
+                icon={<AppIcon name="download-outline" size={18} />}
+                disabled={downloading}
+              />
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="w-full rounded-full border border-softBorder bg-cleanWhite py-2 text-xs font-bold text-warmCocoa hover:bg-warmCream/60 transition-all"
+              >
+                {t('kaushal.copyLink')}
+              </button>
+            </div>
+      </ModalPortal>
 
       {/* ========================================================================= */}
       {/* EDIT SKILLS MODAL */}
       {/* ========================================================================= */}
-      {editSkillsModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-deepNavy/35 backdrop-blur-md p-4 animate-fade-in"
-          onClick={() => setEditSkillsModalOpen(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-3xl bg-cleanWhite/95 backdrop-blur-2xl p-6 shadow-modal border border-softBorder max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-softBorder pb-3 mb-4">
+      <ModalPortal
+        isOpen={editSkillsModalOpen}
+        onClose={() => setEditSkillsModalOpen(false)}
+        maxWidthClass="sm:max-w-md"
+      >
+        {/* Pinned Header */}
+        <div className="shrink-0 flex items-center justify-between px-5 pt-3 pb-3 border-b border-softBorder">
               <div>
                 <h3 className="font-extrabold text-warmCocoa text-base">
                   {t('kaushal.editSkills')}
@@ -604,7 +643,8 @@ export default function KaushalPage() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            {/* Scrollable Body */}
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 space-y-4">
               {/* Predefined skill chips to toggle */}
               <div>
                 <label className="text-xs font-bold text-warmCocoa block mb-2">
@@ -671,28 +711,26 @@ export default function KaushalPage() {
                   </button>
                 </div>
               </div>
-
-              {/* Actions */}
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-softBorder">
-                <button
-                  type="button"
-                  onClick={() => setEditSkillsModalOpen(false)}
-                  className="rounded-full px-4 py-2.5 text-xs font-bold text-textSecondary hover:bg-warmCream/60 transition-colors"
-                >
-                  {t('profileScreen.cancel')}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveSkills}
-                  className="emerald-gradient-btn rounded-full px-6 py-2.5 text-xs font-bold text-white shadow-card hover:shadow-cardHover border border-saffronGold/30 active:scale-95 transition-all"
-                >
-                  {t('kaushal.saveSkills')}
-                </button>
-              </div>
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* Pinned Actions Footer */}
+            <div className="shrink-0 px-5 py-3 border-t border-softBorder bg-warmCream/40 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setEditSkillsModalOpen(false)}
+                className="rounded-full px-4 py-2.5 text-xs font-bold text-textSecondary hover:bg-warmCream/60 transition-colors"
+              >
+                {t('profileScreen.cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveSkills}
+                className="emerald-gradient-btn rounded-full px-6 py-2.5 text-xs font-bold text-white shadow-card hover:shadow-cardHover border border-saffronGold/30 active:scale-95 transition-all"
+              >
+                {t('kaushal.saveSkills')}
+              </button>
+            </div>
+      </ModalPortal>
 
       {/* Confirmation Toast */}
       {toastMessage && (

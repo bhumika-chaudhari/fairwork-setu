@@ -413,8 +413,9 @@ export default function DhanPage() {
 
       {/* TAB CONTENT: Day View */}
       {activeTab === 'day' && (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
           {/* Day's Transactions List */}
+          <div className="lg:col-span-5 xl:col-span-5 space-y-4">
           <Card className="p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div>
@@ -572,288 +573,297 @@ export default function DhanPage() {
               </div>
             )}
           </Card>
+          </div>
 
           {/* Full Transaction History Component with Filters */}
-          <TransactionHistory
-            transactions={transactions}
-            onEdit={openEditModal}
-            onDelete={deleteTransaction}
-            onAddIncome={() => openAddModal('income', selectedDate)}
-            onAddExpense={() => openAddModal('expense', selectedDate)}
-          />
+          <div className="lg:col-span-7 xl:col-span-7">
+            <TransactionHistory
+              transactions={transactions}
+              onEdit={openEditModal}
+              onDelete={deleteTransaction}
+              onAddIncome={() => openAddModal('income', selectedDate)}
+              onAddExpense={() => openAddModal('expense', selectedDate)}
+            />
+          </div>
         </div>
       )}
 
       {/* TAB CONTENT: Weekly Analytics & AI Insights View */}
       {activeTab === 'week' && (
-        <div className="space-y-4">
-          {/* TOP STATS: 2 Cards Side-by-Side */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
-            className="grid grid-cols-2 gap-3"
-          >
-            {/* Card 1: Weekly Income */}
-            <Card className="mb-0 p-3.5">
-              <span className="text-xs font-semibold text-textMuted">
-                {t('dhan.weeklyIncome')}
-              </span>
-              <p className="text-2xl md:text-3xl font-black text-warmCocoa mt-1">
-                {t('common.currency', { amount: formatInr(summary.weeklyIncome) })}
-              </p>
-              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-0.5 text-[11px] font-bold text-success border border-[#2E7D32]/30">
-                <span>{summary.weeklyIncomeDelta >= 0 ? '↑' : '↓'}</span>
-                <span>
-                  {summary.weeklyIncomeDelta >= 0 ? '+' : '−'}
-                  {t('common.currency', { amount: formatInr(Math.abs(summary.weeklyIncomeDelta)) })} {t('dhan.fromLastWeek')}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+          {/* Left Column: Top Stats, Net for Period, 7-Day Chart, Stability Score */}
+          <div className="lg:col-span-7 xl:col-span-7 space-y-4">
+            {/* TOP STATS: 2 Cards Side-by-Side */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="grid grid-cols-2 gap-3"
+            >
+              {/* Card 1: Weekly Income */}
+              <Card className="mb-0 p-3.5">
+                <span className="text-xs font-semibold text-textMuted">
+                  {t('dhan.weeklyIncome')}
                 </span>
-              </div>
-            </Card>
+                <p className="text-2xl md:text-3xl font-black text-warmCocoa mt-1">
+                  {t('common.currency', { amount: formatInr(summary.weeklyIncome) })}
+                </p>
+                <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-0.5 text-[11px] font-bold text-success border border-[#2E7D32]/30">
+                  <span>{summary.weeklyIncomeDelta >= 0 ? '↑' : '↓'}</span>
+                  <span>
+                    {summary.weeklyIncomeDelta >= 0 ? '+' : '−'}
+                    {t('common.currency', { amount: formatInr(Math.abs(summary.weeklyIncomeDelta)) })} {t('dhan.fromLastWeek')}
+                  </span>
+                </div>
+              </Card>
 
-            {/* Card 2: Avg Daily Income */}
-            <Card className="mb-0 p-3.5">
-              <span className="text-xs font-semibold text-textMuted">
-                {t('dhan.avgDailyIncome')}
-              </span>
-              <p className="text-2xl md:text-3xl font-black text-warmCocoa mt-1">
-                {t('common.currency', { amount: formatInr(summary.avgDailyIncome) })}
-              </p>
-              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-warmAmber/20 px-2.5 py-0.5 text-[11px] font-bold text-terracotta border border-warmAmber/40">
-                <span>•</span>
-                <span>{t('dhan.basedOn7Days')}</span>
-              </div>
-            </Card>
-          </motion.div>
+              {/* Card 2: Avg Daily Income */}
+              <Card className="mb-0 p-3.5">
+                <span className="text-xs font-semibold text-textMuted">
+                  {t('dhan.avgDailyIncome')}
+                </span>
+                <p className="text-2xl md:text-3xl font-black text-warmCocoa mt-1">
+                  {t('common.currency', { amount: formatInr(summary.avgDailyIncome) })}
+                </p>
+                <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-warmAmber/20 px-2.5 py-0.5 text-[11px] font-bold text-terracotta border border-warmAmber/40">
+                  <span>•</span>
+                  <span>{t('dhan.basedOn7Days')}</span>
+                </div>
+              </Card>
+            </motion.div>
 
-          {/* NET FOR PERIOD SUMMARY BANNER */}
-          <div className="relative overflow-hidden rounded-2xl bg-cleanWhite/90 backdrop-blur-2xl p-4 shadow-card border border-softBorder flex items-center justify-between">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-terracotta/15 text-terracotta border border-warmAmber/30 shadow-xs">
-                <AppIcon name="wallet" size={17} />
+            {/* NET FOR PERIOD SUMMARY BANNER */}
+            <div className="relative overflow-hidden rounded-2xl bg-cleanWhite/90 backdrop-blur-2xl p-4 shadow-card border border-softBorder flex items-center justify-between">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-terracotta/15 text-terracotta border border-warmAmber/30 shadow-xs">
+                  <AppIcon name="wallet" size={17} />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-warmCocoa block leading-tight">
+                    {t('dhan.netForPeriod')}
+                  </span>
+                  <p className="text-[11px] text-textSecondary mt-0.5">
+                    <span className="text-success font-semibold">+{t('common.currency', { amount: formatInr(summary.totalIncome) })}</span>{' '}
+                    <span className="text-danger font-semibold">−{t('common.currency', { amount: formatInr(summary.totalExpense) })}</span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <span className="text-xs font-bold text-warmCocoa block leading-tight">
+              <div className="text-right">
+                <span className="text-[10px] font-extrabold uppercase text-textMuted block">
                   {t('dhan.netForPeriod')}
                 </span>
-                <p className="text-[11px] text-textSecondary mt-0.5">
-                  <span className="text-success font-semibold">+{t('common.currency', { amount: formatInr(summary.totalIncome) })}</span>{' '}
-                  <span className="text-danger font-semibold">−{t('common.currency', { amount: formatInr(summary.totalExpense) })}</span>
-                </p>
+                <span className={`text-base font-black ${summary.netForPeriod >= 0 ? 'text-warmCocoa' : 'text-danger'}`}>
+                  {summary.netForPeriod >= 0 ? '+' : '−'}{t('common.currency', { amount: formatInr(Math.abs(summary.netForPeriod)) })}
+                </span>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-[10px] font-extrabold uppercase text-textMuted block">
-                {t('dhan.netForPeriod')}
-              </span>
-              <span className={`text-base font-black ${summary.netForPeriod >= 0 ? 'text-warmCocoa' : 'text-danger'}`}>
-                {summary.netForPeriod >= 0 ? '+' : '−'}{t('common.currency', { amount: formatInr(Math.abs(summary.netForPeriod)) })}
-              </span>
-            </div>
-          </div>
 
-          {/* 7-DAY INCOME & EXPENSE CHART */}
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-extrabold text-warmCocoa">
-                {t('dhan.last7Days')}
-              </h2>
-              <span className="text-xs font-semibold text-textMuted">{t('dhan.monSun')}</span>
-            </div>
-            <IncomeChart days={summary.dailyBreakdown} />
-          </Card>
-
-          {/* SECTION: Expense Categories Chips */}
-          {summary.categoryTotals.length > 0 && (
-            <div>
-              <h2 className="text-sm font-extrabold text-warmCocoa mb-2.5">
-                {t('dhan.expenseCategories')}
-              </h2>
-              <div className="hide-scrollbar flex items-center gap-2 overflow-x-auto pb-1">
-                {summary.categoryTotals.map((cat) => {
-                  const isSelected = selectedExpenseCat === cat.category;
-                  return (
-                    <button
-                      key={cat.category}
-                      type="button"
-                      onClick={() =>
-                        setSelectedExpenseCat(isSelected ? null : cat.category)
-                      }
-                      className={`flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-bold transition-all shadow-glass border whitespace-nowrap ${
-                        isSelected
-                          ? 'bg-terracotta text-white border-transparent'
-                          : 'bg-cleanWhite text-earthyCharcoal border-softBorder hover:bg-warmCream/60'
-                      }`}
-                    >
-                      <AppIcon name={cat.icon} size={15} className={isSelected ? 'text-saffronGold' : 'text-terracotta'} />
-                      <span>{t(cat.categoryKey)}</span>
-                      <span className={`font-semibold ${isSelected ? 'text-saffronGold' : 'text-textMuted'}`}>
-                        ₹{formatInr(cat.amount)} ({cat.percentage}%)
-                      </span>
-                    </button>
-                  );
-                })}
+            {/* 7-DAY INCOME & EXPENSE CHART */}
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-extrabold text-warmCocoa">
+                  {t('dhan.last7Days')}
+                </h2>
+                <span className="text-xs font-semibold text-textMuted">{t('dhan.monSun')}</span>
               </div>
-            </div>
-          )}
+              <IncomeChart days={summary.dailyBreakdown} />
+            </Card>
 
-          {/* EMERGENCY SAVINGS PROGRESS CARD */}
-          <Card variant="success" className="p-4 flex items-center justify-between">
-            <div>
-              <span className="text-xs font-semibold text-textMuted">
-                {t('dhan.savingsGoal')}
-              </span>
-              <p className="text-xl font-black text-warmCocoa mt-0.5">
-                {t('common.currency', { amount: formatInr(savingsSaved) })} / {t('common.currency', { amount: formatInr(savingsTarget) })}
-              </p>
-              <span className="text-xs font-bold text-success block mt-1">
-                {savingsPercent}% complete
-              </span>
-            </div>
-            <div className="shrink-0 pl-3">
-              <ProgressRing
-                progress={savingsPercent / 100}
-                size={56}
-                stroke={5}
-                color="#B34A26"
-                trackColor="#FDF3EE"
-              />
-            </div>
-          </Card>
-
-          {/* HONEST AI INCOME ESTIMATE CARD */}
-          <Card variant="accent" className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-warmAmber/20 text-terracotta mt-0.5">
-                <AppIcon name="trending-up" size={22} />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-warmCocoa">
-                    {t('dhan.expectedIncome')}
-                  </span>
-                  <span className="rounded-full bg-saffronGold/20 px-2 py-0.5 text-[10px] font-black text-warmCocoa border border-saffronGold/30">
-                    {t('dhan.aiModel')}
-                  </span>
+            {/* HONEST FINANCIAL STABILITY SCORE GAUGE CARD */}
+            <Card variant="emerald" className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="text-sm font-extrabold text-warmCocoa">
+                    {t('dhan.stabilityScore')}
+                  </h3>
+                  <p className="text-xs text-textMuted mt-0.5">
+                    {t('dhan.stabilityHint')}
+                  </p>
                 </div>
-                {summary.hasSufficientHistory ? (
-                  <div className="mt-1">
-                    <p className="text-lg font-black text-warmCocoa">
-                      ₹{formatInr(summary.forecastMin)} – ₹{formatInr(summary.forecastMax)}
-                    </p>
-                    <p className="text-[11px] text-textSecondary mt-0.5">
-                      {t('dhan.projectionBasedOn', { count: summary.activeDaysCount })}
-                    </p>
+                {summary.hasSufficientStabilityHistory ? (
+                  <div className="text-right">
+                    <span className="text-2xl font-black text-warmCocoa">{summary.stabilityScore}</span>
+                    <span className="block text-[10px] font-bold text-success uppercase">
+                      {t(summary.stabilityScoreLabelKey)}
+                    </span>
                   </div>
                 ) : (
-                  <div className="mt-1.5 space-y-1.5">
-                    <p className="text-xs text-textSecondary leading-relaxed">
-                      {t('dhan.aiForecastInsufficient')}
-                    </p>
-                    <div className="flex items-center gap-2 text-[11px] font-bold text-textMuted">
-                      <span>{t('dhan.forecastProgress', { count: summary.activeDaysCount })}</span>
-                      <div className="flex-1 h-1.5 rounded-full bg-softBorder overflow-hidden">
-                        <div
-                          className="h-full bg-terracotta rounded-full transition-all"
-                          style={{ width: `${Math.min((summary.activeDaysCount / 5) * 100, 100)}%` }}
-                        />
-                      </div>
-                    </div>
+                  <div className="text-right">
+                    <span className="text-xs font-bold text-textMuted bg-surfaceAlt px-2 py-1 rounded-lg">
+                      {t('dhan.buildingScore')}
+                    </span>
                   </div>
                 )}
               </div>
-            </div>
-          </Card>
 
-          {/* HONEST AI ANOMALY DETECTION CARD */}
-          <Card variant={summary.hasAnomaly ? 'warning' : 'glass'} className="p-4">
-            <div className="flex items-start gap-3">
-              <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl mt-0.5 ${
-                  summary.hasAnomaly ? 'bg-warmAmber/20 text-terracotta' : 'bg-warmAmber/15 text-terracotta'
-                }`}
-              >
-                <AppIcon name="sparkles" size={18} />
-              </div>
-              <div className="flex-1">
-                <h3
-                  className={`text-xs font-bold uppercase tracking-wide ${
-                    summary.hasAnomaly ? 'text-warmCocoa' : 'text-warmCocoa'
-                  }`}
-                >
-                  {t('dhan.aiSpendingAnalysis')}
-                </h3>
-                <p className="mt-1 text-xs text-textPrimary leading-relaxed">
-                  {summary.hasAnomaly
-                    ? t(summary.anomalyDescriptionKey || 'dhan.anomalyAlert')
-                    : t('dhan.noSpikesDetected')}
-                </p>
-                {summary.hasAnomaly && (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedExpenseCat('travel_fuel')}
-                    className="mt-2 text-xs font-bold text-terracotta hover:underline"
-                  >
-                    {t('dhan.reviewDeductions')} →
-                  </button>
-                )}
-              </div>
-            </div>
-          </Card>
-
-          {/* HONEST FINANCIAL STABILITY SCORE GAUGE CARD */}
-          <Card variant="emerald" className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-sm font-extrabold text-warmCocoa">
-                  {t('dhan.stabilityScore')}
-                </h3>
-                <p className="text-xs text-textMuted mt-0.5">
-                  {t('dhan.stabilityHint')}
-                </p>
-              </div>
+              {/* Stability Progress Bar */}
               {summary.hasSufficientStabilityHistory ? (
-                <div className="text-right">
-                  <span className="text-2xl font-black text-warmCocoa">{summary.stabilityScore}</span>
-                  <span className="block text-[10px] font-bold text-success uppercase">
-                    {t(summary.stabilityScoreLabelKey)}
-                  </span>
+                <div className="mt-3 h-2.5 w-full rounded-full bg-softBorder overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#F1B96B] via-[#E5953E] to-[#B34A26] transition-all duration-500"
+                    style={{ width: `${Math.min((summary.stabilityScore / 500) * 100, 100)}%` }}
+                  />
                 </div>
               ) : (
-                <div className="text-right">
-                  <span className="text-xs font-bold text-textMuted bg-surfaceAlt px-2 py-1 rounded-lg">
-                    {t('dhan.buildingScore')}
-                  </span>
+                <div className="mt-2 space-y-1.5">
+                  <p className="text-xs text-textSecondary">
+                    {t('dhan.stabilityScoreInsufficient')}
+                  </p>
+                  <div className="flex items-center gap-2 text-[11px] font-bold text-textMuted">
+                    <span>{t('dhan.activeDaysProgress', { count: summary.activeDaysCount })}</span>
+                    <div className="flex-1 h-2 rounded-full bg-softBorder overflow-hidden">
+                      <div
+                        className="h-full bg-saffronGold rounded-full transition-all"
+                        style={{ width: `${Math.min((summary.activeDaysCount / 7) * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
-            </div>
+            </Card>
+          </div>
 
-            {/* Stability Progress Bar */}
-            {summary.hasSufficientStabilityHistory ? (
-              <div className="mt-3 h-2.5 w-full rounded-full bg-softBorder overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#F1B96B] via-[#E5953E] to-[#B34A26] transition-all duration-500"
-                  style={{ width: `${Math.min((summary.stabilityScore / 500) * 100, 100)}%` }}
-                />
-              </div>
-            ) : (
-              <div className="mt-2 space-y-1.5">
-                <p className="text-xs text-textSecondary">
-                  {t('dhan.stabilityScoreInsufficient')}
-                </p>
-                <div className="flex items-center gap-2 text-[11px] font-bold text-textMuted">
-                  <span>{t('dhan.activeDaysProgress', { count: summary.activeDaysCount })}</span>
-                  <div className="flex-1 h-2 rounded-full bg-softBorder overflow-hidden">
-                    <div
-                      className="h-full bg-saffronGold rounded-full transition-all"
-                      style={{ width: `${Math.min((summary.activeDaysCount / 7) * 100, 100)}%` }}
-                    />
-                  </div>
+          {/* Right Column: Expense Categories, Savings Progress, AI Models */}
+          <div className="lg:col-span-5 xl:col-span-5 space-y-4">
+            {/* SECTION: Expense Categories Chips */}
+            {summary.categoryTotals.length > 0 && (
+              <div>
+                <h2 className="text-sm font-extrabold text-warmCocoa mb-2.5">
+                  {t('dhan.expenseCategories')}
+                </h2>
+                <div className="hide-scrollbar flex items-center gap-2 overflow-x-auto pb-1">
+                  {summary.categoryTotals.map((cat) => {
+                    const isSelected = selectedExpenseCat === cat.category;
+                    return (
+                      <button
+                        key={cat.category}
+                        type="button"
+                        onClick={() =>
+                          setSelectedExpenseCat(isSelected ? null : cat.category)
+                        }
+                        className={`flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-bold transition-all shadow-glass border whitespace-nowrap ${
+                          isSelected
+                            ? 'bg-terracotta text-white border-transparent'
+                            : 'bg-cleanWhite text-earthyCharcoal border-softBorder hover:bg-warmCream/60'
+                        }`}
+                      >
+                        <AppIcon name={cat.icon} size={15} className={isSelected ? 'text-saffronGold' : 'text-terracotta'} />
+                        <span>{t(cat.categoryKey)}</span>
+                        <span className={`font-semibold ${isSelected ? 'text-saffronGold' : 'text-textMuted'}`}>
+                          ₹{formatInr(cat.amount)} ({cat.percentage}%)
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
-          </Card>
+
+            {/* EMERGENCY SAVINGS PROGRESS CARD */}
+            <Card variant="success" className="p-4 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-textMuted">
+                  {t('dhan.savingsGoal')}
+                </span>
+                <p className="text-xl font-black text-warmCocoa mt-0.5">
+                  {t('common.currency', { amount: formatInr(savingsSaved) })} / {t('common.currency', { amount: formatInr(savingsTarget) })}
+                </p>
+                <span className="text-xs font-bold text-success block mt-1">
+                  {savingsPercent}% complete
+                </span>
+              </div>
+              <div className="shrink-0 pl-3">
+                <ProgressRing
+                  progress={savingsPercent / 100}
+                  size={56}
+                  stroke={5}
+                  color="#B34A26"
+                  trackColor="#FDF3EE"
+                />
+              </div>
+            </Card>
+
+            {/* HONEST AI INCOME ESTIMATE CARD */}
+            <Card variant="accent" className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-warmAmber/20 text-terracotta mt-0.5">
+                  <AppIcon name="trending-up" size={22} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-warmCocoa">
+                      {t('dhan.expectedIncome')}
+                    </span>
+                    <span className="rounded-full bg-saffronGold/20 px-2 py-0.5 text-[10px] font-black text-warmCocoa border border-saffronGold/30">
+                      {t('dhan.aiModel')}
+                    </span>
+                  </div>
+                  {summary.hasSufficientHistory ? (
+                    <div className="mt-1">
+                      <p className="text-lg font-black text-warmCocoa">
+                        ₹{formatInr(summary.forecastMin)} – ₹{formatInr(summary.forecastMax)}
+                      </p>
+                      <p className="text-[11px] text-textSecondary mt-0.5">
+                        {t('dhan.projectionBasedOn', { count: summary.activeDaysCount })}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-1.5 space-y-1.5">
+                      <p className="text-xs text-textSecondary leading-relaxed">
+                        {t('dhan.aiForecastInsufficient')}
+                      </p>
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-textMuted">
+                        <span>{t('dhan.forecastProgress', { count: summary.activeDaysCount })}</span>
+                        <div className="flex-1 h-1.5 rounded-full bg-softBorder overflow-hidden">
+                          <div
+                            className="h-full bg-terracotta rounded-full transition-all"
+                            style={{ width: `${Math.min((summary.activeDaysCount / 5) * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+
+            {/* HONEST AI ANOMALY DETECTION CARD */}
+            <Card variant={summary.hasAnomaly ? 'warning' : 'glass'} className="p-4">
+              <div className="flex items-start gap-3">
+                <div
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl mt-0.5 ${
+                    summary.hasAnomaly ? 'bg-warmAmber/20 text-terracotta' : 'bg-warmAmber/15 text-terracotta'
+                  }`}
+                >
+                  <AppIcon name="sparkles" size={18} />
+                </div>
+                <div className="flex-1">
+                  <h3
+                    className={`text-xs font-bold uppercase tracking-wide ${
+                      summary.hasAnomaly ? 'text-warmCocoa' : 'text-warmCocoa'
+                    }`}
+                  >
+                    {t('dhan.aiSpendingAnalysis')}
+                  </h3>
+                  <p className="mt-1 text-xs text-textPrimary leading-relaxed">
+                    {summary.hasAnomaly
+                      ? t(summary.anomalyDescriptionKey || 'dhan.anomalyAlert')
+                      : t('dhan.noSpikesDetected')}
+                  </p>
+                  {summary.hasAnomaly && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedExpenseCat('travel_fuel')}
+                      className="mt-2 text-xs font-bold text-terracotta hover:underline"
+                    >
+                      {t('dhan.reviewDeductions')} →
+                    </button>
+                  )}
+                </div>
+              </div>
+            </Card>
+          </div>
         </div>
       )}
 

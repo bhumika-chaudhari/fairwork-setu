@@ -308,177 +308,199 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
             </div>
 
-            {/* Interactive 7-Day Forecast Area Chart */}
-            <Card className="p-4 md:p-5">
-              <div className="mb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-extrabold text-warmCocoa">
-                    7-Day Cash Balance Horizon & Confidence Bounds
-                  </h3>
-                  <p className="text-[11px] text-textSecondary">
-                    Solid line shows expected balance; shaded band shows ±1.2 RMSE prediction interval
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] font-bold">
-                  <span className="inline-flex items-center gap-1 text-terracotta">
-                    <span className="h-2 w-2 rounded-full bg-terracotta" /> Forecast
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-warmAmber">
-                    <span className="h-2 w-2 rounded-full bg-warmAmber/50" /> ±RMSE
-                  </span>
-                </div>
-              </div>
-
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    data={linearData?.forecast_7_days ?? []}
-                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#B34A26" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#B34A26" stopOpacity={0.05} />
-                      </linearGradient>
-                      <linearGradient id="boundGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#F1B96B" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#F1B96B" stopOpacity={0.05} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(35,31,32,0.06)" />
-                    <XAxis
-                      dataKey="day_label"
-                      tick={{ fontSize: 11, fill: '#7D7068', fontWeight: 600 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 10, fill: '#7D7068' }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(v) => `₹${v}`}
-                    />
-                    <Tooltip
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const d = payload[0].payload as any;
-                          return (
-                            <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2.5 shadow-card border border-softBorder text-xs">
-                              <p className="font-extrabold text-warmCocoa">
-                                {d.day_label} ({d.date})
-                              </p>
-                              <p className="font-bold text-terracotta mt-1">
-                                Expected: ₹{d.predicted_balance?.toLocaleString('en-IN')}
-                              </p>
-                              <p className="text-[11px] text-textMuted mt-0.5">
-                                Interval: ₹{d.confidence_lower?.toLocaleString('en-IN')} – ₹{d.confidence_upper?.toLocaleString('en-IN')}
-                              </p>
-                              <p className="text-[10px] text-textSecondary mt-0.5">
-                                Expected Daily Net: ₹{d.expected_daily_net}
-                              </p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="confidence_upper"
-                      stroke="transparent"
-                      fill="url(#boundGrad)"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="predicted_balance"
-                      stroke="#B34A26"
-                      strokeWidth={2.5}
-                      fill="url(#balanceGrad)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            {/* Regression Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  R² Score
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1">
-                  {linearData?.metrics?.r2_score ?? '0.884'}
-                </span>
-                <span className="text-[10px] text-success font-bold mt-0.5 block">
-                  Variance Explained
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  MAE (Test)
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1">
-                  ₹{linearData?.metrics?.mae ?? '142.5'}
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Mean Absolute Error
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  RMSE
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1">
-                  ₹{linearData?.metrics?.rmse ?? '184.2'}
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Root Mean Sq Error
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Split Samples
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1">
-                  {linearData?.metrics?.train_samples ?? 72} / {linearData?.metrics?.test_samples ?? 18}
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Train / Test (80/20)
-                </span>
-              </div>
-            </div>
-
-            {/* Regression Coefficients & Interpretability Card */}
-            <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
-                Learned Model Coefficients & Feature Importance
-              </h3>
-              <p className="text-xs text-textSecondary mb-3">
-                Interpretable regression weights indicating impact on projected cash balance:
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                {linearData?.metrics?.coefficients &&
-                  Object.entries(linearData.metrics.coefficients).map(([feat, weight]) => (
-                    <div
-                      key={feat}
-                      className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder"
-                    >
-                      <span className="font-semibold text-textSecondary font-mono">{feat}</span>
-                      <span
-                        className={`font-mono font-bold ${
-                          weight >= 0 ? 'text-success' : 'text-danger'
-                        }`}
-                      >
-                        {weight >= 0 ? '+' : ''}{weight}
+            {/* 2-Column Responsive Layout for Desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+              {/* Left Column: Interactive Chart & Learned Feature Coefficients */}
+              <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+                {/* Interactive 7-Day Forecast Area Chart */}
+                <Card className="p-4 md:p-5">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-warmCocoa">
+                        7-Day Cash Balance Horizon & Confidence Bounds
+                      </h3>
+                      <p className="text-[11px] text-textSecondary">
+                        Solid line shows expected balance; shaded band shows ±1.2 RMSE prediction interval
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] font-bold">
+                      <span className="inline-flex items-center gap-1 text-terracotta">
+                        <span className="h-2 w-2 rounded-full bg-terracotta" /> Forecast
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-warmAmber">
+                        <span className="h-2 w-2 rounded-full bg-warmAmber/50" /> ±RMSE
                       </span>
                     </div>
-                  ))}
+                  </div>
+
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={linearData?.forecast_7_days ?? []}
+                        margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#B34A26" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="#B34A26" stopOpacity={0.05} />
+                          </linearGradient>
+                          <linearGradient id="boundGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F1B96B" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#F1B96B" stopOpacity={0.05} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(35,31,32,0.06)" />
+                        <XAxis
+                          dataKey="day_label"
+                          tick={{ fontSize: 11, fill: '#7D7068', fontWeight: 600 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          tick={{ fontSize: 10, fill: '#7D7068' }}
+                          axisLine={false}
+                          tickLine={false}
+                          tickFormatter={(v) => `₹${v}`}
+                        />
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const d = payload[0].payload as any;
+                              return (
+                                <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2.5 shadow-card border border-softBorder text-xs">
+                                  <p className="font-extrabold text-warmCocoa">
+                                    {d.day_label} ({d.date})
+                                  </p>
+                                  <p className="font-bold text-terracotta mt-1">
+                                    Expected: ₹{d.predicted_balance?.toLocaleString('en-IN')}
+                                  </p>
+                                  <p className="text-[11px] text-textMuted mt-0.5">
+                                    Interval: ₹{d.confidence_lower?.toLocaleString('en-IN')} – ₹{d.confidence_upper?.toLocaleString('en-IN')}
+                                  </p>
+                                  <p className="text-[10px] text-textSecondary mt-0.5">
+                                    Expected Daily Net: ₹{d.expected_daily_net}
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="confidence_upper"
+                          stroke="transparent"
+                          fill="url(#boundGrad)"
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="predicted_balance"
+                          stroke="#B34A26"
+                          strokeWidth={2.5}
+                          fill="url(#balanceGrad)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </Card>
+
+                {/* Regression Coefficients & Interpretability Card */}
+                <Card className="p-4 md:p-5">
+                  <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
+                    Learned Model Coefficients & Feature Importance
+                  </h3>
+                  <p className="text-xs text-textSecondary mb-3">
+                    Interpretable regression weights indicating impact on projected cash balance:
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {linearData?.metrics?.coefficients &&
+                      Object.entries(linearData.metrics.coefficients).map(([feat, weight]) => (
+                        <div
+                          key={feat}
+                          className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder"
+                        >
+                          <span className="font-semibold text-textSecondary font-mono">{feat}</span>
+                          <span
+                            className={`font-mono font-bold ${
+                              weight >= 0 ? 'text-success' : 'text-danger'
+                            }`}
+                          >
+                            {weight >= 0 ? '+' : ''}{weight}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </Card>
               </div>
-            </Card>
+
+              {/* Right Column: Regression Metrics Grid & Interpretation */}
+              <div className="lg:col-span-5 xl:col-span-4 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      R² Score
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      {linearData?.metrics?.r2_score ?? '0.884'}
+                    </span>
+                    <span className="text-[10px] text-success font-bold mt-0.5 block">
+                      Variance Explained
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      MAE (Test)
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      ₹{linearData?.metrics?.mae ?? '142.5'}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Mean Absolute Error
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      RMSE
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      ₹{linearData?.metrics?.rmse ?? '184.2'}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Root Mean Sq Error
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Split Samples
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      {linearData?.metrics?.train_samples ?? 72} / {linearData?.metrics?.test_samples ?? 18}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Train / Test (80/20)
+                    </span>
+                  </div>
+                </div>
+
+                <Card className="p-4 md:p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta">
+                      <AppIcon name="sparkles" size={14} />
+                    </div>
+                    <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
+                      Model Interpretation
+                    </h3>
+                  </div>
+                  <p className="text-xs text-textPrimary leading-relaxed">
+                    OLS linear regression models daily balance projections based on 3-day rolling flow and cyclical weekly swings. An R² score above 0.85 verifies strong explanatory power for day-to-day gig finances.
+                  </p>
+                </Card>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -541,163 +563,185 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
             </div>
 
-            {/* Probability Gauge & Budget Comparison Card */}
-            <Card className="p-4 md:p-5 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-extrabold text-warmCocoa">
-                    Budget Overrun Probability Meter
-                  </h3>
-                  <p className="text-xs text-textSecondary">
-                    Evaluated against your monthly target of ₹{formatInr(logisticData?.budget_amount ?? 5000)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className="text-2xl font-black text-warmCocoa">
-                    {logisticData?.probability_percent ?? 40.8}%
-                  </span>
-                  <span className="text-[10px] font-bold text-textMuted block">
-                    Exceed Probability
-                  </span>
-                </div>
-              </div>
-
-              {/* Progress Track with Color Stops */}
-              <div className="space-y-1.5">
-                <div className="relative h-4 w-full overflow-hidden rounded-full bg-warmCream/60 border border-softBorder p-0.5 shadow-inner">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(100, logisticData?.probability_percent ?? 40)}%` }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                    className={`h-full rounded-full ${
-                      (logisticData?.probability_percent ?? 40) < 35
-                        ? 'bg-gradient-to-r from-[#2E7D32] to-[#E5953E]'
-                        : (logisticData?.probability_percent ?? 40) < 65
-                        ? 'bg-gradient-to-r from-[#F1B96B] via-[#E5953E] to-[#B34A26]'
-                        : 'bg-gradient-to-r from-[#E5953E] to-rose-600'
-                    }`}
-                  />
-                </div>
-                <div className="flex justify-between text-[10px] font-bold text-textMuted px-1">
-                  <span>0% (Safe)</span>
-                  <span>35% (Borderline)</span>
-                  <span>65% (High Risk)</span>
-                  <span>100% (Critical)</span>
-                </div>
-              </div>
-
-              {/* Spend vs Budget Comparison */}
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-softBorder">
-                <div className="p-3 rounded-2xl bg-warmCream/60 border border-softBorder">
-                  <span className="text-[10px] font-black uppercase text-textMuted block">
-                    Projected Month Spend
-                  </span>
-                  <span className="text-lg font-black text-warmCocoa mt-0.5 block">
-                    {formatInr(logisticData?.projected_spend ?? 4700)}
-                  </span>
-                </div>
-                <div className="p-3 rounded-2xl bg-warmCream/60 border border-softBorder">
-                  <span className="text-[10px] font-black uppercase text-textMuted block">
-                    Target Budget
-                  </span>
-                  <span className="text-lg font-black text-warmCocoa mt-0.5 block">
-                    {formatInr(logisticData?.budget_amount ?? 5000)}
-                  </span>
-                </div>
-              </div>
-            </Card>
-
-            {/* Classification Evaluation Metrics */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  ROC-AUC
-                </span>
-                <span className="text-lg font-black text-warmCocoa block mt-1">
-                  {logisticData?.metrics?.roc_auc ?? '0.9967'}
-                </span>
-                <span className="text-[10px] text-success font-bold mt-0.5 block">
-                  Discrimination
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Accuracy
-                </span>
-                <span className="text-lg font-black text-warmCocoa block mt-1">
-                  {((logisticData?.metrics?.accuracy ?? 0.94) * 100).toFixed(1)}%
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Overall Correct
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Precision
-                </span>
-                <span className="text-lg font-black text-warmCocoa block mt-1">
-                  {((logisticData?.metrics?.precision ?? 0.965) * 100).toFixed(1)}%
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Low False Pos
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Recall
-                </span>
-                <span className="text-lg font-black text-warmCocoa block mt-1">
-                  {((logisticData?.metrics?.recall ?? 0.933) * 100).toFixed(1)}%
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Catching Risk
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  F1-Score
-                </span>
-                <span className="text-lg font-black text-warmCocoa block mt-1">
-                  {((logisticData?.metrics?.f1_score ?? 0.949) * 100).toFixed(1)}%
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Harmonic Mean
-                </span>
-              </div>
-            </div>
-
-            {/* Feature Coefficients Breakdown */}
-            <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
-                Standardized Logistic Feature Weights
-              </h3>
-              <p className="text-xs text-textSecondary mb-3">
-                Features standardized with StandardScaler prior to training:
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                {logisticData?.metrics?.coefficients &&
-                  Object.entries(logisticData.metrics.coefficients).map(([feat, coef]) => (
-                    <div
-                      key={feat}
-                      className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder"
-                    >
-                      <span className="font-semibold text-textSecondary font-mono">{feat}</span>
-                      <span
-                        className={`font-mono font-bold ${
-                          coef >= 0 ? 'text-danger' : 'text-success'
-                        }`}
-                      >
-                        {coef >= 0 ? '+' : ''}{coef}
+            {/* 2-Column Responsive Layout for Desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+              {/* Left Column: Probability Gauge and Feature Coefficients */}
+              <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+                {/* Probability Gauge & Budget Comparison Card */}
+                <Card className="p-4 md:p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-warmCocoa">
+                        Budget Overrun Probability Meter
+                      </h3>
+                      <p className="text-xs text-textSecondary">
+                        Evaluated against your monthly target of ₹{formatInr(logisticData?.budget_amount ?? 5000)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-black text-warmCocoa">
+                        {logisticData?.probability_percent ?? 40.8}%
+                      </span>
+                      <span className="text-[10px] font-bold text-textMuted block">
+                        Exceed Probability
                       </span>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Progress Track with Color Stops */}
+                  <div className="space-y-1.5">
+                    <div className="relative h-4 w-full overflow-hidden rounded-full bg-warmCream/60 border border-softBorder p-0.5 shadow-inner">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, logisticData?.probability_percent ?? 40)}%` }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                        className={`h-full rounded-full ${
+                          (logisticData?.probability_percent ?? 40) < 35
+                            ? 'bg-gradient-to-r from-[#2E7D32] to-[#E5953E]'
+                            : (logisticData?.probability_percent ?? 40) < 65
+                            ? 'bg-gradient-to-r from-[#F1B96B] via-[#E5953E] to-[#B34A26]'
+                            : 'bg-gradient-to-r from-[#E5953E] to-rose-600'
+                        }`}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] font-bold text-textMuted px-1">
+                      <span>0% (Safe)</span>
+                      <span>35% (Borderline)</span>
+                      <span>65% (High Risk)</span>
+                      <span>100% (Critical)</span>
+                    </div>
+                  </div>
+
+                  {/* Spend vs Budget Comparison */}
+                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-softBorder">
+                    <div className="p-3 rounded-2xl bg-warmCream/60 border border-softBorder">
+                      <span className="text-[10px] font-black uppercase text-textMuted block">
+                        Projected Month Spend
+                      </span>
+                      <span className="text-lg font-black text-warmCocoa mt-0.5 block">
+                        {formatInr(logisticData?.projected_spend ?? 4700)}
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-warmCream/60 border border-softBorder">
+                      <span className="text-[10px] font-black uppercase text-textMuted block">
+                        Target Budget
+                      </span>
+                      <span className="text-lg font-black text-warmCocoa mt-0.5 block">
+                        {formatInr(logisticData?.budget_amount ?? 5000)}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Feature Coefficients Breakdown */}
+                <Card className="p-4 md:p-5">
+                  <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
+                    Standardized Logistic Feature Weights
+                  </h3>
+                  <p className="text-xs text-textSecondary mb-3">
+                    Features standardized with StandardScaler prior to training:
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {logisticData?.metrics?.coefficients &&
+                      Object.entries(logisticData.metrics.coefficients).map(([feat, coef]) => (
+                        <div
+                          key={feat}
+                          className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder"
+                        >
+                          <span className="font-semibold text-textSecondary font-mono">{feat}</span>
+                          <span
+                            className={`font-mono font-bold ${
+                              coef >= 0 ? 'text-danger' : 'text-success'
+                            }`}
+                          >
+                            {coef >= 0 ? '+' : ''}{coef}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </Card>
               </div>
-            </Card>
+
+              {/* Right Column: Classification Evaluation Metrics & Insights */}
+              <div className="lg:col-span-5 xl:col-span-4 space-y-4">
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      ROC-AUC
+                    </span>
+                    <span className="text-lg font-black text-warmCocoa block mt-1">
+                      {logisticData?.metrics?.roc_auc ?? '0.9967'}
+                    </span>
+                    <span className="text-[10px] text-success font-bold mt-0.5 block">
+                      Discrimination
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Accuracy
+                    </span>
+                    <span className="text-lg font-black text-warmCocoa block mt-1">
+                      {((logisticData?.metrics?.accuracy ?? 0.94) * 100).toFixed(1)}%
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Overall Correct
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Precision
+                    </span>
+                    <span className="text-lg font-black text-warmCocoa block mt-1">
+                      {((logisticData?.metrics?.precision ?? 0.965) * 100).toFixed(1)}%
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Low False Pos
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Recall
+                    </span>
+                    <span className="text-lg font-black text-warmCocoa block mt-1">
+                      {((logisticData?.metrics?.recall ?? 0.933) * 100).toFixed(1)}%
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Catching Risk
+                    </span>
+                  </div>
+
+                  <div className="col-span-2 rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      F1-Score
+                    </span>
+                    <span className="text-lg font-black text-warmCocoa block mt-1">
+                      {((logisticData?.metrics?.f1_score ?? 0.949) * 100).toFixed(1)}%
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Harmonic Mean of Precision and Recall
+                    </span>
+                  </div>
+                </div>
+
+                <Card className="p-4 md:p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta">
+                      <AppIcon name="shield-checkmark" size={14} />
+                    </div>
+                    <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
+                      Budget Risk Analysis
+                    </h3>
+                  </div>
+                  <p className="text-xs text-textPrimary leading-relaxed">
+                    Logistic regression maps worker spending trends to sigmoid probability curve \(P(Y=1 \mid X)\). Positive weights for high living expenses increase risk; positive income balances lower it.
+                  </p>
+                </Card>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -764,156 +808,178 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
             </div>
 
-            {/* 7-Day Net Cash Flow Line Chart */}
-            <Card className="p-4 md:p-5">
-              <div className="mb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-extrabold text-warmCocoa">
-                    7-Day Multi-Step Sequential Net Cash Flow
+            {/* 2-Column Responsive Layout for Desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+              {/* Left Column: 7-Day Net Cash Flow Line Chart & Architecture Details */}
+              <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+                {/* 7-Day Net Cash Flow Line Chart */}
+                <Card className="p-4 md:p-5">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-warmCocoa">
+                        7-Day Multi-Step Sequential Net Cash Flow
+                      </h3>
+                      <p className="text-[11px] text-textSecondary">
+                        Sequential neural network output forecasting daily income minus daily expenses
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] font-bold">
+                      <span className="inline-flex items-center gap-1 text-terracotta">
+                        <span className="h-2 w-2 rounded-full bg-terracotta" /> Forecast Net (₹)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={lstmData?.forecast_7_days ?? []}
+                        margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(35,31,32,0.06)" />
+                        <XAxis
+                          dataKey="day_label"
+                          tick={{ fontSize: 11, fill: '#7D7068', fontWeight: 600 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          tick={{ fontSize: 10, fill: '#7D7068' }}
+                          axisLine={false}
+                          tickLine={false}
+                          tickFormatter={(v) => `₹${v}`}
+                        />
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const d = payload[0].payload as any;
+                              return (
+                                <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2.5 shadow-card border border-softBorder text-xs">
+                                  <p className="font-extrabold text-warmCocoa">
+                                    {d.day_label} ({d.date})
+                                  </p>
+                                  <p className="font-bold text-terracotta mt-1">
+                                    Predicted Net: ₹{d.predicted_net}
+                                  </p>
+                                  <p className="text-[11px] text-textMuted mt-0.5">
+                                    Confidence Band: ₹{d.confidence_lower} – ₹{d.confidence_upper}
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="predicted_net"
+                          stroke="#B34A26"
+                          strokeWidth={3}
+                          dot={{ fill: '#7C2D16', r: 4 }}
+                          activeDot={{ r: 6, fill: '#E5953E' }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </Card>
+
+                {/* Model Architecture Summary */}
+                <Card className="p-4 md:p-5">
+                  <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
+                    PyTorch Network Architecture Details
                   </h3>
-                  <p className="text-[11px] text-textSecondary">
-                    Sequential neural network output forecasting daily income minus daily expenses
+                  <p className="text-xs text-textSecondary mb-3">
+                    Built and verified with genuine deep learning tensors:
                   </p>
+
+                  <div className="space-y-2 text-xs font-mono">
+                    <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
+                      <span className="text-textSecondary">Input Size:</span>
+                      <span className="font-bold text-warmCocoa">3 features (normalized [income, expense, net])</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
+                      <span className="text-textSecondary">Hidden Units:</span>
+                      <span className="font-bold text-warmCocoa">32 recurrent LSTM hidden states</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
+                      <span className="text-textSecondary">Sequence Length:</span>
+                      <span className="font-bold text-warmCocoa">7 sliding days historical input</span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
+                      <span className="text-textSecondary">Output Projection:</span>
+                      <span className="font-bold text-warmCocoa">nn.Linear(32, 1) -&gt; 7-step autoregressive rollout</span>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Right Column: Neural Network Architecture Metrics & Deep Learning Interpretation */}
+              <div className="lg:col-span-5 xl:col-span-4 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Epochs Trained
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      {lstmData?.metrics?.epochs ?? 35}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Adam (lr=0.01)
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Final MSE Loss
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
+                      {lstmData?.metrics?.final_train_loss?.toFixed(5) ?? '0.00806'}
+                    </span>
+                    <span className="text-[10px] text-success font-bold mt-0.5 block">
+                      Normalized Loss
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Test Seq MAE
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      ₹{lstmData?.metrics?.test_mae?.toFixed(1) ?? '197.1'}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Chrono Split
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Parameters
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
+                      {lstmData?.metrics?.parameters?.toLocaleString() ?? '4,769'}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Weights & Biases
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-[11px] font-bold">
-                  <span className="inline-flex items-center gap-1 text-terracotta">
-                    <span className="h-2 w-2 rounded-full bg-terracotta" /> Forecast Net (₹)
-                  </span>
-                </div>
-              </div>
 
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={lstmData?.forecast_7_days ?? []}
-                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(35,31,32,0.06)" />
-                    <XAxis
-                      dataKey="day_label"
-                      tick={{ fontSize: 11, fill: '#7D7068', fontWeight: 600 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 10, fill: '#7D7068' }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(v) => `₹${v}`}
-                    />
-                    <Tooltip
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const d = payload[0].payload as any;
-                          return (
-                            <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2.5 shadow-card border border-softBorder text-xs">
-                              <p className="font-extrabold text-warmCocoa">
-                                {d.day_label} ({d.date})
-                              </p>
-                              <p className="font-bold text-terracotta mt-1">
-                                Predicted Net: ₹{d.predicted_net}
-                              </p>
-                              <p className="text-[11px] text-textMuted mt-0.5">
-                                Confidence Band: ₹{d.confidence_lower} – ₹{d.confidence_upper}
-                              </p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="predicted_net"
-                      stroke="#B34A26"
-                      strokeWidth={3}
-                      dot={{ fill: '#7C2D16', r: 4 }}
-                      activeDot={{ r: 6, fill: '#E5953E' }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            {/* Neural Network Architecture Metrics */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Epochs Trained
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1">
-                  {lstmData?.metrics?.epochs ?? 35}
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Adam Optimizer (lr=0.01)
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Final MSE Loss
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
-                  {lstmData?.metrics?.final_train_loss?.toFixed(5) ?? '0.00806'}
-                </span>
-                <span className="text-[10px] text-success font-bold mt-0.5 block">
-                  Normalized Loss
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Test Sequence MAE
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1">
-                  ₹{lstmData?.metrics?.test_mae?.toFixed(1) ?? '197.1'}
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Chronological Split
-                </span>
-              </div>
-
-              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
-                <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
-                  Model Parameters
-                </span>
-                <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
-                  {lstmData?.metrics?.parameters?.toLocaleString() ?? '4,769'}
-                </span>
-                <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
-                  Weights & Biases
-                </span>
+                <Card className="p-4 md:p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta">
+                      <AppIcon name="sparkles" size={14} />
+                    </div>
+                    <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
+                      Deep Sequence Modeling
+                    </h3>
+                  </div>
+                  <p className="text-xs text-textPrimary leading-relaxed">
+                    Long Short-Term Memory recurrent gates learn multi-day momentum and weekend surge cycles across irregular gig payouts, enabling adaptive 7-day cash forecasts with tight error bounds.
+                  </p>
+                </Card>
               </div>
             </div>
-
-            {/* Model Architecture Summary */}
-            <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
-                PyTorch Network Architecture Details
-              </h3>
-              <p className="text-xs text-textSecondary mb-3">
-                Built and verified with genuine deep learning tensors:
-              </p>
-
-              <div className="space-y-2 text-xs font-mono">
-                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
-                  <span className="text-textSecondary">Input Size:</span>
-                  <span className="font-bold text-warmCocoa">3 features (normalized [income, expense, net])</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
-                  <span className="text-textSecondary">Hidden Units:</span>
-                  <span className="font-bold text-warmCocoa">32 recurrent LSTM hidden states</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
-                  <span className="text-textSecondary">Sequence Length:</span>
-                  <span className="font-bold text-warmCocoa">7 sliding days historical input</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
-                  <span className="text-textSecondary">Output Projection:</span>
-                  <span className="font-bold text-warmCocoa">nn.Linear(32, 1) -&gt; 7-step autoregressive rollout</span>
-                </div>
-              </div>
-            </Card>
           </motion.div>
         )}
 
@@ -969,74 +1035,146 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
             </div>
 
-            {/* Cluster Proportions Chart */}
-            <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-warmCocoa mb-3">
-                Cluster Distribution & Proportions
-              </h3>
+            {/* 2-Column Responsive Layout for Desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+              {/* Left: Cluster Proportions Chart Card */}
+              <div className="lg:col-span-7 xl:col-span-8">
+                <Card className="p-4 md:p-5">
+                  <h3 className="text-sm font-extrabold text-warmCocoa mb-3">
+                    Cluster Distribution & Proportions
+                  </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                <div className="h-48 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={kmeansData?.cluster_summaries ?? []}
-                        dataKey="count"
-                        nameKey="title"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={75}
-                        innerRadius={45}
-                        paddingAngle={4}
-                      >
-                        {(kmeansData?.cluster_summaries ?? []).map((_, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={CLUSTER_COLORS[index % CLUSTER_COLORS.length]}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                    <div className="h-48 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={kmeansData?.cluster_summaries ?? []}
+                            dataKey="count"
+                            nameKey="title"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={75}
+                            innerRadius={45}
+                            paddingAngle={4}
+                          >
+                            {(kmeansData?.cluster_summaries ?? []).map((_, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={CLUSTER_COLORS[index % CLUSTER_COLORS.length]}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                const d = payload[0].payload as any;
+                                return (
+                                  <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2 shadow-card border border-softBorder text-xs">
+                                    <p className="font-extrabold text-warmCocoa">{d.title}</p>
+                                    <p className="text-terracotta font-bold">{d.count} transactions ({d.percentage}%)</p>
+                                    <p className="text-textMuted">Average: ₹{d.avg_amount}</p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
                           />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const d = payload[0].payload as any;
-                            return (
-                              <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2 shadow-card border border-softBorder text-xs">
-                                <p className="font-extrabold text-warmCocoa">{d.title}</p>
-                                <p className="text-terracotta font-bold">{d.count} transactions ({d.percentage}%)</p>
-                                <p className="text-textMuted">Average: ₹{d.avg_amount}</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Legend & Summary */}
+                    <div className="space-y-2">
+                      {(kmeansData?.cluster_summaries ?? []).map((c, idx) => (
+                        <div
+                          key={c.cluster_id}
+                          className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder text-xs"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="h-3 w-3 rounded-full shrink-0"
+                              style={{ backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}
+                            />
+                            <span className="font-bold text-warmCocoa">{c.title}</span>
+                          </div>
+                          <span className="font-mono font-bold text-textSecondary">
+                            {c.percentage}% ({c.count})
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Right: Unsupervised Cluster Metrics & Insights */}
+              <div className="lg:col-span-5 xl:col-span-4 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Optimal k
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1">
+                      3 Clusters
+                    </span>
+                    <span className="text-[10px] text-success font-bold mt-0.5 block">
+                      Elbow Method
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Inertia (WCSS)
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
+                      {kmeansData?.metrics?.inertia?.toFixed(1) ?? '170.4'}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Within-Cluster Sum
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Scaling
+                    </span>
+                    <span className="text-base font-black text-warmCocoa block mt-1">
+                      StandardScaler
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      μ=0, σ²=1
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
+                      Sample Size
+                    </span>
+                    <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
+                      {kmeansData?.total_analyzed ?? 180}
+                    </span>
+                    <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
+                      Data Points
+                    </span>
+                  </div>
                 </div>
 
-                {/* Legend & Summary */}
-                <div className="space-y-2">
-                  {(kmeansData?.cluster_summaries ?? []).map((c, idx) => (
-                    <div
-                      key={c.cluster_id}
-                      className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder text-xs"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="h-3 w-3 rounded-full shrink-0"
-                          style={{ backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}
-                        />
-                        <span className="font-bold text-warmCocoa">{c.title}</span>
-                      </div>
-                      <span className="font-mono font-bold text-textSecondary">
-                        {c.percentage}% ({c.count})
-                      </span>
+                <Card className="p-4 md:p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta">
+                      <AppIcon name="grid" size={14} />
                     </div>
-                  ))}
-                </div>
+                    <h3 className="text-xs font-extrabold text-warmCocoa uppercase tracking-wider">
+                      Pattern Discovery
+                    </h3>
+                  </div>
+                  <p className="text-xs text-textPrimary leading-relaxed">
+                    K-Means reveals natural spending groupings without labels—segregating high-frequency fuel/food transactions from periodic high-ticket maintenance and household remittances.
+                  </p>
+                </Card>
               </div>
-            </Card>
+            </div>
 
             {/* Empirical Archetype Profile Cards */}
             <div className="space-y-3">
@@ -1044,26 +1182,26 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 Discovered Spending Archetypes
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {(kmeansData?.cluster_summaries ?? []).map((c, idx) => (
                   <div
                     key={c.cluster_id}
-                    className="rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 border border-softBorder shadow-card space-y-2.5 flex flex-col justify-between"
+                    className="rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 border border-softBorder shadow-card space-y-3 flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex items-center justify-between">
                         <span
-                          className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full text-white"
+                          className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full text-white"
                           style={{ backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}
                         >
                           Cluster {c.cluster_id}
                         </span>
                         <span className="text-xs font-bold text-textMuted font-mono">
-                          {c.percentage}%
+                          {c.percentage}% of Spend
                         </span>
                       </div>
 
-                      <h4 className="text-sm font-black text-warmCocoa mt-2">
+                      <h4 className="text-base font-black text-warmCocoa mt-2.5">
                         {c.title}
                       </h4>
                       <p className="text-xs text-textSecondary mt-1 leading-relaxed">
@@ -1071,7 +1209,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-softBorder space-y-1 text-xs">
+                    <div className="pt-3 border-t border-softBorder space-y-1.5 text-xs">
                       <div className="flex justify-between">
                         <span className="text-textMuted">Average Amount:</span>
                         <span className="font-bold text-warmCocoa font-mono">
