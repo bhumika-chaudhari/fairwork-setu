@@ -254,9 +254,9 @@ export default function VoiceEntryModal({
             >
               {/* Luminous Pulsing Microphone */}
               <div className="relative my-4 flex items-center justify-center">
-                <div className="absolute h-36 w-36 rounded-full bg-mint/25 animate-pulse-ring" />
-                <div className="absolute h-28 w-28 rounded-full bg-primaryTeal/15" />
-                <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#087F73] to-[#073B3A] text-white shadow-clay">
+                <div className="absolute h-36 w-36 rounded-full bg-saffronGold/25 animate-pulse-ring" />
+                <div className="absolute h-28 w-28 rounded-full bg-terracotta/15" />
+                <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-clay">
                   <AppIcon name="mic" size={36} className="text-white drop-shadow" />
                 </div>
               </div>
@@ -305,7 +305,7 @@ export default function VoiceEntryModal({
               className="py-3 space-y-4"
             >
               {/* Transcript Card */}
-              <div className="rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 p-3 mb-0 shadow-xs">
+              <div className="rounded-2xl bg-white/75 backdrop-blur-md border border-[#F4EBDD] p-3 mb-0 shadow-xs">
                 <span className="text-[11px] font-bold text-textMuted uppercase tracking-wider">
                   {t('voice.youSaid')}
                 </span>
@@ -317,7 +317,7 @@ export default function VoiceEntryModal({
               {/* Two Extracted Amount Cards Side-by-Side matching reference Screen 6 */}
               <div className="grid grid-cols-2 gap-3">
                 {/* Income Card */}
-                <div className="rounded-2xl bg-[#EDFAF5]/80 backdrop-blur-md p-3 border border-[#72E5C2]/60 shadow-xs">
+                <div className="rounded-2xl bg-[#F1F8F3]/90 backdrop-blur-md p-3 border border-[#2E7D32]/40 shadow-xs">
                   <span className="text-[11px] font-bold text-textMuted block">
                     {t('voice.income')}
                   </span>
@@ -330,12 +330,12 @@ export default function VoiceEntryModal({
                     type="number"
                     value={incomeAmount}
                     onChange={(e) => setIncomeAmount(Number(e.target.value))}
-                    className="mt-1.5 w-full rounded-xl border border-white/80 bg-white/80 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-deepEmerald focus:outline-none focus:ring-2 focus:ring-mint/50"
+                    className="mt-1.5 w-full rounded-xl border border-[#F4EBDD] bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-deepEmerald focus:outline-none focus:ring-2 focus:ring-saffronGold/50"
                   />
                 </div>
 
                 {/* Expense Card */}
-                <div className="rounded-2xl bg-[#FEF3C7]/80 backdrop-blur-md p-3 border border-[#F4B544]/60 shadow-xs">
+                <div className="rounded-2xl bg-[#FDF3EE]/90 backdrop-blur-md p-3 border border-[#B34A26]/30 shadow-xs">
                   <span className="text-[11px] font-bold text-textMuted block">
                     {t('voice.expense')}
                   </span>
@@ -348,7 +348,7 @@ export default function VoiceEntryModal({
                     type="number"
                     value={expenseAmount}
                     onChange={(e) => setExpenseAmount(Number(e.target.value))}
-                    className="mt-1.5 w-full rounded-xl border border-white/80 bg-white/80 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-deepEmerald focus:outline-none focus:ring-2 focus:ring-amber-400/50"
+                    className="mt-1.5 w-full rounded-xl border border-[#F4EBDD] bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold text-deepEmerald focus:outline-none focus:ring-2 focus:ring-terracotta/40"
                   />
                 </div>
               </div>
@@ -366,8 +366,8 @@ export default function VoiceEntryModal({
                       onClick={() => setCategory(cat.id)}
                       className={`rounded-xl px-2.5 py-1 text-xs font-bold transition-all active:scale-95 ${
                         category === cat.id
-                          ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40'
-                          : 'bg-white/65 hover:bg-white/90 text-textSecondary border border-white/80 backdrop-blur-md shadow-xs'
+                          ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-[#E5953E]/50'
+                          : 'bg-white/75 hover:bg-white text-textSecondary border border-[#F4EBDD] backdrop-blur-md shadow-xs'
                       }`}
                     >
                       {t(cat.key)}

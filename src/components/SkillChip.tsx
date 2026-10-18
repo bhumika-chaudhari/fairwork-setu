@@ -21,15 +21,15 @@ export default function SkillChip({
 }) {
   const isInteractive = Boolean(onPress);
 
-  let styleClasses = 'bg-white/65 hover:bg-white/85 text-textPrimary border-white/80 hover:border-primary/40 backdrop-blur-lg shadow-[0_2px_8px_rgba(7,59,58,0.04),inset_0_1px_1px_rgba(255,255,255,0.8)]';
+  let styleClasses = 'bg-cleanWhite/90 hover:bg-cleanWhite text-earthyCharcoal border-softBorder hover:border-terracotta/40 backdrop-blur-lg shadow-xs';
   if (selected) {
-    styleClasses = 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white border-mint/50 shadow-dockActive';
+    styleClasses = 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white border-saffronGold/50 shadow-dockActive';
   } else if (variant === 'mint') {
-    styleClasses = 'bg-[#E4FAF2]/80 backdrop-blur-md text-[#073B3A] border-[#72E5C2]/60 font-bold';
+    styleClasses = 'bg-warmAmber/20 backdrop-blur-md text-warmCocoa border-warmAmber/40 font-bold';
   } else if (variant === 'primary') {
-    styleClasses = 'bg-primarySoft/80 backdrop-blur-md text-primaryDark border-mint/35 font-bold';
+    styleClasses = 'bg-terracotta/10 backdrop-blur-md text-terracotta border-terracotta/30 font-bold';
   } else if (variant === 'accent') {
-    styleClasses = 'bg-accentSoft/80 backdrop-blur-md text-[#B45309] border-[#F4B544]/50 font-bold';
+    styleClasses = 'bg-saffronGold/20 backdrop-blur-md text-warmCocoa border-saffronGold/40 font-bold';
   }
 
   const sizeClasses = size === 'sm' ? 'px-2.5 py-1 text-xs' : 'px-3.5 py-1.5 text-[13px]';

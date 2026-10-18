@@ -189,11 +189,11 @@ export default function TransactionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-deepEmerald/30 p-4 backdrop-blur-xl animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E2B3E]/30 p-4 backdrop-blur-xl animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-[32px] bg-white/80 p-6 shadow-glassModal border border-white/90 backdrop-blur-3xl max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-lg rounded-[32px] bg-white/90 p-6 shadow-glassModal border border-[#F4EBDD] backdrop-blur-3xl max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
@@ -203,7 +203,7 @@ export default function TransactionModal({
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-glass ${
                 type === 'income'
-                  ? 'bg-successSoft/90 text-success border border-[#72E5C2]/60'
+                  ? 'bg-successSoft/90 text-success border border-[#2E7D32]/40'
                   : 'bg-danger/15 text-danger border border-danger/30'
               }`}
             >
@@ -258,11 +258,11 @@ export default function TransactionModal({
                 }}
                 className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
                   type === 'income'
-                    ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40 font-black'
+                    ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-[#E5953E]/50 font-black'
                     : 'text-textSecondary hover:text-deepEmerald active:scale-95'
                 }`}
               >
-                <span className="h-2 w-2 rounded-full bg-mint shadow-[0_0_6px_#72E5C2]" />
+                <span className="h-2 w-2 rounded-full bg-saffronGold shadow-[0_0_6px_#E5953E]" />
                 <span>{t('transactions.typeIncome')}</span>
               </button>
               <button
@@ -297,7 +297,7 @@ export default function TransactionModal({
                     key={preset.label}
                     type="button"
                     onClick={() => handleApplyPreset(preset)}
-                    className="rounded-full bg-white/70 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-deepEmerald border border-mint/50 shadow-xs hover:bg-white active:scale-95 transition-all"
+                    className="rounded-full bg-white/80 backdrop-blur-md px-3 py-1 text-[11px] font-bold text-deepEmerald border border-[#E5953E]/50 shadow-xs hover:bg-white active:scale-95 transition-all"
                   >
                     + {preset.label}
                   </button>
@@ -323,7 +323,7 @@ export default function TransactionModal({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="e.g. 500"
-                className="w-full rounded-2xl border border-white/85 bg-white/65 hover:bg-white/80 focus:bg-white/92 backdrop-blur-xl pl-9 pr-4 py-3 text-base font-black text-deepEmerald shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] placeholder:text-textMuted focus:border-primary/50 focus:ring-4 focus:ring-mint/30 focus:outline-none transition-all"
+                className="w-full rounded-2xl border border-[#F4EBDD] bg-white/75 hover:bg-white/90 focus:bg-white backdrop-blur-xl pl-9 pr-4 py-3 text-base font-black text-deepEmerald shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] placeholder:text-textMuted focus:border-terracotta/50 focus:ring-4 focus:ring-warmAmber/30 focus:outline-none transition-all"
               />
             </div>
             {/* Quick Amount Chips */}
@@ -333,7 +333,7 @@ export default function TransactionModal({
                   key={amt}
                   type="button"
                   onClick={() => setAmount(amt.toString())}
-                  className="rounded-xl bg-white/65 hover:bg-white/90 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-deepEmerald border border-white/80 shadow-xs active:scale-95 transition-all"
+                  className="rounded-xl bg-white/80 hover:bg-white backdrop-blur-md px-2.5 py-1 text-xs font-bold text-deepEmerald border border-[#F4EBDD] shadow-xs active:scale-95 transition-all"
                 >
                   ₹{amt}
                 </button>
@@ -356,8 +356,8 @@ export default function TransactionModal({
                     onClick={() => setCategory(cat)}
                     className={`flex items-center gap-1.5 rounded-xl p-2.5 text-xs font-bold text-left transition-all active:scale-95 ${
                       isSelected
-                        ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40'
-                        : 'bg-white/65 hover:bg-white/90 text-textPrimary border border-white/80 backdrop-blur-md shadow-xs'
+                        ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-[#E5953E]/50'
+                        : 'bg-white/75 hover:bg-white text-textPrimary border border-[#F4EBDD] backdrop-blur-md shadow-xs'
                     }`}
                   >
                     <AppIcon name={CATEGORY_ICONS[cat]} size={15} />

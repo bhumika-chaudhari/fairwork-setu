@@ -127,7 +127,7 @@ export default function TransactionHistory({
           <button
             type="button"
             onClick={onAddIncome}
-            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-3.5 py-1.5 text-xs font-bold text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-400/30"
+            className="emerald-gradient-btn flex items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-bold text-white shadow-lifted hover:brightness-105 active:scale-95 transition-all"
           >
             <span>+</span>
             <span>{t('transactions.incomeAction')}</span>
@@ -162,8 +162,8 @@ export default function TransactionHistory({
             onClick={() => setDateFilter(tab.id as DateFilterType)}
             className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition-all duration-200 active:scale-95 ${
               dateFilter === tab.id
-                ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
-                : 'bg-white/40 hover:bg-white/70 backdrop-blur-md text-textSecondary border border-white/60 shadow-xs'
+                ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-[#E5953E]/50'
+                : 'bg-white/70 hover:bg-white text-textSecondary border border-[#F4EBDD] shadow-xs'
             }`}
           >
             {tab.label}
@@ -262,8 +262,8 @@ export default function TransactionHistory({
       {/* Transaction List */}
       {filtered.length === 0 ? (
         /* Empty State */
-        <div className="rounded-2xl border border-dashed border-white/60 bg-white/30 backdrop-blur-md p-6 text-center space-y-3 shadow-xs">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
+        <div className="rounded-2xl border border-dashed border-[#F4EBDD] bg-white/50 backdrop-blur-md p-6 text-center space-y-3 shadow-xs">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FEF4E8] text-[#B34A26] border border-[#E5953E]/30 shadow-xs">
             <AppIcon name="receipt-outline" size={24} />
           </div>
           <div>
@@ -279,7 +279,7 @@ export default function TransactionHistory({
               <button
                 type="button"
                 onClick={onAddIncome}
-                className="flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#073B3A] via-[#087F73] to-[#0A8F82] px-4 py-2 text-xs sm:text-sm font-black text-white shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-300/40"
+                className="emerald-gradient-btn flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-xs sm:text-sm font-black text-white shadow-lifted hover:brightness-105 active:scale-95 transition-all"
               >
                 <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/20 text-[10px] font-black text-white">+</span>
                 <span>{t('transactions.addIncome')}</span>
@@ -296,7 +296,7 @@ export default function TransactionHistory({
           )}
         </div>
       ) : (
-        <div className="divide-y divide-white/40">
+        <div className="divide-y divide-[#F4EBDD]">
           {filtered.map((tx) => {
             const isIncome = tx.type === 'income';
             const iconName = CATEGORY_ICONS[tx.category] || 'ellipsis-horizontal';
@@ -311,8 +311,8 @@ export default function TransactionHistory({
                   <div
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-glass ${
                       isIncome
-                        ? 'bg-gradient-to-br from-emerald-100/90 to-teal-50/90 text-success border border-emerald-300/50'
-                        : 'bg-gradient-to-br from-red-100/90 to-rose-50/90 text-danger border border-red-300/50'
+                        ? 'bg-[#F1F8F3] text-success border border-[#2E7D32]/30'
+                        : 'bg-[#FDF3EE] text-danger border border-[#B34A26]/30'
                     }`}
                   >
                     <AppIcon name={iconName} size={18} />

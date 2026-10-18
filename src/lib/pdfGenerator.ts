@@ -69,53 +69,53 @@ export function generateSkillPassportPdf(data: SkillPassportPdfData): Blob {
     streamLines.push('ET');
   };
 
-  // Background light warm ivory
-  setColor(247, 245, 239);
+  // Background light warm cream
+  setColor(253, 248, 240);
   drawRect(0, 0, width, height, true, false);
 
   // Outer border container card
   setColor(255, 255, 255);
-  setStrokeColor(8, 127, 115);
+  setStrokeColor(244, 235, 221);
   streamLines.push('2.5 w');
   drawRect(36, 40, width - 72, height - 80, true, true);
 
-  // Decorative top emerald header banner
-  setColor(7, 59, 58);
+  // Decorative top warm cocoa header banner
+  setColor(124, 45, 22);
   drawRect(36, height - 120, width - 72, 80, true, false);
 
-  // Mint accent line
-  setColor(114, 229, 194);
+  // Saffron gold accent line
+  setColor(229, 149, 62);
   drawRect(36, height - 124, width - 72, 4, true, false);
 
   // Header Title & Logo
   drawText('SETU LIVELIHOOD NETWORK', 56, height - 72, 'F2', 18, 255, 255, 255);
-  drawText('Digital Skill & Livelihood Passport', 56, height - 94, 'F1', 11, 114, 229, 194);
-  drawText('GOVT. ALIGNED VERIFIED CREDENTIAL', 340, height - 80, 'F2', 9, 244, 181, 68);
+  drawText('Digital Skill & Livelihood Passport', 56, height - 94, 'F1', 11, 241, 185, 107);
+  drawText('GOVT. ALIGNED VERIFIED CREDENTIAL', 340, height - 80, 'F2', 9, 229, 168, 35);
 
   // Worker Profile Card Banner
-  setColor(244, 253, 250);
-  setStrokeColor(200, 235, 225);
+  setColor(253, 248, 240);
+  setStrokeColor(244, 235, 221);
   streamLines.push('1 w');
   drawRect(56, height - 235, width - 112, 95, true, true);
 
   // Worker Name & Occupation
-  drawText(data.name.toUpperCase(), 76, height - 165, 'F2', 20, 7, 59, 58);
-  drawText(`${data.occupation} - ${data.city}`, 76, height - 188, 'F2', 13, 8, 127, 115);
+  drawText(data.name.toUpperCase(), 76, height - 165, 'F2', 20, 124, 45, 22);
+  drawText(`${data.occupation} - ${data.city}`, 76, height - 188, 'F2', 13, 179, 74, 38);
   drawText(
     `Experience: ${data.experienceYears} Years   |   Languages: ${data.languages.join(', ')}`,
     76,
     height - 212,
     'F1',
     10,
-    75,
-    94,
-    93
+    74,
+    66,
+    61
   );
 
   // Verification Badge Pill
-  setColor(228, 250, 242);
+  setColor(254, 243, 230);
   drawRect(400, height - 175, 120, 26, true, false);
-  drawText('[VERIFIED WORKER]', 412, height - 167, 'F2', 9, 8, 127, 115);
+  drawText('[VERIFIED WORKER]', 412, height - 167, 'F2', 9, 179, 74, 38);
 
   // 3 Metric Stat Boxes
   const statBoxY = height - 305;
@@ -124,44 +124,46 @@ export function generateSkillPassportPdf(data: SkillPassportPdfData): Blob {
   const startX = 56;
 
   // Box 1: Jobs Completed
-  setColor(248, 252, 250);
-  setStrokeColor(220, 240, 235);
+  setColor(255, 255, 255);
+  setStrokeColor(244, 235, 221);
   drawRect(startX, statBoxY, boxW, 55, true, true);
-  drawText(`${data.jobsCompleted}+`, startX + 16, statBoxY + 30, 'F2', 18, 7, 59, 58);
-  drawText('Completed Engagements', startX + 16, statBoxY + 14, 'F1', 8, 110, 138, 136);
+  drawText(`${data.jobsCompleted}+`, startX + 16, statBoxY + 30, 'F2', 18, 124, 45, 22);
+  drawText('Completed Engagements', startX + 16, statBoxY + 14, 'F1', 8, 125, 112, 104);
 
   // Box 2: Average Daily Pay
   const box2X = startX + boxW + gap;
-  setColor(248, 252, 250);
+  setColor(255, 255, 255);
+  setStrokeColor(244, 235, 221);
   drawRect(box2X, statBoxY, boxW, 55, true, true);
-  drawText(`Rs. ${data.avgDailyPay}/day`, box2X + 16, statBoxY + 30, 'F2', 16, 7, 59, 58);
-  drawText('Average Verified Pay', box2X + 16, statBoxY + 14, 'F1', 8, 110, 138, 136);
+  drawText(`Rs. ${data.avgDailyPay}/day`, box2X + 16, statBoxY + 30, 'F2', 16, 124, 45, 22);
+  drawText('Average Verified Pay', box2X + 16, statBoxY + 14, 'F1', 8, 125, 112, 104);
 
   // Box 3: Client Rating
   const box3X = box2X + boxW + gap;
-  setColor(248, 252, 250);
+  setColor(255, 255, 255);
+  setStrokeColor(244, 235, 221);
   drawRect(box3X, statBoxY, boxW, 55, true, true);
-  drawText(`${data.clientRating.toFixed(1)} / 5.0`, box3X + 16, statBoxY + 30, 'F2', 16, 7, 59, 58);
-  drawText('Worker Trust Rating', box3X + 16, statBoxY + 14, 'F1', 8, 110, 138, 136);
+  drawText(`${data.clientRating.toFixed(1)} / 5.0`, box3X + 16, statBoxY + 30, 'F2', 16, 124, 45, 22);
+  drawText('Worker Trust Rating', box3X + 16, statBoxY + 14, 'F1', 8, 125, 112, 104);
 
   // Section 1: Verified Competencies
   const compY = height - 335;
-  drawText('1. VERIFIED COMPETENCIES (Assessed & Authenticated)', 56, compY, 'F2', 11, 7, 59, 58);
+  drawText('1. VERIFIED COMPETENCIES (Assessed & Authenticated)', 56, compY, 'F2', 11, 124, 45, 22);
 
   let currentY = compY - 24;
   data.verifiedCompetencies.forEach((comp) => {
-    setColor(232, 249, 242);
-    setStrokeColor(114, 229, 194);
+    setColor(253, 248, 240);
+    setStrokeColor(244, 235, 221);
     streamLines.push('0.5 w');
     drawRect(56, currentY - 6, width - 112, 22, true, true);
-    drawText(`*  ${comp}`, 68, currentY, 'F2', 9.5, 7, 59, 58);
-    drawText('AUTHENTICATED', 430, currentY, 'F1', 8, 8, 127, 115);
+    drawText(`*  ${comp}`, 68, currentY, 'F2', 9.5, 35, 31, 32);
+    drawText('AUTHENTICATED', 430, currentY, 'F1', 8, 179, 74, 38);
     currentY -= 28;
   });
 
   // Section 2: User-Declared Skills
   currentY -= 10;
-  drawText('2. DECLARED APPLIED SKILLS & SPECIALIZATIONS', 56, currentY, 'F2', 11, 7, 59, 58);
+  drawText('2. DECLARED APPLIED SKILLS & SPECIALIZATIONS', 56, currentY, 'F2', 11, 124, 45, 22);
   currentY -= 20;
 
   // Skill chips row
@@ -172,29 +174,29 @@ export function generateSkillPassportPdf(data: SkillPassportPdfData): Blob {
       chipX = 56;
       currentY -= 24;
     }
-    setColor(240, 244, 243);
-    setStrokeColor(200, 215, 212);
+    setColor(255, 255, 255);
+    setStrokeColor(244, 235, 221);
     streamLines.push('0.5 w');
     drawRect(chipX, currentY - 5, chipWidth, 18, true, true);
-    drawText(skill, chipX + 8, currentY, 'F1', 8.5, 7, 59, 58);
+    drawText(skill, chipX + 8, currentY, 'F1', 8.5, 35, 31, 32);
     chipX += chipWidth + 8;
   });
 
   // Verification Summary Box
   currentY -= 40;
-  setColor(244, 248, 246);
-  setStrokeColor(210, 230, 225);
+  setColor(253, 248, 240);
+  setStrokeColor(244, 235, 221);
   drawRect(56, currentY - 35, width - 112, 45, true, true);
-  drawText('LIVELIHOOD NETWORK INTEGRITY STATEMENT', 68, currentY - 5, 'F2', 9, 8, 127, 115);
+  drawText('LIVELIHOOD NETWORK INTEGRITY STATEMENT', 68, currentY - 5, 'F2', 9, 179, 74, 38);
   drawText(
     'This credential certifies that the worker profile has undergone digital verification, identity validation,',
     68,
     currentY - 18,
     'F1',
     8,
-    75,
-    94,
-    93
+    74,
+    66,
+    61
   );
   drawText(
     'and verified peer ratings through the Setu Inclusive Worker Empowerment platform.',
@@ -202,20 +204,20 @@ export function generateSkillPassportPdf(data: SkillPassportPdfData): Blob {
     currentY - 29,
     'F1',
     8,
-    75,
-    94,
-    93
+    74,
+    66,
+    61
   );
 
   // Footer / Verification ID and Date
   const footerY = 60;
-  setColor(7, 59, 58);
+  setColor(244, 235, 221);
   streamLines.push('0.5 w');
   drawRect(56, footerY + 20, width - 112, 0.5, true, false);
 
-  drawText(`Verification ID: ${data.verificationId}`, 56, footerY, 'F2', 8.5, 7, 59, 58);
-  drawText(`Issued: ${data.issuedDate}`, 270, footerY, 'F1', 8.5, 110, 138, 136);
-  drawText('setu-livelihood.in/verify', 420, footerY, 'F2', 8.5, 8, 127, 115);
+  drawText(`Verification ID: ${data.verificationId}`, 56, footerY, 'F2', 8.5, 124, 45, 22);
+  drawText(`Issued: ${data.issuedDate}`, 270, footerY, 'F1', 8.5, 125, 112, 104);
+  drawText('setu-livelihood.in/verify', 420, footerY, 'F2', 8.5, 179, 74, 38);
 
   const streamContent = streamLines.join('\n');
   const streamLength = streamContent.length;

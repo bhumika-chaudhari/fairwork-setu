@@ -58,24 +58,24 @@ export default function ListenButton({ track, className = '', size = 'md' }: Lis
             : 'px-3.5 py-1.5 text-xs'
         } ${
           isPlaying
-            ? 'bg-gradient-to-r from-[#073B3A] to-[#087F73] text-white shadow-dockActive ring-2 ring-mint/50 border border-mint/40'
+            ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-warm ring-2 ring-saffronGold/50 border border-saffronGold/40'
             : isPaused
-            ? 'bg-amber-100/80 border border-amber-300/60 text-[#854D0E] backdrop-blur-md shadow-xs'
-            : 'bg-white/70 hover:bg-white/90 text-deepEmerald border border-white/85 shadow-glass backdrop-blur-xl hover:border-mint/60'
+            ? 'bg-warmAmber/30 border border-warmAmber text-warmCocoa backdrop-blur-md shadow-xs'
+            : 'bg-cleanWhite/90 hover:bg-cleanWhite text-warmCocoa border border-softBorder shadow-glass backdrop-blur-xl hover:border-saffronGold/60'
         } ${className}`}
         title={`${getButtonLabel()} audio explanation`}
       >
         {isPlaying ? (
           /* Animated sound wave bars when speaking */
           <span className="flex items-center gap-0.5" aria-hidden="true">
-            <span className="h-3 w-0.5 animate-[pulse_0.6s_ease-in-out_infinite] rounded-full bg-mint" />
+            <span className="h-3 w-0.5 animate-[pulse_0.6s_ease-in-out_infinite] rounded-full bg-saffronGold" />
             <span className="h-4 w-0.5 animate-[pulse_0.4s_ease-in-out_infinite_0.15s] rounded-full bg-white" />
-            <span className="h-2.5 w-0.5 animate-[pulse_0.5s_ease-in-out_infinite_0.3s] rounded-full bg-mint" />
+            <span className="h-2.5 w-0.5 animate-[pulse_0.5s_ease-in-out_infinite_0.3s] rounded-full bg-saffronGold" />
           </span>
         ) : isPaused ? (
-          <AppIcon name="play" size={13} className="text-[#854D0E]" />
+          <AppIcon name="play" size={13} className="text-warmCocoa" />
         ) : (
-          <AppIcon name="volume-high" size={14} className="text-primaryTeal" />
+          <AppIcon name="volume-high" size={14} className="text-terracotta" />
         )}
 
         <span>{getButtonLabel()}</span>

@@ -12,12 +12,12 @@ export default function StabilityGauge({ score }: { score: number }) {
     <div className="mr-4">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size}>
-          <circle cx={size / 2} cy={size / 2} r={radius} stroke="#FEF3C7" strokeWidth={stroke} fill="none" />
+          <circle cx={size / 2} cy={size / 2} r={radius} stroke="#FEF4E8" strokeWidth={stroke} fill="none" />
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="#F59E0B"
+            stroke="#E5953E"
             strokeWidth={stroke}
             fill="none"
             strokeDasharray={`${circ} ${circ}`}

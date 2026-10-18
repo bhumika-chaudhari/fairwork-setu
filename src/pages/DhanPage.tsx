@@ -179,7 +179,7 @@ export default function DhanPage() {
       {/* Header */}
       <header className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white font-black text-base shadow-glass border border-emerald-400/30">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white font-black text-base shadow-glass border border-[#F1B96B]/40">
             D
           </div>
           <h1 className="text-xl font-extrabold text-deepEmerald">
@@ -223,7 +223,7 @@ export default function DhanPage() {
 
       {/* EMPTY DATA DEV HELPER: Load sample data or start fresh */}
       {!summary.isSampleData && transactions.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-mint/70 bg-white/40 backdrop-blur-md p-3.5 flex items-center justify-between gap-2 shadow-xs">
+        <div className="rounded-2xl border border-dashed border-[#F4EBDD] bg-white/60 backdrop-blur-md p-3.5 flex items-center justify-between gap-2 shadow-xs">
           <div className="flex items-center gap-2">
             <AppIcon name="receipt-outline" size={16} className="text-primary shrink-0" />
             <span className="text-xs text-textSecondary font-medium">
@@ -233,7 +233,7 @@ export default function DhanPage() {
           <button
             type="button"
             onClick={loadSampleData}
-            className="rounded-full bg-white/70 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-deepEmerald border border-white/80 hover:bg-white transition-all shrink-0 shadow-xs active:scale-95"
+            className="rounded-full bg-white/80 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-deepEmerald border border-[#F4EBDD] hover:bg-white transition-all shrink-0 shadow-xs active:scale-95"
           >
             {t('dhan.loadSampleData')}
           </button>
@@ -249,7 +249,7 @@ export default function DhanPage() {
               type="button"
               onClick={handlePrevDay}
               aria-label="Previous day"
-              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 hover:bg-white border border-border shadow-xs text-textPrimary active:scale-95 transition-all"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 hover:bg-white border border-[#F4EBDD] shadow-xs text-textPrimary active:scale-95 transition-all"
             >
               <AppIcon name="chevron-back" size={16} />
             </button>
@@ -258,11 +258,11 @@ export default function DhanPage() {
                 {formattedDateLabel}
               </span>
               {isToday ? (
-                <span className="rounded-full bg-emerald-100/90 text-emerald-800 border border-emerald-300/60 px-2 py-0.5 text-[10px] font-black uppercase">
+                <span className="rounded-full bg-[#F1F8F3] text-success border border-[#2E7D32]/35 px-2 py-0.5 text-[10px] font-black uppercase">
                   {t('transactions.today', 'Today')}
                 </span>
               ) : isYesterday ? (
-                <span className="rounded-full bg-blue-100/90 text-blue-800 border border-blue-300/60 px-2 py-0.5 text-[10px] font-black uppercase">
+                <span className="rounded-full bg-[#EFF7F8] text-[#3A757D] border border-[#3A757D]/35 px-2 py-0.5 text-[10px] font-black uppercase">
                   {t('transactions.yesterday', 'Yesterday')}
                 </span>
               ) : null}
@@ -271,7 +271,7 @@ export default function DhanPage() {
               type="button"
               onClick={handleNextDay}
               aria-label="Next day"
-              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 hover:bg-white border border-border shadow-xs text-textPrimary active:scale-95 transition-all"
+              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 hover:bg-white border border-[#F4EBDD] shadow-xs text-textPrimary active:scale-95 transition-all"
             >
               <AppIcon name="chevron-forward" size={16} />
             </button>
@@ -282,14 +282,14 @@ export default function DhanPage() {
               <button
                 type="button"
                 onClick={handleToday}
-                className="rounded-full bg-deepEmerald text-white px-2.5 py-1 text-[11px] font-black shadow-xs hover:brightness-110 active:scale-95 transition-all"
+                className="rounded-full emerald-gradient-btn text-white px-2.5 py-1 text-[11px] font-black shadow-xs hover:brightness-105 active:scale-95 transition-all"
               >
                 {t('dhan.jumpToToday', 'Today')}
               </button>
             )}
 
             {/* Native Date Picker trigger overlay */}
-            <label className="relative flex items-center justify-center h-8 px-2.5 rounded-xl bg-white/80 hover:bg-white border border-mint/40 text-deepEmerald cursor-pointer shadow-xs active:scale-95 transition-all text-xs font-bold gap-1">
+            <label className="relative flex items-center justify-center h-8 px-2.5 rounded-xl bg-white/80 hover:bg-white border border-[#F4EBDD] text-deepEmerald cursor-pointer shadow-xs active:scale-95 transition-all text-xs font-bold gap-1">
               <AppIcon name="calendar" size={15} className="text-primary" />
               <span className="hidden sm:inline">{t('dhan.chooseDate', 'Pick Date')}</span>
               <input
@@ -314,11 +314,11 @@ export default function DhanPage() {
               onClick={() => setSelectedDate(item.dateStr)}
               className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all border text-center ${
                 item.isSelected
-                  ? 'bg-deepEmerald text-white border-deepEmerald shadow-glass font-black'
-                  : 'bg-white/50 text-textSecondary border-white/70 hover:bg-white hover:text-textPrimary'
+                  ? 'bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white border-[#B34A26] shadow-glass font-black scale-[1.02]'
+                  : 'bg-white/70 text-textSecondary border-[#F4EBDD] hover:bg-white hover:text-textPrimary'
               }`}
             >
-              <span className={`text-[10px] uppercase font-bold leading-none ${item.isSelected ? 'text-mint' : 'text-textMuted'}`}>
+              <span className={`text-[10px] uppercase font-bold leading-none ${item.isSelected ? 'text-saffronGold' : 'text-textMuted'}`}>
                 {item.dayLabel}
               </span>
               <span className="text-sm font-black mt-0.5 leading-tight">
@@ -326,7 +326,7 @@ export default function DhanPage() {
               </span>
               <span className="h-1.5 w-1.5 rounded-full mt-1 flex items-center justify-center">
                 {item.hasTransactions ? (
-                  <span className={`h-1.5 w-1.5 rounded-full ${item.isSelected ? 'bg-mint' : 'bg-primary'}`} />
+                  <span className={`h-1.5 w-1.5 rounded-full ${item.isSelected ? 'bg-saffronGold' : 'bg-primary'}`} />
                 ) : (
                   <span className="h-1.5 w-1.5 rounded-full bg-transparent" />
                 )}
@@ -336,7 +336,7 @@ export default function DhanPage() {
         </div>
 
         {/* Selected Day Financial Snapshot Banner */}
-        <div className="rounded-2xl bg-gradient-to-br from-mint/15 via-white/80 to-white/40 p-3 border border-mint/30 shadow-xs flex items-center justify-between gap-2 flex-wrap">
+        <div className="rounded-2xl bg-gradient-to-br from-[#FEF4E8]/90 via-white/85 to-[#FDF8F0]/70 p-3 border border-[#E5953E]/30 shadow-xs flex items-center justify-between gap-2 flex-wrap">
           <div className="min-w-0">
             <span className="text-[11px] font-bold text-textSecondary uppercase tracking-wider block">
               {isToday ? t('dhan.todaySummary', "Today's Summary") : `${t('dhan.dayBalance', 'Day Balance')} (${formattedDateLabel})`}
@@ -364,7 +364,7 @@ export default function DhanPage() {
             <button
               type="button"
               onClick={() => openAddModal('income', selectedDate)}
-              className="flex items-center justify-center gap-1 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-3 py-2 text-xs font-black shadow-xs hover:brightness-110 active:scale-95 transition-all"
+              className="emerald-gradient-btn flex items-center justify-center gap-1 rounded-xl text-white px-3 py-2 text-xs font-black shadow-xs hover:brightness-105 active:scale-95 transition-all"
             >
               <span>+</span>
               <span>{t('transactions.addIncome', 'Add Income')}</span>
@@ -386,13 +386,13 @@ export default function DhanPage() {
       </Card>
 
       {/* VIEW SEGMENT CONTROL: Day Entries vs Weekly Analytics & AI */}
-      <div className="flex rounded-2xl bg-white/60 backdrop-blur-md p-1 border border-border shadow-xs">
+      <div className="flex rounded-2xl bg-white/70 backdrop-blur-md p-1 border border-[#F4EBDD] shadow-xs">
         <button
           type="button"
           onClick={() => setActiveTab('day')}
           className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${
             activeTab === 'day'
-              ? 'bg-deepEmerald text-white shadow-glass'
+              ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-glass'
               : 'text-textSecondary hover:text-textPrimary'
           }`}
         >
@@ -403,7 +403,7 @@ export default function DhanPage() {
           onClick={() => setActiveTab('week')}
           className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${
             activeTab === 'week'
-              ? 'bg-deepEmerald text-white shadow-glass'
+              ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-glass'
               : 'text-textSecondary hover:text-textPrimary'
           }`}
         >
@@ -430,7 +430,7 @@ export default function DhanPage() {
                 <button
                   type="button"
                   onClick={() => openAddModal('income', selectedDate)}
-                  className="rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-300/60 px-2.5 py-1 text-[11px] font-bold hover:bg-emerald-500/25 active:scale-95 transition-all"
+                  className="rounded-full bg-warmAmber/20 text-terracotta border border-warmAmber/60 px-2.5 py-1 text-[11px] font-bold hover:bg-warmAmber/30 active:scale-95 transition-all"
                 >
                   + {t('transactions.incomeAction', 'Income')}
                 </button>
@@ -459,13 +459,13 @@ export default function DhanPage() {
                   return (
                     <div
                       key={tx.id}
-                      className="rounded-2xl border border-white/70 bg-white/70 backdrop-blur-md p-3 shadow-xs hover:shadow-glass transition-all flex items-center justify-between gap-3 group"
+                      className="rounded-2xl border border-softBorder bg-cleanWhite/85 backdrop-blur-md p-3 shadow-xs hover:shadow-glass transition-all flex items-center justify-between gap-3 group"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div
                           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-xs border ${
                             isIncome
-                              ? 'bg-emerald-500/15 text-emerald-700 border-emerald-300/60'
+                              ? 'bg-warmAmber/20 text-terracotta border-warmAmber/50'
                               : 'bg-rose-500/15 text-rose-700 border-rose-300/60'
                           }`}
                         >
@@ -542,7 +542,7 @@ export default function DhanPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-mint/20 text-primary mx-auto">
                   <AppIcon name="calendar" size={20} />
                 </div>
-                <h3 className="text-xs font-extrabold text-deepEmerald">
+                <h3 className="text-xs font-extrabold text-warmCocoa">
                   {t('dhan.noDayTransactions', 'No transactions recorded for this day')}
                 </h3>
                 <p className="text-[11px] text-textSecondary max-w-xs mx-auto">
@@ -552,7 +552,7 @@ export default function DhanPage() {
                   <button
                     type="button"
                     onClick={() => openAddModal('income', selectedDate)}
-                    className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 text-white px-3.5 py-1.5 text-xs font-bold shadow-xs hover:brightness-110 active:scale-95 transition-all"
+                    className="rounded-xl emerald-gradient-btn text-white px-3.5 py-1.5 text-xs font-bold shadow-xs hover:brightness-105 active:scale-95 transition-all"
                   >
                     + {t('transactions.addIncome', 'Add Income')}
                   </button>
@@ -599,10 +599,10 @@ export default function DhanPage() {
               <span className="text-xs font-semibold text-textMuted">
                 {t('dhan.weeklyIncome')}
               </span>
-              <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
+              <p className="text-2xl md:text-3xl font-black text-warmCocoa mt-1">
                 {t('common.currency', { amount: formatInr(summary.weeklyIncome) })}
               </p>
-              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#E2FAF2] px-2.5 py-0.5 text-[11px] font-bold text-success border border-mint/40">
+              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-0.5 text-[11px] font-bold text-success border border-[#2E7D32]/30">
                 <span>{summary.weeklyIncomeDelta >= 0 ? '↑' : '↓'}</span>
                 <span>
                   {summary.weeklyIncomeDelta >= 0 ? '+' : '−'}
@@ -616,10 +616,10 @@ export default function DhanPage() {
               <span className="text-xs font-semibold text-textMuted">
                 {t('dhan.avgDailyIncome')}
               </span>
-              <p className="text-2xl md:text-3xl font-black text-deepEmerald mt-1">
+              <p className="text-2xl md:text-3xl font-black text-warmCocoa mt-1">
                 {t('common.currency', { amount: formatInr(summary.avgDailyIncome) })}
               </p>
-              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-primarySoft px-2.5 py-0.5 text-[11px] font-bold text-primary border border-mint/30">
+              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-warmAmber/20 px-2.5 py-0.5 text-[11px] font-bold text-terracotta border border-warmAmber/40">
                 <span>•</span>
                 <span>{t('dhan.basedOn7Days')}</span>
               </div>
@@ -627,14 +627,14 @@ export default function DhanPage() {
           </motion.div>
 
           {/* NET FOR PERIOD SUMMARY BANNER */}
-          <div className="relative overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-4 shadow-glass border border-white/80 flex items-center justify-between">
+          <div className="relative overflow-hidden rounded-2xl bg-cleanWhite/90 backdrop-blur-2xl p-4 shadow-card border border-softBorder flex items-center justify-between">
             <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-terracotta/15 text-terracotta border border-warmAmber/30 shadow-xs">
                 <AppIcon name="wallet" size={17} />
               </div>
               <div>
-                <span className="text-xs font-bold text-deepEmerald block leading-tight">
+                <span className="text-xs font-bold text-warmCocoa block leading-tight">
                   {t('dhan.netForPeriod')}
                 </span>
                 <p className="text-[11px] text-textSecondary mt-0.5">
@@ -647,7 +647,7 @@ export default function DhanPage() {
               <span className="text-[10px] font-extrabold uppercase text-textMuted block">
                 {t('dhan.netForPeriod')}
               </span>
-              <span className={`text-base font-black ${summary.netForPeriod >= 0 ? 'text-deepEmerald' : 'text-danger'}`}>
+              <span className={`text-base font-black ${summary.netForPeriod >= 0 ? 'text-warmCocoa' : 'text-danger'}`}>
                 {summary.netForPeriod >= 0 ? '+' : '−'}{t('common.currency', { amount: formatInr(Math.abs(summary.netForPeriod)) })}
               </span>
             </div>
@@ -656,7 +656,7 @@ export default function DhanPage() {
           {/* 7-DAY INCOME & EXPENSE CHART */}
           <Card className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-extrabold text-deepEmerald">
+              <h2 className="text-sm font-extrabold text-warmCocoa">
                 {t('dhan.last7Days')}
               </h2>
               <span className="text-xs font-semibold text-textMuted">{t('dhan.monSun')}</span>
@@ -667,7 +667,7 @@ export default function DhanPage() {
           {/* SECTION: Expense Categories Chips */}
           {summary.categoryTotals.length > 0 && (
             <div>
-              <h2 className="text-sm font-extrabold text-deepEmerald mb-2.5">
+              <h2 className="text-sm font-extrabold text-warmCocoa mb-2.5">
                 {t('dhan.expenseCategories')}
               </h2>
               <div className="hide-scrollbar flex items-center gap-2 overflow-x-auto pb-1">
@@ -682,13 +682,13 @@ export default function DhanPage() {
                       }
                       className={`flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-bold transition-all shadow-glass border whitespace-nowrap ${
                         isSelected
-                          ? 'bg-deepEmerald text-white border-transparent'
-                          : 'bg-gradient-to-br from-white/95 via-[rgba(244,253,250,0.88)] to-[rgba(114,229,194,0.14)] text-textPrimary border-[rgba(8,127,115,0.16)] hover:bg-white'
+                          ? 'bg-terracotta text-white border-transparent'
+                          : 'bg-cleanWhite text-earthyCharcoal border-softBorder hover:bg-warmCream/60'
                       }`}
                     >
-                      <AppIcon name={cat.icon} size={15} className={isSelected ? 'text-mint' : 'text-primary'} />
+                      <AppIcon name={cat.icon} size={15} className={isSelected ? 'text-saffronGold' : 'text-terracotta'} />
                       <span>{t(cat.categoryKey)}</span>
-                      <span className={`font-semibold ${isSelected ? 'text-mint' : 'text-textMuted'}`}>
+                      <span className={`font-semibold ${isSelected ? 'text-saffronGold' : 'text-textMuted'}`}>
                         ₹{formatInr(cat.amount)} ({cat.percentage}%)
                       </span>
                     </button>
@@ -704,7 +704,7 @@ export default function DhanPage() {
               <span className="text-xs font-semibold text-textMuted">
                 {t('dhan.savingsGoal')}
               </span>
-              <p className="text-xl font-black text-deepEmerald mt-0.5">
+              <p className="text-xl font-black text-warmCocoa mt-0.5">
                 {t('common.currency', { amount: formatInr(savingsSaved) })} / {t('common.currency', { amount: formatInr(savingsTarget) })}
               </p>
               <span className="text-xs font-bold text-success block mt-1">
@@ -716,8 +716,8 @@ export default function DhanPage() {
                 progress={savingsPercent / 100}
                 size={56}
                 stroke={5}
-                color="#087F73"
-                trackColor="#E0F8F0"
+                color="#B34A26"
+                trackColor="#FDF3EE"
               />
             </div>
           </Card>
@@ -725,21 +725,21 @@ export default function DhanPage() {
           {/* HONEST AI INCOME ESTIMATE CARD */}
           <Card variant="accent" className="p-4">
             <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-accentSoft text-[#D97706] mt-0.5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-warmAmber/20 text-terracotta mt-0.5">
                 <AppIcon name="trending-up" size={22} />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-deepEmerald">
+                  <span className="text-xs font-bold text-warmCocoa">
                     {t('dhan.expectedIncome')}
                   </span>
-                  <span className="rounded-full bg-saffron/20 px-2 py-0.5 text-[10px] font-black text-[#B45309]">
+                  <span className="rounded-full bg-saffronGold/20 px-2 py-0.5 text-[10px] font-black text-warmCocoa border border-saffronGold/30">
                     {t('dhan.aiModel')}
                   </span>
                 </div>
                 {summary.hasSufficientHistory ? (
                   <div className="mt-1">
-                    <p className="text-lg font-black text-deepEmerald">
+                    <p className="text-lg font-black text-warmCocoa">
                       ₹{formatInr(summary.forecastMin)} – ₹{formatInr(summary.forecastMax)}
                     </p>
                     <p className="text-[11px] text-textSecondary mt-0.5">
@@ -753,9 +753,9 @@ export default function DhanPage() {
                     </p>
                     <div className="flex items-center gap-2 text-[11px] font-bold text-textMuted">
                       <span>{t('dhan.forecastProgress', { count: summary.activeDaysCount })}</span>
-                      <div className="flex-1 h-1.5 rounded-full bg-border/60 overflow-hidden">
+                      <div className="flex-1 h-1.5 rounded-full bg-softBorder overflow-hidden">
                         <div
-                          className="h-full bg-primary rounded-full transition-all"
+                          className="h-full bg-terracotta rounded-full transition-all"
                           style={{ width: `${Math.min((summary.activeDaysCount / 5) * 100, 100)}%` }}
                         />
                       </div>
@@ -771,7 +771,7 @@ export default function DhanPage() {
             <div className="flex items-start gap-3">
               <div
                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl mt-0.5 ${
-                  summary.hasAnomaly ? 'bg-saffron/20 text-[#D97706]' : 'bg-primarySoft text-primary'
+                  summary.hasAnomaly ? 'bg-warmAmber/20 text-terracotta' : 'bg-warmAmber/15 text-terracotta'
                 }`}
               >
                 <AppIcon name="sparkles" size={18} />
@@ -779,7 +779,7 @@ export default function DhanPage() {
               <div className="flex-1">
                 <h3
                   className={`text-xs font-bold uppercase tracking-wide ${
-                    summary.hasAnomaly ? 'text-[#92400E]' : 'text-deepEmerald'
+                    summary.hasAnomaly ? 'text-warmCocoa' : 'text-warmCocoa'
                   }`}
                 >
                   {t('dhan.aiSpendingAnalysis')}
@@ -793,7 +793,7 @@ export default function DhanPage() {
                   <button
                     type="button"
                     onClick={() => setSelectedExpenseCat('travel_fuel')}
-                    className="mt-2 text-xs font-bold text-[#B45309] hover:underline"
+                    className="mt-2 text-xs font-bold text-terracotta hover:underline"
                   >
                     {t('dhan.reviewDeductions')} →
                   </button>
@@ -806,7 +806,7 @@ export default function DhanPage() {
           <Card variant="emerald" className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <h3 className="text-sm font-extrabold text-deepEmerald">
+                <h3 className="text-sm font-extrabold text-warmCocoa">
                   {t('dhan.stabilityScore')}
                 </h3>
                 <p className="text-xs text-textMuted mt-0.5">
@@ -815,7 +815,7 @@ export default function DhanPage() {
               </div>
               {summary.hasSufficientStabilityHistory ? (
                 <div className="text-right">
-                  <span className="text-2xl font-black text-deepEmerald">{summary.stabilityScore}</span>
+                  <span className="text-2xl font-black text-warmCocoa">{summary.stabilityScore}</span>
                   <span className="block text-[10px] font-bold text-success uppercase">
                     {t(summary.stabilityScoreLabelKey)}
                   </span>
@@ -831,9 +831,9 @@ export default function DhanPage() {
 
             {/* Stability Progress Bar */}
             {summary.hasSufficientStabilityHistory ? (
-              <div className="mt-3 h-2.5 w-full rounded-full bg-primarySoft overflow-hidden">
+              <div className="mt-3 h-2.5 w-full rounded-full bg-softBorder overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#72E5C2] to-[#087F73] transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-[#F1B96B] via-[#E5953E] to-[#B34A26] transition-all duration-500"
                   style={{ width: `${Math.min((summary.stabilityScore / 500) * 100, 100)}%` }}
                 />
               </div>
@@ -844,9 +844,9 @@ export default function DhanPage() {
                 </p>
                 <div className="flex items-center gap-2 text-[11px] font-bold text-textMuted">
                   <span>{t('dhan.activeDaysProgress', { count: summary.activeDaysCount })}</span>
-                  <div className="flex-1 h-2 rounded-full bg-surfaceAlt overflow-hidden">
+                  <div className="flex-1 h-2 rounded-full bg-softBorder overflow-hidden">
                     <div
-                      className="h-full bg-mint rounded-full transition-all"
+                      className="h-full bg-saffronGold rounded-full transition-all"
                       style={{ width: `${Math.min((summary.activeDaysCount / 7) * 100, 100)}%` }}
                     />
                   </div>

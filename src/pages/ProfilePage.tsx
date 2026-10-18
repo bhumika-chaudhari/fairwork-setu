@@ -173,16 +173,16 @@ export default function ProfilePage() {
     <div className="min-h-screen w-full bg-transparent px-4 py-4 md:py-8 pb-28">
       <div className="mx-auto w-full max-w-md md:max-w-xl space-y-4">
         {/* Top Header matching reference Screen 9 */}
-        <header className="flex items-center justify-between border-b border-white/60 pb-3">
+        <header className="flex items-center justify-between border-b border-softBorder pb-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 backdrop-blur-md shadow-glass border border-white/80 hover:bg-white/85 text-deepEmerald transition-all active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-cleanWhite/90 backdrop-blur-md shadow-card border border-softBorder hover:bg-cleanWhite text-warmCocoa transition-all active:scale-95"
             aria-label="Back"
           >
             <AppIcon name="arrow-back" size={20} />
           </button>
-          <h1 className="text-xl font-extrabold text-deepEmerald">
+          <h1 className="text-xl font-extrabold text-warmCocoa">
             {t('profileScreen.title')}
           </h1>
           <button
@@ -208,7 +208,7 @@ export default function ProfilePage() {
             />
             <label
               htmlFor="profile-photo-input"
-              className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-[#073B3A] to-[#087F73] text-2xl font-black text-white shadow-card ring-2 ring-white overflow-hidden group"
+              className="relative flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-2xl font-black text-white shadow-card ring-2 ring-white overflow-hidden group"
               title="Upload photo / Selfie"
             >
               {avatarUrl ? (
@@ -216,18 +216,18 @@ export default function ProfilePage() {
               ) : (
                 name.charAt(0) || 'R'
               )}
-              <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-mint text-deepEmerald shadow-xs border border-white">
+              <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-saffronGold text-deepNavy shadow-xs border border-white">
                 <AppIcon name="camera-outline" size={13} />
               </div>
             </label>
             <div>
-              <h2 className="text-base font-extrabold text-deepEmerald">{name}</h2>
-              <p className="text-xs font-semibold text-primaryTeal mt-0.5">
+              <h2 className="text-base font-extrabold text-warmCocoa">{name}</h2>
+              <p className="text-xs font-semibold text-terracotta mt-0.5">
                 {t(`workerTypes.${workType}`)} • {t(cityKey)}
               </p>
               <label
                 htmlFor="profile-photo-input"
-                className="text-xs font-bold text-primary hover:underline mt-1 block cursor-pointer"
+                className="text-xs font-bold text-terracotta hover:underline mt-1 block cursor-pointer"
               >
                 {t('profileScreen.changePhoto')}
               </label>
@@ -237,15 +237,15 @@ export default function ProfilePage() {
           {/* Strength Bar */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold text-deepEmerald">
+              <span className="text-xs font-bold text-warmCocoa">
                 {t('profileScreen.strength', { percent: strength })}
               </span>
               <span className="text-[11px] font-bold text-success">{t('profileScreen.stabilityGood')}</span>
             </div>
             <ProgressBar
               progress={strength / 100}
-              color="#087F73"
-              trackColor="#E6F7F2"
+              color="#B34A26"
+              trackColor="#FDF3EE"
             />
             <p className="text-[11px] text-textMuted mt-1">
               {t('profileScreen.strengthHint')}
@@ -265,21 +265,21 @@ export default function ProfilePage() {
         <div className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.name')}
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
             />
           </div>
 
           {/* Gender Selection (Optional) */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-bold text-deepEmerald">
+              <label className="text-xs font-bold text-warmCocoa">
                 {t('gender.label')}{' '}
                 <span className="text-[11px] font-normal text-textMuted">
                   ({t('gender.optionalBadge')})
@@ -299,8 +299,8 @@ export default function ProfilePage() {
                     onClick={() => setGender(isSelected ? null : opt.id)}
                     className={`flex items-center justify-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
                       isSelected
-                        ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
-                        : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
+                        ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
+                        : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
                     }`}
                   >
                     <AppIcon name={opt.icon} size={14} />
@@ -316,13 +316,13 @@ export default function ProfilePage() {
 
           {/* City */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.city')}
             </label>
             <select
               value={cityKey}
               onChange={(e) => setCityKey(e.target.value)}
-              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
             >
               {CITY_KEYS.map((k) => (
                 <option key={k} value={k}>
@@ -334,7 +334,7 @@ export default function ProfilePage() {
 
           {/* Preferred Language */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.preferredLanguage')}
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -345,8 +345,8 @@ export default function ProfilePage() {
                   onClick={() => handleLangSelect(code)}
                   className={`rounded-full px-3 py-1 text-xs font-bold transition-all active:scale-95 ${
                     selectedLang === code
-                      ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
-                      : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
+                      ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
+                      : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
                   }`}
                 >
                   {LANGUAGE_NATIVE_NAMES[code]}
@@ -357,7 +357,7 @@ export default function ProfilePage() {
 
           {/* Work Type */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.workType')}
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -368,8 +368,8 @@ export default function ProfilePage() {
                   onClick={() => setWorkType(opt.type)}
                   className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all active:scale-95 ${
                     workType === opt.type
-                      ? 'bg-teal-500/15 border-2 border-primary text-deepEmerald shadow-glass'
-                      : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
+                      ? 'bg-terracotta/10 border-2 border-terracotta text-warmCocoa shadow-card'
+                      : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
                   }`}
                 >
                   <AppIcon name={opt.icon} size={15} />
@@ -381,14 +381,14 @@ export default function ProfilePage() {
 
           {/* Editable Skills */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.skills')}
             </label>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {skillKeys.map((sk) => (
                 <span
                   key={sk}
-                  className="inline-flex items-center gap-1 rounded-full bg-[#E4FAF2] border border-[#72E5C2]/60 px-3 py-1 text-xs font-bold text-deepEmerald"
+                  className="inline-flex items-center gap-1 rounded-full bg-warmAmber/20 border border-warmAmber/30 px-3 py-1 text-xs font-bold text-warmCocoa"
                 >
                   <span>{t(sk)}</span>
                   <button
@@ -403,7 +403,7 @@ export default function ProfilePage() {
               {customSkills.map((sk) => (
                 <span
                   key={sk}
-                  className="inline-flex items-center gap-1 rounded-full bg-primarySoft border border-primary/30 px-3 py-1 text-xs font-bold text-primary"
+                  className="inline-flex items-center gap-1 rounded-full bg-warmAmber/20 border border-warmAmber/30 px-3 py-1 text-xs font-bold text-terracotta"
                 >
                   <span>{sk}</span>
                   <button
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                 value={newSkillText}
                 onChange={(e) => setNewSkillText(e.target.value)}
                 placeholder={t('profileScreen.skillPlaceholder')}
-                className="flex-1 rounded-xl border border-white/80 bg-white/70 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary focus:ring-2 focus:ring-primary/30 focus:outline-none shadow-inner"
+                className="flex-1 rounded-xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3 py-2 text-xs font-medium text-textPrimary focus:ring-2 focus:ring-terracotta/30 focus:outline-none shadow-inner"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -435,7 +435,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={handleAddCustomSkill}
-                className="rounded-xl bg-gradient-to-r from-deepEmerald to-teal-700 px-3.5 py-2 text-xs font-bold text-white shadow-glass hover:brightness-110 active:scale-95 transition-all"
+                className="rounded-xl bg-gradient-to-r from-[#B34A26] to-[#7C2D16] px-3.5 py-2 text-xs font-bold text-white shadow-card hover:brightness-110 active:scale-95 transition-all"
               >
                 + {t('common.add')}
               </button>
@@ -444,20 +444,20 @@ export default function ProfilePage() {
 
           {/* Experience Years */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.experience')}
             </label>
             <input
               type="number"
               value={experienceYears}
               onChange={(e) => setExperienceYears(e.target.value)}
-              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
             />
           </div>
 
           {/* Availability */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.availability')}
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -468,8 +468,8 @@ export default function ProfilePage() {
                   onClick={() => setAvailability(av.id)}
                   className={`rounded-xl p-2.5 text-xs font-bold text-center transition-all active:scale-95 ${
                     availability === av.id
-                      ? 'bg-gradient-to-r from-deepEmerald to-teal-700 text-white shadow-glass border border-emerald-400/40'
-                      : 'bg-white/50 backdrop-blur-md text-textSecondary border border-white/70 hover:bg-white/80 shadow-xs'
+                      ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-card border border-saffronGold/40'
+                      : 'bg-cleanWhite/80 backdrop-blur-md text-textSecondary border border-softBorder hover:bg-cleanWhite shadow-xs'
                   }`}
                 >
                   {t(`availability.${av.id}`)}
@@ -480,7 +480,7 @@ export default function ProfilePage() {
 
           {/* Expected Daily Pay Range */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.payRange')} (₹ / day)
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -489,21 +489,21 @@ export default function ProfilePage() {
                 value={payMin}
                 onChange={(e) => setPayMin(e.target.value)}
                 placeholder="Min (e.g. 400)"
-                className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
               />
               <input
                 type="number"
                 value={payMax}
                 onChange={(e) => setPayMax(e.target.value)}
                 placeholder="Max (e.g. 700)"
-                className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Emergency Contact */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.emergencyContact')}
             </label>
             <input
@@ -511,13 +511,13 @@ export default function ProfilePage() {
               value={emergencyContact}
               onChange={(e) => setEmergencyContact(e.target.value)}
               placeholder="+91 98765 43210"
-              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
             />
           </div>
 
           {/* Savings Goal */}
           <div>
-            <label className="block text-xs font-bold text-deepEmerald mb-1">
+            <label className="block text-xs font-bold text-warmCocoa mb-1">
               {t('profileScreen.savingsGoal')}
             </label>
             <input
@@ -525,7 +525,7 @@ export default function ProfilePage() {
               value={savingsGoal}
               onChange={(e) => setSavingsGoal(e.target.value)}
               placeholder="10000"
-              className="w-full rounded-2xl border border-white/80 bg-white/70 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-primary/30 focus:outline-none"
+              className="w-full rounded-2xl border border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3.5 py-3 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
             />
           </div>
 
@@ -535,7 +535,7 @@ export default function ProfilePage() {
               type="button"
               onClick={handleCancel}
               disabled={isSaving}
-              className="flex-1 rounded-full border border-white/80 bg-white/60 backdrop-blur-md py-3 text-xs font-bold text-textSecondary hover:bg-white/85 transition-all shadow-xs active:scale-95"
+              className="flex-1 rounded-full border border-softBorder bg-cleanWhite/80 backdrop-blur-md py-3 text-xs font-bold text-textSecondary hover:bg-cleanWhite transition-all shadow-xs active:scale-95"
             >
               {t('profileScreen.cancel')}
             </button>
@@ -543,7 +543,7 @@ export default function ProfilePage() {
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-[2] flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 py-3 text-xs font-bold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
+              className="emerald-gradient-btn flex-[2] flex items-center justify-center gap-2 rounded-full py-3 text-xs font-bold text-white shadow-card hover:shadow-cardHover border border-saffronGold/30 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
             >
               {isSaving && (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -554,7 +554,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Account & Session Controls */}
-        <div className="rounded-3xl bg-white/50 backdrop-blur-2xl p-4 md:p-5 border border-white/80 shadow-glass space-y-3">
+        <div className="rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 border border-softBorder shadow-card space-y-3">
           <h3 className="text-xs font-bold text-textMuted uppercase tracking-wider">
             {t('profileScreen.accountSession', 'Session & Demo Controls')}
           </h3>
@@ -562,7 +562,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={handleResetDemoData}
-              className="flex items-center justify-center gap-1.5 rounded-2xl bg-white/70 hover:bg-white/90 text-primary border border-mint/40 py-3 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-2xl bg-cleanWhite/90 hover:bg-white text-terracotta border border-warmAmber/40 py-3 px-3 text-xs font-bold shadow-xs active:scale-95 transition-all"
             >
               <AppIcon name="refresh" size={15} />
               <span>{t('profileScreen.reloadDemo', 'Reload 5-Day Demo Data')}</span>
@@ -580,13 +580,13 @@ export default function ProfilePage() {
 
         {/* Logout Confirmation Modal */}
         {showLogoutConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-deepEmerald/40 backdrop-blur-md animate-fade-in">
-            <div className="w-full max-w-sm rounded-3xl bg-white/95 backdrop-blur-2xl p-6 shadow-lifted border border-white/90 space-y-4 text-center">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-deepNavy/35 backdrop-blur-md animate-fade-in">
+            <div className="w-full max-w-sm rounded-3xl bg-cleanWhite/95 backdrop-blur-2xl p-6 shadow-lifted border border-softBorder space-y-4 text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 border border-rose-200">
                 <AppIcon name="close" size={26} />
               </div>
               <div>
-                <h3 className="text-base font-black text-deepEmerald">
+                <h3 className="text-base font-black text-warmCocoa">
                   {t('profileScreen.logoutPromptTitle', 'Log Out of Setu?')}
                 </h3>
                 <p className="text-xs text-textSecondary mt-1">
@@ -597,14 +597,14 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={() => setShowLogoutConfirm(false)}
-                  className="flex-1 rounded-full border border-white/80 bg-white/80 py-2.5 text-xs font-bold text-textSecondary hover:bg-white transition-all shadow-xs active:scale-95"
+                  className="flex-1 rounded-full border border-softBorder bg-cleanWhite/80 py-2.5 text-xs font-bold text-textSecondary hover:bg-white transition-all shadow-xs active:scale-95"
                 >
                   {t('common.cancel', 'Cancel')}
                 </button>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="flex-1 rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white shadow-glass hover:bg-rose-700 transition-all active:scale-95"
+                  className="flex-1 rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white shadow-card hover:bg-rose-700 transition-all active:scale-95"
                 >
                   {t('profileScreen.confirmLogout', 'Yes, Log Out')}
                 </button>
@@ -615,8 +615,8 @@ export default function ProfilePage() {
 
         {demoResetSuccess && (
           <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 animate-fade-in">
-            <div className="flex items-center gap-2 rounded-full bg-deepEmerald px-6 py-3 text-sm font-extrabold text-white shadow-lifted border border-mint">
-              <AppIcon name="checkmark-circle" size={18} className="text-mint" />
+            <div className="flex items-center gap-2 rounded-full bg-[#1E2B3E] px-6 py-3 text-sm font-extrabold text-white shadow-lifted border border-saffronGold/40">
+              <AppIcon name="checkmark-circle" size={18} className="text-saffronGold" />
               <span>Demo transactions loaded for past 5 days!</span>
             </div>
           </div>
@@ -625,8 +625,8 @@ export default function ProfilePage() {
         {/* Confirmation Toast matching reference Screen 9 ("Profile updated successfully!") */}
         {savedSuccess && (
           <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 animate-fade-in">
-            <div className="flex items-center gap-2 rounded-full bg-deepEmerald px-6 py-3 text-sm font-extrabold text-white shadow-lifted border border-mint">
-              <AppIcon name="checkmark-circle" size={18} className="text-mint" />
+            <div className="flex items-center gap-2 rounded-full bg-[#1E2B3E] px-6 py-3 text-sm font-extrabold text-white shadow-lifted border border-saffronGold/40">
+              <AppIcon name="checkmark-circle" size={18} className="text-saffronGold" />
               <span>{t('profileScreen.saved')}</span>
             </div>
           </div>

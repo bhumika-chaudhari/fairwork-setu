@@ -40,7 +40,7 @@ import {
 
 type TabKey = 'linear' | 'logistic' | 'lstm' | 'kmeans';
 
-const CLUSTER_COLORS = ['#087F73', '#F59E0B', '#3B82F6', '#8B5CF6'];
+const CLUSTER_COLORS = ['#B34A26', '#E5953E', '#3A757D', '#1E2B3E'];
 
 export default function AiLabPage() {
   const { t, i18n } = useTranslation();
@@ -135,17 +135,17 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/60 backdrop-blur-xl border border-white/80 text-deepEmerald shadow-glass hover:bg-white/80 active:scale-95 transition-all"
+              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cleanWhite/90 backdrop-blur-xl border border-softBorder text-warmCocoa shadow-card hover:bg-cleanWhite active:scale-95 transition-all"
               aria-label="Back"
             >
               <AppIcon name="arrow-back" size={18} />
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl md:text-2xl font-black text-deepEmerald tracking-tight">
+                <h1 className="text-xl md:text-2xl font-black text-warmCocoa tracking-tight">
                   {t('aiLab.title', 'AI/ML Intelligence Lab')}
                 </h1>
-                <span className="rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-2 py-0.5 text-[10px] font-black text-white shadow-xs">
+                <span className="rounded-full bg-gradient-to-r from-[#B34A26] to-[#7C2D16] px-2 py-0.5 text-[10px] font-black text-white shadow-xs">
                   4 Models
                 </span>
               </div>
@@ -161,7 +161,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               type="button"
               onClick={handleRetrainAll}
               disabled={retraining}
-              className="flex items-center gap-1.5 rounded-full bg-emerald-gradient px-3.5 py-2 text-xs font-bold text-white shadow-glass hover:brightness-110 active:scale-95 transition-all disabled:opacity-60"
+              className="emerald-gradient-btn flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold text-white shadow-card hover:shadow-cardHover active:scale-95 transition-all disabled:opacity-60 border border-saffronGold/30"
             >
               <AppIcon
                 name="refresh"
@@ -179,14 +179,14 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
         </div>
 
         {/* Backend & Model Status Indicator Banner */}
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-white/50 backdrop-blur-xl border border-white/80 p-2.5 px-3.5 shadow-glass text-xs font-medium">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-cleanWhite/90 backdrop-blur-xl border border-softBorder p-2.5 px-3.5 shadow-card text-xs font-medium">
           <div className="flex items-center gap-2">
             <span
               className={`h-2.5 w-2.5 rounded-full ${
-                status?.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                status?.isOnline ? 'bg-success animate-pulse' : 'bg-warmAmber'
               }`}
             />
-            <span className="font-bold text-deepEmerald">
+            <span className="font-bold text-warmCocoa">
               {status?.isOnline
                 ? t('aiLab.apiConnected', 'Python FastAPI Microservice Connected (Port 8000)')
                 : t('aiLab.offlineFallback', 'Client Numerical Engine Active (Offline Fallback)')}
@@ -202,7 +202,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="rounded-xl bg-[#E2FAF2] border border-mint/60 p-2.5 text-center text-xs font-bold text-success shadow-xs"
+            className="rounded-xl bg-[#F1F8F3] border border-[#2E7D32]/30 p-2.5 text-center text-xs font-bold text-success shadow-xs"
           >
             ✓ {t('aiLab.allTrainedSuccess', 'All 4 ML models retrained successfully with updated parameters!')}
           </motion.div>
@@ -210,7 +210,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
       </header>
 
       {/* 4 MODEL TABS NAVIGATION */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 p-1 rounded-2xl bg-white/50 backdrop-blur-2xl border border-white/80 shadow-glass">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 p-1 rounded-2xl bg-cleanWhite/90 backdrop-blur-2xl border border-softBorder shadow-card">
         {(
           [
             { key: 'linear', label: '1. Linear Regression', sub: 'Balance Forecast', icon: 'trending-up' },
@@ -225,21 +225,21 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             onClick={() => handleTabChange(item.key)}
             className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-center transition-all duration-200 ${
               activeTab === item.key
-                ? 'bg-gradient-to-br from-[#073B3A] to-[#087F73] text-white shadow-dockActive border border-mint/40 scale-[1.01]'
-                : 'text-textSecondary hover:bg-white/60 hover:text-deepEmerald active:scale-95'
+                ? 'bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-white shadow-dockActive border border-saffronGold/40 scale-[1.01]'
+                : 'text-textSecondary hover:bg-warmCream/60 hover:text-warmCocoa active:scale-95'
             }`}
           >
             <div className="flex items-center gap-1.5">
               <AppIcon
                 name={item.icon}
                 size={14}
-                className={activeTab === item.key ? 'text-mint' : 'text-textMuted'}
+                className={activeTab === item.key ? 'text-saffronGold' : 'text-textMuted'}
               />
               <span className="text-xs font-extrabold">{item.label}</span>
             </div>
             <span
               className={`text-[10px] mt-0.5 ${
-                activeTab === item.key ? 'text-mint/90' : 'text-textMuted'
+                activeTab === item.key ? 'text-saffronGold/90' : 'text-textMuted'
               }`}
             >
               {item.sub}
@@ -263,14 +263,14 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             className="space-y-4"
           >
             {/* Header Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-white/50 backdrop-blur-2xl p-4 md:p-5 shadow-glass border border-white/80 space-y-3">
+            <div className="relative overflow-hidden rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 shadow-card border border-softBorder space-y-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 text-primary border border-mint/30">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta border border-warmAmber/30">
                       <AppIcon name="trending-up" size={16} />
                     </span>
-                    <h2 className="text-base md:text-lg font-black text-deepEmerald">
+                    <h2 className="text-base md:text-lg font-black text-warmCocoa">
                       Model 1: Linear Regression Cash Balance Forecaster
                     </h2>
                   </div>
@@ -283,7 +283,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   <span className="text-[10px] uppercase font-black text-textMuted tracking-wider">
                     Next-Day Projected Balance
                   </span>
-                  <span className="text-2xl font-black text-deepEmerald">
+                  <span className="text-2xl font-black text-warmCocoa">
                     {formatInr(linearData?.next_day_prediction ?? 0)}
                   </span>
                   <span
@@ -298,7 +298,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
 
               {/* Data mode banner */}
-              <div className="flex items-center justify-between border-t border-white/60 pt-2 text-[11px] text-textMuted font-medium">
+              <div className="flex items-center justify-between border-t border-softBorder pt-2 text-[11px] text-textMuted font-medium">
                 <span>
                   {linearData?.is_synthetic
                     ? '⚠️ Using reproducible 90-day synthetic gig-worker cashflow for evaluation'
@@ -312,7 +312,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             <Card className="p-4 md:p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-extrabold text-deepEmerald">
+                  <h3 className="text-sm font-extrabold text-warmCocoa">
                     7-Day Cash Balance Horizon & Confidence Bounds
                   </h3>
                   <p className="text-[11px] text-textSecondary">
@@ -320,11 +320,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-[11px] font-bold">
-                  <span className="inline-flex items-center gap-1 text-[#087F73]">
-                    <span className="h-2 w-2 rounded-full bg-[#087F73]" /> Forecast
+                  <span className="inline-flex items-center gap-1 text-terracotta">
+                    <span className="h-2 w-2 rounded-full bg-terracotta" /> Forecast
                   </span>
-                  <span className="inline-flex items-center gap-1 text-mint">
-                    <span className="h-2 w-2 rounded-full bg-mint/50" /> ±RMSE
+                  <span className="inline-flex items-center gap-1 text-warmAmber">
+                    <span className="h-2 w-2 rounded-full bg-warmAmber/50" /> ±RMSE
                   </span>
                 </div>
               </div>
@@ -337,23 +337,23 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   >
                     <defs>
                       <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#087F73" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#087F73" stopOpacity={0.05} />
+                        <stop offset="5%" stopColor="#B34A26" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#B34A26" stopOpacity={0.05} />
                       </linearGradient>
                       <linearGradient id="boundGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#72E5C2" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#72E5C2" stopOpacity={0.05} />
+                        <stop offset="5%" stopColor="#F1B96B" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#F1B96B" stopOpacity={0.05} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(7,59,58,0.06)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(35,31,32,0.06)" />
                     <XAxis
                       dataKey="day_label"
-                      tick={{ fontSize: 11, fill: '#4E6563', fontWeight: 600 }}
+                      tick={{ fontSize: 11, fill: '#7D7068', fontWeight: 600 }}
                       axisLine={false}
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fontSize: 10, fill: '#4E6563' }}
+                      tick={{ fontSize: 10, fill: '#7D7068' }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(v) => `₹${v}`}
@@ -363,11 +363,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                         if (active && payload && payload.length) {
                           const d = payload[0].payload as any;
                           return (
-                            <div className="rounded-xl bg-white/90 backdrop-blur-xl p-2.5 shadow-glass border border-white/90 text-xs">
-                              <p className="font-extrabold text-deepEmerald">
+                            <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2.5 shadow-card border border-softBorder text-xs">
+                              <p className="font-extrabold text-warmCocoa">
                                 {d.day_label} ({d.date})
                               </p>
-                              <p className="font-bold text-primary mt-1">
+                              <p className="font-bold text-terracotta mt-1">
                                 Expected: ₹{d.predicted_balance?.toLocaleString('en-IN')}
                               </p>
                               <p className="text-[11px] text-textMuted mt-0.5">
@@ -391,7 +391,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                     <Area
                       type="monotone"
                       dataKey="predicted_balance"
-                      stroke="#087F73"
+                      stroke="#B34A26"
                       strokeWidth={2.5}
                       fill="url(#balanceGrad)"
                     />
@@ -402,11 +402,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Regression Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   R² Score
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1">
+                <span className="text-xl font-black text-warmCocoa block mt-1">
                   {linearData?.metrics?.r2_score ?? '0.884'}
                 </span>
                 <span className="text-[10px] text-success font-bold mt-0.5 block">
@@ -414,11 +414,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   MAE (Test)
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1">
+                <span className="text-xl font-black text-warmCocoa block mt-1">
                   ₹{linearData?.metrics?.mae ?? '142.5'}
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -426,11 +426,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   RMSE
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1">
+                <span className="text-xl font-black text-warmCocoa block mt-1">
                   ₹{linearData?.metrics?.rmse ?? '184.2'}
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -438,11 +438,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Split Samples
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1">
+                <span className="text-xl font-black text-warmCocoa block mt-1">
                   {linearData?.metrics?.train_samples ?? 72} / {linearData?.metrics?.test_samples ?? 18}
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -453,7 +453,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Regression Coefficients & Interpretability Card */}
             <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-deepEmerald mb-1">
+              <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
                 Learned Model Coefficients & Feature Importance
               </h3>
               <p className="text-xs text-textSecondary mb-3">
@@ -465,7 +465,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   Object.entries(linearData.metrics.coefficients).map(([feat, weight]) => (
                     <div
                       key={feat}
-                      className="flex items-center justify-between p-2 rounded-xl bg-white/60 border border-white/80"
+                      className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder"
                     >
                       <span className="font-semibold text-textSecondary font-mono">{feat}</span>
                       <span
@@ -495,14 +495,14 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             className="space-y-4"
           >
             {/* Header Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-white/50 backdrop-blur-2xl p-4 md:p-5 shadow-glass border border-white/80 space-y-3">
+            <div className="relative overflow-hidden rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 shadow-card border border-softBorder space-y-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 text-primary border border-mint/30">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta border border-warmAmber/30">
                       <AppIcon name="shield-checkmark" size={16} />
                     </span>
-                    <h2 className="text-base md:text-lg font-black text-deepEmerald">
+                    <h2 className="text-base md:text-lg font-black text-warmCocoa">
                       Model 2: Logistic Regression Budget Risk Classifier
                     </h2>
                   </div>
@@ -519,7 +519,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                     <span
                       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${
                         logisticData?.risk_level === 'Low'
-                          ? 'bg-[#E2FAF2] text-success border-mint/60'
+                          ? 'bg-[#F1F8F3] text-success border-[#2E7D32]/30'
                           : logisticData?.risk_level === 'Moderate'
                           ? 'bg-amber-100 text-amber-800 border-amber-300'
                           : 'bg-rose-100 text-rose-800 border-rose-300'
@@ -545,7 +545,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             <Card className="p-4 md:p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-extrabold text-deepEmerald">
+                  <h3 className="text-sm font-extrabold text-warmCocoa">
                     Budget Overrun Probability Meter
                   </h3>
                   <p className="text-xs text-textSecondary">
@@ -553,7 +553,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-deepEmerald">
+                  <span className="text-2xl font-black text-warmCocoa">
                     {logisticData?.probability_percent ?? 40.8}%
                   </span>
                   <span className="text-[10px] font-bold text-textMuted block">
@@ -564,17 +564,17 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
               {/* Progress Track with Color Stops */}
               <div className="space-y-1.5">
-                <div className="relative h-4 w-full overflow-hidden rounded-full bg-white/70 border border-white/80 p-0.5 shadow-inner">
+                <div className="relative h-4 w-full overflow-hidden rounded-full bg-warmCream/60 border border-softBorder p-0.5 shadow-inner">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, logisticData?.probability_percent ?? 40)}%` }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                     className={`h-full rounded-full ${
                       (logisticData?.probability_percent ?? 40) < 35
-                        ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+                        ? 'bg-gradient-to-r from-[#2E7D32] to-[#E5953E]'
                         : (logisticData?.probability_percent ?? 40) < 65
-                        ? 'bg-gradient-to-r from-teal-400 to-amber-500'
-                        : 'bg-gradient-to-r from-amber-500 to-rose-600'
+                        ? 'bg-gradient-to-r from-[#F1B96B] via-[#E5953E] to-[#B34A26]'
+                        : 'bg-gradient-to-r from-[#E5953E] to-rose-600'
                     }`}
                   />
                 </div>
@@ -587,20 +587,20 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
 
               {/* Spend vs Budget Comparison */}
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/60">
-                <div className="p-3 rounded-2xl bg-white/50 border border-white/80">
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-softBorder">
+                <div className="p-3 rounded-2xl bg-warmCream/60 border border-softBorder">
                   <span className="text-[10px] font-black uppercase text-textMuted block">
                     Projected Month Spend
                   </span>
-                  <span className="text-lg font-black text-deepEmerald mt-0.5 block">
+                  <span className="text-lg font-black text-warmCocoa mt-0.5 block">
                     {formatInr(logisticData?.projected_spend ?? 4700)}
                   </span>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/50 border border-white/80">
+                <div className="p-3 rounded-2xl bg-warmCream/60 border border-softBorder">
                   <span className="text-[10px] font-black uppercase text-textMuted block">
                     Target Budget
                   </span>
-                  <span className="text-lg font-black text-deepEmerald mt-0.5 block">
+                  <span className="text-lg font-black text-warmCocoa mt-0.5 block">
                     {formatInr(logisticData?.budget_amount ?? 5000)}
                   </span>
                 </div>
@@ -609,11 +609,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Classification Evaluation Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   ROC-AUC
                 </span>
-                <span className="text-lg font-black text-deepEmerald block mt-1">
+                <span className="text-lg font-black text-warmCocoa block mt-1">
                   {logisticData?.metrics?.roc_auc ?? '0.9967'}
                 </span>
                 <span className="text-[10px] text-success font-bold mt-0.5 block">
@@ -621,11 +621,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Accuracy
                 </span>
-                <span className="text-lg font-black text-deepEmerald block mt-1">
+                <span className="text-lg font-black text-warmCocoa block mt-1">
                   {((logisticData?.metrics?.accuracy ?? 0.94) * 100).toFixed(1)}%
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -633,11 +633,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Precision
                 </span>
-                <span className="text-lg font-black text-deepEmerald block mt-1">
+                <span className="text-lg font-black text-warmCocoa block mt-1">
                   {((logisticData?.metrics?.precision ?? 0.965) * 100).toFixed(1)}%
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -645,11 +645,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Recall
                 </span>
-                <span className="text-lg font-black text-deepEmerald block mt-1">
+                <span className="text-lg font-black text-warmCocoa block mt-1">
                   {((logisticData?.metrics?.recall ?? 0.933) * 100).toFixed(1)}%
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -657,11 +657,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   F1-Score
                 </span>
-                <span className="text-lg font-black text-deepEmerald block mt-1">
+                <span className="text-lg font-black text-warmCocoa block mt-1">
                   {((logisticData?.metrics?.f1_score ?? 0.949) * 100).toFixed(1)}%
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -672,7 +672,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Feature Coefficients Breakdown */}
             <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-deepEmerald mb-1">
+              <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
                 Standardized Logistic Feature Weights
               </h3>
               <p className="text-xs text-textSecondary mb-3">
@@ -684,7 +684,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   Object.entries(logisticData.metrics.coefficients).map(([feat, coef]) => (
                     <div
                       key={feat}
-                      className="flex items-center justify-between p-2 rounded-xl bg-white/60 border border-white/80"
+                      className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder"
                     >
                       <span className="font-semibold text-textSecondary font-mono">{feat}</span>
                       <span
@@ -714,25 +714,25 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             className="space-y-4"
           >
             {/* Header Card with Demo Mode Toggle */}
-            <div className="relative overflow-hidden rounded-3xl bg-white/50 backdrop-blur-2xl p-4 md:p-5 shadow-glass border border-white/80 space-y-3">
+            <div className="relative overflow-hidden rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 shadow-card border border-softBorder space-y-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 text-primary border border-mint/30">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta border border-warmAmber/30">
                       <AppIcon name="sparkles" size={16} />
                     </span>
-                    <h2 className="text-base md:text-lg font-black text-deepEmerald">
+                    <h2 className="text-base md:text-lg font-black text-warmCocoa">
                       Model 3: PyTorch LSTM Sequential Cash Flow Forecaster
                     </h2>
                   </div>
                   <p className="text-xs text-textSecondary mt-1 leading-relaxed max-w-xl">
-                    Deep recurrent neural network (<span className="font-mono text-primary font-bold">torch.nn.LSTM</span>) modeling temporal dependencies in daily net cash flows across sequential 7-day windows.
+                    Deep recurrent neural network (<span className="font-mono text-terracotta font-bold">torch.nn.LSTM</span>) modeling temporal dependencies in daily net cash flows across sequential 7-day windows.
                   </p>
                 </div>
 
                 {/* Synthetic Demo Mode Toggle */}
-                <div className="flex items-center gap-2 p-2 rounded-2xl bg-white/70 border border-white/80 shadow-xs">
-                  <span className="text-[11px] font-bold text-deepEmerald">Demo Data Mode:</span>
+                <div className="flex items-center gap-2 p-2 rounded-2xl bg-warmCream/60 border border-softBorder shadow-xs">
+                  <span className="text-[11px] font-bold text-warmCocoa">Demo Data Mode:</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -741,7 +741,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                       loadAllModels(next);
                     }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      lstmDemoMode ? 'bg-[#087F73]' : 'bg-gray-300'
+                      lstmDemoMode ? 'bg-terracotta' : 'bg-gray-300'
                     }`}
                   >
                     <span
@@ -754,13 +754,13 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </div>
 
               {/* Status / Insufficient Data Notice */}
-              <div className="flex items-center justify-between border-t border-white/60 pt-2 text-[11px] text-textMuted font-medium">
+              <div className="flex items-center justify-between border-t border-softBorder pt-2 text-[11px] text-textMuted font-medium">
                 <span>
                   {lstmData?.status === 'demo_mode' || lstmDemoMode
                     ? '⚡ Reproducible 60-day gig worker sequence dataset (Seed 42) enabled for model demonstration'
                     : '✓ Real transaction sequences trained on PyTorch LSTM'}
                 </span>
-                <span className="font-bold text-primary">PyTorch 2.5.1</span>
+                <span className="font-bold text-terracotta">PyTorch 2.5.1</span>
               </div>
             </div>
 
@@ -768,7 +768,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             <Card className="p-4 md:p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-extrabold text-deepEmerald">
+                  <h3 className="text-sm font-extrabold text-warmCocoa">
                     7-Day Multi-Step Sequential Net Cash Flow
                   </h3>
                   <p className="text-[11px] text-textSecondary">
@@ -776,8 +776,8 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-[11px] font-bold">
-                  <span className="inline-flex items-center gap-1 text-[#087F73]">
-                    <span className="h-2 w-2 rounded-full bg-[#087F73]" /> Forecast Net (₹)
+                  <span className="inline-flex items-center gap-1 text-terracotta">
+                    <span className="h-2 w-2 rounded-full bg-terracotta" /> Forecast Net (₹)
                   </span>
                 </div>
               </div>
@@ -788,15 +788,15 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                     data={lstmData?.forecast_7_days ?? []}
                     margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(7,59,58,0.06)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(35,31,32,0.06)" />
                     <XAxis
                       dataKey="day_label"
-                      tick={{ fontSize: 11, fill: '#4E6563', fontWeight: 600 }}
+                      tick={{ fontSize: 11, fill: '#7D7068', fontWeight: 600 }}
                       axisLine={false}
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fontSize: 10, fill: '#4E6563' }}
+                      tick={{ fontSize: 10, fill: '#7D7068' }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(v) => `₹${v}`}
@@ -806,11 +806,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                         if (active && payload && payload.length) {
                           const d = payload[0].payload as any;
                           return (
-                            <div className="rounded-xl bg-white/90 backdrop-blur-xl p-2.5 shadow-glass border border-white/90 text-xs">
-                              <p className="font-extrabold text-deepEmerald">
+                            <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2.5 shadow-card border border-softBorder text-xs">
+                              <p className="font-extrabold text-warmCocoa">
                                 {d.day_label} ({d.date})
                               </p>
-                              <p className="font-bold text-primary mt-1">
+                              <p className="font-bold text-terracotta mt-1">
                                 Predicted Net: ₹{d.predicted_net}
                               </p>
                               <p className="text-[11px] text-textMuted mt-0.5">
@@ -825,10 +825,10 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                     <Line
                       type="monotone"
                       dataKey="predicted_net"
-                      stroke="#087F73"
+                      stroke="#B34A26"
                       strokeWidth={3}
-                      dot={{ fill: '#073B3A', r: 4 }}
-                      activeDot={{ r: 6, fill: '#72E5C2' }}
+                      dot={{ fill: '#7C2D16', r: 4 }}
+                      activeDot={{ r: 6, fill: '#E5953E' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -837,11 +837,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Neural Network Architecture Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Epochs Trained
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1">
+                <span className="text-xl font-black text-warmCocoa block mt-1">
                   {lstmData?.metrics?.epochs ?? 35}
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -849,11 +849,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Final MSE Loss
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1 font-mono">
+                <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
                   {lstmData?.metrics?.final_train_loss?.toFixed(5) ?? '0.00806'}
                 </span>
                 <span className="text-[10px] text-success font-bold mt-0.5 block">
@@ -861,11 +861,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Test Sequence MAE
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1">
+                <span className="text-xl font-black text-warmCocoa block mt-1">
                   ₹{lstmData?.metrics?.test_mae?.toFixed(1) ?? '197.1'}
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -873,11 +873,11 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </span>
               </div>
 
-              <div className="rounded-2xl bg-white/50 backdrop-blur-xl p-3.5 border border-white/80 shadow-glass">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-xl p-3.5 border border-softBorder shadow-card">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted block">
                   Model Parameters
                 </span>
-                <span className="text-xl font-black text-deepEmerald block mt-1 font-mono">
+                <span className="text-xl font-black text-warmCocoa block mt-1 font-mono">
                   {lstmData?.metrics?.parameters?.toLocaleString() ?? '4,769'}
                 </span>
                 <span className="text-[10px] text-textMuted font-bold mt-0.5 block">
@@ -888,7 +888,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Model Architecture Summary */}
             <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-deepEmerald mb-1">
+              <h3 className="text-sm font-extrabold text-warmCocoa mb-1">
                 PyTorch Network Architecture Details
               </h3>
               <p className="text-xs text-textSecondary mb-3">
@@ -896,21 +896,21 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
               </p>
 
               <div className="space-y-2 text-xs font-mono">
-                <div className="p-2.5 rounded-xl bg-white/60 border border-white/80 flex justify-between">
+                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
                   <span className="text-textSecondary">Input Size:</span>
-                  <span className="font-bold text-deepEmerald">3 features (normalized [income, expense, net])</span>
+                  <span className="font-bold text-warmCocoa">3 features (normalized [income, expense, net])</span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/60 border border-white/80 flex justify-between">
+                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
                   <span className="text-textSecondary">Hidden Units:</span>
-                  <span className="font-bold text-deepEmerald">32 recurrent LSTM hidden states</span>
+                  <span className="font-bold text-warmCocoa">32 recurrent LSTM hidden states</span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/60 border border-white/80 flex justify-between">
+                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
                   <span className="text-textSecondary">Sequence Length:</span>
-                  <span className="font-bold text-deepEmerald">7 sliding days historical input</span>
+                  <span className="font-bold text-warmCocoa">7 sliding days historical input</span>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/60 border border-white/80 flex justify-between">
+                <div className="p-2.5 rounded-xl bg-warmCream/60 border border-softBorder flex justify-between">
                   <span className="text-textSecondary">Output Projection:</span>
-                  <span className="font-bold text-deepEmerald">nn.Linear(32, 1) -&gt; 7-step autoregressive rollout</span>
+                  <span className="font-bold text-warmCocoa">nn.Linear(32, 1) -&gt; 7-step autoregressive rollout</span>
                 </div>
               </div>
             </Card>
@@ -930,14 +930,14 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
             className="space-y-4"
           >
             {/* Header Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-white/50 backdrop-blur-2xl p-4 md:p-5 shadow-glass border border-white/80 space-y-3">
+            <div className="relative overflow-hidden rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 md:p-5 shadow-card border border-softBorder space-y-3">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 text-primary border border-mint/30">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warmAmber/20 text-terracotta border border-warmAmber/30">
                       <AppIcon name="grid" size={16} />
                     </span>
-                    <h2 className="text-base md:text-lg font-black text-deepEmerald">
+                    <h2 className="text-base md:text-lg font-black text-warmCocoa">
                       Model 4: K-Means Spending Pattern Discovery
                     </h2>
                   </div>
@@ -950,7 +950,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   <span className="text-[10px] uppercase font-black text-textMuted tracking-wider">
                     Inertia (WCSS)
                   </span>
-                  <span className="text-2xl font-black text-deepEmerald font-mono">
+                  <span className="text-2xl font-black text-warmCocoa font-mono">
                     {kmeansData?.metrics?.inertia?.toFixed(1) ?? '170.4'}
                   </span>
                   <span className="text-[10px] text-textMuted font-bold">
@@ -959,7 +959,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-white/60 pt-2 text-[11px] text-textMuted font-medium">
+              <div className="flex items-center justify-between border-t border-softBorder pt-2 text-[11px] text-textMuted font-medium">
                 <span>
                   {kmeansData?.is_synthetic
                     ? '⚡ Evaluated on 180 representative gig worker transactions'
@@ -971,7 +971,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Cluster Proportions Chart */}
             <Card className="p-4 md:p-5">
-              <h3 className="text-sm font-extrabold text-deepEmerald mb-3">
+              <h3 className="text-sm font-extrabold text-warmCocoa mb-3">
                 Cluster Distribution & Proportions
               </h3>
 
@@ -1001,9 +1001,9 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                           if (active && payload && payload.length) {
                             const d = payload[0].payload as any;
                             return (
-                              <div className="rounded-xl bg-white/90 backdrop-blur-xl p-2 shadow-glass border border-white/90 text-xs">
-                                <p className="font-extrabold text-deepEmerald">{d.title}</p>
-                                <p className="text-primary font-bold">{d.count} transactions ({d.percentage}%)</p>
+                              <div className="rounded-xl bg-cleanWhite/95 backdrop-blur-xl p-2 shadow-card border border-softBorder text-xs">
+                                <p className="font-extrabold text-warmCocoa">{d.title}</p>
+                                <p className="text-terracotta font-bold">{d.count} transactions ({d.percentage}%)</p>
                                 <p className="text-textMuted">Average: ₹{d.avg_amount}</p>
                               </div>
                             );
@@ -1020,14 +1020,14 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                   {(kmeansData?.cluster_summaries ?? []).map((c, idx) => (
                     <div
                       key={c.cluster_id}
-                      className="flex items-center justify-between p-2 rounded-xl bg-white/60 border border-white/80 text-xs"
+                      className="flex items-center justify-between p-2 rounded-xl bg-warmCream/60 border border-softBorder text-xs"
                     >
                       <div className="flex items-center gap-2">
                         <span
                           className="h-3 w-3 rounded-full shrink-0"
                           style={{ backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length] }}
                         />
-                        <span className="font-bold text-deepEmerald">{c.title}</span>
+                        <span className="font-bold text-warmCocoa">{c.title}</span>
                       </div>
                       <span className="font-mono font-bold text-textSecondary">
                         {c.percentage}% ({c.count})
@@ -1040,7 +1040,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
 
             {/* Empirical Archetype Profile Cards */}
             <div className="space-y-3">
-              <h3 className="text-sm font-extrabold text-deepEmerald px-1">
+              <h3 className="text-sm font-extrabold text-warmCocoa px-1">
                 Discovered Spending Archetypes
               </h3>
 
@@ -1048,7 +1048,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                 {(kmeansData?.cluster_summaries ?? []).map((c, idx) => (
                   <div
                     key={c.cluster_id}
-                    className="rounded-3xl bg-white/50 backdrop-blur-2xl p-4 border border-white/80 shadow-glass space-y-2.5 flex flex-col justify-between"
+                    className="rounded-3xl bg-cleanWhite/90 backdrop-blur-2xl p-4 border border-softBorder shadow-card space-y-2.5 flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex items-center justify-between">
@@ -1063,7 +1063,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                         </span>
                       </div>
 
-                      <h4 className="text-sm font-black text-deepEmerald mt-2">
+                      <h4 className="text-sm font-black text-warmCocoa mt-2">
                         {c.title}
                       </h4>
                       <p className="text-xs text-textSecondary mt-1 leading-relaxed">
@@ -1071,10 +1071,10 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-white/60 space-y-1 text-xs">
+                    <div className="pt-2 border-t border-softBorder space-y-1 text-xs">
                       <div className="flex justify-between">
                         <span className="text-textMuted">Average Amount:</span>
-                        <span className="font-bold text-deepEmerald font-mono">
+                        <span className="font-bold text-warmCocoa font-mono">
                           ₹{c.avg_amount}
                         </span>
                       </div>
@@ -1086,7 +1086,7 @@ Fourth, K-Means clustering identifies 3 distinct spending archetypes across your
                       </div>
                       <div className="flex justify-between">
                         <span className="text-textMuted">Primary Focus:</span>
-                        <span className="font-semibold text-primary capitalize">
+                        <span className="font-semibold text-terracotta capitalize">
                           {c.primary_category.replace('_', ' ')}
                         </span>
                       </div>

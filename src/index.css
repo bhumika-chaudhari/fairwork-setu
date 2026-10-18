@@ -10,17 +10,17 @@ body,
 
 body {
   margin: 0;
-  background-color: #F4F8F6;
+  background-color: #FDF8F0;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(114, 229, 194, 0.42) 0px, transparent 48%),
-    radial-gradient(at 100% 0%, rgba(8, 127, 115, 0.32) 0px, transparent 50%),
-    radial-gradient(at 90% 40%, rgba(147, 197, 253, 0.38) 0px, transparent 45%),
-    radial-gradient(at 10% 55%, rgba(244, 181, 68, 0.26) 0px, transparent 46%),
-    radial-gradient(at 50% 80%, rgba(114, 229, 194, 0.35) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(8, 127, 115, 0.28) 0px, transparent 48%),
-    radial-gradient(at 0% 100%, rgba(199, 210, 254, 0.32) 0px, transparent 45%);
+    radial-gradient(at 0% 0%, rgba(229, 149, 62, 0.22) 0px, transparent 48%),
+    radial-gradient(at 100% 0%, rgba(179, 74, 38, 0.16) 0px, transparent 50%),
+    radial-gradient(at 90% 40%, rgba(58, 117, 125, 0.16) 0px, transparent 45%),
+    radial-gradient(at 10% 55%, rgba(241, 185, 107, 0.24) 0px, transparent 46%),
+    radial-gradient(at 50% 80%, rgba(229, 168, 35, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(124, 45, 22, 0.14) 0px, transparent 48%),
+    radial-gradient(at 0% 100%, rgba(30, 43, 62, 0.12) 0px, transparent 45%);
   background-attachment: fixed;
-  color: #0C2B2A;
+  color: #231F20;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", system-ui, "Noto Sans", "Noto Sans Devanagari", sans-serif;
   font-size: 16px;
   line-height: 24px;
@@ -55,59 +55,59 @@ select {
 }
 
 /* ============================================================
-   APPLE LIQUID GLASS / ULTRA-HEAVY GLASSMORPHISM CORE STYLES
+   WARM EARTHEN LIQUID GLASS / ULTRA-HEAVY GLASSMORPHISM CORE STYLES
    ============================================================ */
 
 /* Universal Liquid Frosted Glass */
 .liquid-glass,
 .glass {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.54) 55%, rgba(240, 253, 248, 0.42) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.65) 55%, rgba(253, 248, 240, 0.50) 100%);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(244, 235, 221, 0.95);
   box-shadow: 
-    0 10px 32px 0 rgba(7, 59, 58, 0.08),
+    0 10px 32px 0 rgba(124, 45, 22, 0.05),
     0 1px 2px 0 rgba(255, 255, 255, 0.95) inset,
-    0 -1px 1px 0 rgba(255, 255, 255, 0.25) inset;
+    0 -1px 1px 0 rgba(244, 235, 221, 0.3) inset;
 }
 
 /* Apple Floating Liquid Glass Dock */
 .liquid-glass-dock {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.60) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.72) 100%);
   backdrop-filter: blur(36px) saturate(190%);
   -webkit-backdrop-filter: blur(36px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(244, 235, 221, 0.95);
   box-shadow: 
-    0 20px 50px -10px rgba(7, 59, 58, 0.24),
-    0 0 0 1px rgba(255, 255, 255, 0.85),
+    0 20px 50px -10px rgba(30, 43, 62, 0.18),
+    0 0 0 1px rgba(244, 235, 221, 0.9),
     0 1.5px 2px 0 rgba(255, 255, 255, 0.95) inset,
-    0 -1px 1px 0 rgba(255, 255, 255, 0.3) inset;
+    0 -1px 1px 0 rgba(241, 185, 107, 0.25) inset;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Liquid Glass Active Capsule Indicator */
+/* Liquid Glass Active Capsule Indicator - Terracotta to Warm Cocoa with Saffron Border */
 .liquid-glass-dock-item-active {
-  background: linear-gradient(135deg, #073B3A 0%, #087F73 100%);
+  background: linear-gradient(135deg, #B34A26 0%, #7C2D16 100%);
   color: #FFFFFF;
   box-shadow: 
-    0 6px 20px rgba(8, 127, 115, 0.38),
+    0 6px 20px rgba(179, 74, 38, 0.35),
     0 1px 1.5px rgba(255, 255, 255, 0.55) inset;
-  border: 1px solid rgba(114, 229, 194, 0.5);
+  border: 1px solid rgba(229, 149, 62, 0.55);
 }
 
-/* Emerald Glass Card */
+/* Earthen Glass Card */
 .emerald-glass,
 .emerald-glass-card {
   position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.58) 55%, rgba(235, 253, 248, 0.45) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.70) 55%, rgba(253, 248, 240, 0.55) 100%);
   backdrop-filter: blur(26px) saturate(180%);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(244, 235, 221, 0.92);
   border-radius: 24px;
   box-shadow: 
-    0 10px 32px 0 rgba(7, 59, 58, 0.08),
-    0 1px 1.5px 0 rgba(255, 255, 255, 0.92) inset,
-    0 -1px 1px 0 rgba(255, 255, 255, 0.2) inset;
+    0 10px 32px 0 rgba(124, 45, 22, 0.05),
+    0 1px 1.5px 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 1px 0 rgba(244, 235, 221, 0.2) inset;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
@@ -124,85 +124,85 @@ select {
 }
 
 .emerald-glass-card:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.68) 55%, rgba(220, 252, 243, 0.52) 100%);
-  border-color: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.80) 55%, rgba(254, 247, 238, 0.65) 100%);
+  border-color: rgba(229, 149, 62, 0.4);
   box-shadow: 
-    0 16px 44px 0 rgba(7, 59, 58, 0.13),
+    0 16px 44px 0 rgba(124, 45, 22, 0.10),
     0 1px 2px 0 rgba(255, 255, 255, 0.98) inset;
 }
 
-/* Frosted AI Card */
+/* Frosted AI Card - Saffron Warmth */
 .glass-ai-card {
-  background: linear-gradient(135deg, rgba(235, 253, 247, 0.85) 0%, rgba(209, 250, 237, 0.58) 100%);
+  background: linear-gradient(135deg, rgba(255, 251, 245, 0.92) 0%, rgba(254, 243, 228, 0.70) 100%);
   backdrop-filter: blur(26px) saturate(180%);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border: 1px solid rgba(114, 229, 194, 0.6);
+  border: 1px solid rgba(229, 149, 62, 0.45);
   box-shadow: 
-    0 10px 34px rgba(7, 59, 58, 0.08),
+    0 10px 34px rgba(124, 45, 22, 0.06),
     0 1px 2px rgba(255, 255, 255, 0.95) inset;
   border-radius: 24px;
 }
 
 /* Frosted Income Card */
 .glass-income-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(230, 251, 244, 0.60) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(253, 248, 240, 0.75) 100%);
   backdrop-filter: blur(26px) saturate(180%);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(244, 235, 221, 0.95);
   box-shadow: 
-    0 10px 32px rgba(7, 59, 58, 0.08),
+    0 10px 32px rgba(124, 45, 22, 0.05),
     0 1px 1.5px rgba(255, 255, 255, 0.95) inset;
   border-radius: 24px;
 }
 
 /* Frosted Saffron Alert */
 .glass-saffron-alert {
-  background: linear-gradient(135deg, rgba(255, 251, 235, 0.85) 0%, rgba(254, 243, 199, 0.58) 100%);
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.92) 0%, rgba(254, 243, 199, 0.65) 100%);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(244, 181, 68, 0.55);
+  border: 1px solid rgba(229, 149, 62, 0.55);
   box-shadow: 
-    0 10px 30px rgba(244, 181, 68, 0.14),
+    0 10px 30px rgba(229, 149, 62, 0.14),
     0 1px 2px rgba(255, 255, 255, 0.9) inset;
   border-radius: 22px;
 }
 
 /* Frosted Hero Card */
 .emerald-glass-hero {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.84) 0%, rgba(235, 253, 248, 0.62) 60%, rgba(114, 229, 194, 0.28) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(254, 247, 238, 0.75) 60%, rgba(241, 185, 107, 0.28) 100%);
   backdrop-filter: blur(30px) saturate(190%);
   -webkit-backdrop-filter: blur(30px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(244, 235, 221, 0.95);
   box-shadow: 
-    0 16px 44px rgba(7, 59, 58, 0.12),
+    0 16px 44px rgba(124, 45, 22, 0.08),
     0 1.5px 2px rgba(255, 255, 255, 0.95) inset;
 }
 
-/* Frosted Dark Emerald Glass */
+/* Frosted Dark Navy Glass */
 .emerald-glass-dark {
-  background: linear-gradient(135deg, rgba(7, 59, 58, 0.90) 0%, rgba(8, 127, 115, 0.84) 100%);
+  background: linear-gradient(135deg, rgba(30, 43, 62, 0.96) 0%, rgba(21, 29, 42, 0.92) 100%);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(114, 229, 194, 0.45);
+  border: 1px solid rgba(241, 185, 107, 0.35);
   box-shadow: 
-    0 12px 36px rgba(7, 59, 58, 0.28),
-    0 1px 1.5px rgba(255, 255, 255, 0.3) inset;
+    0 12px 36px rgba(30, 43, 62, 0.28),
+    0 1px 1.5px rgba(255, 255, 255, 0.25) inset;
   color: #FFFFFF;
 }
 
-/* Luminous Mint Glow */
+/* Luminous Saffron Glow */
 .mint-glow {
-  box-shadow: 0 0 36px rgba(114, 229, 194, 0.5);
+  box-shadow: 0 0 36px rgba(229, 149, 62, 0.45);
 }
 
-/* Glossy Liquid Emerald Button */
+/* Dominant Brand CTA: Terracotta Gradient Button with Warm Amber Highlight */
 .emerald-gradient-btn {
   position: relative;
-  background: linear-gradient(135deg, #073B3A 0%, #087F73 60%, #0A9B8D 100%);
+  background: linear-gradient(135deg, #B34A26 0%, #C4552F 50%, #7C2D16 100%);
   color: #FFFFFF;
-  border: 1px solid rgba(114, 229, 194, 0.45);
+  border: 1px solid rgba(241, 185, 107, 0.45);
   box-shadow: 
-    0 8px 24px rgba(8, 127, 115, 0.36),
+    0 8px 24px rgba(179, 74, 38, 0.32),
     0 1px 1px rgba(255, 255, 255, 0.45) inset;
   transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
@@ -223,7 +223,7 @@ select {
   filter: brightness(1.08);
   transform: translateY(-1px);
   box-shadow: 
-    0 12px 32px rgba(8, 127, 115, 0.45),
+    0 12px 32px rgba(179, 74, 38, 0.42),
     0 1px 1.5px rgba(255, 255, 255, 0.55) inset;
 }
 
@@ -234,45 +234,45 @@ select {
 
 /* Liquid Glass Input Fields */
 .liquid-glass-input {
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(244, 235, 221, 0.95);
   box-shadow: 
-    0 2px 8px rgba(7, 59, 58, 0.04),
+    0 2px 8px rgba(124, 45, 22, 0.03),
     0 1.5px 3px rgba(0, 0, 0, 0.02) inset;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .liquid-glass-input:focus,
 .liquid-glass-input:focus-within {
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(8, 127, 115, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(179, 74, 38, 0.5);
   box-shadow: 
-    0 0 0 3px rgba(114, 229, 194, 0.35),
-    0 4px 14px rgba(7, 59, 58, 0.08);
+    0 0 0 3px rgba(241, 185, 107, 0.35),
+    0 4px 14px rgba(124, 45, 22, 0.06);
 }
 
 /* Liquid Glass Modal Sheet */
 .liquid-glass-modal {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.65) 55%, rgba(240, 253, 248, 0.50) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.75) 55%, rgba(253, 248, 240, 0.60) 100%);
   backdrop-filter: blur(36px) saturate(190%);
   -webkit-backdrop-filter: blur(36px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(244, 235, 221, 0.95);
   box-shadow: 
-    0 28px 70px -12px rgba(7, 59, 58, 0.28),
-    0 0 0 1px rgba(255, 255, 255, 0.85),
+    0 28px 70px -12px rgba(30, 43, 62, 0.24),
+    0 0 0 1px rgba(244, 235, 221, 0.85),
     0 1.5px 2px 0 rgba(255, 255, 255, 0.95) inset;
 }
 
 /* Liquid Glass Pill / Badge */
 .liquid-glass-pill {
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(18px) saturate(170%);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(244, 235, 221, 0.9);
   box-shadow: 
-    0 2px 10px rgba(7, 59, 58, 0.05),
+    0 2px 10px rgba(124, 45, 22, 0.04),
     0 1px 1px rgba(255, 255, 255, 0.8) inset;
 }
 
@@ -289,7 +289,7 @@ select {
   width: 20px;
   height: 3px;
   border-radius: 999px;
-  background: #087F73;
+  background: #B34A26;
 }
 
 /* Focus ring for accessibility */
@@ -298,7 +298,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #087F73;
+  outline: 2px solid #B34A26;
   outline-offset: 2px;
   border-radius: 14px;
 }
@@ -341,6 +341,6 @@ select:focus-visible {
 
 /* Custom selection */
 ::selection {
-  background: #72E5C2;
-  color: #073B3A;
+  background: #F1B96B;
+  color: #1E2B3E;
 }

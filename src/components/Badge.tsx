@@ -1,10 +1,10 @@
 const tones = {
-  success: 'bg-[#E4FAF2]/85 text-deepEmerald border border-[#72E5C2]/60 backdrop-blur-md shadow-xs',
-  warning: 'bg-[#FEF3C7]/85 text-[#92400E] border border-[#F4B544]/50 backdrop-blur-md shadow-xs',
-  danger: 'bg-dangerSoft/85 text-danger border border-danger/40 backdrop-blur-md shadow-xs',
-  health: 'bg-primarySoft/85 text-primary border border-mint/45 backdrop-blur-md shadow-xs',
-  primary: 'bg-primarySoft/85 text-deepEmerald border border-mint/40 backdrop-blur-md shadow-xs',
-  accent: 'bg-accentSoft/85 text-[#B45309] border border-saffron/45 backdrop-blur-md shadow-xs',
+  success: 'bg-[#F1F8F3]/90 text-[#2E7D32] border border-[#2E7D32]/40 backdrop-blur-md shadow-xs',
+  warning: 'bg-[#FEF9EC]/90 text-[#7C2D16] border border-[#E5A823]/50 backdrop-blur-md shadow-xs',
+  danger: 'bg-[#FDF3EE]/90 text-[#B34A26] border border-[#B34A26]/40 backdrop-blur-md shadow-xs',
+  health: 'bg-[#EFF7F8]/90 text-[#3A757D] border border-[#3A757D]/40 backdrop-blur-md shadow-xs',
+  primary: 'bg-[#FDF3EE]/90 text-[#B34A26] border border-[#F1B96B]/50 backdrop-blur-md shadow-xs',
+  accent: 'bg-[#FEF4E8]/90 text-[#7C2D16] border border-[#E5953E]/50 backdrop-blur-md shadow-xs',
 };
 
 export default function Badge({

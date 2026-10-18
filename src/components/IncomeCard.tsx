@@ -13,7 +13,7 @@ export default function IncomeCard({ todayIncome, weekDelta = 0 }: { todayIncome
       <p className="text-[44px] font-black leading-[54px] text-deepEmerald tracking-tight">
         {t('common.currency', { amount: formatInr(todayIncome) })}
       </p>
-      <div className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 backdrop-blur-md shadow-xs ${up ? 'bg-successSoft/90 border border-[#72E5C2]/70' : 'bg-dangerSoft/90 border border-danger/40'}`}>
+      <div className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 backdrop-blur-md shadow-xs ${up ? 'bg-successSoft/90 border border-[#2E7D32]/40' : 'bg-dangerSoft/90 border border-danger/40'}`}>
         <AppIcon name={up ? 'trending-up' : 'trending-down'} size={16} className={up ? 'text-success' : 'text-danger'} />
         <span className={`text-sm font-bold ${up ? 'text-success' : 'text-danger'}`}>
           {t(up ? 'home.weekDeltaUp' : 'home.weekDeltaDown', { amount: formatInr(Math.abs(weekDelta)) })}

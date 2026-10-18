@@ -48,19 +48,19 @@ export default function IncomeChart({ days }: { days: DailyChartItem[] }) {
           <BarChart data={data} margin={{ top: 10, right: 4, left: 4, bottom: 0 }}>
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: '#4E6563', fontWeight: 600 }}
+              tick={{ fontSize: 11, fill: '#4A423D', fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              cursor={{ fill: 'rgba(114, 229, 194, 0.12)' }}
+              cursor={{ fill: 'rgba(229, 149, 62, 0.12)' }}
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const inc = (payload.find((p) => p.dataKey === 'income')?.value as number) || 0;
                   const exp = (payload.find((p) => p.dataKey === 'expense')?.value as number) || 0;
                   return (
-                    <div className="rounded-xl bg-deepEmerald px-3 py-2 text-xs font-bold text-white shadow-lifted border border-mint/40 space-y-0.5">
-                      <div className="flex items-center justify-between gap-3 text-mint">
+                    <div className="rounded-xl bg-[#1E2B3E] px-3 py-2 text-xs font-bold text-white shadow-lifted border border-[#E5953E]/40 space-y-0.5">
+                      <div className="flex items-center justify-between gap-3 text-saffronGold">
                         <span>{t('transactions.typeIncome')}:</span>
                         <span>₹{formatInr(inc)}</span>
                       </div>
@@ -83,8 +83,8 @@ export default function IncomeChart({ days }: { days: DailyChartItem[] }) {
               wrapperStyle={{ fontSize: 11, fontWeight: 700, paddingBottom: 6 }}
               formatter={(value) => (value === 'income' ? t('transactions.typeIncome') : t('transactions.typeExpense'))}
             />
-            <Bar dataKey="income" fill="#087F73" radius={[6, 6, 0, 0]} maxBarSize={24} />
-            <Bar dataKey="expense" fill="#EF4444" radius={[6, 6, 0, 0]} maxBarSize={24} />
+            <Bar dataKey="income" fill="#B34A26" radius={[6, 6, 0, 0]} maxBarSize={24} />
+            <Bar dataKey="expense" fill="#7C2D16" radius={[6, 6, 0, 0]} maxBarSize={24} />
           </BarChart>
         </ResponsiveContainer>
       </div>

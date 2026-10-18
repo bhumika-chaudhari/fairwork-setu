@@ -2,8 +2,8 @@ export default function ProgressRing({
   progress,
   size = 88,
   stroke = 9,
-  color = '#087F73',
-  trackColor = '#E6F7F2',
+  color = '#B34A26',
+  trackColor = '#FDF3EE',
   label,
 }: {
   progress: number;

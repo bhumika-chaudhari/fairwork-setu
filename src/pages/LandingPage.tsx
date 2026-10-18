@@ -11,9 +11,9 @@ const FEATURE_CARDS = [
     key: 'landing.featureWork',
     subKey: 'landing.featureWorkSub',
     icon: 'briefcase',
-    bg: 'bg-[#E6F7F2]',
-    border: 'border-[#72E5C2]/50',
-    iconColor: 'text-[#087F73]',
+    bg: 'bg-[#EFF7F8]',
+    border: 'border-[#3A757D]/35',
+    iconColor: 'text-[#3A757D]',
     title: 'Kaam',
     sub: 'Nearby jobs & skill matching',
   },
@@ -21,9 +21,9 @@ const FEATURE_CARDS = [
     key: 'landing.featureMoney',
     subKey: 'landing.featureMoneySub',
     icon: 'wallet',
-    bg: 'bg-[#FEF7E8]',
-    border: 'border-[#F4B544]/50',
-    iconColor: 'text-[#D97706]',
+    bg: 'bg-[#FEF4E8]',
+    border: 'border-[#E5953E]/45',
+    iconColor: 'text-[#B34A26]',
     title: 'Dhan',
     sub: 'Track income, save money',
   },
@@ -31,9 +31,9 @@ const FEATURE_CARDS = [
     key: 'landing.featureHealth',
     subKey: 'landing.featureHealthSub',
     icon: 'heart',
-    bg: 'bg-[#FEE2E2]/60',
-    border: 'border-[#EF4444]/30',
-    iconColor: 'text-[#DC2626]',
+    bg: 'bg-[#FDF3EE]',
+    border: 'border-[#B34A26]/30',
+    iconColor: 'text-[#B34A26]',
     title: 'Sehat',
     sub: 'Health & welfare support',
   },
@@ -41,9 +41,9 @@ const FEATURE_CARDS = [
     key: 'landing.featureSkills',
     subKey: 'landing.featureSkillsSub',
     icon: 'school',
-    bg: 'bg-[#E0F2FE]',
-    border: 'border-[#38BDF8]/40',
-    iconColor: 'text-[#0284C7]',
+    bg: 'bg-[#FEF9EC]',
+    border: 'border-[#E5A823]/40',
+    iconColor: 'text-[#E5A823]',
     title: 'Kaushal',
     sub: 'Build your skill passport',
   },
@@ -57,8 +57,8 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen w-full bg-transparent overflow-x-hidden flex flex-col justify-between">
       {/* Ambient background glows */}
-      <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-mint/20 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-primary/15 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-[#E5953E]/18 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/3 -right-24 h-96 w-96 rounded-full bg-[#B34A26]/14 blur-3xl" />
 
       {/* Main container */}
       <div className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-4xl flex-1 flex-col px-5 py-4 md:py-8">
@@ -111,7 +111,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.2 + idx * 0.07 }}
-              className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/50 backdrop-blur-xl p-3.5 shadow-glass border border-white/75 transition-all duration-300 hover:border-white hover:bg-white/65 hover:shadow-glassHover overflow-hidden"
+              className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/70 backdrop-blur-xl p-3.5 shadow-glass border border-[#F4EBDD] transition-all duration-300 hover:border-[#E5953E]/40 hover:bg-white/85 hover:shadow-glassHover overflow-hidden"
             >
               <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
               <div
@@ -139,7 +139,7 @@ export default function LandingPage() {
             transition={{ duration: 0.4, delay: 0.5 }}
             type="button"
             onClick={() => navigate('/onboarding')}
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 text-base font-extrabold text-white shadow-glass hover:shadow-glassHover border border-emerald-400/30 hover:brightness-110 active:scale-95 transition-all"
+            className="emerald-gradient-btn flex h-14 w-full items-center justify-center gap-2 rounded-full text-base font-extrabold text-white shadow-lifted hover:brightness-105 active:scale-95 transition-all"
           >
             <span>{t('landing.getStarted')}</span>
             <AppIcon name="arrow-forward" size={18} />
@@ -152,7 +152,7 @@ export default function LandingPage() {
               transition={{ duration: 0.35, delay: 0.55 }}
               type="button"
               onClick={() => navigate('/home')}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/70 hover:bg-white text-sm font-extrabold text-deepEmerald shadow-xs border border-white/90 backdrop-blur-md hover:shadow-sm active:scale-95 transition-all"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white/80 hover:bg-white text-sm font-extrabold text-deepEmerald shadow-xs border border-[#F4EBDD] backdrop-blur-md hover:shadow-sm active:scale-95 transition-all"
             >
               <AppIcon name="home" size={16} className="text-primary" />
               <span>{t('landing.goToDashboard', 'Proceed to Dashboard')} ({profile.name}) →</span>

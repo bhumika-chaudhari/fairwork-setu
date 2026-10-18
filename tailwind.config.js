@@ -4,38 +4,56 @@ export default {
   theme: {
     extend: {
       colors: {
-        deepEmerald: '#073B3A',
-        primaryTeal: '#087F73',
-        mint: '#72E5C2',
-        saffron: '#F4B544',
-        warmIvory: '#F7F5EF',
-        emerald: '#073B3A',
-        teal: '#087F73',
-        ivory: '#F7F5EF',
-        primary: '#087F73',
-        primaryDark: '#073B3A',
-        primarySoft: '#E6F7F2',
-        accent: '#F4B544',
-        accentSoft: '#FEF7E8',
-        background: '#F7F5EF',
-        page: '#F7F5EF',
-        surface: '#FFFFFF',
-        surfaceAlt: '#FCFBF7',
-        surfaceGlass: 'rgba(255, 255, 255, 0.78)',
-        surfaceGlassHover: 'rgba(255, 255, 255, 0.92)',
-        textPrimary: '#0C2B2A',
-        textSecondary: '#3F5957',
-        textMuted: '#6E8A88',
-        success: '#0F9F58',
-        successSoft: '#E6F8EE',
-        warning: '#D97706',
-        warningSoft: '#FEF3C7',
-        danger: '#DC2626',
-        dangerSoft: '#FEE2E2',
-        health: '#087F73',
-        healthSoft: '#E6F7F2',
-        border: 'rgba(7, 59, 58, 0.1)',
-        glassBorder: 'rgba(255, 255, 255, 0.85)',
+        // --- 11-Role Earthy Warm Palette Specification ---
+        // Brand Accents
+        terracotta: '#B34A26',
+        saffronGold: '#E5953E',
+        warmAmber: '#F1B96B',
+        // Contrast & Typography
+        deepNavy: '#1E2B3E',
+        earthyCharcoal: '#231F20',
+        warmCocoa: '#7C2D16',
+        // Surfaces & Environmental
+        warmCream: '#FDF8F0',
+        cleanWhite: '#FFFFFF',
+        softBorder: '#F4EBDD',
+        // Contextual & Illustration Accents
+        dustyTeal: '#3A757D',
+        safetyYellow: '#E5A823',
+
+        // --- Semantic Mappings to Palette Roles ---
+        deepEmerald: '#7C2D16', // Warm Cocoa for headers & high-impact titles
+        primaryTeal: '#B34A26', // Terracotta for dominant brand CTA
+        mint: '#E5953E',        // Saffron Gold for glowing accents & highlights
+        saffron: '#E5A823',     // Safety Yellow / Saffron
+        warmIvory: '#FDF8F0',   // Warm Cream
+        emerald: '#7C2D16',     // Warm Cocoa
+        teal: '#3A757D',        // Dusty Teal
+        ivory: '#FDF8F0',       // Warm Cream
+        primary: '#B34A26',     // Terracotta (Dominant brand CTA)
+        primaryDark: '#7C2D16', // Warm Cocoa
+        primarySoft: '#FDF3EE', // Soft terracotta tint
+        accent: '#E5953E',      // Saffron Gold
+        accentSoft: '#FEF4E8',  // Soft saffron tint
+        background: '#FDF8F0',  // Warm Cream
+        page: '#FDF8F0',        // Warm Cream
+        surface: '#FFFFFF',     // Clean White
+        surfaceAlt: '#FAF5ED',  // Warm Cream surface
+        surfaceGlass: 'rgba(255, 255, 255, 0.85)',
+        surfaceGlassHover: 'rgba(255, 255, 255, 0.95)',
+        textPrimary: '#231F20', // Earthy Charcoal
+        textSecondary: '#4A423D', // Earthy Warm Secondary
+        textMuted: '#7D7068',   // Earthy Muted
+        success: '#2E7D32',
+        successSoft: '#F1F8F3',
+        warning: '#E5A823',     // Safety Yellow
+        warningSoft: '#FEF9EC',
+        danger: '#B34A26',      // Terracotta
+        dangerSoft: '#FDF3EE',
+        health: '#3A757D',      // Dusty Teal
+        healthSoft: '#EFF7F8',
+        border: '#F4EBDD',      // Soft Border
+        glassBorder: 'rgba(244, 235, 221, 0.88)',
       },
       maxWidth: {
         app: '480px',
@@ -55,28 +73,32 @@ export default {
         ],
       },
       boxShadow: {
-        glass: '0 8px 32px 0 rgba(7, 59, 58, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.25)',
-        glassHover: '0 14px 44px 0 rgba(7, 59, 58, 0.14), inset 0 1px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.35)',
-        glassActive: '0 4px 16px 0 rgba(7, 59, 58, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8)',
-        dock: '0 20px 50px -10px rgba(7, 59, 58, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.75), inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.25)',
-        dockActive: '0 6px 20px rgba(8, 127, 115, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.6)',
-        glassModal: '0 28px 70px -12px rgba(7, 59, 58, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.85), inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95)',
-        card: '0 4px 24px rgba(7, 59, 58, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.85)',
-        lifted: '0 16px 40px rgba(7, 59, 58, 0.14), inset 0 1px 1.5px rgba(255, 255, 255, 0.9)',
-        clay: '0 8px 24px rgba(8, 127, 115, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
-        glow: '0 0 36px rgba(114, 229, 194, 0.45)',
-        nav: '0 -4px 24px rgba(7, 59, 58, 0.08)',
+        glass: '0 8px 32px 0 rgba(124, 45, 22, 0.06), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(244, 235, 221, 0.4)',
+        glassHover: '0 14px 44px 0 rgba(124, 45, 22, 0.10), inset 0 1px 2px 0 rgba(255, 255, 255, 0.98), inset 0 -1px 1px 0 rgba(244, 235, 221, 0.5)',
+        glassActive: '0 4px 16px 0 rgba(124, 45, 22, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8)',
+        dock: '0 20px 50px -10px rgba(30, 43, 62, 0.18), 0 0 0 1px rgba(244, 235, 221, 0.9), inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(241, 185, 107, 0.2)',
+        dockActive: '0 6px 20px rgba(179, 74, 38, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.6)',
+        glassModal: '0 28px 70px -12px rgba(30, 43, 62, 0.22), 0 0 0 1px rgba(244, 235, 221, 0.85), inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95)',
+        card: '0 4px 24px rgba(124, 45, 22, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.9)',
+        lifted: '0 16px 40px rgba(124, 45, 22, 0.10), inset 0 1px 1.5px rgba(255, 255, 255, 0.9)',
+        clay: '0 8px 24px rgba(179, 74, 38, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
+        glow: '0 0 36px rgba(229, 149, 62, 0.40)',
+        nav: '0 -4px 24px rgba(124, 45, 22, 0.06)',
       },
       borderRadius: {
         card: '24px',
         btn: '20px',
       },
       backgroundImage: {
-        'emerald-gradient': 'linear-gradient(135deg, #073B3A 0%, #087F73 100%)',
-        'mint-gradient': 'linear-gradient(135deg, #72E5C2 0%, #087F73 100%)',
-        'saffron-gradient': 'linear-gradient(135deg, #F4B544 0%, #E29B26 100%)',
-        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.55) 100%)',
-        'liquid-sheen': 'linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%)',
+        'emerald-gradient': 'linear-gradient(135deg, #B34A26 0%, #7C2D16 100%)',
+        'terracotta-gradient': 'linear-gradient(135deg, #B34A26 0%, #7C2D16 100%)',
+        'saffron-gradient': 'linear-gradient(135deg, #E5953E 0%, #E5A823 100%)',
+        'amber-gradient': 'linear-gradient(135deg, #F1B96B 0%, #E5953E 100%)',
+        'navy-gradient': 'linear-gradient(135deg, #1E2B3E 0%, #151D2A 100%)',
+        'teal-gradient': 'linear-gradient(135deg, #3A757D 0%, #2A565C 100%)',
+        'mint-gradient': 'linear-gradient(135deg, #F1B96B 0%, #B34A26 100%)',
+        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(253,248,240,0.65) 100%)',
+        'liquid-sheen': 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.15) 100%)',
       },
       keyframes: {
         'fade-in': {

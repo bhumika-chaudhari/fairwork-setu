@@ -32,7 +32,7 @@ export default function JobCard({
 
   // Logo styling & colors by employer
   const employerKey = job.employerKey.toLowerCase();
-  let logoBg = 'bg-[#087F73] text-white';
+  let logoBg = 'bg-[#B34A26] text-white';
   let logoText = 'S';
 
   if (employerKey.includes('zomato')) {
@@ -42,13 +42,13 @@ export default function JobCard({
     logoBg = 'bg-[#FC8019] text-white';
     logoText = 'S';
   } else if (employerKey.includes('amazon') || employerKey.includes('warehouse')) {
-    logoBg = 'bg-[#232F3E] text-[#FF9900]';
+    logoBg = 'bg-[#1E2B3E] text-[#E5A823]';
     logoText = 'A';
   } else if (employerKey.includes('urban') || employerKey.includes('company')) {
-    logoBg = 'bg-[#000000] text-white';
+    logoBg = 'bg-[#231F20] text-white';
     logoText = 'U';
   } else if (employerKey.includes('family') || employerKey.includes('home')) {
-    logoBg = 'bg-[#087F73] text-[#72E5C2]';
+    logoBg = 'bg-[#7C2D16] text-[#F1B96B]';
     logoText = 'H';
   }
 
@@ -79,20 +79,20 @@ export default function JobCard({
 
   return (
     <>
-      <Card className="hover:border-primary/30 transition-all duration-200">
+      <Card className="hover:border-terracotta/40 transition-all duration-200">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl font-black text-lg shadow-sm ${logoBg}`}>
               {logoText}
             </div>
             <div>
-              <h3 className="text-base font-bold text-deepEmerald leading-snug">
+              <h3 className="text-base font-bold text-warmCocoa leading-snug">
                 {t(job.titleKey)}
               </h3>
               <p className="mt-0.5 text-xs font-medium text-textSecondary">
                 {t(job.employerKey)} • {job.distance}
               </p>
-              <p className="mt-1 text-xs font-bold text-primaryTeal">
+              <p className="mt-1 text-xs font-bold text-terracotta">
                 {t('kaam.payRange', { min: formatInr(job.payMin), max: formatInr(job.payMax) })}
                 <span className="ml-1 text-[11px] font-normal text-textMuted">
                   • {t(job.payTypeKey)}
@@ -102,7 +102,7 @@ export default function JobCard({
           </div>
 
           {/* Skill match pill */}
-          <div className="shrink-0 rounded-full bg-[#E4FAF2]/85 border border-[#72E5C2]/70 backdrop-blur-md px-2.5 py-1 text-[11px] font-bold text-deepEmerald shadow-xs">
+          <div className="shrink-0 rounded-full bg-saffronGold/15 border border-saffronGold/30 backdrop-blur-md px-2.5 py-1 text-[11px] font-bold text-warmCocoa shadow-xs">
             {t('kaam.skillMatch', { percent: job.skillMatch })}
           </div>
         </div>
@@ -113,19 +113,19 @@ export default function JobCard({
             {job.skillKeys.map((sk) => (
               <span
                 key={sk}
-                className="rounded-xl bg-white/65 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-bold text-textSecondary border border-white/80 shadow-xs"
+                className="rounded-xl bg-cleanWhite/90 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-bold text-textSecondary border border-softBorder shadow-xs"
               >
                 {t(sk)}
               </span>
             ))}
-            <span className="rounded-xl bg-white/65 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-bold text-textMuted border border-white/80 shadow-xs">
+            <span className="rounded-xl bg-cleanWhite/90 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-bold text-textMuted border border-softBorder shadow-xs">
               {t(job.workTypeKey)}
             </span>
           </div>
         )}
 
         {/* AI match explanation */}
-        <div className="mt-3 flex items-start gap-2 rounded-2xl bg-white/65 backdrop-blur-xl p-2.5 border border-white/85 shadow-xs">
+        <div className="mt-3 flex items-start gap-2 rounded-2xl bg-cleanWhite/80 backdrop-blur-xl p-2.5 border border-softBorder shadow-xs">
           <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-successSoft text-success">
             <AppIcon name="checkmark-circle" size={12} />
           </div>
@@ -152,28 +152,28 @@ export default function JobCard({
       {/* Job Details Modal */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-deepEmerald/25 p-4 backdrop-blur-xl animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-deepNavy/35 p-4 backdrop-blur-xl animate-fade-in"
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-lg rounded-[32px] bg-white/80 p-6 shadow-glassModal backdrop-blur-3xl border border-white/90 max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-lg rounded-[32px] bg-cleanWhite/95 p-6 shadow-modal backdrop-blur-3xl border border-softBorder max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
-            <div className="flex items-start justify-between gap-3 border-b border-border/40 pb-4">
+            <div className="flex items-start justify-between gap-3 border-b border-softBorder pb-4">
               <div className="flex items-center gap-3">
                 <div className={`flex h-12 w-12 items-center justify-center rounded-2xl font-black text-xl shadow-glass ${logoBg}`}>
                   {logoText}
                 </div>
                 <div>
-                  <h2 className="text-xl font-extrabold text-deepEmerald">{t(job.titleKey)}</h2>
+                  <h2 className="text-xl font-extrabold text-warmCocoa">{t(job.titleKey)}</h2>
                   <p className="text-sm text-textSecondary">{t(job.employerKey)} • {t(job.locationKey)}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/60 hover:bg-white text-textMuted hover:text-deepEmerald border border-white/80 transition-all"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-warmCream/80 hover:bg-white text-textMuted hover:text-warmCocoa border border-softBorder transition-all"
               >
                 ✕
               </button>
@@ -181,21 +181,21 @@ export default function JobCard({
 
             <div className="mt-4 space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-primarySoft/70 backdrop-blur-md p-3 border border-mint/35 shadow-xs">
+                <div className="rounded-2xl bg-warmAmber/20 backdrop-blur-md p-3 border border-warmAmber/30 shadow-xs">
                   <span className="text-xs text-textMuted font-semibold">{t('kaam.payRate')}</span>
-                  <p className="text-lg font-black text-deepEmerald">
+                  <p className="text-lg font-black text-warmCocoa">
                     {t('kaam.payRange', { min: formatInr(job.payMin), max: formatInr(job.payMax) })}
                   </p>
-                  <span className="text-xs font-bold text-primary">{t(job.payTypeKey)}</span>
+                  <span className="text-xs font-bold text-terracotta">{t(job.payTypeKey)}</span>
                 </div>
-                <div className="rounded-2xl bg-[#E4FAF2]/80 backdrop-blur-md p-3 border border-mint/50 shadow-xs">
+                <div className="rounded-2xl bg-saffronGold/15 backdrop-blur-md p-3 border border-saffronGold/30 shadow-xs">
                   <span className="text-xs text-textMuted font-semibold">{t('kaam.aiMatchScore')}</span>
-                  <p className="text-lg font-black text-deepEmerald">{t('kaam.skillMatch', { percent: job.skillMatch })}</p>
+                  <p className="text-lg font-black text-warmCocoa">{t('kaam.skillMatch', { percent: job.skillMatch })}</p>
                   <span className="text-xs font-bold text-success">{t('kaam.verifiedHighFit')}</span>
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-white/70 backdrop-blur-md p-3.5 border border-white/85 shadow-xs">
+              <div className="rounded-2xl bg-cleanWhite/90 backdrop-blur-md p-3.5 border border-softBorder shadow-xs">
                 <h4 className="text-xs font-bold text-textPrimary uppercase tracking-wider mb-1">
                   {t('kaam.whyMatch')}
                 </h4>
@@ -210,12 +210,12 @@ export default function JobCard({
                   {job.skillKeys.map((sk) => (
                     <span
                       key={sk}
-                      className="rounded-full bg-primarySoft px-3 py-1 text-xs font-semibold text-primary"
+                      className="rounded-full bg-warmAmber/20 px-3 py-1 text-xs font-semibold text-terracotta border border-warmAmber/30"
                     >
                       ✓ {t(sk)}
                     </span>
                   ))}
-                  <span className="rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold text-[#B45309]">
+                  <span className="rounded-full bg-saffronGold/20 px-3 py-1 text-xs font-semibold text-warmCocoa border border-saffronGold/30">
                     {t(job.workTypeKey)}
                   </span>
                 </div>
@@ -257,7 +257,7 @@ export default function JobCard({
                 {/* Direct Phone Call */}
                 <a
                   href="tel:9876543210"
-                  className="flex w-full items-center justify-center gap-1.5 rounded-full border border-border/80 bg-white/80 px-4 py-2.5 text-xs font-bold text-deepEmerald shadow-xs hover:bg-white transition-all active:scale-[0.98]"
+                  className="flex w-full items-center justify-center gap-1.5 rounded-full border border-softBorder bg-cleanWhite/90 px-4 py-2.5 text-xs font-bold text-warmCocoa shadow-xs hover:bg-white transition-all active:scale-[0.98]"
                 >
                   <AppIcon name="call" size={14} />
                   <span>{t('kaam.callEmployer')}</span>

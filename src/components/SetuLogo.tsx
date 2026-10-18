@@ -21,7 +21,7 @@ export default function SetuLogo({
     <div className={`flex items-center gap-2.5 ${className}`}>
       {/* Setu Bridge-Leaf Emblem */}
       <div
-        className="relative flex items-center justify-center rounded-xl bg-gradient-to-br from-[#073B3A] to-[#087F73] shadow-card transition-transform active:scale-95"
+        className="relative flex items-center justify-center rounded-xl bg-gradient-to-br from-[#B34A26] to-[#7C2D16] shadow-card border border-[#F1B96B]/40 transition-transform active:scale-95"
         style={{ width: iconSizes.w, height: iconSizes.h }}
       >
         <svg
@@ -33,7 +33,7 @@ export default function SetuLogo({
           {/* Bridge arch / leaf foundation */}
           <path
             d="M6 22C8.5 15 13 11 22 10"
-            stroke="#72E5C2"
+            stroke="#E5953E"
             strokeWidth="3.2"
             strokeLinecap="round"
           />
@@ -44,13 +44,13 @@ export default function SetuLogo({
             strokeLinecap="round"
           />
           {/* Diamond spark / forward momentum */}
-          <circle cx="23" cy="8" r="2.8" fill="#F4B544" />
+          <circle cx="23" cy="8" r="2.8" fill="#E5A823" />
         </svg>
       </div>
 
       {showText && (
         <span
-          className={`font-extrabold tracking-tight text-[#073B3A] ${iconSizes.font}`}
+          className={`font-extrabold tracking-tight text-[#7C2D16] ${iconSizes.font}`}
         >
           Setu
         </span>

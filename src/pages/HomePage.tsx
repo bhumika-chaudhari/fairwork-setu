@@ -113,7 +113,7 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => navigate('/profile')}
-            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 text-lg font-black text-white shadow-glass ring-2 ring-white/80 transition-transform hover:scale-105 active:scale-95 overflow-hidden"
+            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#B34A26] to-[#7C2D16] text-lg font-black text-white shadow-glass ring-2 ring-white/80 transition-transform hover:scale-105 active:scale-95 overflow-hidden"
             aria-label="Profile"
           >
             {profile.avatarUrl ? (
@@ -130,7 +130,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => navigate('/profile')}
-                className="inline-flex items-center gap-1 rounded-full bg-white/60 backdrop-blur-md border border-white/80 px-2.5 py-0.5 text-[11px] font-bold text-deepEmerald hover:bg-white/85 transition-all shadow-xs"
+                className="inline-flex items-center gap-1 rounded-full bg-white/70 backdrop-blur-md border border-[#F4EBDD] px-2.5 py-0.5 text-[11px] font-bold text-deepEmerald hover:bg-white transition-all shadow-xs"
                 title={t('profileScreen.editProfile')}
               >
                 <AppIcon name="create-outline" size={11} className="text-primary" />
@@ -147,10 +147,10 @@ export default function HomePage() {
           {/* Notification bell */}
           <button
             type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/60 backdrop-blur-xl shadow-glass border border-white/80 hover:bg-white/85 text-deepEmerald transition-all active:scale-95"
+            className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-white/70 backdrop-blur-xl shadow-glass border border-[#F4EBDD] hover:bg-white text-deepEmerald transition-all active:scale-95"
             aria-label="Notifications"
           >
-            <AppIcon name="sparkles" size={18} className="text-[#087F73]" />
+            <AppIcon name="sparkles" size={18} className="text-saffronGold" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-saffron ring-2 ring-white" />
           </button>
           {/* Language button */}
@@ -176,7 +176,7 @@ export default function HomePage() {
                 {t('common.currency', { amount: formatInr(todayInc) })}
               </p>
             </div>
-            <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-[#E2FAF2] px-2.5 py-1 text-[11px] font-bold text-success border border-mint/40 self-start">
+            <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-[#F1F8F3] px-2.5 py-1 text-[11px] font-bold text-success border border-[#2E7D32]/30 self-start">
               <span>{weekDelta >= 0 ? '↑' : '↓'}</span>
               <span>
                 {weekDelta >= 0 ? '+' : '−'}
@@ -203,20 +203,20 @@ export default function HomePage() {
                 progress={savingsPercent / 100}
                 size={54}
                 stroke={5}
-                color="#087F73"
-                trackColor="#E6F7F2"
+                color="#B34A26"
+                trackColor="#FDF3EE"
               />
             </div>
           </Card>
         </div>
 
         {/* Today's Summary & Fast Income/Expense Entry */}
-        <div className="relative overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-4 shadow-glass border border-white/80 space-y-3">
+        <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-4 shadow-glass border border-[#F4EBDD] space-y-3">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent" />
           
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/15 text-primary border border-mint/30 shadow-xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FEF4E8] text-terracotta border border-warmAmber/30 shadow-xs">
                 <AppIcon name="wallet" size={17} />
               </div>
               <div>
@@ -244,11 +244,11 @@ export default function HomePage() {
           </div>
 
           {/* Quick Action Buttons: Add Income and Add Expense */}
-          <div className="grid grid-cols-2 gap-2.5 pt-1.5 border-t border-white/60">
+          <div className="grid grid-cols-2 gap-2.5 pt-1.5 border-t border-[#F4EBDD]">
             <button
               type="button"
               onClick={() => openAddModal('income')}
-              className="flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-gradient-to-r from-[#073B3A] via-[#087F73] to-[#0A8F82] py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-glass hover:shadow-glassHover hover:brightness-110 active:scale-95 transition-all border border-emerald-300/40 group"
+              className="emerald-gradient-btn flex items-center justify-center gap-1.5 sm:gap-2 rounded-full py-2.5 px-2.5 sm:px-3 min-h-[44px] shadow-lifted hover:brightness-105 active:scale-95 transition-all group"
             >
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-black text-white">
                 +
@@ -281,11 +281,11 @@ export default function HomePage() {
       >
         <div
           onClick={() => setVoiceModalVisible(true)}
-          className="relative overflow-hidden rounded-[28px] bg-white/50 backdrop-blur-2xl p-6 shadow-glass border border-white/80 cursor-pointer transition-all duration-300 hover:shadow-glassHover hover:bg-white/60 active:scale-[0.99] group text-center"
+          className="relative overflow-hidden rounded-[28px] bg-white/70 backdrop-blur-2xl p-6 shadow-glass border border-[#F4EBDD] cursor-pointer transition-all duration-300 hover:shadow-glassHover hover:bg-white/85 active:scale-[0.99] group text-center"
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent" />
           {/* Ambient soft glow */}
-          <div className="pointer-events-none absolute inset-x-0 -top-10 h-36 bg-mint/25 blur-3xl" />
+          <div className="pointer-events-none absolute inset-x-0 -top-10 h-36 bg-saffronGold/20 blur-3xl" />
 
           {/* Central Pulsing Mic Button */}
           <div className="my-2 flex justify-center">
@@ -308,38 +308,38 @@ export default function HomePage() {
       <section className="pt-2">
         <div className="mb-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-500/20 text-[#087F73]">
+            <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-terracotta/10 text-terracotta">
               <AppIcon name="sparkles" size={14} />
             </div>
             <h2 className="text-base font-extrabold text-deepEmerald">
               {t('home.aiInsights', 'AI Financial Insights')}
             </h2>
-            <span className="rounded-full bg-[#E2FAF2] px-2 py-0.5 text-[10px] font-extrabold text-success border border-mint/40">
+            <span className="rounded-full bg-[#F1F8F3] px-2 py-0.5 text-[10px] font-extrabold text-success border border-[#2E7D32]/30">
               4 Models
             </span>
           </div>
           <button
             type="button"
             onClick={() => navigate('/ai-lab')}
-            className="text-xs font-bold text-primaryTeal hover:underline inline-flex items-center gap-0.5"
+            className="text-xs font-bold text-terracotta hover:underline inline-flex items-center gap-0.5"
           >
             <span>Open AI Lab</span> →
           </button>
         </div>
 
-        {/* 2x2 Grid of Apple Liquid Glass ML Cards */}
+        {/* 2x2 Grid of Liquid Glass ML Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Model 1: Linear Regression Balance Forecast */}
           <div
             onClick={() => navigate('/ai-lab?tab=linear')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-3.5 shadow-glass border border-white/80 hover:bg-white/65 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
                   1. Linear Regression
                 </span>
-                <span className="rounded-full bg-teal-500/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-mint/30">
+                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
                   R²: {linearQuery.data?.metrics?.r2_score ?? '0.88'}
                 </span>
               </div>
@@ -350,7 +350,7 @@ export default function HomePage() {
                 {formatInr(linearQuery.data?.next_day_prediction ?? 3460)}
               </p>
             </div>
-            <div className="mt-2 pt-2 border-t border-white/50 flex items-center justify-between text-[11px]">
+            <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
               <span className="text-textSecondary">
                 {(linearQuery.data?.delta_amount ?? 0) >= 0 ? 'Expected gain' : 'Expected net'}:
               </span>
@@ -368,14 +368,14 @@ export default function HomePage() {
           {/* Model 2: Logistic Regression Budget Risk */}
           <div
             onClick={() => navigate('/ai-lab?tab=logistic')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-3.5 shadow-glass border border-white/80 hover:bg-white/65 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
                   2. Logistic Regression
                 </span>
-                <span className="rounded-full bg-teal-500/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-mint/30">
+                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
                   AUC: {logisticQuery.data?.metrics?.roc_auc ?? '0.99'}
                 </span>
               </div>
@@ -389,15 +389,15 @@ export default function HomePage() {
                 <span className="text-xs font-bold text-textMuted">over-budget risk</span>
               </div>
             </div>
-            <div className="mt-2 pt-2 border-t border-white/50 flex items-center justify-between text-[11px]">
+            <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
               <span className="text-textSecondary">Status:</span>
               <span
                 className={`font-black px-2 py-0.5 rounded-full text-[10px] ${
                   logisticQuery.data?.risk_level === 'Low'
-                    ? 'bg-emerald-100 text-emerald-800'
+                    ? 'bg-[#F1F8F3] text-success border border-[#2E7D32]/30'
                     : logisticQuery.data?.risk_level === 'Moderate'
                     ? 'bg-amber-100 text-amber-800'
-                    : 'bg-rose-100 text-rose-800'
+                    : 'bg-[#FDF3EE] text-danger border border-[#B34A26]/30'
                 }`}
               >
                 {logisticQuery.data?.predicted_label ?? 'Within Budget'}
@@ -408,14 +408,14 @@ export default function HomePage() {
           {/* Model 3: PyTorch LSTM Sequence Forecaster */}
           <div
             onClick={() => navigate('/ai-lab?tab=lstm')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-3.5 shadow-glass border border-white/80 hover:bg-white/65 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
                   3. PyTorch LSTM
                 </span>
-                <span className="rounded-full bg-teal-500/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-mint/30">
+                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
                   Deep Learning
                 </span>
               </div>
@@ -427,7 +427,7 @@ export default function HomePage() {
                 <span className="text-xs font-semibold text-textMuted ml-1">tomorrow net</span>
               </p>
             </div>
-            <div className="mt-2 pt-2 border-t border-white/50 flex items-center justify-between text-[11px]">
+            <div className="mt-2 pt-2 border-t border-[#F4EBDD] flex items-center justify-between text-[11px]">
               <span className="text-textSecondary">Test MAE:</span>
               <span className="font-bold text-deepEmerald">
                 ₹{lstmQuery.data?.metrics?.test_mae?.toFixed(0) ?? 197} (35 Epochs)
@@ -438,14 +438,14 @@ export default function HomePage() {
           {/* Model 4: K-Means Clustering Spending Discovery */}
           <div
             onClick={() => navigate('/ai-lab?tab=kmeans')}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/50 backdrop-blur-2xl p-3.5 shadow-glass border border-white/80 hover:bg-white/65 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl p-3.5 shadow-glass border border-[#F4EBDD] hover:bg-white hover:border-[#E5953E]/40 hover:shadow-glassHover active:scale-[0.99] transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-textMuted">
                   4. K-Means Clustering
                 </span>
-                <span className="rounded-full bg-teal-500/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-mint/30">
+                <span className="rounded-full bg-warmAmber/20 px-2 py-0.5 text-[10px] font-bold text-terracotta border border-warmAmber/40">
                   k = 3 Archetypes
                 </span>
               </div>
@@ -506,9 +506,9 @@ export default function HomePage() {
 
           <Card
             onClick={() => navigate('/sehat')}
-            className="flex items-center gap-3 p-3.5 cursor-pointer hover:border-mint/60"
+            className="flex items-center gap-3 p-3.5 cursor-pointer hover:border-[#E5953E]/60"
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E6F7F2] text-[#087F73]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EFF7F8] text-[#3A757D]">
               <AppIcon name="medical" size={22} />
             </div>
             <div className="flex-1 min-w-0">
@@ -545,7 +545,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="rounded-full bg-saffron/20 border border-saffron/40 px-2 py-0.5 text-[10px] font-black text-[#B45309]">
+              <span className="rounded-full bg-warmAmber/20 border border-warmAmber/40 px-2 py-0.5 text-[10px] font-black text-terracotta">
                 {t('dhan.aiForecastNotice')}
               </span>
               <span className="inline-flex items-center gap-0.5 text-xs font-bold text-primary hover:underline">
@@ -556,8 +556,8 @@ export default function HomePage() {
           </div>
           <ProgressBar
             progress={strength / 100}
-            color="#087F73"
-            trackColor="#E6F7F2"
+            color="#B34A26"
+            trackColor="#FDF3EE"
           />
         </Card>
       </section>
