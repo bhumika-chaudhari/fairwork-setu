@@ -1,62 +1,64 @@
-# Problem Statement
+# Problem Statement: Setu (सेतु)
 
-## Final problem statement
+## 1. Final Problem Statement
 
-> **India’s informal and gig workers face irregular income, limited savings, weak digital work profiles, and poor awareness of nearby work, health, welfare, and skilling opportunities. Because much of their work is daily, seasonal, cash-based, or app-based, they often cannot plan expenses, handle emergencies, prove their skills, or access formal financial and livelihood support.**
+> **India’s 450+ million informal and gig workers face irregular income, limited savings, weak digital work profiles, and low awareness of government welfare schemes and nearby work opportunities. Because their work is daily, seasonal, cash-based, or app-mediated, they cannot easily plan expenses, handle medical emergencies, prove their skills, or access formal financial and social security support.**
 >
-> **Setu is a voice-first, multilingual AI livelihood companion that helps informal and gig workers record income and expenses, forecast earnings, build emergency savings, discover nearby work matching their skills, access verified health and welfare information, and create a digital Skill Passport for better livelihood opportunities.**
+> **Setu is an AI-powered, voice-first, multimodal livelihood companion that helps informal and gig workers record income and expenses, forecast earnings, build emergency savings, discover nearby work matching their skills, access verified health and welfare information, and create a verifiable digital Skill Passport—with native Android ergonomics designed for on-duty field workers.**
 
-## Why this problem matters
+---
 
-India’s informal workforce is very large, and many workers lack job security, social protection, and reliable income streams. Informal workers commonly face unstable earnings, limited access to credit, and low awareness or access to welfare and skilling services.
+## 2. Why This Problem Matters
 
-For gig and platform workers, income volatility can also make formal credit access difficult because they may have a “thin” financial profile. Public systems such as e-Shram aim to connect unorganised workers with welfare, employment, skilling, and pension-related services, but many workers still need a simpler, voice-first way to understand and use these opportunities.
+India’s informal economy comprises over **90% of the total workforce** and accounts for more than half of the national GDP. Yet, these workers lack basic social protections, job security, and structured financial tools. 
 
-## Core user problem
+Key challenges include:
+* **Thin Financial Profiles:** Informal workers receive cash daily. Without formal pay slips or tax returns, institutional banks reject their loan applications, forcing them into the clutches of local moneylenders charging 36%–120% APR.
+* **On-the-Road Physical Barriers:** Delivery riders wearing motorcycle gloves or auto drivers navigating busy traffic cannot type on small smartphone keyboards or navigate nested menus.
+* **Welfare Policy Gap:** While landmark initiatives like **e-Shram, PM-SYM (pension), PM-SVANidhi (micro-credit), and Ayushman Bharat (health)** exist, millions of eligible workers remain unenrolled due to intimidating bureaucratic jargon and widespread misinformation.
 
-A worker may think:
+---
 
-> “I work hard every day, but I do not know how much I will earn next week, where to find better work, what schemes I can use, or how to show my skills to someone.”
+## 3. Core User Problem: The Worker's Daily Reality
 
-Setu addresses this by giving the worker one simple place to manage:
+An informal worker faces six fundamental daily questions:
 
-- **Kaam:** What work can I find?
-- **Dhan:** How much am I earning and saving?
-- **Sehat:** Where can I find affordable health support?
-- **Kaushal:** How can I show and improve my skills?
+1. **🏠 Home (आज का दिन):** *How am I doing on my shift today, and what are my critical reminders?*
+2. **💼 Kaam (काम):** *Where can I find verified work nearby that matches my specific practical skills?*
+3. **💰 Dhan (कमाई और खर्चे):** *How much net profit did I actually earn today after fuel, tolls, and food, and how much can I expect next week?*
+4. **🩺 Sehat (स्वास्थ्य):** *Where is the nearest free government hospital, and what should I do in a medical emergency?*
+5. **📜 Kaushal (कौशल):** *How can I formally prove my years of craftsmanship to get hired for higher-paying commercial contracts?*
+6. **🛡️ Haq (अधिकार और योजनाएं):** *What government schemes am I legally entitled to, and how do I file a wage grievance if a contractor defaults?*
 
-## Scope of the problem
+---
 
-### In scope
+## 4. Scope of the System
 
-- Worker profile creation
-- Skill extraction and Skill Passport generation
-- Income and expense tracking
-- Weekly income forecasting
-- Savings-goal suggestions
-- Job/work recommendation based on skills and location
-- Health-resource discovery
-- Welfare/skilling information retrieval
-- Hindi and English voice/text interaction
-- PDF report generation
+### In Scope
+* Voice-first vernacular transaction logging (Hindi, Marathi, Hinglish, English).
+* Dual cashflow ledger with 7-day predictive forecasting and confidence bands.
+* Non-punitive educational Financial Stability Scoring (0–100).
+* Semantic job-worker matching using dense vector embeddings (SentenceTransformers).
+* Grounded RAG welfare search with zero hallucination guarantee and official gazette citations.
+* NCVET-aligned digital Skill Passport generation (downloadable PDF).
+* Client-side multimodal camera receipt and bill OCR scanner.
+* Native Android hardware integrations: 4x2 Home-Screen Card Widget, Lock-Screen Shift Tracker Foreground Service, Accelerometer "Shake-to-Log", and Quick Settings Tile.
 
-### Out of scope
+### Out of Scope
+* Automated commercial loan approval or binding credit scoring.
+* Medical diagnosis or automated prescription generation.
+* Automated hiring disqualification or algorithmic termination of gig workers.
+* Direct financial transactions, payment gateway processing, or custodial wallet holding.
+* Automated legal litigation or court filing.
 
-- Legal advice or court-document preparation
-- Loan approval or credit decisioning
-- Insurance underwriting or claim settlement
-- Medical diagnosis or treatment recommendations
-- Guaranteed job placement
-- Direct disbursement of government benefits
-- Automated rejection of workers from jobs, loans, or schemes
+---
 
-## Success condition
+## 5. Success Conditions
 
-Setu is successful if a worker with low digital literacy can, within five minutes:
-
-1. Create a basic profile.
-2. Record today’s income and expenses by voice.
-3. See expected weekly earnings.
-4. View at least one relevant work suggestion.
-5. Download a Skill Passport.
-6. Find relevant health or welfare information with a source link.
+FairWork Setu is successful if an informal worker with low digital literacy can, within **3 minutes of first launch**:
+1. Create a voice or simple form profile in their native language.
+2. Record today's fare or fuel expense using voice, lock-screen notification buttons, or phone shake.
+3. View their expected 7-day earnings trajectory.
+4. Discover at least one verified nearby gig opportunity matching their skills.
+5. Download an NCVET-aligned Skill Passport PDF.
+6. Verify eligibility for an official welfare scheme with a direct government source citation.

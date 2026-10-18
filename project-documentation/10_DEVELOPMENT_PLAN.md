@@ -1,156 +1,116 @@
-# Development Plan
+# Development Plan: Setu (सेतु)
 
-## 1. Build order
+## 1. Phased Development Roadmap
 
-Do not build all modules at once. Follow this order.
+The development of FairWork Setu followed a phased, modular engineering approach ensuring that each layer (ML models, web interfaces, and native Android hooks) was tested and audited independently before integration.
 
-## Phase 1: Foundation — Week 1
+---
 
-### Goals
+### Phase 1: Foundation & Data Architecture (Weeks 1–2)
+* **Goals:**
+  * Initialize repository structure and development environment.
+  * Establish database contracts for users, transactions, jobs, and welfare schemes.
+  * Implement phone-number OTP authentication flow.
+* **Deliverables:**
+  * Vite + React 18 + TypeScript frontend setup.
+  * Python FastAPI backend with Pydantic v2 schemas.
+  * Client-side persistent cache (IndexedDB / LocalStorage).
 
-- Set up GitHub repository
-- Create backend and mobile-app folders
-- Set up PostgreSQL
-- Implement phone-number login
-- Create basic worker profile
+---
 
-### Deliverables
+### Phase 2: Cashflow & Financial Intelligence (Weeks 3–4)
+* **Goals:**
+  * Build the **Dhan Setu** dual cashflow ledger (Kamai vs. Kharcha).
+  * Train Model 1 (`SGDClassifier` with Modified Huber loss) for expense classification.
+  * Train Model 2 (`RandomForestRegressor`) with lag features for 7-day income forecasting.
+  * Implement Model 3 (`IsolationForest`) for accidental typo and outlier detection.
+* **Deliverables:**
+  * Cashflow dashboard with interactive income/expense charts.
+  * 7-day forecast visualization with 80% confidence interval bands.
+  * Non-punitive 5-factor Financial Stability Score engine.
 
-- Running FastAPI server
-- Running React Native/Expo app
-- Database connection
-- User registration and profile API
+---
 
-## Phase 2: Money Module — Week 2
+### Phase 3: Conversational Voice AI (Weeks 5–6)
+* **Goals:**
+  * Integrate continuous speech recognition with Indic audio streaming.
+  * Develop Model 5 (Compound Regex Entity Parser) for multi-item sentence splitting.
+  * Build interactive visual confirmation cards for speech transactions.
+* **Deliverables:**
+  * Full-screen conversational Voice Assistant overlay (`UnifiedVoiceAssistantModal.tsx`).
+  * Support for mixed Hindi, Marathi, and Hinglish vernacular phrases.
 
-### Goals
+---
 
-- Add income entry
-- Add expense entry
-- Build Dhan dashboard
-- Add weekly income chart
-- Implement simple savings goal
+### Phase 4: Kaam Setu — Work Discovery & Semantic Matching (Weeks 7–8)
+* **Goals:**
+  * Ingest and generate hyper-local gig opportunities across urban clusters.
+  * Deploy Model 6 (`SentenceTransformers` `all-MiniLM-L6-v2`) for dense vector matching.
+* **Deliverables:**
+  * Ranked job recommendation cards with explainable match percentages.
+  * Travel radius filtering and 1-tap application submissions.
 
-### Deliverables
+---
 
-- Manual income/expense entry
-- Income and expense history
-- Weekly/monthly summary
-- Savings progress ring
+### Phase 5: Kaushal Setu — Skill Passport & Upskilling (Weeks 9–10)
+* **Goals:**
+  * Deploy Model 7 for NCVET National Occupational Standards (NOS) skill alignment.
+  * Implement dynamic digital portfolio and PDF resume generator.
+* **Deliverables:**
+  * Digital Skill Passport card with verified work history.
+  * Curated, free PMKVY / Skill India course recommendations.
 
-## Phase 3: Voice AI — Week 3
+---
 
-### Goals
+### Phase 6: Sehat Setu — Health Triage & Grounded RAG (Weeks 11–12)
+* **Goals:**
+  * Build FAISS vector database over public health resources and verified government clinics.
+  * Implement automated emergency interceptor for critical health symptoms.
+* **Deliverables:**
+  * Symptom self-checker with localized hospital discovery.
+  * 1-tap emergency dialer cards for **108 (Ambulance)** and **112 (Emergency)**.
 
-- Add microphone recording
-- Integrate Whisper or hosted ASR
-- Extract amount, category, and date
-- Show editable confirmation screen
+---
 
-### Deliverables
+### Phase 7: Haq Setu — Social Security & Legal Rights (Weeks 13–14)
+* **Goals:**
+  * Index official government scheme gazettes (e-Shram, PM-SYM, PM-SVANidhi, Ayushman Bharat).
+  * Build Grounded RAG search with zero hallucination guarantee.
+* **Deliverables:**
+  * Source-cited welfare eligibility screening.
+  * Printable legal grievance templates for wage disputes.
 
-- “Bol kar add karo” feature
-- Voice-to-income entry
-- Voice-to-expense entry
-- Transcript review screen
+---
 
-## Phase 4: Kaam Module — Week 4
+### Phase 8: Android Native Packaging & Capacitor Bridge (Weeks 15–16)
+* **Goals:**
+  * Initialize Capacitor 8 native container (`com.fairwork.setu`).
+  * Configure Android permissions (`RECORD_AUDIO`, `VIBRATE`, `FOREGROUND_SERVICE`, `POST_NOTIFICATIONS`).
+  * Implement deep-link intent routing in `MainActivity.java`.
+* **Deliverables:**
+  * Compilable native Android APK targeting API Level 24 through 35.
 
-### Goals
+---
 
-- Create job dataset
-- Add skill-based job matching
-- Build Kaam screen
-- Show match score and distance
+### Phase 9: Mobile Hardware Ergonomics & Widgets (Weeks 17–18)
+* **Goals:**
+  * Implement 4x2 Home-Screen Card Widget (`QuickEntryWidgetProvider`, `RemoteViews`).
+  * Implement Live Lock-Screen Shift Tracker Foreground Service (`ShiftTrackerService`).
+  * Engineer the hardware accelerometer "Shake-to-Log" algorithm with multi-peak reversal physics.
+  * Add Android Quick Settings Control Shade Tile (`SetuQuickTileService`).
+* **Deliverables:**
+  * Functional home-screen card widget with instant `➕ Kamai`, `➖ Kharcha`, and `🎙️ Bolkar` actions.
+  * Lock-screen persistent notification controller.
+  * Vibration-backed double-shake gesture trigger.
 
-### Deliverables
+---
 
-- Job recommendation API
-- Job cards UI
-- Skill-match explanation
-
-## Phase 5: Kaushal Module — Week 5
-
-### Goals
-
-- Generate Skill Passport
-- Add PDF generation
-- Add course/skill recommendations
-
-### Deliverables
-
-- Skill Passport screen
-- PDF download
-- Basic course suggestions
-
-## Phase 6: Sehat and RAG — Week 6
-
-### Goals
-
-- Add health-resource search
-- Build RAG knowledge base
-- Add source-linked question answering
-- Add disclaimers
-
-### Deliverables
-
-- Sehat screen
-- Assistant Q&A
-- Source cards
-- Emergency helpline section
-
-## Phase 7: Polish and Demo — Week 7
-
-### Goals
-
-- Improve Hindi UI
-- Add empty/error states
-- Improve charts
-- Test on a real Android phone
-- Prepare demo script
-- Write project report
-
-### Deliverables
-
-- Final APK or Expo demo
-- Demo video
-- Project report
-- Presentation slides
-
-## 8. Team allocation
-
-For a 4-member team:
-
-| Member | Responsibility |
-|---|---|
-| Member 1 | React Native UI, navigation, charts, voice UI |
-| Member 2 | FastAPI backend, PostgreSQL, authentication, APIs |
-| Member 3 | ML models: NER, classification, forecasting, matching |
-| Member 4 | RAG, datasets, health/scheme data, PDF generation, testing |
-
-All members should contribute to testing and documentation.
-
-## 9. Definition of done
-
-A feature is complete only when:
-
-- Backend API works.
-- Mobile UI works.
-- Data is saved correctly.
-- The feature works in Hindi and English.
-- Basic errors are handled.
-- The feature is tested on an Android phone.
-- Documentation is updated.
-
-## 10. Demo script
-
-1. Open Setu in Hindi.
-2. Create a worker profile: “Electrician, Pune.”
-3. Say: “Aaj 900 kamaye, 150 petrol mein gaye.”
-4. Show Dhan dashboard and forecast.
-5. Search: “Mujhe electrician ka kaam chahiye.”
-6. Show ranked job cards.
-7. Ask: “Mujhe sarkari health scheme ke baare mein batao.”
-8. Show source-linked answer.
-9. Generate and download Skill Passport PDF.
-10. Explain privacy, safety, and future scope.
+### Phase 10: Multimodal OCR Scanner & Final Quality Audit (Weeks 19–20)
+* **Goals:**
+  * Integrate client-side Tesseract.js WebAssembly OCR worker for paper receipts.
+  * Eliminate false shake triggers with 2.7G threshold and 2500ms cooldown.
+  * Conduct automated ML unit test suites and comprehensive documentation.
+* **Deliverables:**
+  * Working camera receipt scanner auto-populating amounts and categories.
+  * Production debug APK (`app-debug.apk`, 10.18 MB).
+  * 15 comprehensive technical specifications and Academic Project Report.

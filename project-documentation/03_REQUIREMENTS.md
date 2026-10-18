@@ -1,233 +1,125 @@
-# Requirements Specification
+# Requirements Specification: Setu (सेतु)
 
-## 1. Functional requirements
+## 1. Functional Requirements (FR)
 
-### FR-1: User registration and login
-
+### FR-1: User Registration & Authentication
 - The worker shall register using a mobile number.
-- The system shall support OTP-based login in the demonstration environment.
-- The worker shall choose a preferred language: Hindi or English.
-- The system shall create a unique worker profile.
+- The system shall support OTP verification for secure worker authentication.
+- The worker shall select their preferred UI language: **Hindi, Marathi, or English**, with the ability to switch dynamically at any time.
+- The system shall create a persistent, encrypted worker profile.
 
-### FR-2: Worker profile
-
-The worker shall be able to add:
-
-- Name
-- City and locality
-- Occupation
-- Skills
-- Years of experience
-- Languages known
-- Work availability
-- Preferred work type
-- Optional photo
-
-Profile creation shall support both form input and voice input.
-
-### FR-3: Voice input
-
-- The worker shall be able to speak in Hindi or English.
-- The system shall convert speech to text.
-- The system shall extract structured information such as amount, date, work type, skill, and location.
-- The worker shall be able to review and edit extracted information before saving.
-
-### FR-4: Income tracking
-
+### FR-2: Worker Profile & Digital Portfolio
 The worker shall be able to record:
+- Full Name / Nickname
+- City and Locality
+- Primary & Secondary Occupations (e.g. Electrician, Auto Driver, Delivery Partner)
+- Core Skills & Years of Experience
+- Work Availability (Full-time, Part-time, Shifts)
+- Preferred Daily Pay Rate and Maximum Travel Radius (km)
+- Profile creation shall support both manual visual form input and conversational voice dictation.
 
-- Daily income
-- Income source
-- Work type
-- Date
-- Optional location
+### FR-3: Conversational Vernacular Voice Assistant
+- The worker shall be able to speak naturally in Hindi, Marathi, or Hinglish.
+- The system shall support real-time continuous speech-to-text recognition via native audio hooks.
+- The system shall parse compound conversational utterances (e.g., *"Aaj 800 kamaye par 150 ka tel bharwaya"*), extracting amounts, dates, and categories into structured items simultaneously.
+- The system shall display an interactive confirmation card before committing any voice transaction to the ledger.
 
-The system shall calculate daily, weekly, and monthly income.
+### FR-4: Dual-Stream Cashflow Tracking (Dhan Setu)
+- The worker shall be able to log income with source tags (fare, tip, daily wage, bonus).
+- The worker shall be able to log expenses with automatic ML category classification into 9 standard categories:
+  `travel_fuel`, `food`, `tools_maintenance`, `health`, `rent`, `utilities`, `education`, `loan_repayment`, `other`.
+- The system shall compute and display net daily, weekly, and monthly cashflow:
+  $$\text{Net Income} = \sum \text{Income} - \sum \text{Expenses}$$
 
-### FR-5: Expense tracking
+### FR-5: 7-Day Predictive Income Forecasting
+- The system shall forecast daily expected earnings for the next 7 days based on the worker's historical cashflow and day-of-week cyclical demand patterns.
+- The forecast shall display an 80% confidence interval band rather than a single misleading static number.
 
-The worker shall be able to record expenses under categories such as:
+### FR-6: Emergency Savings Buffer & Goals
+- The worker shall be able to define a target 30-day emergency subsistence fund.
+- The system shall track daily progress and recommend small, achievable daily saving amounts based on the day's forecasted earnings.
 
-- Travel/Fuel
-- Food
-- Rent
-- Tools
-- Mobile/Internet
-- Medical
-- Education
-- Other
+### FR-7: Non-Punitive Financial Stability Score
+- The system shall compute an educational financial health score (0–100) based on 5 weighted pillars:
+  1. Income Regularity (25%)
+  2. Savings Surplus Rate (25%)
+  3. Emergency Buffer Progress (20%)
+  4. Work-Day Consistency (15%)
+  5. Expense Volatility (15%)
+- The score shall be strictly informational and educational; it shall **never** be shared with commercial lenders or used for loan denial.
 
-The system shall calculate net income as:
+### FR-8: Semantic Work Discovery & Gig Matching (Kaam Setu)
+- The system shall match workers to nearby gig opportunities using dense vector semantic similarity (**SentenceTransformers**).
+- Each job recommendation shall display an explainable match percentage and transparent reasoning (e.g. *"92% Match: Requires domestic wiring and motor pump troubleshooting"*).
+- The worker shall be able to express interest or apply with a 1-tap action.
 
-\[
-	ext{Net Income} = 	ext{Total Income} - 	ext{Total Expenses}
-\]
+### FR-9: Social Security, Welfare & Legal Advisory (Haq Setu)
+- The worker shall be able to query eligibility criteria for central and state government welfare schemes (e-Shram, PM-SYM pension, PM-SVANidhi micro-credit, Ayushman Bharat, BOCW welfare boards).
+- The system shall utilize Grounded Retrieval-Augmented Generation (RAG) with a **FAISS vector database** to provide 100% source-cited answers with official portal links.
+- The system shall provide structured, printable legal grievance templates for wage non-payment or platform deactivation.
 
-### FR-6: Savings goal
+### FR-10: Android Home-Screen Card Widget
+- The system shall provide an interactive 4x2 `AppWidgetProvider` card on the Android home screen (`QuickEntryWidgetProvider`).
+- The widget shall expose three direct PendingIntent triggers:
+  1. `[ ➖ Kharcha ]`: Opens the expense ledger modal.
+  2. `[ ➕ Kamai ]`: Opens the income credit modal.
+  3. `[ 🎙️ Bolkar Log Karein ]`: Immediately awakens the voice assistant.
 
-The worker shall be able to create an emergency-savings goal.
+### FR-11: Live Lock-Screen Shift Tracker Foreground Service
+- The system shall provide a native Android Foreground Sticky Service (`ShiftTrackerService`) that activates during work shifts.
+- The service shall maintain an ongoing notification categorized with `VISIBILITY_PUBLIC` and `setOngoing(true)` visible directly on the phone's lock screen.
+- The notification shall expose 4 inline buttons without requiring the worker to unlock the phone:
+  `[ ➕ Kamai ]` • `[ ➖ Kharcha ]` • `[ 🎙️ Bolkar ]` • `[ ⏹ End Shift ]`.
 
-The system shall show:
+### FR-12: Hardware Accelerometer Sensor "Shake-to-Log"
+- The system shall monitor the physical `Sensor.TYPE_ACCELEROMETER` in real time.
+- The system shall implement a multi-peak direction-reversal physics algorithm requiring $gForce \ge 2.7\text{ G}$ across at least 2 consecutive peaks within a 650ms window.
+- Upon detection, the phone shall emit a 180ms haptic vibration pulse and display the Voice Assistant overlay without full-page navigation.
 
-- Target amount
-- Current saved amount
-- Remaining amount
-- Suggested daily saving amount
-- Progress percentage
+### FR-13: Multimodal Camera Receipt & Bill Scanner
+- The worker shall be able to capture fuel meter readings, roadside receipts, and parts slips using the device camera.
+- The system shall process images client-side via **Tesseract.js WebAssembly** to extract numeric bill amounts, dates, and vendor categories.
 
-### FR-7: Income forecasting
+### FR-14: Android Quick Settings Control Shade Tile
+- The system shall provide a system tile in Android's top control drawer (`SetuQuickTileService`).
+- Tapping the tile shall invoke `startActivityAndCollapse()` to launch the voice logger and collapse the notification shade in a single fluid gesture.
 
-The system shall predict the worker’s expected income for the next 7 days.
+---
 
-The forecast shall show a range, not a single guaranteed value.
+## 2. Non-Functional Requirements (NFR)
 
-Example:
+### NFR-1: Edge Latency & Performance
+- Expense classification (Model 1) shall return inferences in **< 20 milliseconds**.
+- Income forecasting (Model 2) shall compute 7-day trajectories in **< 30 milliseconds**.
+- Speech-to-text transcription shall stream with **< 150 milliseconds** perceived delay.
+- The native Android APK cold launch time shall be under **1.2 seconds**.
 
-> “Next week’s expected income: ₹4,200–₹5,000.”
+### NFR-2: Mobile Device & OS Compatibility
+- The native Android APK shall support **Android 7.0 (API Level 24 / Nougat) through Android 15 (API Level 35)**, covering over 99.2% of active Android smartphones in India.
+- The application UI shall adapt responsively to screen sizes ranging from small 5.0-inch 720p budget devices to modern 6.7-inch OLED smartphones.
 
-### FR-8: Financial Stability Score
+### NFR-3: Battery & Sensor Conservation
+- Accelerometer listening shall be paused in `onPause()` to eliminate background battery drain when the app is minimized.
+- The lock-screen shift tracker shall utilize `NotificationManager.IMPORTANCE_LOW` to prevent unnecessary screen wake-ups.
 
-The system shall generate a Financial Stability Score from 0 to 100 based on:
+### NFR-4: Data Privacy & Security (DPDP Act, 2023)
+- The system shall never request or store Aadhaar numbers, biometric templates, UPI PINs, bank passwords, or continuous live GPS trails.
+- All network communications shall be strictly encrypted over HTTPS with TLS 1.3.
+- Audio recordings shall be converted to text and immediately purged from RAM; raw audio shall never be stored without explicit informed consent.
 
-- Regularity of income entries
-- Average income
-- Savings rate
-- Expense volatility
-- Number of active work days
-- Emergency-fund progress
+### NFR-5: Accessibility & Low-Literacy Ergonomics
+- All interactive touch targets shall meet a minimum bounding size of **48 × 48 dp**.
+- Text contrast ratios shall strictly exceed **4.5:1** against backgrounds as per WCAG 2.1 AA standards.
+- Critical actions shall be reinforced with tactile haptic pulses and distinct audio chimes (`playTap()`, `playSuccess()`).
 
-The score is informational only and must not be used for loan approval.
+### NFR-6: Offline Resilience
+- The system shall cache active shift data and recent transactions in client-side **IndexedDB / LocalStorage**.
+- Camera receipt OCR parsing and rule-based entity parsing shall execute fully client-side, permitting offline field logging that synchronizes when connectivity resumes.
 
-### FR-9: Job/work discovery
+### NFR-7: Safety & Emergency Interceptors
+- The system shall never generate automated medical diagnoses or treatment regimens.
+- Critical medical symptom queries shall immediately bypass AI generation and present direct calling cards for **108 (Ambulance)** and **112 (Emergency)**.
 
-The worker shall be able to search for work using:
-
-- Skill
-- City/locality
-- Work type
-- Availability
-- Expected pay range
-
-The system shall return ranked work suggestions with:
-
-- Title
-- Distance
-- Pay range
-- Skill-match score
-- Work type
-- Source
-
-### FR-10: Skill Passport
-
-The system shall generate a downloadable Skill Passport PDF containing:
-
-- Worker name
-- City
-- Occupation
-- Skills
-- Experience
-- Languages
-- Availability
-- Work history summary
-- Average recorded income
-- Generated date
-- Disclaimer
-
-### FR-11: Health-resource discovery
-
-The worker shall be able to search for:
-
-- Nearby government hospitals
-- Primary health centres
-- Clinics
-- Emergency helplines
-
-The system shall display source-linked information only.
-
-### FR-12: Welfare and skilling discovery
-
-The worker shall be able to ask questions such as:
-
-- “Which schemes can I check?”
-- “Is there any skill training near me?”
-- “What is e-Shram?”
-
-The system shall return relevant public information with source URLs.
-
-### FR-13: Multilingual UI
-
-The MVP shall support:
-
-- Hindi
-- English
-
-The architecture shall allow additional Indian languages later.
-
-### FR-14: Reports
-
-The worker shall be able to download:
-
-- Skill Passport PDF
-- Monthly income summary
-- Savings progress summary
-
-### FR-15: Offline-friendly behaviour
-
-The app should allow basic income/expense entries to be saved locally when internet is unavailable and synchronized later.
-
-This is desirable but optional for the first demo.
-
-## 2. Non-functional requirements
-
-| ID | Requirement |
-|---|---|
-| NFR-1 | The app must be usable on low-end Android phones |
-| NFR-2 | Main screens must load within 2 seconds on a normal 4G connection |
-| NFR-3 | Voice-to-text processing should complete within 5 seconds for short inputs |
-| NFR-4 | The UI must support large fonts and high-contrast mode |
-| NFR-5 | All text-background contrast must meet at least 4.5:1 for normal text |
-| NFR-6 | The app must support Hindi and English |
-| NFR-7 | Personal data must be stored securely and minimally |
-| NFR-8 | The system must show source links for health/welfare information |
-| NFR-9 | The system must clearly state that it does not provide legal, medical, or financial advice |
-| NFR-10 | The backend API must be modular so new Indian languages and work categories can be added |
-
-## 3. Hardware requirements
-
-### Development
-
-- Laptop with at least 8 GB RAM; 16 GB recommended for local ML experimentation
-- Android phone for testing
-- Microphone and internet connection
-
-### Deployment
-
-- Cloud backend with PostgreSQL
-- Object storage for PDFs and optional profile photos
-- GPU is not required for the MVP if speech-to-text uses an API or a small local model
-
-## 4. Software requirements
-
-| Component | Requirement |
-|---|---|
-| Mobile OS | Android 9+ preferred |
-| Backend | Python 3.11+ |
-| Database | PostgreSQL 15+ |
-| Frontend | React Native / Expo |
-| Package management | npm/pnpm for frontend, uv/pip for backend |
-| Containerization | Docker and Docker Compose |
-| Version control | Git and GitHub |
-
-## 5. Acceptance criteria
-
-The project is accepted for the semester demo when:
-
-1. A worker can register and create a profile.
-2. A worker can add income and expenses by voice.
-3. Extracted income/expense data can be reviewed and edited.
-4. The Dhan dashboard shows income trends and a 7-day forecast.
-5. The Kaam screen shows ranked work suggestions.
-6. The Kaushal screen generates a Skill Passport PDF.
-7. The Sehat screen returns source-linked health/welfare information.
-8. The app works in Hindi and English.
-9. The app displays clear disclaimers for financial, health, and employment information.
+### NFR-8: Zero-Hallucination Welfare Compliance
+- The RAG pipeline shall strictly cite verified government gazettes and official circulars for all scheme rules.
+- If a query cannot be answered using official verified context, the model must declare uncertainty rather than generate plausible falsehoods.
