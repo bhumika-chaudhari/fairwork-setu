@@ -311,11 +311,10 @@ export default function SehatPage() {
                   key={chip.id}
                   type="button"
                   onClick={() => setCentresFilter(chip.id)}
-                  className={`py-1.5 px-3.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                    centresFilter === chip.id
+                  className={`py-1.5 px-3.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${centresFilter === chip.id
                       ? 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] text-white shadow-xs'
                       : 'bg-white/90 text-textSecondary hover:bg-white border border-[#F4EBDD]'
-                  }`}
+                    }`}
                 >
                   {chip.label}
                 </button>

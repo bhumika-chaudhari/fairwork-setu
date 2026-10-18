@@ -52,37 +52,21 @@ export default function SoundToggle({ className = '', size = 'md' }: SoundToggle
                     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" fillOpacity="0.15" />
 
                     {/* Sound waves when active */}
-                    {!muted && (
-                        <>
-                            <motion.path
-                                d="M15.54 8.46a5 5 0 0 1 0 7.07"
-                                initial={{ opacity: 0, pathLength: 0 }}
-                                animate={{ opacity: 1, pathLength: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                            />
-                            <motion.path
-                                d="M19.07 4.93a10 10 0 0 1 0 14.14"
-                                initial={{ opacity: 0, pathLength: 0 }}
-                                animate={{ opacity: 1, pathLength: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.25, delay: 0.05 }}
-                            />
-                        </>
-                    )}
-
-                    {/* Strikethrough line when muted */}
-                    {muted && (
-                        <motion.line
+                    {!muted ? (
+                        <g className="text-current transition-opacity duration-200">
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                        </g>
+                    ) : (
+                        /* Strikethrough line when muted */
+                        <line
                             x1="23"
                             y1="1"
                             x2="1"
                             y2="23"
-                            initial={{ pathLength: 0 }}
-                            animate={{ pathLength: 1 }}
-                            transition={{ duration: 0.2 }}
-                            stroke="currentColor"
-                            className="text-red-500"
+                            stroke="#B34A26"
+                            strokeWidth="2.5"
+                            className="transition-opacity duration-200"
                         />
                     )}
                 </svg>

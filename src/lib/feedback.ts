@@ -83,8 +83,14 @@ class FeedbackManager {
     }
   }
 
+  private lastHaptic: number = 0;
+
   public triggerHaptic(pattern: HapticPattern = 8) {
     if (this.isMuted) return;
+    const now = Date.now();
+    if (now - this.lastHaptic < 80) return;
+    this.lastHaptic = now;
+
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(pattern);

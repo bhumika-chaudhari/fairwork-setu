@@ -81,15 +81,15 @@ function SpotlightFeatureCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 + idx * 0.08, ease: 'easeOut' }}
-      whileHover={{ y: -4, scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -3, scale: 1.015 }}
+      whileTap={{ scale: 0.97 }}
       onMouseMove={handleMouseMove}
       onClick={() => playTap()}
-      className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/75 backdrop-blur-xl p-3.5 shadow-sm border border-[#E9DFCE] hover:border-[#E5953E]/50 transition-all duration-300 overflow-hidden cursor-pointer"
+      className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 rounded-[22px] bg-white/80 backdrop-blur-xl p-3.5 shadow-sm border border-[#E9DFCE] hover:border-[#E5953E]/50 transition-colors duration-200 overflow-hidden cursor-pointer select-none touch-manipulation transform-gpu"
     >
-      {/* Dynamic Cursor Spotlight Effect */}
+      {/* Dynamic Cursor Spotlight Effect - Desktop only to prevent mobile touch flashes */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-[22px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-px rounded-[22px] opacity-0 transition-opacity duration-300 hidden md:block group-hover:opacity-100"
         style={{
           background: useMotionTemplate`
             radial-gradient(
@@ -106,7 +106,7 @@ function SpotlightFeatureCard({
 
       {/* Icon */}
       <div
-        className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${card.bg} ${card.border} border shadow-xs transition-all duration-300 group-hover:scale-110 group-hover:shadow-md`}
+        className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${card.bg} ${card.border} border shadow-xs transition-transform duration-200 group-hover:scale-105`}
       >
         <AppIcon name={card.icon} size={20} className={card.iconColor} />
       </div>
@@ -140,35 +140,10 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-b from-[#FDF8F0] via-[#F8EFE2] to-[#FAF5EC] overflow-x-hidden flex flex-col justify-between selection:bg-amber-200">
-      {/* Living Atmospheric Glow Orbs */}
-      <motion.div
-        animate={{
-          scale: [1, 1.18, 1],
-          opacity: [0.35, 0.48, 0.35],
-          x: [0, 25, 0],
-          y: [0, -20, 0],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="pointer-events-none absolute -top-32 -left-32 h-[480px] w-[480px] rounded-full bg-[#E5953E] blur-[120px]"
-      />
-      <motion.div
-        animate={{
-          scale: [1, 1.25, 1],
-          opacity: [0.28, 0.4, 0.28],
-          x: [0, -25, 0],
-          y: [0, 20, 0],
-        }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="pointer-events-none absolute top-1/3 -right-32 h-[480px] w-[480px] rounded-full bg-[#E5953E]/60 blur-[130px]"
-      />
-      <motion.div
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.2, 0.32, 0.2],
-        }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-        className="pointer-events-none absolute bottom-10 left-1/4 h-[380px] w-[380px] rounded-full bg-[#B34A26] blur-[140px]"
-      />
+      {/* Living Atmospheric Glow Orbs - Hardware Accelerated */}
+      <div className="pointer-events-none absolute -top-32 -left-32 h-[340px] md:h-[480px] w-[340px] md:w-[480px] rounded-full bg-[#E5953E]/35 blur-[80px] md:blur-[120px] transform-gpu" />
+      <div className="pointer-events-none absolute top-1/3 -right-32 h-[340px] md:h-[480px] w-[340px] md:w-[480px] rounded-full bg-[#E5953E]/30 blur-[80px] md:blur-[130px] transform-gpu" />
+      <div className="pointer-events-none absolute bottom-10 left-1/4 h-[300px] md:h-[380px] w-[300px] md:w-[380px] rounded-full bg-[#B34A26]/20 blur-[90px] md:blur-[140px] transform-gpu" />
 
       {/* Main container */}
       <div className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-4xl flex-1 flex-col px-5 py-4 md:py-8">
@@ -203,10 +178,8 @@ export default function LandingPage() {
           transition={{ duration: 0.55, delay: 0.12, ease: 'easeOut' }}
           className="my-5 flex justify-center"
         >
-          <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-            className="group relative w-full overflow-hidden rounded-[28px] bg-white/55 backdrop-blur-2xl p-2.5 shadow-2xl shadow-[#7C2D16]/10 border border-white/80 ring-1 ring-[#D8CCB5]/60"
+          <div
+            className="group relative w-full overflow-hidden rounded-[28px] bg-white/60 backdrop-blur-2xl p-2.5 shadow-xl shadow-[#7C2D16]/8 border border-white/80 ring-1 ring-[#D8CCB5]/60 transform-gpu"
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent" />
 
@@ -220,7 +193,7 @@ export default function LandingPage() {
             />
 
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 rounded-b-[22px] bg-gradient-to-t from-[#F4E9D8]/80 via-[#F4E9D8]/30 to-transparent" />
-          </motion.div>
+          </div>
         </motion.div>
 
         {/* Feature Cards Grid */}
