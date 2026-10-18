@@ -13,4 +13,7 @@ research/
 project-documentation/ml_focused_report/
 *.docx
 *.pdf
+.idea/
+android/.idea/
+android/local.properties
 
