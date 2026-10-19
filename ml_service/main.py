@@ -24,6 +24,7 @@ from notifications_router import notifications_router
 from database import init_db
 from user_router import user_router
 from transactions_router import transactions_router
+from auth_router import auth_router
 
 app = FastAPI(
     title="Setu Financial & Livelihood Marketplace Service",
@@ -54,6 +55,7 @@ app.include_router(ai_models_router)
 app.include_router(notifications_router)
 app.include_router(user_router)
 app.include_router(transactions_router)
+app.include_router(auth_router)
 
 
 

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "icons:generate": "python3 scripts/generate_app_icons.py",
     "icons:sync": "python3 scripts/sync_android_icons.py",
-    "test": "node scripts/test_recommendations.mjs",
+    "test": "node scripts/test_recommendations.mjs && node scripts/test_auth_flows.mjs",
+    "test:auth": "node scripts/test_auth_flows.mjs",
     "test:recommendations": "node scripts/test_recommendations.mjs"
   },
   "dependencies": {

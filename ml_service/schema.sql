@@ -203,3 +203,46 @@ CREATE POLICY "Users can manage own saved health items" ON public.saved_health_i
 DROP POLICY IF EXISTS "Users can manage own notification preferences" ON public.notification_preferences;
 CREATE POLICY "Users can manage own notification preferences" ON public.notification_preferences
     FOR ALL USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- 9. ACCOUNT EXISTENCE VERIFICATION RPC (Publicly callable via Supabase client rpc)
+-- ============================================================================
+CREATE OR REPLACE FUNCTION public.check_email_registered(email_to_check text)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+BEGIN
+    IF email_to_check IS NULL OR length(trim(email_to_check)) = 0 THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Check auth.users table
+    IF EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE LOWER(email) = LOWER(TRIM(email_to_check))
+    ) THEN
+        RETURN TRUE;
+    END IF;
+
+    -- Check public.profiles table
+    IF EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE LOWER(email) = LOWER(TRIM(email_to_check))
+    ) THEN
+        RETURN TRUE;
+    END IF;
+
+    -- Check authorized demo accounts
+    IF LOWER(TRIM(email_to_check)) = 'sadia.sakharkar@cumminscollege.in' THEN
+        RETURN TRUE;
+    END IF;
+
+    RETURN FALSE;
+END;
+$$;
+
+-- Grant EXECUTE permission to anon, authenticated, and service_role
+GRANT EXECUTE ON FUNCTION public.check_email_registered(text) TO anon, authenticated, service_role;
+

@@ -80,6 +80,7 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isAccountAlreadyExists, setIsAccountAlreadyExists] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   // Resend countdown timer for email
@@ -127,6 +128,7 @@ export default function SignUpPage() {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
+    setIsAccountAlreadyExists(false);
 
     const cleanName = fullName.trim();
     if (!cleanName || cleanName.length < 2) {
@@ -145,7 +147,21 @@ export default function SignUpPage() {
     try {
       const res = await sendEmailSignupOtp(clean, cleanName);
       if (res.error) {
-        setErrorMessage(res.error.message || 'Failed to send verification code.');
+        const msg = res.error.message || 'Failed to send verification code.';
+        if (
+          msg.toLowerCase().includes('already exists') ||
+          msg.toLowerCase().includes('log in instead')
+        ) {
+          setIsAccountAlreadyExists(true);
+          setErrorMessage(
+            t(
+              'auth.accountAlreadyExists',
+              'An account already exists with this email. Please log in instead.'
+            )
+          );
+        } else {
+          setErrorMessage(msg);
+        }
       } else {
         setEmailOtpSent(true);
         setEmailResendTimer(30);
@@ -446,11 +462,23 @@ export default function SignUpPage() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3 text-left flex items-start gap-2.5"
+                className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3.5 text-left flex items-start gap-2.5"
               >
                 <AppIcon name="shield-alert" size={16} className="text-red-600 shrink-0 mt-0.5" />
                 <div className="flex-1 text-xs text-red-800 leading-snug">
-                  {errorMessage}
+                  <div>{errorMessage}</div>
+                  {isAccountAlreadyExists && (
+                    <div className="mt-3">
+                      <Link
+                        to="/login"
+                        onClick={() => playTap()}
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#B34A26] text-white text-xs font-bold shadow-sm hover:bg-[#8C3415] transition-all active:scale-95"
+                      >
+                        <span>{t('auth.logIn', 'Log In')}</span>
+                        <span>→</span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}

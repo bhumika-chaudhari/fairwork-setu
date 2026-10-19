@@ -32,6 +32,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [isUserNotFound, setIsUserNotFound] = useState(false);
+  const [isAccountAlreadyExists, setIsAccountAlreadyExists] = useState(false);
 
   // Countdown timer for Email OTP resend
   useEffect(() => {
@@ -47,6 +49,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       setErrorMsg(null);
       setSuccessMsg(null);
       setLoading(false);
+      setIsUserNotFound(false);
+      setIsAccountAlreadyExists(false);
       setEmailStep('input_email');
       setEmailOtpToken('');
     }
@@ -58,6 +62,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
+    setIsUserNotFound(false);
+    setIsAccountAlreadyExists(false);
 
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
@@ -91,14 +97,28 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       if (res.error) {
         const msg = res.error.message || 'Failed to send verification code';
         if (
+          msg.toLowerCase().includes("account doesn't exist") ||
           msg.toLowerCase().includes('not found') ||
           msg.toLowerCase().includes('signups not allowed') ||
+          msg.toLowerCase().includes('sign up first') ||
           msg.toLowerCase().includes('create an account')
         ) {
+          setIsUserNotFound(true);
           setErrorMsg(
             t(
-              'auth.noAccountFound',
-              "We couldn't find an account with this email. Please create an account first."
+              'auth.accountDoesNotExist',
+              "Account doesn't exist. Please sign up first."
+            )
+          );
+        } else if (
+          msg.toLowerCase().includes('already exists') ||
+          msg.toLowerCase().includes('log in instead')
+        ) {
+          setIsAccountAlreadyExists(true);
+          setErrorMsg(
+            t(
+              'auth.accountAlreadyExists',
+              'An account already exists with this email. Please log in instead.'
             )
           );
         } else {
@@ -201,6 +221,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                 onClick={() => {
                   playTap();
                   setIsSignUp(false);
+                  setIsUserNotFound(false);
+                  setIsAccountAlreadyExists(false);
                   setErrorMsg(null);
                   setEmailStep('input_email');
                 }}
@@ -217,6 +239,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                 onClick={() => {
                   playTap();
                   setIsSignUp(true);
+                  setIsUserNotFound(false);
+                  setIsAccountAlreadyExists(false);
                   setErrorMsg(null);
                   setEmailStep('input_email');
                 }}
@@ -234,9 +258,45 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           <div className="p-6">
             {/* Feedback Banners */}
             {errorMsg && (
-              <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800 flex items-start gap-2">
+              <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs text-rose-800 flex items-start gap-2.5">
                 <AppIcon name="message-warning" size={16} className="text-rose-600 shrink-0 mt-0.5" />
-                <span className="flex-1">{errorMsg}</span>
+                <div className="flex-1 leading-snug">
+                  <div>{errorMsg}</div>
+                  {isUserNotFound && (
+                    <div className="mt-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playTap();
+                          setIsSignUp(true);
+                          setIsUserNotFound(false);
+                          setErrorMsg(null);
+                        }}
+                        className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#B34A26] text-white text-xs font-bold shadow-xs hover:bg-[#8C3415] transition-all"
+                      >
+                        <span>{t('auth.signUp', 'Sign Up')}</span>
+                        <span>→</span>
+                      </button>
+                    </div>
+                  )}
+                  {isAccountAlreadyExists && (
+                    <div className="mt-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playTap();
+                          setIsSignUp(false);
+                          setIsAccountAlreadyExists(false);
+                          setErrorMsg(null);
+                        }}
+                        className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#B34A26] text-white text-xs font-bold shadow-xs hover:bg-[#8C3415] transition-all"
+                      >
+                        <span>{t('auth.logIn', 'Log In')}</span>
+                        <span>→</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {successMsg && (

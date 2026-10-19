@@ -4,6 +4,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { apiClient } from '../services/apiClient';
 import { setCurrentAuthUserId } from '../services/transactionService';
 import { changeAppLanguage, type LanguageCode } from '../localization';
+import { checkEmailIsRegistered } from '../services/accountCheck';
 import type { User, Session } from '@supabase/supabase-js';
 
 const PROFILE_KEY_PREFIX = '@setu/profile_';
@@ -466,14 +467,22 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   // Send 6-Digit Email OTP for Login (strictly prevents new account creation)
   const sendEmailLoginOtp = useCallback(async (email: string) => {
-    if (!supabase || !isSupabaseConfigured) {
-      return {
-        error: new Error(
-          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
-        ),
-      };
-    }
     const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      return { error: new Error('Please enter a valid email address.') };
+    }
+
+    if (!supabase || !isSupabaseConfigured) {
+      // In dev / unconfigured mode: check if account exists (e.g. demo accounts or backend DB)
+      const isRegistered = await checkEmailIsRegistered(cleanEmail);
+      if (!isRegistered) {
+        return {
+          error: new Error("Account doesn't exist. Please sign up first."),
+        };
+      }
+      return { error: null, message: `6-digit verification code sent to ${cleanEmail}` };
+    }
+
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email: cleanEmail,
@@ -487,10 +496,11 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
           msg.includes('signups not allowed') ||
           msg.includes('user not found') ||
           msg.includes('signup disabled') ||
+          msg.includes('invalid credentials') ||
           (error as any).status === 400
         ) {
           return {
-            error: new Error("We couldn't find an account with this email. Please create an account first."),
+            error: new Error("Account doesn't exist. Please sign up first."),
           };
         }
         if (msg.includes('rate limit') || (error as any).status === 429) {
@@ -508,14 +518,23 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   // Send 6-Digit Email OTP for Signup (creates new account with metadata)
   const sendEmailSignupOtp = useCallback(async (email: string, name?: string) => {
-    if (!supabase || !isSupabaseConfigured) {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      return { error: new Error('Please enter a valid email address.') };
+    }
+
+    // Pre-flight check: If email is already registered, do not create duplicate or send signup OTP!
+    const isAlreadyRegistered = await checkEmailIsRegistered(cleanEmail);
+    if (isAlreadyRegistered) {
       return {
-        error: new Error(
-          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
-        ),
+        error: new Error("An account already exists with this email. Please log in instead."),
       };
     }
-    const cleanEmail = email.trim().toLowerCase();
+
+    if (!supabase || !isSupabaseConfigured) {
+      return { error: null, message: `6-digit verification code sent to ${cleanEmail}` };
+    }
+
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email: cleanEmail,

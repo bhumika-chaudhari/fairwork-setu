@@ -70,15 +70,17 @@ export default function LoginPage() {
       if (res.error) {
         const msg = res.error.message || 'Failed to send verification code.';
         if (
+          msg.toLowerCase().includes("account doesn't exist") ||
           msg.toLowerCase().includes('not found') ||
           msg.toLowerCase().includes('signups not allowed') ||
+          msg.toLowerCase().includes('sign up first') ||
           msg.toLowerCase().includes('create an account')
         ) {
           setIsUserNotFound(true);
           setErrorMessage(
             t(
-              'auth.noAccountFound',
-              "We couldn't find an account with this email. Please create an account first."
+              'auth.accountDoesNotExist',
+              "Account doesn't exist. Please sign up first."
             )
           );
         } else {
@@ -211,13 +213,13 @@ export default function LoginPage() {
                 <div className="flex-1 text-xs text-red-800 leading-snug">
                   <div>{errorMessage}</div>
                   {isUserNotFound && (
-                    <div className="mt-2">
+                    <div className="mt-3">
                       <Link
                         to="/signup"
                         onClick={() => playTap()}
-                        className="inline-flex items-center gap-1 font-extrabold text-[#B34A26] underline hover:text-[#8C3415]"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#B34A26] text-white text-xs font-bold shadow-sm hover:bg-[#8C3415] transition-all active:scale-95"
                       >
-                        <span>{t('auth.signUp', 'Create an Account Now')}</span>
+                        <span>{t('auth.signUp', 'Sign Up')}</span>
                         <span>→</span>
                       </Link>
                     </div>
