@@ -10,11 +10,17 @@ import { AppIcon } from '../lib/icons';
 import ModalPortal from './ModalPortal';
 import { playPop } from '../lib/feedback';
 
+interface LanguageSelectorProps {
+  variant?: 'grid' | 'icon' | 'pills';
+  size?: 'sm' | 'md';
+  className?: string;
+}
+
 export default function LanguageSelector({
   variant = 'grid',
-}: {
-  variant?: 'grid' | 'icon' | 'pills';
-}) {
+  size = 'md',
+  className = '',
+}: LanguageSelectorProps) {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -51,18 +57,22 @@ export default function LanguageSelector({
     </div>
   );
 
+  const isSmall = size === 'sm';
+
   return (
     <>
       {variant === 'icon' ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex h-10 items-center gap-1.5 rounded-full bg-white/80 backdrop-blur-xl px-3 shadow-glass border border-[#F4EBDD] text-xs font-bold text-deepEmerald hover:bg-white transition-all active:scale-95"
+          className={`flex items-center rounded-full bg-white/80 backdrop-blur-xl shadow-glass border border-[#F4EBDD] font-bold text-deepEmerald hover:bg-white transition-all active:scale-95 ${
+            isSmall ? 'h-9 px-2.5 gap-1 text-xs' : 'h-10 px-3 gap-1.5 text-xs'
+          } ${className}`}
           aria-label={t('common.chooseLanguage')}
         >
-          <span className="text-sm">🌐</span>
-          <span className="uppercase">{current.slice(0, 2)}</span>
-          <span className="text-[10px] text-textMuted">▼</span>
+          <span className={isSmall ? 'text-xs' : 'text-sm'}>🌐</span>
+          <span className="uppercase text-[11px] font-bold tracking-tight">{current.slice(0, 2)}</span>
+          <span className="text-[9px] text-textMuted">▼</span>
         </button>
       ) : (
         chips

@@ -26,9 +26,15 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     privacy_mask_earnings BOOLEAN DEFAULT FALSE,
     auto_readout BOOLEAN DEFAULT FALSE,
     expense_alerts BOOLEAN DEFAULT TRUE,
+    skills TEXT DEFAULT '',
+    custom_skills TEXT DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Ensure columns exist in case table was created previously
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS skills TEXT DEFAULT '';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_skills TEXT DEFAULT '';
 
 -- 2. TRANSACTIONS (INCOME & EXPENSES WITH OFFLINE IDEMPOTENCY)
 CREATE TABLE IF NOT EXISTS public.transactions (

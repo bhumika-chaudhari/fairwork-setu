@@ -26,7 +26,7 @@ export default function SoundToggle({ className = '', size = 'md' }: SoundToggle
         }
     };
 
-    const sizeClass = size === 'sm' ? 'h-8 w-8' : 'h-9 w-9';
+    const sizeClass = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10';
 
     return (
         <motion.button

@@ -107,17 +107,31 @@ def get_db():
 
 
 def init_db():
-    """Initializes all tables defined in Base metadata."""
+    """Initializes all tables defined in Base metadata and ensures schema consistency."""
     if not HAS_SQLALCHEMY or engine is None or Base is None or getattr(Base, "metadata", None) is None:
         logger.info("Database engine not active or SQLAlchemy not installed. Skipping init_db.")
         return
-
     try:
         try:
             import db_models
         except ImportError:
             from ml_service import db_models
         Base.metadata.create_all(bind=engine)
-        logger.info("Database tables verified/created successfully.")
+
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            dialect = engine.dialect.name
+            if dialect == "sqlite":
+                cols = [row[1] for row in conn.execute(text("PRAGMA table_info(profiles)")).fetchall()]
+                if "skills" not in cols:
+                    conn.execute(text("ALTER TABLE profiles ADD COLUMN skills TEXT DEFAULT ''"))
+                if "custom_skills" not in cols:
+                    conn.execute(text("ALTER TABLE profiles ADD COLUMN custom_skills TEXT DEFAULT ''"))
+                conn.commit()
+            elif dialect in ("postgresql", "postgres"):
+                conn.execute(text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS skills TEXT DEFAULT ''"))
+                conn.execute(text("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_skills TEXT DEFAULT ''"))
+                conn.commit()
+        logger.info("Database tables and schema migrations verified successfully.")
     except Exception as e:
         logger.error(f"Error initializing database tables: {e}")

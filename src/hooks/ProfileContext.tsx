@@ -36,8 +36,8 @@ export const emptyProfile: ProfileState = {
   name: '',
   avatarUrl: '',
   gender: null,
-  cityKey: 'cities.pune',
-  workType: 'driver',
+  cityKey: '',
+  workType: null,
   skillKeys: [],
   customSkills: [],
   experienceYears: 1,
@@ -54,6 +54,14 @@ export const emptyProfile: ProfileState = {
 };
 
 export const defaultProfile = emptyProfile;
+
+export function isProfileComplete(p: ProfileState | null | undefined): boolean {
+  if (!p) return false;
+  const hasName = Boolean(p.name && p.name.trim().length >= 2);
+  const hasWorkType = Boolean(p.workType);
+  const hasCity = Boolean(p.cityKey && p.cityKey.trim().length > 0);
+  return hasName && hasWorkType && hasCity;
+}
 
 function computeStrength(profile: ProfileState): number {
   if (!profile || !profile.name || !profile.name.trim()) return 0;
@@ -72,29 +80,49 @@ function computeStrength(profile: ProfileState): number {
 
 function mapBackendToProfileState(backendProfile: any, fallback: ProfileState): ProfileState {
   if (!backendProfile) return fallback;
+
+  // Normalize skills list
+  let resolvedSkillKeys: string[] = fallback.skillKeys || [];
+  if (backendProfile.skills) {
+    if (Array.isArray(backendProfile.skills)) {
+      resolvedSkillKeys = backendProfile.skills;
+    } else if (typeof backendProfile.skills === 'string') {
+      resolvedSkillKeys = backendProfile.skills.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }
+  } else if (Array.isArray(backendProfile.skillKeys)) {
+    resolvedSkillKeys = backendProfile.skillKeys;
+  }
+
+  // Normalize custom skills list
+  let resolvedCustomSkills: string[] = fallback.customSkills || [];
+  const rawCustom = backendProfile.custom_skills || backendProfile.customSkills;
+  if (rawCustom) {
+    if (Array.isArray(rawCustom)) {
+      resolvedCustomSkills = rawCustom;
+    } else if (typeof rawCustom === 'string') {
+      resolvedCustomSkills = rawCustom.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }
+  }
+
   return {
-    name: backendProfile.full_name || fallback.name || '',
-    avatarUrl: backendProfile.avatar_url || fallback.avatarUrl || '',
+    name: backendProfile.full_name || backendProfile.name || fallback.name || '',
+    avatarUrl: backendProfile.avatar_url || backendProfile.avatarUrl || fallback.avatarUrl || '',
     gender: (backendProfile.gender as Gender) || fallback.gender || null,
-    cityKey: backendProfile.city_key || fallback.cityKey || 'cities.pune',
-    workType: (backendProfile.work_type as WorkerType) || fallback.workType || 'driver',
-    skillKeys: backendProfile.skills
-      ? (typeof backendProfile.skills === 'string' ? backendProfile.skills.split(',').filter(Boolean) : backendProfile.skills)
-      : fallback.skillKeys,
-    customSkills: backendProfile.custom_skills
-      ? (typeof backendProfile.custom_skills === 'string' ? backendProfile.custom_skills.split(',').filter(Boolean) : backendProfile.custom_skills)
-      : fallback.customSkills,
-    experienceYears: backendProfile.experience_years ?? fallback.experienceYears ?? 1,
+    cityKey: backendProfile.city_key || backendProfile.cityKey || fallback.cityKey || 'cities.pune',
+    workType: (backendProfile.work_type as WorkerType) || (backendProfile.workType as WorkerType) || fallback.workType || null,
+    skillKeys: resolvedSkillKeys,
+    customSkills: resolvedCustomSkills,
+    experienceYears: backendProfile.experience_years ?? backendProfile.experienceYears ?? fallback.experienceYears ?? 1,
     availability: (backendProfile.availability as Availability) || fallback.availability || 'anytime',
-    payMin: backendProfile.pay_min ?? fallback.payMin ?? 400,
-    payMax: backendProfile.pay_max ?? fallback.payMax ?? 700,
-    emergencyContact: backendProfile.emergency_contact || fallback.emergencyContact || '',
-    savingsGoal: backendProfile.savings_goal ?? fallback.savingsGoal ?? 5000,
-    weeklySaveGoal: backendProfile.weekly_save_goal ?? fallback.weeklySaveGoal ?? 350,
-    preferredLanguage: backendProfile.preferred_language || fallback.preferredLanguage || 'en',
-    speechRate: backendProfile.speech_rate ?? fallback.speechRate ?? 0.95,
-    voiceSilenceTimeout: backendProfile.voice_silence_timeout ?? fallback.voiceSilenceTimeout ?? 5,
-    privacyMaskEarnings: backendProfile.privacy_mask_earnings ?? fallback.privacyMaskEarnings ?? false,
+    payMin: backendProfile.pay_min ?? backendProfile.payMin ?? fallback.payMin ?? 400,
+    payMax: backendProfile.pay_max ?? backendProfile.payMax ?? fallback.payMax ?? 700,
+    emergencyContact: backendProfile.emergency_contact || backendProfile.emergencyContact || fallback.emergencyContact || '',
+    savingsGoal: backendProfile.savings_goal ?? backendProfile.savingsGoal ?? fallback.savingsGoal ?? 5000,
+    weeklySaveGoal: backendProfile.weekly_save_goal ?? backendProfile.weeklySaveGoal ?? fallback.weeklySaveGoal ?? 350,
+    preferredLanguage: backendProfile.preferred_language || backendProfile.preferredLanguage || fallback.preferredLanguage || 'en',
+    speechRate: backendProfile.speech_rate ?? backendProfile.speechRate ?? fallback.speechRate ?? 0.95,
+    voiceSilenceTimeout: backendProfile.voice_silence_timeout ?? backendProfile.voiceSilenceTimeout ?? fallback.voiceSilenceTimeout ?? 5,
+    privacyMaskEarnings: backendProfile.privacy_mask_earnings ?? backendProfile.privacyMaskEarnings ?? fallback.privacyMaskEarnings ?? false,
   };
 }
 
@@ -144,6 +172,8 @@ interface ProfileContextValue {
 
   loginWithPhone: (phoneNumber: string) => Promise<{ error: Error | null; message?: string }>;
   verifyPhoneOtp: (phoneNumber: string, token: string) => Promise<{ error: Error | null; user?: User | null }>;
+  sendEmailOtp: (email: string) => Promise<{ error: Error | null; message?: string }>;
+  verifyEmailOtp: (email: string, token: string) => Promise<{ error: Error | null; user?: User | null }>;
   loginWithEmail: (email: string, password?: string) => Promise<{ error: Error | null; user?: User | null }>;
   signupWithEmail: (email: string, password: string, name?: string) => Promise<{ error: Error | null; user?: User | null }>;
   sendMagicLink: (email: string) => Promise<{ error: Error | null; message?: string }>;
@@ -165,41 +195,60 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
   const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);
 
-  // Fetch or sync remote profile from FastAPI backend when authenticated
+  // Fetch or sync remote profile from FastAPI backend or direct Supabase when authenticated
   const syncRemoteProfile = useCallback(async (activeUser: User) => {
+    let resolvedProfile: ProfileState | null = null;
+
+    // 1. Try FastAPI backend first
     try {
       const res = await apiClient.get('/user/profile');
       if (res.data?.profile) {
-        const mapped = mapBackendToProfileState(res.data.profile, emptyProfile);
-        setProfile(mapped);
-        localStorage.setItem(`${PROFILE_KEY_PREFIX}${activeUser.id}`, JSON.stringify(mapped));
-        const hasCompleted = Boolean(mapped.name && mapped.name.trim().length > 1);
-        setOnboardingComplete(hasCompleted);
-        if (hasCompleted) {
-          localStorage.setItem(`${ONBOARDING_KEY_PREFIX}${activeUser.id}`, '1');
-        }
-        if (mapped.preferredLanguage) {
-          changeAppLanguage(mapped.preferredLanguage as LanguageCode);
-        }
-        return;
+        resolvedProfile = mapBackendToProfileState(res.data.profile, emptyProfile);
       }
     } catch (err: any) {
-      console.warn('[ProfileSync] Remote profile fetch warning:', err.response?.status || err.message);
+      console.warn('[ProfileSync] Backend profile fetch notice:', err.response?.status || err.message);
     }
 
-    // Fallback to user-scoped local storage if backend is unreachable
-    try {
-      const cached = localStorage.getItem(`${PROFILE_KEY_PREFIX}${activeUser.id}`);
-      const cachedOnboarding = localStorage.getItem(`${ONBOARDING_KEY_PREFIX}${activeUser.id}`);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        setProfile({ ...emptyProfile, ...parsed });
-        setOnboardingComplete(cachedOnboarding === '1' && Boolean(parsed.name && parsed.name.trim().length > 1));
-      } else {
-        setProfile(emptyProfile);
-        setOnboardingComplete(false);
+    // 2. If FastAPI backend failed or profile had no name, query direct Supabase table
+    if ((!resolvedProfile || !resolvedProfile.name) && supabase && isSupabaseConfigured) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', activeUser.id)
+          .maybeSingle();
+        if (!error && data) {
+          resolvedProfile = mapBackendToProfileState(data, emptyProfile);
+        }
+      } catch (sbErr) {
+        console.warn('[ProfileSync] Direct Supabase fetch notice:', sbErr);
       }
-    } catch {
+    }
+
+    // 3. Fallback to user-scoped local storage if network is offline or cold-starting
+    if (!resolvedProfile || !resolvedProfile.name) {
+      try {
+        const cached = localStorage.getItem(`${PROFILE_KEY_PREFIX}${activeUser.id}`);
+        if (cached) {
+          resolvedProfile = { ...emptyProfile, ...JSON.parse(cached) };
+        }
+      } catch {
+        // ignore JSON parse error
+      }
+    }
+
+    if (resolvedProfile && resolvedProfile.name && resolvedProfile.name.trim().length > 1) {
+      setProfile(resolvedProfile);
+      localStorage.setItem(`${PROFILE_KEY_PREFIX}${activeUser.id}`, JSON.stringify(resolvedProfile));
+      const hasCompleted = isProfileComplete(resolvedProfile);
+      setOnboardingComplete(hasCompleted);
+      if (hasCompleted) {
+        localStorage.setItem(`${ONBOARDING_KEY_PREFIX}${activeUser.id}`, '1');
+      }
+      if (resolvedProfile.preferredLanguage) {
+        changeAppLanguage(resolvedProfile.preferredLanguage as LanguageCode);
+      }
+    } else {
       setProfile(emptyProfile);
       setOnboardingComplete(false);
     }
@@ -269,13 +318,54 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   const persist = useCallback(async (next: ProfileState) => {
     setProfile(next);
+    const complete = isProfileComplete(next);
+    setOnboardingComplete(complete);
+
     if (user) {
       localStorage.setItem(`${PROFILE_KEY_PREFIX}${user.id}`, JSON.stringify(next));
+      if (complete) {
+        localStorage.setItem(`${ONBOARDING_KEY_PREFIX}${user.id}`, '1');
+      }
+
+      // Dual Persistence: Direct Supabase PostgreSQL upsert
+      if (supabase && isSupabaseConfigured) {
+        try {
+          await supabase.from('profiles').upsert(
+            {
+              id: user.id,
+              full_name: next.name.trim(),
+              avatar_url: next.avatarUrl || null,
+              gender: next.gender || null,
+              city_key: next.cityKey || 'cities.pune',
+              work_type: next.workType || 'driver',
+              skills: next.skillKeys.join(','),
+              custom_skills: next.customSkills.join(','),
+              experience_years: next.experienceYears,
+              availability: next.availability || 'anytime',
+              pay_min: next.payMin,
+              pay_max: next.payMax,
+              emergency_contact: next.emergencyContact || null,
+              savings_goal: next.savingsGoal,
+              weekly_save_goal: next.weeklySaveGoal,
+              preferred_language: next.preferredLanguage || 'en',
+              speech_rate: next.speechRate,
+              voice_silence_timeout: next.voiceSilenceTimeout,
+              privacy_mask_earnings: next.privacyMaskEarnings,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'id' }
+          );
+        } catch (supabaseErr) {
+          console.warn('[ProfileContext] Direct Supabase upsert notice:', supabaseErr);
+        }
+      }
+
+      // FastAPI Backend sync (ensures ML microservice cache is updated)
       if (isSupabaseConfigured) {
         try {
           await apiClient.put('/user/profile', mapProfileStateToBackendPayload(next));
         } catch (err) {
-          console.warn('[ProfileContext] Background profile sync failed:', err);
+          console.warn('[ProfileContext] Backend profile sync notice:', err);
         }
       }
     }
@@ -445,6 +535,75 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Send 6-Digit Email OTP
+  const sendEmailOtp = useCallback(async (email: string) => {
+    if (!supabase || !isSupabaseConfigured) {
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
+        ),
+      };
+    }
+    const cleanEmail = email.trim();
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: cleanEmail,
+        options: {
+          shouldCreateUser: true,
+        },
+      });
+      if (error) return { error };
+      return { error: null, message: `6-digit verification code sent to ${cleanEmail}` };
+    } catch (err: any) {
+      return { error: err };
+    }
+  }, []);
+
+  // Verify 6-Digit Email OTP
+  const verifyEmailOtp = useCallback(async (email: string, token: string) => {
+    if (!supabase || !isSupabaseConfigured) {
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
+        ),
+      };
+    }
+    const cleanEmail = email.trim();
+    try {
+      // First try standard email OTP verification
+      let result = await supabase.auth.verifyOtp({
+        email: cleanEmail,
+        token: token.trim(),
+        type: 'email',
+      });
+
+      // If email type fails and user might have just signed up, try signup type
+      if (result.error && (result.error.message?.includes('type') || (result.error as any).status === 400)) {
+        const signupRetry = await supabase.auth.verifyOtp({
+          email: cleanEmail,
+          token: token.trim(),
+          type: 'signup',
+        });
+        if (!signupRetry.error) {
+          result = signupRetry;
+        }
+      }
+
+      if (result.error) return { error: result.error };
+
+      if (result.data?.user) {
+        setUser(result.data.user);
+        setSession(result.data.session);
+        setCurrentAuthUserId(result.data.user.id);
+        setIsAuthModalOpen(false);
+        await syncRemoteProfile(result.data.user);
+      }
+      return { error: null, user: result.data?.user };
+    } catch (err: any) {
+      return { error: err };
+    }
+  }, [syncRemoteProfile]);
+
   // Magic Link
   const sendMagicLink = useCallback(async (email: string) => {
     if (!supabase || !isSupabaseConfigured) {
@@ -489,6 +648,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       closeAuthModal,
       loginWithPhone,
       verifyPhoneOtp,
+      sendEmailOtp,
+      verifyEmailOtp,
       loginWithEmail,
       signupWithEmail,
       sendMagicLink,
@@ -506,12 +667,14 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       openAuthModal,
       profile,
       ready,
+      sendEmailOtp,
       sendMagicLink,
       session,
       signupWithEmail,
       strength,
       updateProfile,
       user,
+      verifyEmailOtp,
       verifyPhoneOtp,
     ]
   );

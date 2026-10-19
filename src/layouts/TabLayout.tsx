@@ -118,10 +118,10 @@ export default function TabLayout() {
             <NotificationBellButton size="sm" />
 
             {/* Sound & Haptics Global Toggle */}
-            <SoundToggle />
+            <SoundToggle size="sm" />
 
             {/* Language dropdown */}
-            <LanguageSelector variant="icon" />
+            <LanguageSelector variant="icon" size="sm" />
 
             {/* Profile Avatar button */}
             <button
@@ -149,10 +149,11 @@ export default function TabLayout() {
         <Outlet />
       </main>
 
-      {/* Mobile Floating Action Buttons (FABs) positioned above bottom dock */}
-      <div className="fixed bottom-24 right-4 z-40 md:hidden flex flex-col items-center gap-2.5">
+      {/* Mobile Floating Action Buttons (FABs) positioned consistently in bottom-right corner */}
+      <div className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px))] right-4 z-40 md:hidden flex flex-col items-center gap-2">
         <NotificationBellButton size="sm" />
         <SoundToggle size="sm" />
+        <LanguageSelector variant="icon" size="sm" />
         <button
           type="button"
           onClick={() => {

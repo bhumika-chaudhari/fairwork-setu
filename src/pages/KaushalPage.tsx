@@ -7,7 +7,6 @@ import Card from '../components/Card';
 import PrimaryButton from '../components/PrimaryButton';
 import DisclaimerText from '../components/DisclaimerText';
 import SkillChip from '../components/SkillChip';
-import LanguageSelector from '../components/LanguageSelector';
 import ModalPortal from '../components/ModalPortal';
 import { AppIcon } from '../lib/icons';
 import { getSkillCourses, getWorkerStats } from '../services/workerService';
@@ -227,9 +226,6 @@ export default function KaushalPage() {
             <AppIcon name="document-text" size={13} className="text-warmCocoa" />
             <span className="text-warmCocoa font-bold">{t('kaushal.viewPassport')}</span>
           </button>
-          <div className="md:hidden">
-            <LanguageSelector variant="icon" />
-          </div>
         </div>
       </header>
 

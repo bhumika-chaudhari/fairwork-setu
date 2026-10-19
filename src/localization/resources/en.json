@@ -666,7 +666,13 @@
     "skills": "Select Your Skills",
     "savingsGoal": "Weekly Savings Target (Optional)",
     "completeRegistration": "Complete Registration & Open Dashboard",
-    "loggingOut": "Logging out..."
+    "loggingOut": "Logging out...",
+    "enterFullName": "Please enter your full name (at least 2 letters)",
+    "emailOtpMode": "Email 6-Digit OTP",
+    "passwordMode": "Password",
+    "emailOtpHint": "We will send a 6-digit verification code to your email",
+    "verifyAndContinue": "Verify & Continue",
+    "selectWorkerTypeAlert": "Please select your profession / work type"
   }
 }
 

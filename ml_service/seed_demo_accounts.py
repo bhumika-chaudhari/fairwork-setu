@@ -56,6 +56,8 @@ DEMO_USERS = [
         "savings_goal": 8000.0,
         "weekly_save_goal": 600.0,
         "preferred_language": "mr",
+        "skills": "skills.cooking,skills.cleaning,skills.sweepingMopping",
+        "custom_skills": "Baking,Event Catering",
         "transactions": [
             {
                 "cid": "demo_seed_8055440700_1",
@@ -187,6 +189,8 @@ DEMO_USERS = [
         "savings_goal": 6000.0,
         "weekly_save_goal": 500.0,
         "preferred_language": "hi",
+        "skills": "skills.delivery,skills.driving",
+        "custom_skills": "Route Navigation,Customer Relations",
         "transactions": [
             {
                 "cid": "demo_seed_9766236307_1",
@@ -308,6 +312,8 @@ DEMO_USERS = [
         "savings_goal": 10000.0,
         "weekly_save_goal": 800.0,
         "preferred_language": "en",
+        "skills": "skills.electrician,skills.wiring,skills.fanRepair",
+        "custom_skills": "Inverter Setup,Solar Panel Wiring",
         "transactions": [
             {
                 "cid": "demo_seed_7028403043_1",
@@ -430,6 +436,8 @@ DEMO_USERS = [
         "savings_goal": 12000.0,
         "weekly_save_goal": 1000.0,
         "preferred_language": "mr",
+        "skills": "skills.driving,skills.delivery",
+        "custom_skills": "Night Driving,Highway Transit",
         "transactions": [
             {
                 "cid": "demo_seed_8263935704_1",
@@ -582,6 +590,8 @@ def seed_demo_accounts() -> dict:
                     gender=user_data["gender"],
                     city_key=user_data["city_key"],
                     work_type=user_data["work_type"],
+                    skills=user_data.get("skills", ""),
+                    custom_skills=user_data.get("custom_skills", ""),
                     experience_years=user_data["experience_years"],
                     availability=user_data["availability"],
                     pay_min=user_data["pay_min"],
@@ -603,6 +613,8 @@ def seed_demo_accounts() -> dict:
                 profile.gender = user_data["gender"]
                 profile.city_key = user_data["city_key"]
                 profile.work_type = user_data["work_type"]
+                profile.skills = user_data.get("skills", profile.skills or "")
+                profile.custom_skills = user_data.get("custom_skills", profile.custom_skills or "")
                 profile.experience_years = user_data["experience_years"]
                 profile.availability = user_data["availability"]
                 profile.pay_min = user_data["pay_min"]

@@ -23,7 +23,6 @@ import ServiceRequestsInbox from '../components/marketplace/ServiceRequestsInbox
 import ServiceProfileEditor from '../components/marketplace/ServiceProfileEditor';
 import ConversationModal from '../components/marketplace/ConversationModal';
 import ListenButton from '../components/ListenButton';
-import LanguageSelector from '../components/LanguageSelector';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
 import { matchJobsWithWorker, type Model6JobMatch } from '../services/aiModelsClient';
 
@@ -543,9 +542,6 @@ export default function KaamPage() {
             <span>Demo Service Requests</span>
           </button>
           <ListenButton track={pageSpeechTrack} size="sm" />
-          <div className="md:hidden">
-            <LanguageSelector variant="icon" />
-          </div>
         </div>
       </header>
 

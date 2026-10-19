@@ -9,7 +9,6 @@ import DisclaimerText from '../components/DisclaimerText';
 import ListenButton from '../components/ListenButton';
 import TransactionHistory from '../components/TransactionHistory';
 import TransactionModal from '../components/TransactionModal';
-import LanguageSelector from '../components/LanguageSelector';
 import { buildFinancialSpeechText } from '../lib/speechContextualContent';
 import { AppIcon } from '../lib/icons';
 import { formatInr } from '../localization';
@@ -245,9 +244,6 @@ export default function DhanPage() {
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <ListenButton track={financialTrack} size="sm" />
-          <div className="md:hidden">
-            <LanguageSelector variant="icon" />
-          </div>
         </div>
       </header>
 

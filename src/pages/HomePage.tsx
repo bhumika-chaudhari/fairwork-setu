@@ -7,9 +7,6 @@ import JobCard from '../components/JobCard';
 import Card from '../components/Card';
 import VoiceButton from '../components/VoiceButton';
 import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
-import LanguageSelector from '../components/LanguageSelector';
-import SoundToggle from '../components/SoundToggle';
-import NotificationBellButton from '../components/notifications/NotificationBellButton';
 import { playTap } from '../lib/feedback';
 import ProgressBar from '../components/ProgressBar';
 import ProgressRing from '../components/ProgressRing';
@@ -108,14 +105,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Notifications Bell */}
-          <NotificationBellButton />
-          {/* Sound & Haptics toggle */}
-          <SoundToggle />
-          {/* Language switcher */}
-          <LanguageSelector variant="icon" />
-          {/* Primary Top-Right Profile Icon Button */}
+        <div className="flex items-center gap-2 md:hidden">
+          {/* Primary Top-Right Profile Icon Button on Mobile */}
           <button
             type="button"
             onClick={() => {

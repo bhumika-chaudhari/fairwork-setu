@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { AppIcon } from '../lib/icons';
 import { useProfile } from '../hooks/ProfileContext';
-import LanguageSelector from '../components/LanguageSelector';
-import SoundToggle from '../components/SoundToggle';
 import ListenButton from '../components/ListenButton';
 import { playTap } from '../lib/feedback';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
@@ -104,12 +102,6 @@ export default function SehatPage() {
           >
             <AppIcon name="sparkles" size={15} />
           </button>
-
-          {/* Sound & Haptics Toggle */}
-          <SoundToggle size="sm" />
-
-          {/* Language Selector */}
-          <LanguageSelector variant="icon" />
 
           {/* Listen Track Button */}
           <ListenButton track={pageSpeechTrack} size="sm" />

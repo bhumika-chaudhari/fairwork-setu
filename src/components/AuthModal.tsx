@@ -17,10 +17,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     isSupabaseConfigured,
     loginWithPhone,
     verifyPhoneOtp,
+    sendEmailOtp,
+    verifyEmailOtp,
     loginWithEmail,
     signupWithEmail,
     sendMagicLink,
-    continueAsGuest,
   } = useProfile();
 
   const [activeTab, setActiveTab] = useState<'phone' | 'email'>('phone');
@@ -32,7 +33,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [resendTimer, setResendTimer] = useState(0);
 
   // Email states
+  const [emailAuthMode, setEmailAuthMode] = useState<'otp' | 'password'>('otp');
   const [email, setEmail] = useState('');
+  const [emailOtpToken, setEmailOtpToken] = useState('');
+  const [emailStep, setEmailStep] = useState<'input_email' | 'input_otp'>('input_email');
+  const [emailResendTimer, setEmailResendTimer] = useState(0);
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -43,13 +48,21 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Countdown timer for OTP resend
+  // Countdown timer for Phone OTP resend
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer((prev) => prev - 1), 1000);
       return () => clearTimeout(timer);
     }
   }, [resendTimer]);
+
+  // Countdown timer for Email OTP resend
+  useEffect(() => {
+    if (emailResendTimer > 0) {
+      const timer = setTimeout(() => setEmailResendTimer((prev) => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailResendTimer]);
 
   // Reset modal state on open
   useEffect(() => {
@@ -58,7 +71,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       setSuccessMsg(null);
       setLoading(false);
       setPhoneStep('input_phone');
+      setEmailStep('input_email');
       setOtpToken('');
+      setEmailOtpToken('');
     }
   }, [isOpen]);
 
@@ -71,33 +86,32 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     const clean = phoneNumber.replace(/[\s-]/g, '');
     if (clean.length < 10) {
-      setErrorMsg(t('auth.validPhoneRequired', 'कृपया 10 अंकों का मान्य मोबाइल नंबर दर्ज करें (Please enter a valid 10-digit mobile number)'));
+      setErrorMsg(t('auth.validPhoneRequired', 'Please enter a valid 10-digit mobile number'));
+      return;
+    }
+
+    if (!isSupabaseConfigured) {
+      setErrorMsg(
+        t(
+          'auth.serviceNotConfigured',
+          'Authentication service is not configured. Please configure Supabase environment variables.'
+        )
+      );
       return;
     }
 
     setLoading(true);
     playTap();
 
-    if (!isSupabaseConfigured) {
-      // In offline / mock mode, simulate instantaneous OTP dispatch for test demo
-      setTimeout(() => {
-        setLoading(false);
-        setPhoneStep('input_otp');
-        setResendTimer(30);
-        setSuccessMsg('डेमो ओटीपी भेजा गया: 123456 (Demo OTP sent: 123456)');
-      }, 600);
-      return;
-    }
-
-    const res = await loginWithPhone(phoneNumber);
+    const res = await loginWithPhone(clean);
     setLoading(false);
 
     if (res.error) {
-      setErrorMsg(res.error.message || 'ओटीपी भेजने में असमर्थ (Failed to send OTP)');
+      setErrorMsg(res.error.message || 'Failed to send OTP. Please check your number.');
     } else {
       setPhoneStep('input_otp');
       setResendTimer(30);
-      setSuccessMsg(res.message || 'ओटीपी सफलतापूर्वक भेजा गया (OTP sent successfully)');
+      setSuccessMsg(res.message || 'OTP sent successfully to your mobile number');
     }
   };
 
@@ -106,29 +120,83 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setErrorMsg(null);
 
     if (otpToken.trim().length < 6) {
-      setErrorMsg('कृपया 6 अंकों का ओटीपी दर्ज करें (Please enter the 6-digit OTP)');
+      setErrorMsg(t('auth.enterCompleteOtp', 'Please enter the 6-digit OTP'));
+      return;
+    }
+
+    if (!isSupabaseConfigured) {
+      setErrorMsg('Authentication service is not configured.');
       return;
     }
 
     setLoading(true);
     playTap();
 
-    if (!isSupabaseConfigured) {
-      // Offline / Demo mode acceptance: accept 123456 or any 6 digits for testing
-      setTimeout(() => {
-        setLoading(false);
-        playPop();
-        onClose();
-        if (onSuccess) onSuccess();
-      }, 500);
-      return;
-    }
-
-    const res = await verifyPhoneOtp(phoneNumber, otpToken);
+    const clean = phoneNumber.replace(/[\s-]/g, '');
+    const res = await verifyPhoneOtp(clean, otpToken.trim());
     setLoading(false);
 
     if (res.error) {
-      setErrorMsg(res.error.message || 'अमान्य ओटीपी कोड (Invalid OTP code)');
+      setErrorMsg(res.error.message || 'Invalid or expired OTP code');
+    } else {
+      playPop();
+      onClose();
+      if (onSuccess) onSuccess();
+    }
+  };
+
+  const handleSendEmailOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    if (!email || !email.includes('@')) {
+      setErrorMsg(t('auth.invalidEmail', 'Please enter a valid email address'));
+      return;
+    }
+
+    if (!isSupabaseConfigured) {
+      setErrorMsg('Authentication service is not configured.');
+      return;
+    }
+
+    setLoading(true);
+    playTap();
+
+    const res = await sendEmailOtp(email.trim());
+    setLoading(false);
+
+    if (res.error) {
+      setErrorMsg(res.error.message || 'Failed to send email verification code');
+    } else {
+      setEmailStep('input_otp');
+      setEmailResendTimer(30);
+      setSuccessMsg(res.message || `Verification code sent to ${email.trim()}`);
+    }
+  };
+
+  const handleVerifyEmailOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+
+    if (emailOtpToken.trim().length < 6) {
+      setErrorMsg('Please enter the 6-digit verification code');
+      return;
+    }
+
+    if (!isSupabaseConfigured) {
+      setErrorMsg('Authentication service is not configured.');
+      return;
+    }
+
+    setLoading(true);
+    playTap();
+
+    const res = await verifyEmailOtp(email.trim(), emailOtpToken.trim());
+    setLoading(false);
+
+    if (res.error) {
+      setErrorMsg(res.error.message || 'Invalid or expired verification code');
     } else {
       playPop();
       onClose();
@@ -142,30 +210,25 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setSuccessMsg(null);
 
     if (!email || !email.includes('@')) {
-      setErrorMsg('कृपया मान्य ईमेल पता दर्ज करें (Please enter a valid email address)');
+      setErrorMsg(t('auth.invalidEmail', 'Please enter a valid email address'));
+      return;
+    }
+
+    if (!isSupabaseConfigured) {
+      setErrorMsg('Authentication service is not configured.');
       return;
     }
 
     setLoading(true);
     playTap();
 
-    if (!isSupabaseConfigured) {
-      setTimeout(() => {
-        setLoading(false);
-        playPop();
-        onClose();
-        if (onSuccess) onSuccess();
-      }, 500);
-      return;
-    }
-
     if (useMagicLink) {
-      const res = await sendMagicLink(email);
+      const res = await sendMagicLink(email.trim());
       setLoading(false);
       if (res.error) {
         setErrorMsg(res.error.message);
       } else {
-        setSuccessMsg(res.message || 'जादुई लॉगिन लिंक भेजा गया (Magic link sent)');
+        setSuccessMsg(res.message || 'Magic sign-in link sent to your email');
       }
       return;
     }
@@ -173,23 +236,23 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     if (isSignUp) {
       if (password.length < 6) {
         setLoading(false);
-        setErrorMsg('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए (Password must be at least 6 characters)');
+        setErrorMsg('Password must be at least 6 characters');
         return;
       }
-      const res = await signupWithEmail(email, password, fullName);
+      const res = await signupWithEmail(email.trim(), password, fullName);
       setLoading(false);
       if (res.error) {
         setErrorMsg(res.error.message);
       } else {
         playPop();
-        setSuccessMsg('खाता सफलतापूर्वक बनाया गया (Account created successfully)');
+        setSuccessMsg('Account created successfully');
         setTimeout(() => {
           onClose();
           if (onSuccess) onSuccess();
         }, 800);
       }
     } else {
-      const res = await loginWithEmail(email, password);
+      const res = await loginWithEmail(email.trim(), password);
       setLoading(false);
       if (res.error) {
         setErrorMsg(res.error.message);
@@ -199,13 +262,6 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         if (onSuccess) onSuccess();
       }
     }
-  };
-
-  const handleGuestContinue = () => {
-    playTap();
-    continueAsGuest();
-    onClose();
-    if (onSuccess) onSuccess();
   };
 
   return (
@@ -297,7 +353,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
               <div className="mb-4 rounded-xl border border-amber-200/80 bg-amber-50/70 p-2.5 text-[11px] text-amber-900 flex items-start gap-2">
                 <AppIcon name="info" size={15} className="text-amber-700 shrink-0 mt-0.5" />
                 <span>
-                  <strong>ऑफ़लाइन डेमो मोड सक्रिय (Local Demo Active):</strong> आप बिना लाइव क्रेडेंशियल के सीधे टेस्ट कर सकते हैं (Use test OTP: <strong>123456</strong> या Continue as Demo).
+                  <strong>Configuration Notice:</strong> Real authentication requires configured Supabase credentials. Simulated bypasses are disabled.
                 </span>
               </div>
             )}
@@ -351,45 +407,43 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
                         <label className="text-xs font-bold text-[#5A4535]">
-                          6-अंकों का ओटीपी दर्ज करें (Enter 6-digit OTP)
+                          6-अंकीय ओटीपी दर्ज करें (Enter 6-digit OTP)
                         </label>
                         <button
                           type="button"
-                          onClick={() => setPhoneStep('input_phone')}
+                          onClick={() => {
+                            setPhoneStep('input_phone');
+                            setOtpToken('');
+                          }}
                           className="text-[11px] font-bold text-[#B34A26] hover:underline"
                         >
                           बदलें (Change)
                         </button>
                       </div>
-                      <p className="text-[11px] text-[#7C6956] mb-2">
-                        +91 {phoneNumber} पर भेजा गया कोड:
-                      </p>
                       <input
                         type="text"
                         inputMode="numeric"
                         maxLength={6}
                         value={otpToken}
                         onChange={(e) => setOtpToken(e.target.value.replace(/\D/g, ''))}
-                        placeholder="• • • • • •"
-                        className="w-full tracking-widest text-center text-xl font-extrabold rounded-xl border border-[#D5C5B2] bg-white py-3 text-[#2C2117] focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20 outline-hidden"
+                        placeholder="••••••"
+                        className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-3 text-center text-xl font-bold tracking-widest text-[#2C2117] outline-hidden focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20"
                         autoFocus
                       />
                     </div>
 
-                    <div className="flex items-center justify-between text-xs">
-                      {resendTimer > 0 ? (
-                        <span className="text-[#8C7A68]">
-                          पुनः भेजें {resendTimer}s में (Resend in {resendTimer}s)
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={handleSendPhoneOtp}
-                          className="font-bold text-[#B34A26] hover:underline"
-                        >
-                          ओटीपी फिर से भेजें (Resend OTP)
-                        </button>
-                      )}
+                    <div className="flex items-center justify-between text-xs text-[#7C6956]">
+                      <span>
+                        {resendTimer > 0 ? `पुनः भेजें ${resendTimer}s में` : 'ओटीपी नहीं मिला?'}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={resendTimer > 0 || loading}
+                        onClick={handleSendPhoneOtp}
+                        className="font-bold text-[#B34A26] hover:underline disabled:opacity-50"
+                      >
+                        पुनः भेजें (Resend OTP)
+                      </button>
                     </div>
 
                     <button
@@ -398,11 +452,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                       className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#8C3415] py-3.5 text-sm font-bold text-white shadow-md hover:shadow-lg disabled:opacity-50 transition-all active:scale-[0.98]"
                     >
                       {loading ? (
-                        <span>पुष्टि की जा रही है... (Verifying...)</span>
+                        <span>सत्यापित हो रहा है... (Verifying...)</span>
                       ) : (
                         <>
-                          <AppIcon name="check" size={16} />
-                          <span>सत्यापित करें और आगे बढ़ें (Verify & Sign In)</span>
+                          <AppIcon name="shield-check" size={16} />
+                          <span>सत्यापित करें और लॉगिन करें (Verify & Login)</span>
                         </>
                       )}
                     </button>
@@ -411,131 +465,216 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
               </div>
             )}
 
-            {/* TAB 2: EMAIL & PASSWORD */}
+            {/* TAB 2: EMAIL */}
             {activeTab === 'email' && (
-              <form onSubmit={handleEmailAuth} className="space-y-3.5">
-                {isSignUp && (
-                  <div>
-                    <label className="block text-xs font-bold text-[#5A4535] mb-1">
-                      आपका पूरा नाम (Full Name)
-                    </label>
-                    <input
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Ramesh Kumar"
-                      className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2C2117] focus:border-[#B34A26] outline-hidden"
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs font-bold text-[#5A4535] mb-1">
-                    ईमेल पता (Email Address)
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com"
-                    className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2C2117] focus:border-[#B34A26] outline-hidden"
-                    autoFocus
-                  />
-                </div>
-
-                {!useMagicLink && (
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-bold text-[#5A4535]">
-                        पासवर्ड (Password)
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setUseMagicLink(true)}
-                        className="text-[11px] font-bold text-[#B34A26] hover:underline"
-                      >
-                        बिना पासवर्ड लिंक का उपयोग करें
-                      </button>
-                    </div>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-2.5 text-sm font-medium text-[#2C2117] focus:border-[#B34A26] outline-hidden"
-                    />
-                  </div>
-                )}
-
-                {useMagicLink && (
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#7C6956]">हम आपके इनबॉक्स में लॉगिन लिंक भेजेंगे</span>
-                    <button
-                      type="button"
-                      onClick={() => setUseMagicLink(false)}
-                      className="font-bold text-[#B34A26] hover:underline"
-                    >
-                      पासवर्ड का उपयोग करें
-                    </button>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading || !email}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#8C3415] py-3 text-sm font-bold text-white shadow-md hover:shadow-lg disabled:opacity-50 transition-all active:scale-[0.98]"
-                >
-                  {loading ? (
-                    <span>प्रतीक्षा करें... (Please wait...)</span>
-                  ) : useMagicLink ? (
-                    <span>जादुई लिंक भेजें (Send Magic Link)</span>
-                  ) : isSignUp ? (
-                    <span>खाता बनाएं (Create Account)</span>
-                  ) : (
-                    <span>साइन इन करें (Sign In)</span>
-                  )}
-                </button>
-
-                <div className="text-center pt-1">
+              <div>
+                <div className="flex rounded-xl bg-[#EFE6D8] p-1 mb-4 text-xs font-bold">
                   <button
                     type="button"
                     onClick={() => {
-                      playTap();
-                      setIsSignUp(!isSignUp);
+                      setEmailAuthMode('otp');
                       setErrorMsg(null);
                     }}
-                    className="text-xs font-semibold text-[#7C6956] hover:text-[#B34A26]"
+                    className={`flex-1 py-1.5 rounded-lg transition-all ${
+                      emailAuthMode === 'otp'
+                        ? 'bg-white text-[#B34A26] shadow-xs'
+                        : 'text-textMuted'
+                    }`}
                   >
-                    {isSignUp
-                      ? 'पहले से खाता है? साइन इन करें (Already have an account? Sign In)'
-                      : 'नया उपयोगकर्ता? नया खाता बनाएं (New to Setu? Sign Up)'}
+                    ईमेल ओटीपी (Email OTP)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmailAuthMode('password');
+                      setErrorMsg(null);
+                    }}
+                    className={`flex-1 py-1.5 rounded-lg transition-all ${
+                      emailAuthMode === 'password'
+                        ? 'bg-white text-[#B34A26] shadow-xs'
+                        : 'text-textMuted'
+                    }`}
+                  >
+                    पासवर्ड (Password)
                   </button>
                 </div>
-              </form>
+
+                {emailAuthMode === 'otp' ? (
+                  emailStep === 'input_email' ? (
+                    <form onSubmit={handleSendEmailOtp} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold text-[#5A4535] mb-1.5">
+                          ईमेल पता (Email Address)
+                        </label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="worker@example.com"
+                          className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-3 text-sm font-semibold text-[#2C2117] placeholder:text-[#A39281] outline-hidden focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20"
+                          autoFocus
+                          required
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={loading || !email}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#8C3415] py-3.5 text-sm font-bold text-white shadow-md hover:shadow-lg disabled:opacity-50 transition-all active:scale-[0.98]"
+                      >
+                        {loading ? 'ओटीपी भेजा जा रहा है...' : 'ओटीपी भेजें (Send Email OTP)'}
+                      </button>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleVerifyEmailOtp} className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-xs font-bold text-[#5A4535]">
+                            6-अंकीय कोड दर्ज करें (Enter 6-digit Code)
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEmailStep('input_email');
+                              setEmailOtpToken('');
+                            }}
+                            className="text-[11px] font-bold text-[#B34A26] hover:underline"
+                          >
+                            बदलें (Change)
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={emailOtpToken}
+                          onChange={(e) => setEmailOtpToken(e.target.value.replace(/\D/g, ''))}
+                          placeholder="••••••"
+                          className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-3 text-center text-xl font-bold tracking-widest text-[#2C2117] outline-hidden focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20"
+                          autoFocus
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-[#7C6956]">
+                        <span>
+                          {emailResendTimer > 0 ? `पुनः भेजें ${emailResendTimer}s में` : 'कोड नहीं मिला?'}
+                        </span>
+                        <button
+                          type="button"
+                          disabled={emailResendTimer > 0 || loading}
+                          onClick={handleSendEmailOtp}
+                          className="font-bold text-[#B34A26] hover:underline disabled:opacity-50"
+                        >
+                          पुनः भेजें (Resend Code)
+                        </button>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading || emailOtpToken.length < 6}
+                        className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#8C3415] py-3.5 text-sm font-bold text-white shadow-md hover:shadow-lg disabled:opacity-50 transition-all active:scale-[0.98]"
+                      >
+                        {loading ? 'सत्यापित हो रहा है...' : 'सत्यापित करें (Verify Code)'}
+                      </button>
+                    </form>
+                  )
+                ) : (
+                  <form onSubmit={handleEmailAuth} className="space-y-4">
+                    {isSignUp && (
+                      <div>
+                        <label className="block text-xs font-bold text-[#5A4535] mb-1.5">
+                          पूरा नाम (Full Name)
+                        </label>
+                        <input
+                          type="text"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder="आपका नाम (Your Name)"
+                          className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-3 text-sm font-semibold text-[#2C2117] placeholder:text-[#A39281] outline-hidden focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20"
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-xs font-bold text-[#5A4535] mb-1.5">
+                        ईमेल पता (Email Address)
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="worker@example.com"
+                        className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-3 text-sm font-semibold text-[#2C2117] placeholder:text-[#A39281] outline-hidden focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20"
+                        autoFocus
+                        required
+                      />
+                    </div>
+
+                    {!useMagicLink && (
+                      <div>
+                        <label className="block text-xs font-bold text-[#5A4535] mb-1.5">
+                          पासवर्ड (Password)
+                        </label>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="कम से कम 6 अक्षर (Min 6 chars)"
+                          className="w-full rounded-xl border border-[#D5C5B2] bg-white px-3.5 py-3 text-sm font-semibold text-[#2C2117] placeholder:text-[#A39281] outline-hidden focus:border-[#B34A26] focus:ring-2 focus:ring-[#B34A26]/20"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-xs">
+                      <button
+                        type="button"
+                        onClick={() => setUseMagicLink(!useMagicLink)}
+                        className="font-semibold text-[#B34A26] hover:underline"
+                      >
+                        {useMagicLink ? 'पासवर्ड से लॉगिन करें' : 'जादुई लिंक से लॉगिन करें'}
+                      </button>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading || !email || (!useMagicLink && password.length < 6)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B34A26] to-[#8C3415] py-3.5 text-sm font-bold text-white shadow-md hover:shadow-lg disabled:opacity-50 transition-all active:scale-[0.98]"
+                    >
+                      {loading ? (
+                        <span>प्रक्रिया जारी है... (Processing...)</span>
+                      ) : (
+                        <>
+                          <AppIcon name="lock-closed" size={16} />
+                          <span>
+                            {useMagicLink
+                              ? 'जादुई लिंक भेजें (Send Magic Link)'
+                              : isSignUp
+                              ? 'खाता बनाएं (Create Account)'
+                              : 'साइन इन करें (Sign In)'}
+                          </span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="text-center pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playTap();
+                          setIsSignUp(!isSignUp);
+                          setErrorMsg(null);
+                        }}
+                        className="text-xs font-semibold text-[#7C6956] hover:text-[#B34A26]"
+                      >
+                        {isSignUp
+                          ? 'पहले से खाता है? साइन इन करें (Already have an account? Sign In)'
+                          : 'नया उपयोगकर्ता? नया खाता बनाएं (New to Setu? Sign Up)'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
-
-            {/* SEPARATOR */}
-            <div className="relative my-5">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[#DECDBD]" />
-              </div>
-              <div className="relative flex justify-center text-[11px] font-bold uppercase tracking-wider text-[#9E8B7A]">
-                <span className="bg-[#FAF5EE] px-3">या / OR</span>
-              </div>
-            </div>
-
-            {/* GUEST / DEMO MODE BUTTON */}
-            <button
-              type="button"
-              onClick={handleGuestContinue}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-[#D5C5B2] bg-white py-3 text-xs font-bold text-[#5A4535] hover:bg-[#F3EBE0] hover:border-[#B34A26]/40 transition-all active:scale-[0.98]"
-            >
-              <AppIcon name="user" size={15} className="text-[#8C5E38]" />
-              <span>डेमो / गेस्ट के रूप में जारी रखें (Continue as Demo Guest)</span>
-            </button>
-            <p className="mt-1.5 text-center text-[10px] text-[#8C7A68]">
-              समीक्षा और मूल्यांकन के लिए: सभी एआई मॉडल और डेमो लेन-देन तुरंत उपलब्ध होंगे।
-            </p>
           </div>
         </motion.div>
       </div>

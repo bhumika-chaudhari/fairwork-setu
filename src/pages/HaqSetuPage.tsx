@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
 import ListenButton from '../components/ListenButton';
-import LanguageSelector from '../components/LanguageSelector';
 import AccountDeactivationWizard from '../components/haq/AccountDeactivationWizard';
 import GrievanceTracker from '../components/haq/GrievanceTracker';
 import LegalSourcesLibrary from '../components/haq/LegalSourcesLibrary';
@@ -65,9 +64,6 @@ export default function HaqSetuPage() {
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <ListenButton track={speechTrack} size="sm" />
-          <div className="md:hidden">
-            <LanguageSelector variant="icon" />
-          </div>
         </div>
       </header>
 

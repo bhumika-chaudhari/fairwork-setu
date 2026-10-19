@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,6 +27,13 @@ export default function OnboardingPage() {
   const { t, i18n } = useTranslation();
   const { profile, completeOnboarding, onboardingComplete } = useProfile();
 
+  // If already onboarded, never trap user in onboarding again
+  useEffect(() => {
+    if (onboardingComplete) {
+      navigate('/home', { replace: true });
+    }
+  }, [onboardingComplete, navigate]);
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>(
     (i18n.language as LanguageCode) || 'en'
@@ -34,17 +41,40 @@ export default function OnboardingPage() {
   const [fullName, setFullName] = useState(profile.name || '');
   const [gender, setGender] = useState<Gender | null>(profile.gender || null);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl || '');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(
+    profile.emergencyContact ? profile.emergencyContact.replace(/^\+91\s*/, '') : ''
+  );
   const [experienceYears, setExperienceYears] = useState(profile.experienceYears || 3);
   const [isListeningName, setIsListeningName] = useState(false);
-  const [workType, setWorkType] = useState<WorkerType>('driver');
-  const [cityInput, setCityInput] = useState('Pune');
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([
-    'skills.driving',
-    'skills.cleaning',
-  ]);
-  const [savingsGoal, setSavingsGoal] = useState<number>(5000);
+  const [workType, setWorkType] = useState<WorkerType | null>(profile.workType || null);
+  const [cityInput, setCityInput] = useState(
+    profile.cityKey ? profile.cityKey.replace(/^cities\./i, '') : ''
+  );
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(
+    profile.skillKeys && profile.skillKeys.length > 0 ? profile.skillKeys : []
+  );
+  const [savingsGoal, setSavingsGoal] = useState<number>(profile.savingsGoal || 5000);
   const [submitted, setSubmitted] = useState(false);
+  const [errorText, setErrorText] = useState<string | null>(null);
+
+  // Sync if profile resolves asynchronously after mount
+  useEffect(() => {
+    if (profile.name && !fullName) setFullName(profile.name);
+    if (profile.gender && !gender) setGender(profile.gender);
+    if (profile.avatarUrl && !avatarUrl) setAvatarUrl(profile.avatarUrl);
+    if (profile.workType && !workType) setWorkType(profile.workType);
+    if (profile.cityKey && !cityInput) {
+      setCityInput(profile.cityKey.replace(/^cities\./i, ''));
+    }
+    if (profile.skillKeys && profile.skillKeys.length > 0 && selectedSkills.length === 0) {
+      setSelectedSkills(profile.skillKeys);
+    }
+    if (profile.savingsGoal && profile.savingsGoal !== 5000) setSavingsGoal(profile.savingsGoal);
+    if (profile.experienceYears) setExperienceYears(profile.experienceYears);
+    if (profile.emergencyContact && !phoneNumber) {
+      setPhoneNumber(profile.emergencyContact.replace(/^\+91\s*/, ''));
+    }
+  }, [profile]);
 
   const handleLanguageChange = async (code: LanguageCode) => {
     setSelectedLanguage(code);
@@ -87,6 +117,7 @@ export default function OnboardingPage() {
         const transcript = event.results?.[0]?.[0]?.transcript;
         if (transcript) {
           setFullName(transcript.trim());
+          setErrorText(null);
         }
         setIsListeningName(false);
       };
@@ -104,10 +135,46 @@ export default function OnboardingPage() {
     );
   };
 
+  const handleStep1Next = () => {
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setErrorText(t('auth.enterFullName', 'Please enter your full name (at least 2 letters)'));
+      return;
+    }
+    setErrorText(null);
+    setStep(2);
+  };
+
+  const handleStep2Next = () => {
+    if (!workType) {
+      setErrorText(t('onboarding.selectWorkerTypeAlert', 'Please select your profession / work type'));
+      return;
+    }
+    setErrorText(null);
+    setStep(3);
+  };
+
   const handleFinish = async () => {
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setErrorText(t('auth.enterFullName', 'Please enter your full name'));
+      setStep(1);
+      return;
+    }
+    if (!workType) {
+      setErrorText(t('onboarding.selectWorkerTypeAlert', 'Please select your profession'));
+      setStep(2);
+      return;
+    }
+
+    setErrorText(null);
     setSubmitted(true);
+    const resolvedCity = cityInput.trim()
+      ? (cityInput.trim().toLowerCase().startsWith('cities.')
+          ? cityInput.trim().toLowerCase()
+          : `cities.${cityInput.trim().toLowerCase()}`)
+      : 'cities.pune';
+
     await completeOnboarding({
-      name: fullName.trim() || profile.name || 'Setu Worker',
+      name: fullName.trim(),
       gender,
       avatarUrl,
       emergencyContact: phoneNumber.trim()
@@ -115,7 +182,7 @@ export default function OnboardingPage() {
         : (profile.emergencyContact || ''),
       experienceYears,
       workType,
-      cityKey: cityInput ? `cities.${cityInput.toLowerCase()}` : 'cities.pune',
+      cityKey: resolvedCity,
       skillKeys: selectedSkills,
       savingsGoal,
       weeklySaveGoal: Math.round(savingsGoal / 12),
@@ -179,6 +246,21 @@ export default function OnboardingPage() {
               transition={{ duration: 0.28 }}
               className="space-y-6"
             >
+              {/* Validation Alert */}
+              <AnimatePresence>
+                {errorText && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    className="rounded-2xl bg-danger/10 border border-danger/30 p-3.5 flex items-center gap-2.5 text-danger text-xs font-bold shadow-xs"
+                  >
+                    <AppIcon name="alert-circle" size={18} className="shrink-0" />
+                    <span>{errorText}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* ========================================================================= */}
               {/* STEP 1: AAPKA PARICHAY (Language, Name, Photo, Phone) */}
               {/* ========================================================================= */}
@@ -358,16 +440,10 @@ export default function OnboardingPage() {
 
                   {/* Step 1 Actions */}
                   <div className="flex items-center justify-between gap-4 pt-2 pb-6">
+                    <div />
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
-                      className="text-xs font-bold text-textMuted hover:text-warmCocoa"
-                    >
-                      {t('common.skip')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
+                      onClick={handleStep1Next}
                       className="flex h-12 items-center gap-2 rounded-full emerald-gradient-btn px-8 text-sm font-bold text-white shadow-warm hover:brightness-105 active:scale-95 transition-all"
                     >
                       <span>{t('common.next')}</span>
@@ -510,7 +586,7 @@ export default function OnboardingPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStep(3)}
+                      onClick={handleStep2Next}
                       className="flex h-12 items-center gap-2 rounded-full emerald-gradient-btn px-8 text-sm font-bold text-white shadow-warm hover:brightness-105 active:scale-95 transition-all"
                     >
                       <span>{t('common.next')}</span>
@@ -631,9 +707,9 @@ export default function OnboardingPage() {
                         </span>
                       </div>
                       <p className="text-xs text-terracotta font-medium truncate mt-0.5">
-                        {workerTypeOptions.find((o) => o.type === workType)?.labelKey
+                        {workType && workerTypeOptions.find((o) => o.type === workType)?.labelKey
                           ? t(workerTypeOptions.find((o) => o.type === workType)!.labelKey)
-                          : 'Driver'}{' '}
+                          : t('common.worker', 'Worker')}{' '}
                         • {cityInput || 'Pune'} • {experienceYears} Years Exp
                       </p>
                     </div>

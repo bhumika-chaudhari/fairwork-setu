@@ -79,6 +79,8 @@ class Profile(Base):
     privacy_mask_earnings = Column(Boolean, default=False)
     auto_readout = Column(Boolean, default=False)
     expense_alerts = Column(Boolean, default=True)
+    skills = Column(Text, nullable=True, default="")
+    custom_skills = Column(Text, nullable=True, default="")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -96,25 +98,45 @@ class Profile(Base):
         return {
             "id": self.id,
             "phoneNumber": self.phone_number,
+            "phone_number": self.phone_number,
             "email": self.email,
             "name": self.full_name,
+            "full_name": self.full_name,
             "avatarUrl": self.avatar_url or "",
+            "avatar_url": self.avatar_url or "",
             "gender": self.gender,
             "cityKey": self.city_key,
+            "city_key": self.city_key,
             "workType": self.work_type,
+            "work_type": self.work_type,
+            "skills": self.skills or "",
+            "customSkills": self.custom_skills or "",
+            "custom_skills": self.custom_skills or "",
             "experienceYears": self.experience_years,
+            "experience_years": self.experience_years,
             "availability": self.availability,
             "payMin": self.pay_min,
+            "pay_min": self.pay_min,
             "payMax": self.pay_max,
+            "pay_max": self.pay_max,
             "emergencyContact": self.emergency_contact or "",
+            "emergency_contact": self.emergency_contact or "",
             "savingsGoal": self.savings_goal,
+            "savings_goal": self.savings_goal,
             "weeklySaveGoal": self.weekly_save_goal,
+            "weekly_save_goal": self.weekly_save_goal,
             "preferredLanguage": self.preferred_language,
+            "preferred_language": self.preferred_language,
             "speechRate": self.speech_rate,
+            "speech_rate": self.speech_rate,
             "voiceSilenceTimeout": self.voice_silence_timeout,
+            "voice_silence_timeout": self.voice_silence_timeout,
             "privacyMaskEarnings": self.privacy_mask_earnings,
+            "privacy_mask_earnings": self.privacy_mask_earnings,
             "autoReadout": self.auto_readout,
+            "auto_readout": self.auto_readout,
             "expenseAlerts": self.expense_alerts,
+            "expense_alerts": self.expense_alerts,
             "createdAt": self.created_at.isoformat() if self.created_at else None,
             "updatedAt": self.updated_at.isoformat() if self.updated_at else None,
         }
