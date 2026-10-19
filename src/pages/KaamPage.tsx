@@ -25,6 +25,7 @@ import ConversationModal from '../components/marketplace/ConversationModal';
 import ListenButton from '../components/ListenButton';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
 import { matchJobsWithWorker, type Model6JobMatch } from '../services/aiModelsClient';
+import { calculateJobMatch } from '../services/recommendationEngine';
 
 type MainTab = 'jobs' | 'requests' | 'profile';
 type JobSubTab = 'browse' | 'applications';
@@ -275,75 +276,37 @@ export default function KaamPage() {
     [aiJobMatches]
   );
 
-  // Compute full match data (score, matching skills, explanation) for each job
+  // Compute full match data (score, matching skills, explanation) for each job using profile skills & experience
   const getJobMatchData = useCallback(
     (job: JobListing) => {
-      const match = getModel6MatchForJob(job);
-      if (match) {
+      // 1. Core deterministic match from active profile (skills, experience years, trade, location)
+      const baseMatch = calculateJobMatch(profile, job);
+
+      // 2. If Model 6 AI matching was explicitly requested and returned, blend respectfully
+      const model6 = getModel6MatchForJob(job);
+      if (model6 && isAiRanked) {
+        const blendedScore = Math.round(baseMatch.matchScore * 0.7 + model6.match_percentage * 0.3);
         return {
-          score: Math.round(match.match_percentage),
-          matchingSkills: match.matching_skills || [],
-          explanation:
-            match.match_explanation ||
-            'Strong trade alignment: Aligns with your verified skills and experience.',
-          model: match.match_model || 'Model 6 (TF-IDF Semantic Matcher)',
+          score: Math.max(12, Math.min(98, blendedScore)),
+          matchingSkills:
+            baseMatch.matchingSkills.length > 0
+              ? baseMatch.matchingSkills
+              : model6.matching_skills || [],
+          explanation: baseMatch.explanation,
+          model: 'Model 6 (TF-IDF) + Profile Engine',
+          isAlternative: baseMatch.isAlternative,
         };
       }
 
-      // Real-time fallback based on worker skills and role
-      const workerSkillTokens = [
-        ...(profile.skillKeys || []).map((k) =>
-          k.replace('skills.', '').replace('_', ' ').toLowerCase()
-        ),
-        ...(profile.customSkills || []).map((s) => s.toLowerCase()),
-        (profile.workType || '').toLowerCase(),
-      ];
-
-      const matchedSkills: string[] = [];
-      job.skills.forEach((js) => {
-        const lowJs = js.toLowerCase();
-        if (
-          workerSkillTokens.some(
-            (ws) => ws && (lowJs.includes(ws) || ws.includes(lowJs))
-          )
-        ) {
-          matchedSkills.push(js);
-        }
-      });
-
-      const workerRole = (profile.workType || '').toLowerCase();
-      const jobCat = (job.category || '').toLowerCase();
-      const isDirectTrade = workerRole.includes(jobCat) || jobCat.includes(workerRole);
-
-      let score = 32;
-      let explanation =
-        'New domain opportunity: Requires distinct trade skills with on-the-job training.';
-
-      if (isDirectTrade && matchedSkills.length > 0) {
-        score = Math.min(96, 78 + matchedSkills.length * 6);
-        explanation = `Strong trade alignment: Directly matches your experience in ${matchedSkills.join(
-          ', '
-        )}.`;
-      } else if (matchedSkills.length > 0) {
-        score = Math.min(74, 52 + matchedSkills.length * 8);
-        explanation = `Transferable skill fit: Your skills in ${matchedSkills.join(
-          ', '
-        )} apply to this role.`;
-      } else if (isDirectTrade) {
-        score = 68;
-        explanation = `Trade fit: Aligns with your primary trade as ${
-          profile.workType || 'specialist'
-        }.`;
-      }
-
       return {
-        score,
-        matchingSkills: matchedSkills,
-        explanation,
-        model: 'Model 6 (Semantic Baseline)',
+        score: baseMatch.matchScore,
+        matchingSkills: baseMatch.matchingSkills,
+        explanation: baseMatch.explanation,
+        model: baseMatch.model,
+        isAlternative: baseMatch.isAlternative,
       };
     },
-    [getModel6MatchForJob, profile]
+    [getModel6MatchForJob, isAiRanked, profile]
   );
 
   // Filtered & Sorted Jobs
@@ -845,9 +808,32 @@ export default function KaamPage() {
                   {onlyHighMatches && ' (filtered to high match ≥65%)'}
                 </span>
                 <span className="hidden sm:inline">
-                  ⚡ Ranked with Model 6 Semantic Similarity
+                  ⚡ Ranked with Skill & Experience Engine
                 </span>
               </div>
+
+              {/* Empty Profile Invitation Banner */}
+              {profile.skillKeys.length === 0 && profile.customSkills.length === 0 && (
+                <div className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-[#B34A26] flex items-center justify-center shrink-0 mt-0.5">
+                      <AppIcon name="sparkles" size={16} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-amber-950">Add Skills for Personalized Job Matching</h4>
+                      <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                        You haven't selected skills yet. We are showing popular entry-level opportunities. Add your trade skills to see exact match percentages and tailored openings.
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href="/profile"
+                    className="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#B34A26] hover:bg-[#7C2D16] text-white text-xs font-bold transition-all shadow-xs"
+                  >
+                    Add Skills
+                  </a>
+                </div>
+              )}
 
               {/* Loading Skeletons */}
               {(jobsLoading || isMatching) && (

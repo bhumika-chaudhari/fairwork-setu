@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppIcon } from '../lib/icons';
 import { useTransactions } from '../hooks/TransactionContext';
@@ -76,6 +76,7 @@ export default function TransactionModal({
   const [dateStr, setDateStr] = useState('');
   const [workRef, setWorkRef] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   // Model 1 & 5 Integration States
@@ -336,6 +337,8 @@ export default function TransactionModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingRef.current || isSubmitting) return;
+
     setValidationError(null);
 
     const normalizedAmt = normalizeIndicDigits(amount.trim());
@@ -345,6 +348,7 @@ export default function TransactionModal({
       return;
     }
 
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     try {
       // Parse ISO timestamp preserving local datetime chosen by user
@@ -393,6 +397,7 @@ export default function TransactionModal({
       setValidationError(err.message || 'Failed to save transaction');
     } finally {
       setIsSubmitting(false);
+      isSubmittingRef.current = false;
     }
   };
 

@@ -263,7 +263,7 @@ export default function ProfilePage() {
 
     const cleanedContact = emergencyContact.trim().replace(/\D/g, '');
     if (emergencyContact.trim() && cleanedContact.length < 10) {
-      setValidationError(t('profileScreen.validationContact') || 'Please enter a valid 10-digit phone number.');
+      setValidationError(t('auth.invalidEmergencyContact') || t('profileScreen.validationContact') || 'Please enter a valid phone number or leave it empty.');
       setActiveTab('personal');
       return;
     }
@@ -828,9 +828,14 @@ export default function ProfilePage() {
 
               {/* Emergency Contact */}
               <div>
-                <label className="block text-xs font-bold text-warmCocoa mb-1">
-                  {t('profileScreen.emergencyContact')} *
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-bold text-warmCocoa">
+                    {t('auth.emergencyContactNumber', 'Emergency Contact Number (optional)')}
+                  </label>
+                  <span className="text-[11px] font-normal text-textMuted">
+                    ({t('gender.optionalBadge', 'Optional')})
+                  </span>
+                </div>
                 <input
                   type="tel"
                   value={emergencyContact}
@@ -839,7 +844,7 @@ export default function ProfilePage() {
                   className="w-full rounded-2xl border border-softBorder bg-warmCream/40 backdrop-blur-md px-3.5 py-2.5 text-sm font-medium text-textPrimary shadow-inner focus:ring-2 focus:ring-terracotta/30 focus:outline-none"
                 />
                 <p className="text-[11px] text-textMuted mt-1">
-                  {t('profileScreen.emergencyHint', '10-digit phone number for urgent job and health alerts')}
+                  {t('auth.emergencyContactHint', 'Someone we can contact if you need urgent help.')}
                 </p>
               </div>
             </Card>

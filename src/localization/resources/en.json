@@ -633,7 +633,7 @@
     "emailOption": "Email OTP",
     "emailOtpSentTo": "We sent a 6-digit verification code to {{email}}",
     "emailVerificationCode": "Email Verification Code",
-    "noAccountFound": "No account found with this email. Please sign up to create a new profile.",
+    "noAccountFound": "We couldn't find an account with this email. Please create an account first.",
     "accountAlreadyExists": "An account already exists with this email. Please log in instead.",
     "invalidOrExpiredOtp": "Verification code is incorrect or has expired. Please check or request a new code.",
     "rateLimitExceeded": "Too many requests. Please wait a moment before trying again.",
@@ -681,7 +681,12 @@
     "passwordMode": "Password",
     "emailOtpHint": "We will send a 6-digit verification code to your email",
     "verifyAndContinue": "Verify & Continue",
-    "selectWorkerTypeAlert": "Please select your profession / work type"
+    "selectWorkerTypeAlert": "Please select your profession / work type",
+    "emergencyContactNumber": "Emergency Contact Number (optional)",
+    "emergencyContactHint": "Someone we can contact if you need urgent help.",
+    "emergencyContactPlaceholder": "10-digit phone number",
+    "invalidEmergencyContact": "Please enter a valid 10-digit emergency contact phone number or leave it blank.",
+    "skillsSelectedCount": "{{count}} selected"
   }
 }
 

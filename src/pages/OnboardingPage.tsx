@@ -41,8 +41,9 @@ export default function OnboardingPage() {
   const [fullName, setFullName] = useState(profile.name || '');
   const [gender, setGender] = useState<Gender | null>(profile.gender || null);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl || '');
-  const [phoneNumber, setPhoneNumber] = useState(
-    profile.emergencyContact ? profile.emergencyContact.replace(/^\+91\s*/, '') : ''
+  const [emergencyCountryCode, setEmergencyCountryCode] = useState('+91');
+  const [emergencyContactNumber, setEmergencyContactNumber] = useState(
+    profile.emergencyContact ? profile.emergencyContact.replace(/^(\+\d{1,4})\s*/, '') : ''
   );
   const [experienceYears, setExperienceYears] = useState(profile.experienceYears || 3);
   const [isListeningName, setIsListeningName] = useState(false);
@@ -71,8 +72,14 @@ export default function OnboardingPage() {
     }
     if (profile.savingsGoal && profile.savingsGoal !== 5000) setSavingsGoal(profile.savingsGoal);
     if (profile.experienceYears) setExperienceYears(profile.experienceYears);
-    if (profile.emergencyContact && !phoneNumber) {
-      setPhoneNumber(profile.emergencyContact.replace(/^\+91\s*/, ''));
+    if (profile.emergencyContact && !emergencyContactNumber) {
+      const match = profile.emergencyContact.match(/^(\+\d{1,4})\s*(.*)$/);
+      if (match) {
+        setEmergencyCountryCode(match[1]);
+        setEmergencyContactNumber(match[2].replace(/\D/g, ''));
+      } else {
+        setEmergencyContactNumber(profile.emergencyContact.replace(/\D/g, ''));
+      }
     }
   }, [profile]);
 
@@ -140,6 +147,21 @@ export default function OnboardingPage() {
       setErrorText(t('auth.enterFullName', 'Please enter your full name (at least 2 letters)'));
       return;
     }
+    const cleanEmergency = emergencyContactNumber.replace(/\D/g, '');
+    if (cleanEmergency) {
+      if (emergencyCountryCode === '+91' && cleanEmergency.length !== 10) {
+        setErrorText(
+          t('auth.invalidEmergencyContact', 'Please enter a valid 10-digit Indian phone number or leave it empty')
+        );
+        return;
+      }
+      if (emergencyCountryCode !== '+91' && (cleanEmergency.length < 7 || cleanEmergency.length > 14)) {
+        setErrorText(
+          t('auth.invalidEmergencyContact', 'Please enter a valid phone number or leave it empty')
+        );
+        return;
+      }
+    }
     setErrorText(null);
     setStep(2);
   };
@@ -159,6 +181,23 @@ export default function OnboardingPage() {
       setStep(1);
       return;
     }
+    const cleanEmergency = emergencyContactNumber.replace(/\D/g, '');
+    if (cleanEmergency) {
+      if (emergencyCountryCode === '+91' && cleanEmergency.length !== 10) {
+        setErrorText(
+          t('auth.invalidEmergencyContact', 'Please enter a valid 10-digit Indian phone number or leave it empty')
+        );
+        setStep(1);
+        return;
+      }
+      if (emergencyCountryCode !== '+91' && (cleanEmergency.length < 7 || cleanEmergency.length > 14)) {
+        setErrorText(
+          t('auth.invalidEmergencyContact', 'Please enter a valid phone number or leave it empty')
+        );
+        setStep(1);
+        return;
+      }
+    }
     if (!workType) {
       setErrorText(t('onboarding.selectWorkerTypeAlert', 'Please select your profession'));
       setStep(2);
@@ -173,13 +212,15 @@ export default function OnboardingPage() {
           : `cities.${cityInput.trim().toLowerCase()}`)
       : 'cities.pune';
 
+    const finalEmergency = cleanEmergency
+      ? `${emergencyCountryCode} ${cleanEmergency}`
+      : (profile.emergencyContact || '');
+
     await completeOnboarding({
       name: fullName.trim(),
       gender,
       avatarUrl,
-      emergencyContact: phoneNumber.trim()
-        ? `+91 ${phoneNumber.replace(/^\+91\s*/, '')}`
-        : (profile.emergencyContact || ''),
+      emergencyContact: finalEmergency,
       experienceYears,
       workType,
       cityKey: resolvedCity,
@@ -378,24 +419,60 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Mobile Number */}
+                    {/* Emergency Contact Number (Optional) */}
                     <div>
-                      <label className="block text-xs font-bold text-warmCocoa mb-1.5">
-                        {t('profileScreen.emergencyContact')}
-                      </label>
-                      <div className="relative flex">
-                        <span className="inline-flex items-center rounded-l-2xl border border-r-0 border-softBorder bg-cleanWhite/80 backdrop-blur-md px-3 text-xs font-bold text-warmCocoa shadow-inner">
-                          +91
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-bold text-warmCocoa">
+                          {t('auth.emergencyContactNumber', 'Emergency Contact Number (optional)')}
+                        </label>
+                        <span className="text-[11px] font-normal text-textMuted">
+                          ({t('gender.optionalBadge', 'Optional')})
                         </span>
+                      </div>
+                      <p className="text-[11px] text-textMuted mb-2">
+                        {t('auth.emergencyContactHint', 'Someone we can contact if you need urgent help.')}
+                      </p>
+                      <div className="relative flex items-center rounded-2xl border border-softBorder bg-cleanWhite/90 backdrop-blur-md shadow-inner focus-within:ring-2 focus-within:ring-terracotta/30 focus-within:border-terracotta transition-all">
+                        <div className="flex items-center gap-1 pl-3 pr-2 py-2.5 border-r border-softBorder text-xs font-bold text-warmCocoa select-none bg-cleanWhite/70 rounded-l-2xl">
+                          <select
+                            value={emergencyCountryCode}
+                            onChange={(e) => setEmergencyCountryCode(e.target.value)}
+                            className="bg-transparent text-xs font-bold text-warmCocoa focus:outline-none cursor-pointer"
+                            aria-label="Country code"
+                          >
+                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                            <option value="+971">🇦🇪 +971</option>
+                            <option value="+966">🇸🇦 +966</option>
+                            <option value="+977">🇳🇵 +977</option>
+                            <option value="+880">🇧🇩 +880</option>
+                            <option value="+65">🇸🇬 +65</option>
+                          </select>
+                        </div>
                         <input
                           type="tel"
                           inputMode="numeric"
-                          maxLength={10}
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                          placeholder="98765 43210"
-                          className="w-full rounded-r-2xl border border-softBorder bg-cleanWhite/90 backdrop-blur-md px-3 py-2.5 text-sm font-medium text-textPrimary shadow-inner placeholder:text-textMuted focus:ring-2 focus:ring-terracotta/30 focus:border-terracotta focus:outline-none"
+                          maxLength={12}
+                          value={emergencyContactNumber}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            setEmergencyContactNumber(val);
+                            setErrorText(null);
+                          }}
+                          placeholder={t('auth.emergencyContactPlaceholder', '10-digit phone number')}
+                          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-textPrimary placeholder:text-textMuted focus:outline-none"
                         />
+                        {emergencyContactNumber && (
+                          <button
+                            type="button"
+                            onClick={() => setEmergencyContactNumber('')}
+                            className="mr-3 text-textMuted hover:text-danger text-xs font-bold"
+                            title="Clear"
+                          >
+                            ✕
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -612,13 +689,29 @@ export default function OnboardingPage() {
 
                   {/* Multi-select Skills */}
                   <div>
-                    <label className="block text-sm font-bold text-warmCocoa mb-1">
-                      {t('onboarding.skillsTitle')}
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-bold text-warmCocoa">
+                        {t('onboarding.skillsTitle')}
+                      </label>
+                      {selectedSkills.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-terracotta bg-warmAmber/20 px-2 py-0.5 rounded-full border border-warmAmber/30">
+                            {t('auth.skillsSelectedCount', '{{count}} selected', { count: selectedSkills.length })}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedSkills([])}
+                            className="text-xs font-bold text-textMuted hover:text-danger"
+                          >
+                            {t('common.clear', 'Clear')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     <p className="text-xs text-textSecondary mb-2.5">
                       {t('onboarding.skillsHint')}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-1.5 border border-softBorder/60 rounded-2xl bg-cleanWhite/40 shadow-inner">
                       {SUGGESTED_SKILL_KEYS.map((key) => {
                         const isSelected = selectedSkills.includes(key);
                         return (
@@ -626,8 +719,9 @@ export default function OnboardingPage() {
                             key={key}
                             label={t(key)}
                             selected={isSelected}
-                            showToggleIcon
+                            showToggleIcon={true}
                             onPress={() => toggleSkill(key)}
+                            onClick={() => toggleSkill(key)}
                           />
                         );
                       })}

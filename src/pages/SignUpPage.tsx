@@ -32,8 +32,6 @@ export default function SignUpPage() {
     isAuthenticated,
     onboardingComplete,
     isSupabaseConfigured,
-    loginWithPhone,
-    verifyPhoneOtp,
     sendEmailSignupOtp,
     verifyEmailOtp,
     completeOnboarding,
@@ -48,13 +46,7 @@ export default function SignUpPage() {
 
   const [step, setStep] = useState<1 | 2 | 3>(user ? 2 : 1);
 
-  // Step 1: Contact verification (Email OTP as default primary)
-  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
-  const [resendTimer, setResendTimer] = useState(0);
-
+  // Step 1: Email Verification
   const [email, setEmail] = useState('');
   const [emailOtpSent, setEmailOtpSent] = useState(false);
   const [emailOtpCode, setEmailOtpCode] = useState('');
@@ -68,6 +60,10 @@ export default function SignUpPage() {
     (i18n.language as LanguageCode) || 'en'
   );
   const [isListeningName, setIsListeningName] = useState(false);
+
+  // Step 2: Emergency Contact (Optional)
+  const [emergencyCountryCode, setEmergencyCountryCode] = useState('+91');
+  const [emergencyContactNumber, setEmergencyContactNumber] = useState('');
 
   // Step 3: Work, Location, Skills, Goals
   const [workType, setWorkType] = useState<WorkerType | null>(profile.workType || null);
@@ -85,15 +81,6 @@ export default function SignUpPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
-
-  // Resend countdown timer for phone
-  useEffect(() => {
-    if (resendTimer <= 0) return;
-    const interval = setInterval(() => {
-      setResendTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [resendTimer]);
 
   // Resend countdown timer for email
   useEffect(() => {
@@ -118,71 +105,21 @@ export default function SignUpPage() {
     }
     if (profile.savingsGoal && profile.savingsGoal !== 5000) setSavingsGoal(profile.savingsGoal);
     if (profile.experienceYears) setExperienceYears(profile.experienceYears);
+    if (profile.emergencyContact && !emergencyContactNumber) {
+      const match = profile.emergencyContact.match(/^(\+\d{1,4})\s*(.*)$/);
+      if (match) {
+        setEmergencyCountryCode(match[1]);
+        setEmergencyContactNumber(match[2].replace(/\D/g, ''));
+      } else {
+        setEmergencyContactNumber(profile.emergencyContact.replace(/\D/g, ''));
+      }
+    }
   }, [profile]);
 
   // Handle immediate language switch in Step 2 or via selectors
   const handleLanguageSelect = async (code: LanguageCode) => {
     setPreferredLang(code);
     await changeAppLanguage(code);
-  };
-
-  // Step 1: Phone Send OTP
-  const handlePhoneSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    const clean = phoneNumber.replace(/\D/g, '');
-    if (clean.length < 10) {
-      setErrorMessage(t('auth.invalidPhone', 'Please enter a valid 10-digit mobile number.'));
-      return;
-    }
-
-    setLoading(true);
-    playTap();
-    try {
-      const res = await loginWithPhone(clean);
-      if (res.error) {
-        setErrorMessage(res.error.message || 'Failed to send verification SMS.');
-      } else {
-        setOtpSent(true);
-        setResendTimer(30);
-        setSuccessMessage(res.message || `Verification code sent to +91 ${clean.slice(-10)}`);
-      }
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to send OTP.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Step 1: Phone Verify OTP
-  const handlePhoneVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    if (otpCode.trim().length < 6) {
-      setErrorMessage(t('auth.invalidOtp', 'Please enter the complete 6-digit OTP code.'));
-      return;
-    }
-
-    setLoading(true);
-    playTap();
-    try {
-      const clean = phoneNumber.replace(/\D/g, '');
-      const res = await verifyPhoneOtp(clean, otpCode.trim());
-      if (res.error) {
-        setErrorMessage(res.error.message || 'Incorrect OTP code. Please retry.');
-      } else {
-        playPop();
-        setStep(2);
-      }
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Verification failed.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   // Step 1: Email Send OTP for Signup
@@ -192,13 +129,13 @@ export default function SignUpPage() {
     setSuccessMessage(null);
 
     const cleanName = fullName.trim();
-    if (!cleanName) {
-      setErrorMessage(t('auth.nameRequired', 'Please enter your full name.'));
+    if (!cleanName || cleanName.length < 2) {
+      setErrorMessage(t('auth.enterFullName', 'Please enter your full name (at least 2 letters).'));
       return;
     }
 
     const clean = email.trim().toLowerCase();
-    if (!clean || !clean.includes('@')) {
+    if (!clean || !clean.includes('@') || !clean.includes('.')) {
       setErrorMessage(t('auth.invalidEmail', 'Please enter a valid email address.'));
       return;
     }
@@ -227,7 +164,8 @@ export default function SignUpPage() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    if (emailOtpCode.trim().length < 6) {
+    const cleanCode = emailOtpCode.trim();
+    if (cleanCode.length < 6) {
       setErrorMessage(t('auth.invalidOtp', 'Please enter the complete 6-digit OTP code.'));
       return;
     }
@@ -236,15 +174,20 @@ export default function SignUpPage() {
     playTap();
     try {
       const clean = email.trim().toLowerCase();
-      const res = await verifyEmailOtp(clean, emailOtpCode.trim());
+      const res = await verifyEmailOtp(clean, cleanCode);
       if (res.error) {
-        setErrorMessage(res.error.message || 'Incorrect verification code. Please retry.');
+        setErrorMessage(
+          t(
+            'auth.invalidOrExpiredOtp',
+            'Verification code is incorrect or has expired. Please check or request a new code.'
+          )
+        );
       } else {
         playPop();
         setStep(2);
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Verification failed.');
+      setErrorMessage(err.message || 'Verification failed. Please retry.');
     } finally {
       setLoading(false);
     }
@@ -310,6 +253,29 @@ export default function SignUpPage() {
       setErrorMessage(t('auth.enterFullName', 'Please enter your full name (at least 2 letters).'));
       return;
     }
+
+    const cleanEmergency = emergencyContactNumber.trim().replace(/\D/g, '');
+    if (cleanEmergency) {
+      if (emergencyCountryCode === '+91' && cleanEmergency.length !== 10) {
+        setErrorMessage(
+          t(
+            'auth.invalidEmergencyContact',
+            'Please enter a valid 10-digit emergency contact phone number or leave it blank.'
+          )
+        );
+        return;
+      }
+      if (cleanEmergency.length < 7 || cleanEmergency.length > 14) {
+        setErrorMessage(
+          t(
+            'auth.invalidEmergencyContact',
+            'Please enter a valid emergency contact phone number or leave it blank.'
+          )
+        );
+        return;
+      }
+    }
+
     setErrorMessage(null);
     playTap();
     setStep(3);
@@ -338,13 +304,35 @@ export default function SignUpPage() {
       return;
     }
 
+    const cleanEmergency = emergencyContactNumber.trim().replace(/\D/g, '');
+    if (cleanEmergency) {
+      if (emergencyCountryCode === '+91' && cleanEmergency.length !== 10) {
+        setErrorMessage(
+          t(
+            'auth.invalidEmergencyContact',
+            'Please enter a valid 10-digit emergency contact phone number or leave it blank.'
+          )
+        );
+        setStep(2);
+        return;
+      }
+      if (cleanEmergency.length < 7 || cleanEmergency.length > 14) {
+        setErrorMessage(
+          t(
+            'auth.invalidEmergencyContact',
+            'Please enter a valid emergency contact phone number or leave it blank.'
+          )
+        );
+        setStep(2);
+        return;
+      }
+    }
+
     setLoading(true);
     playPop();
 
     try {
-      const contactStr = phoneNumber.trim()
-        ? `+91 ${phoneNumber.replace(/\D/g, '').slice(-10)}`
-        : email.trim();
+      const finalEmergency = cleanEmergency ? `${emergencyCountryCode} ${cleanEmergency}` : '';
 
       await completeOnboarding({
         name: fullName.trim(),
@@ -357,7 +345,7 @@ export default function SignUpPage() {
         savingsGoal,
         weeklySaveGoal: Math.round(savingsGoal / 12),
         preferredLanguage: preferredLang,
-        emergencyContact: contactStr,
+        emergencyContact: finalEmergency,
       });
 
       setSubmitted(true);
@@ -509,316 +497,178 @@ export default function SignUpPage() {
                 </p>
               </div>
 
-              {/* Method Tabs */}
-              <div className="flex rounded-2xl bg-[#EFE6D8]/70 p-1 mb-4 border border-[#E2D5C2]">
-                <button
-                  type="button"
-                  onClick={() => {
-                    playTap();
-                    setAuthMethod('email');
-                    setErrorMessage(null);
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
-                    authMethod === 'email'
-                      ? 'bg-white text-deepEmerald shadow-dockActive'
-                      : 'text-textMuted hover:text-textPrimary'
-                  }`}
-                >
-                  <AppIcon name="mail" size={14} />
-                  <span>{t('auth.emailOption', 'Email OTP')}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    playTap();
-                    setAuthMethod('phone');
-                    setErrorMessage(null);
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
-                    authMethod === 'phone'
-                      ? 'bg-white text-deepEmerald shadow-dockActive'
-                      : 'text-textMuted hover:text-textPrimary'
-                  }`}
-                >
-                  <AppIcon name="phone" size={14} />
-                  <span>{t('auth.phoneOption', 'Phone OTP')}</span>
-                </button>
-              </div>
-
               <div className="rounded-[24px] bg-white/90 backdrop-blur-xl p-5 md:p-6 shadow-xl shadow-warmAmber/5 border border-white/80 ring-1 ring-[#D8CCB5]/60">
-                {authMethod === 'phone' ? (
-                  !otpSent ? (
-                    <form onSubmit={handlePhoneSendOtp} className="space-y-4">
-                      <div className="text-left">
-                        <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                          {t('auth.phoneNumber', 'Mobile Phone Number')}
-                        </label>
-                        <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
-                          <div className="flex items-center gap-1 pl-3.5 pr-2 py-3 border-r border-[#E9DFCE] text-xs font-bold text-warmCocoa select-none">
-                            <span>🇮🇳</span>
-                            <span>+91</span>
-                          </div>
-                          <input
-                            type="tel"
-                            inputMode="numeric"
-                            maxLength={10}
-                            value={phoneNumber}
-                            onChange={(e) => {
-                              const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                              setPhoneNumber(val);
-                            }}
-                            placeholder={t('auth.phonePlaceholder', '10-digit mobile number')}
-                            className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
-                            required
-                            autoFocus
-                          />
-                        </div>
-                        <span className="block mt-1.5 text-[11px] text-textMuted">
-                          {t(
-                            'auth.smsVerificationNotice',
-                            'We verify your mobile number with a secure SMS OTP to protect your earnings.'
-                          )}
+                {!emailOtpSent ? (
+                  <form onSubmit={handleEmailSendOtp} className="space-y-4">
+                    {/* Full Name */}
+                    <div className="text-left">
+                      <label className="block text-xs font-bold text-deepEmerald mb-1.5">
+                        {t('profile.fullName', 'Full Name')} <span className="text-[#B34A26]">*</span>
+                      </label>
+                      <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
+                        <span className="pl-3.5 text-textMuted">
+                          <AppIcon name="person" size={16} />
                         </span>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={loading || phoneNumber.length < 10}
-                        className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading ? (
-                          <>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                            <span>{t('auth.sendingOtp', 'Sending OTP...')}</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>{t('auth.sendOtp', 'Send Verification OTP')}</span>
-                            <AppIcon name="arrow-forward" size={16} />
-                          </>
-                        )}
-                      </button>
-                    </form>
-                  ) : (
-                    <form onSubmit={handlePhoneVerifyOtp} className="space-y-4">
-                      <div className="text-left">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="text-xs font-bold text-deepEmerald">
-                            {t('auth.enterOtp', 'Enter 6-digit OTP')}
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOtpSent(false);
-                              setOtpCode('');
-                            }}
-                            className="text-[11px] font-bold text-[#B34A26] hover:underline"
-                          >
-                            {t('common.edit', 'Change Number')} (+91 {phoneNumber})
-                          </button>
-                        </div>
                         <input
                           type="text"
-                          inputMode="numeric"
-                          maxLength={6}
-                          value={otpCode}
+                          value={fullName}
                           onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                            setOtpCode(val);
+                            setFullName(e.target.value);
+                            setErrorMessage(null);
                           }}
-                          placeholder="••••••"
-                          className="w-full text-center tracking-[0.5em] text-xl font-extrabold py-3 rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus:border-deepEmerald focus:ring-2 focus:ring-deepEmerald/20 transition-all text-deepEmerald placeholder:text-textMuted/40"
+                          placeholder={t('profile.namePlaceholder', 'e.g. Ramesh Kumar')}
+                          className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
                           required
                           autoFocus
                         />
                       </div>
+                    </div>
 
-                      <div className="flex items-center justify-between text-xs pt-1">
-                        <span className="text-textMuted">
-                          {resendTimer > 0
-                            ? t('auth.resendIn', `Resend in ${resendTimer}s`, { seconds: resendTimer })
-                            : "Didn't receive the SMS?"}
+                    {/* Email Address */}
+                    <div className="text-left">
+                      <label className="block text-xs font-bold text-deepEmerald mb-1.5">
+                        {t('auth.emailAddress', 'Email Address')} <span className="text-[#B34A26]">*</span>
+                      </label>
+                      <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
+                        <span className="pl-3.5 text-textMuted">
+                          <AppIcon name="mail" size={16} />
                         </span>
-                        <button
-                          type="button"
-                          disabled={resendTimer > 0 || loading}
-                          onClick={handlePhoneSendOtp}
-                          className="font-extrabold text-[#B34A26] hover:underline disabled:opacity-40 disabled:no-underline"
-                        >
-                          {t('auth.resendOtp', 'Resend OTP')}
-                        </button>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={loading || otpCode.length < 6}
-                        className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading ? (
-                          <>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                            <span>{t('auth.verifying', 'Verifying...')}</span>
-                          </>
-                        ) : (
-                          <>
-                            <AppIcon name="shield-check" size={16} />
-                            <span>{t('auth.verifyAndContinue', 'Verify & Continue')}</span>
-                          </>
-                        )}
-                      </button>
-                    </form>
-                  )
-                ) : (
-                  /* EMAIL OTP SIGNUP */
-                  !emailOtpSent ? (
-                    <form onSubmit={handleEmailSendOtp} className="space-y-4">
-                      {/* Full Name */}
-                      <div className="text-left">
-                        <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                          {t('profile.fullName', 'Full Name')} <span className="text-[#B34A26]">*</span>
-                        </label>
-                        <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
-                          <span className="pl-3.5 text-textMuted">
-                            <AppIcon name="person" size={16} />
-                          </span>
-                          <input
-                            type="text"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            placeholder={t('profile.namePlaceholder', 'e.g. Ramesh Kumar')}
-                            className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
-                            required
-                            autoFocus
-                          />
-                        </div>
-                      </div>
-
-                      {/* Email Address */}
-                      <div className="text-left">
-                        <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                          {t('auth.emailAddress', 'Email Address')} <span className="text-[#B34A26]">*</span>
-                        </label>
-                        <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
-                          <span className="pl-3.5 text-textMuted">
-                            <AppIcon name="mail" size={16} />
-                          </span>
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder={t('auth.emailPlaceholder', 'name@example.com')}
-                            className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
-                            required
-                          />
-                        </div>
-                        <span className="block mt-1.5 text-[11px] text-textMuted">
-                          {t('auth.emailOtpHint', 'We will send a 6-digit verification code to your email')}
-                        </span>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={loading || !fullName.trim() || !email || !email.includes('@')}
-                        className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading ? (
-                          <>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                            <span>{t('auth.sendingOtp', 'Sending OTP...')}</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>{t('auth.sendVerificationCode', 'Send Verification Code')}</span>
-                            <AppIcon name="arrow-forward" size={16} />
-                          </>
-                        )}
-                      </button>
-                    </form>
-                  ) : (
-                    /* VERIFY EMAIL OTP STEP */
-                    <form onSubmit={handleEmailVerifyOtp} className="space-y-4">
-                      <div className="text-left">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="text-xs font-bold text-deepEmerald">
-                            {t('auth.emailVerificationCode', '6-Digit Verification Code')}
-                          </label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setErrorMessage(null);
+                          }}
+                          placeholder={t('auth.emailPlaceholder', 'name@example.com')}
+                          className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
+                          required
+                        />
+                        {email && (
                           <button
                             type="button"
                             onClick={() => {
-                              playTap();
-                              setEmailOtpSent(false);
-                              setEmailOtpCode('');
+                              setEmail('');
                               setErrorMessage(null);
                             }}
-                            className="text-[11px] font-bold text-[#B34A26] hover:underline"
+                            className="mr-3 text-textMuted hover:text-red-600 text-xs font-bold"
+                            title="Clear"
                           >
-                            {t('auth.changeEmail', 'Change Email')}
+                            ✕
                           </button>
-                        </div>
-
-                        <p className="text-[11px] text-textMuted mb-2">
-                          {t('auth.emailOtpSentTo', 'Verification code sent to')}{' '}
-                          <strong className="text-deepEmerald">{email}</strong>
-                        </p>
-
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={6}
-                          value={emailOtpCode}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                            setEmailOtpCode(val);
-                          }}
-                          placeholder="••••••"
-                          className="w-full text-center tracking-[0.5em] text-xl font-extrabold py-3 rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus:border-deepEmerald focus:ring-2 focus:ring-deepEmerald/20 transition-all text-deepEmerald placeholder:text-textMuted/40"
-                          required
-                          autoFocus
-                        />
+                        )}
                       </div>
+                      <span className="block mt-1.5 text-[11px] text-textMuted">
+                        {t('auth.emailOtpHint', 'We will send a 6-digit verification code to your email')}
+                      </span>
+                    </div>
 
-                      <div className="flex items-center justify-between text-xs pt-1">
-                        <span className="text-textMuted">
-                          {emailResendTimer > 0
-                            ? t('auth.resendIn', `Resend in ${emailResendTimer}s`, { seconds: emailResendTimer })
-                            : "Didn't receive the email?"}
-                        </span>
+                    <button
+                      type="submit"
+                      disabled={loading || !fullName.trim() || !email || !email.includes('@')}
+                      className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <span>{t('auth.sendingOtp', 'Sending OTP...')}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>{t('auth.sendVerificationCode', 'Send Verification Code')}</span>
+                          <AppIcon name="arrow-forward" size={16} />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                ) : (
+                  /* VERIFY EMAIL OTP STEP */
+                  <form onSubmit={handleEmailVerifyOtp} className="space-y-4">
+                    <div className="text-left">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-bold text-deepEmerald">
+                          {t('auth.emailVerificationCode', '6-Digit Verification Code')}
+                        </label>
                         <button
                           type="button"
-                          disabled={emailResendTimer > 0 || loading}
-                          onClick={handleEmailSendOtp}
-                          className="font-extrabold text-[#B34A26] hover:underline disabled:opacity-40 disabled:no-underline"
+                          onClick={() => {
+                            playTap();
+                            setEmailOtpSent(false);
+                            setEmailOtpCode('');
+                            setErrorMessage(null);
+                          }}
+                          className="text-[11px] font-bold text-[#B34A26] hover:underline"
                         >
-                          {t('auth.resendOtp', 'Resend Code')}
+                          {t('auth.changeEmail', 'Change Email')}
                         </button>
                       </div>
 
-                      <button
-                        type="submit"
-                        disabled={loading || emailOtpCode.length < 6}
-                        className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading ? (
-                          <>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                            <span>{t('auth.verifying', 'Verifying...')}</span>
-                          </>
-                        ) : (
-                          <>
-                            <AppIcon name="shield-check" size={16} />
-                            <span>{t('auth.verifyAndContinue', 'Verify & Continue')}</span>
-                          </>
-                        )}
-                      </button>
+                      <p className="text-[11px] text-textMuted mb-2">
+                        {t('auth.emailOtpSentTo', 'Verification code sent to')}{' '}
+                        <strong className="text-deepEmerald">{email}</strong>
+                      </p>
 
-                      <div className="mt-3 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70 text-[11px] text-amber-900 flex items-start gap-2 text-left">
-                        <span className="text-amber-700 shrink-0 mt-0.5">💡</span>
-                        <span>
-                          {t('auth.checkSpamFolder', "Can't find the email? Please check your Spam or Junk folder. Codes expire in 1 hour.")}
-                        </span>
-                      </div>
-                    </form>
-                  )
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={emailOtpCode}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                          setEmailOtpCode(val);
+                          setErrorMessage(null);
+                        }}
+                        placeholder="••••••"
+                        className="w-full text-center tracking-[0.5em] text-xl font-extrabold py-3 rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus:border-deepEmerald focus:ring-2 focus:ring-deepEmerald/20 transition-all text-deepEmerald placeholder:text-textMuted/40"
+                        required
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <span className="text-textMuted">
+                        {emailResendTimer > 0
+                          ? t('auth.resendIn', `Resend in ${emailResendTimer}s`, { seconds: emailResendTimer })
+                          : "Didn't receive the email?"}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={emailResendTimer > 0 || loading}
+                        onClick={handleEmailSendOtp}
+                        className="font-extrabold text-[#B34A26] hover:underline disabled:opacity-40 disabled:no-underline"
+                      >
+                        {t('auth.resendOtp', 'Resend Code')}
+                      </button>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading || emailOtpCode.length < 6}
+                      className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <span>{t('auth.verifying', 'Verifying...')}</span>
+                        </>
+                      ) : (
+                        <>
+                          <AppIcon name="shield-check" size={16} />
+                          <span>{t('auth.verifyAndContinue', 'Verify & Continue')}</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="mt-3 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70 text-[11px] text-amber-900 flex items-start gap-2 text-left">
+                      <span className="text-amber-700 shrink-0 mt-0.5">💡</span>
+                      <span>
+                        {t(
+                          'auth.checkSpamFolder',
+                          "Can't find the email? Please check your Spam or Junk folder. Codes expire in 1 hour."
+                        )}
+                      </span>
+                    </div>
+                  </form>
                 )}
               </div>
 
@@ -1048,6 +898,63 @@ export default function SignUpPage() {
                   </div>
                 </div>
 
+                {/* Emergency Contact Number (Optional) */}
+                <div className="text-left">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-deepEmerald">
+                      {t('auth.emergencyContactNumber', 'Emergency Contact Number (optional)')}
+                    </label>
+                    <span className="text-[11px] font-medium text-textMuted">
+                      {t('gender.optionalBadge', 'Optional')}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-textMuted mb-2">
+                    {t('auth.emergencyContactHint', 'Someone we can contact if you need urgent help.')}
+                  </p>
+                  <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
+                    <div className="flex items-center gap-1 pl-3 pr-2 py-3 border-r border-[#E9DFCE] text-xs font-bold text-warmCocoa select-none bg-[#FAF5EE]/70 rounded-l-2xl">
+                      <select
+                        value={emergencyCountryCode}
+                        onChange={(e) => setEmergencyCountryCode(e.target.value)}
+                        className="bg-transparent text-xs font-bold text-warmCocoa focus:outline-none cursor-pointer"
+                        aria-label="Country code"
+                      >
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+971">🇦🇪 +971</option>
+                        <option value="+966">🇸🇦 +966</option>
+                        <option value="+977">🇳🇵 +977</option>
+                        <option value="+880">🇧🇩 +880</option>
+                        <option value="+65">🇸🇬 +65</option>
+                      </select>
+                    </div>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={12}
+                      value={emergencyContactNumber}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setEmergencyContactNumber(val);
+                        setErrorMessage(null);
+                      }}
+                      placeholder={t('auth.emergencyContactPlaceholder', '10-digit phone number')}
+                      className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
+                    />
+                    {emergencyContactNumber && (
+                      <button
+                        type="button"
+                        onClick={() => setEmergencyContactNumber('')}
+                        className="pr-3 text-textMuted hover:text-red-600 transition-colors"
+                        aria-label="Clear emergency contact"
+                      >
+                        <AppIcon name="close" size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 <button
                   type="button"
                   onClick={handleStep2Continue}
@@ -1191,10 +1098,32 @@ export default function SignUpPage() {
 
                 {/* Core Skills Selection */}
                 <div className="text-left">
-                  <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                    {t('auth.skills', 'Select Your Skills')} ({selectedSkills.length} selected)
-                  </label>
-                  <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-deepEmerald">
+                      {t('auth.skills', 'Select Your Skills')}
+                      {selectedSkills.length > 0 && (
+                        <span className="ml-1.5 text-[#B34A26] font-extrabold">
+                          ({selectedSkills.length} selected)
+                        </span>
+                      )}
+                    </label>
+                    {selectedSkills.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playTap();
+                          setSelectedSkills([]);
+                        }}
+                        className="text-[11px] font-bold text-[#B34A26] hover:underline"
+                      >
+                        {t('common.clear', 'Clear')}
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-textMuted mb-2">
+                    {t('onboarding.skillsHint', 'Add your core skills to get 90%+ match accuracy.')}
+                  </p>
+                  <div className="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-2 border border-[#E9DFCE] rounded-2xl bg-[#FAF5EE]/40">
                     {SUGGESTED_SKILL_KEYS.map((skillKey) => {
                       const isSelected = selectedSkills.includes(skillKey);
                       return (
@@ -1202,6 +1131,8 @@ export default function SignUpPage() {
                           key={skillKey}
                           label={t(skillKey)}
                           selected={isSelected}
+                          showToggleIcon
+                          onPress={() => toggleSkill(skillKey)}
                           onClick={() => toggleSkill(skillKey)}
                         />
                       );

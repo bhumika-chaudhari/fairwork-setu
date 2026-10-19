@@ -634,7 +634,7 @@
     "emailOption": "ईमेल ओटीपी",
     "emailOtpSentTo": "हमने {{email}} पर 6 अंकों का सत्यापन कोड भेजा है",
     "emailVerificationCode": "ईमेल सत्यापन कोड",
-    "noAccountFound": "इस ईमेल से कोई खाता नहीं मिला। कृपया पहले साइन अप करें।",
+    "noAccountFound": "हमें इस ईमेल से जुड़ा कोई खाता नहीं मिला। कृपया पहले एक नया खाता बनाएं।",
     "accountAlreadyExists": "इस ईमेल से पहले से एक खाता मौजूद है। कृपया इसके बजाय लॉग इन करें।",
     "invalidOrExpiredOtp": "सत्यापन कोड गलत है या समाप्त हो गया है। कृपया जांचें या नया कोड मांगें।",
     "rateLimitExceeded": "बहुत सारे अनुरोध। कृपया पुनः प्रयास करने से पहले कुछ देर प्रतीक्षा करें।",
@@ -682,7 +682,12 @@
     "passwordMode": "पासवर्ड",
     "emailOtpHint": "हम आपके ईमेल पर 6 अंकों का सत्यापन कोड भेजेंगे",
     "verifyAndContinue": "सत्यापित करें और आगे बढ़ें",
-    "selectWorkerTypeAlert": "कृपया अपना पेशा / काम का प्रकार चुनें"
+    "selectWorkerTypeAlert": "कृपया अपना पेशा / काम का प्रकार चुनें",
+    "emergencyContactNumber": "आपातकालीन संपर्क नंबर (वैकल्पिक)",
+    "emergencyContactHint": "कोई व्यक्ति जिससे आपकी तत्काल मदद के लिए संपर्क किया जा सके।",
+    "emergencyContactPlaceholder": "10 अंकों का फ़ोन नंबर",
+    "invalidEmergencyContact": "कृपया एक मान्य 10-अंकों का आपातकालीन संपर्क नंबर दर्ज करें या इसे खाली छोड़ दें।",
+    "skillsSelectedCount": "{{count}} चुने गए"
   }
 }
 

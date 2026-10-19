@@ -172,6 +172,8 @@ interface ProfileContextValue {
 
   loginWithPhone: (phoneNumber: string) => Promise<{ error: Error | null; message?: string }>;
   verifyPhoneOtp: (phoneNumber: string, token: string) => Promise<{ error: Error | null; user?: User | null }>;
+  sendEmailLoginOtp: (email: string) => Promise<{ error: Error | null; message?: string }>;
+  sendEmailSignupOtp: (email: string, name?: string) => Promise<{ error: Error | null; message?: string }>;
   sendEmailOtp: (email: string) => Promise<{ error: Error | null; message?: string }>;
   verifyEmailOtp: (email: string, token: string) => Promise<{ error: Error | null; user?: User | null }>;
   loginWithEmail: (email: string, password?: string) => Promise<{ error: Error | null; user?: User | null }>;
@@ -554,9 +556,14 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) {
         const msg = error.message.toLowerCase();
-        if (msg.includes('signups not allowed') || msg.includes('user not found') || (error as any).status === 400) {
+        if (
+          msg.includes('signups not allowed') ||
+          msg.includes('user not found') ||
+          msg.includes('signup disabled') ||
+          (error as any).status === 400
+        ) {
           return {
-            error: new Error('No account found with this email. Please sign up to create a new profile.'),
+            error: new Error("We couldn't find an account with this email. Please create an account first."),
           };
         }
         if (msg.includes('rate limit') || (error as any).status === 429) {

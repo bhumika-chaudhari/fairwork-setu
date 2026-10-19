@@ -516,6 +516,23 @@ export function addTransaction(
   };
 
   const existing = getStoredTransactions();
+
+  // Deduplication check: prevent duplicate rapid creation within 2 seconds
+  const recentDuplicate = existing.find((t) => {
+    const isRecent = Math.abs(now - (t.createdAt || 0)) < 2000;
+    const sameFields =
+      t.type === input.type &&
+      t.amount === input.amount &&
+      t.category === input.category &&
+      (t.description || '') === (input.description || '');
+    return isRecent && sameFields;
+  });
+
+  if (recentDuplicate) {
+    console.warn('[TransactionService] Prevented duplicate transaction submission');
+    return recentDuplicate;
+  }
+
   const updated = [newTx, ...existing];
   saveStoredTransactions(updated);
 
