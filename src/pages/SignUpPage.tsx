@@ -34,9 +34,8 @@ export default function SignUpPage() {
     isSupabaseConfigured,
     loginWithPhone,
     verifyPhoneOtp,
-    sendEmailOtp,
+    sendEmailSignupOtp,
     verifyEmailOtp,
-    signupWithEmail,
     completeOnboarding,
   } = useProfile();
 
@@ -49,20 +48,17 @@ export default function SignUpPage() {
 
   const [step, setStep] = useState<1 | 2 | 3>(user ? 2 : 1);
 
-  // Step 1: Contact verification
-  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
+  // Step 1: Contact verification (Email OTP as default primary)
+  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
 
-  const [emailAuthMode, setEmailAuthMode] = useState<'otp' | 'password'>('otp');
   const [email, setEmail] = useState('');
   const [emailOtpSent, setEmailOtpSent] = useState(false);
   const [emailOtpCode, setEmailOtpCode] = useState('');
   const [emailResendTimer, setEmailResendTimer] = useState(0);
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
   // Step 2: Personal Details
   const [fullName, setFullName] = useState(profile.name || '');
@@ -189,13 +185,19 @@ export default function SignUpPage() {
     }
   };
 
-  // Step 1: Email Send OTP
+  // Step 1: Email Send OTP for Signup
   const handleEmailSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    const clean = email.trim();
+    const cleanName = fullName.trim();
+    if (!cleanName) {
+      setErrorMessage(t('auth.nameRequired', 'Please enter your full name.'));
+      return;
+    }
+
+    const clean = email.trim().toLowerCase();
     if (!clean || !clean.includes('@')) {
       setErrorMessage(t('auth.invalidEmail', 'Please enter a valid email address.'));
       return;
@@ -204,7 +206,7 @@ export default function SignUpPage() {
     setLoading(true);
     playTap();
     try {
-      const res = await sendEmailOtp(clean);
+      const res = await sendEmailSignupOtp(clean, cleanName);
       if (res.error) {
         setErrorMessage(res.error.message || 'Failed to send verification code.');
       } else {
@@ -233,7 +235,7 @@ export default function SignUpPage() {
     setLoading(true);
     playTap();
     try {
-      const clean = email.trim();
+      const clean = email.trim().toLowerCase();
       const res = await verifyEmailOtp(clean, emailOtpCode.trim());
       if (res.error) {
         setErrorMessage(res.error.message || 'Incorrect verification code. Please retry.');
@@ -243,38 +245,6 @@ export default function SignUpPage() {
       }
     } catch (err: any) {
       setErrorMessage(err.message || 'Verification failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Step 1: Email Sign Up (Password)
-  const handleEmailSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    if (!email.trim() || !email.includes('@')) {
-      setErrorMessage(t('auth.invalidEmail', 'Please enter a valid email address.'));
-      return;
-    }
-    if (!password.trim() || password.length < 6) {
-      setErrorMessage(t('auth.invalidPassword', 'Password must be at least 6 characters long.'));
-      return;
-    }
-
-    setLoading(true);
-    playTap();
-    try {
-      const res = await signupWithEmail(email.trim(), password);
-      if (res.error) {
-        setErrorMessage(res.error.message || 'Sign up failed. Please check your credentials.');
-      } else {
-        playPop();
-        setStep(2);
-      }
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -545,6 +515,22 @@ export default function SignUpPage() {
                   type="button"
                   onClick={() => {
                     playTap();
+                    setAuthMethod('email');
+                    setErrorMessage(null);
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
+                    authMethod === 'email'
+                      ? 'bg-white text-deepEmerald shadow-dockActive'
+                      : 'text-textMuted hover:text-textPrimary'
+                  }`}
+                >
+                  <AppIcon name="mail" size={14} />
+                  <span>{t('auth.emailOption', 'Email OTP')}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    playTap();
                     setAuthMethod('phone');
                     setErrorMessage(null);
                   }}
@@ -556,22 +542,6 @@ export default function SignUpPage() {
                 >
                   <AppIcon name="phone" size={14} />
                   <span>{t('auth.phoneOption', 'Phone OTP')}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    playTap();
-                    setAuthMethod('email');
-                    setErrorMessage(null);
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold transition-all duration-200 ${
-                    authMethod === 'email'
-                      ? 'bg-white text-deepEmerald shadow-dockActive'
-                      : 'text-textMuted hover:text-textPrimary'
-                  }`}
-                >
-                  <AppIcon name="mail" size={14} />
-                  <span>{t('auth.emailOption', 'Email & Password')}</span>
                 </button>
               </div>
 
@@ -699,225 +669,156 @@ export default function SignUpPage() {
                     </form>
                   )
                 ) : (
-                  <div>
-                    {/* Sub-tabs for Email: OTP vs Password */}
-                    <div className="flex rounded-xl bg-[#EFE6D8]/60 p-1 mb-4 border border-[#E2D5C2] text-xs font-bold">
+                  /* EMAIL OTP SIGNUP */
+                  !emailOtpSent ? (
+                    <form onSubmit={handleEmailSendOtp} className="space-y-4">
+                      {/* Full Name */}
+                      <div className="text-left">
+                        <label className="block text-xs font-bold text-deepEmerald mb-1.5">
+                          {t('profile.fullName', 'Full Name')} <span className="text-[#B34A26]">*</span>
+                        </label>
+                        <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
+                          <span className="pl-3.5 text-textMuted">
+                            <AppIcon name="person" size={16} />
+                          </span>
+                          <input
+                            type="text"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            placeholder={t('profile.namePlaceholder', 'e.g. Ramesh Kumar')}
+                            className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
+                            required
+                            autoFocus
+                          />
+                        </div>
+                      </div>
+
+                      {/* Email Address */}
+                      <div className="text-left">
+                        <label className="block text-xs font-bold text-deepEmerald mb-1.5">
+                          {t('auth.emailAddress', 'Email Address')} <span className="text-[#B34A26]">*</span>
+                        </label>
+                        <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
+                          <span className="pl-3.5 text-textMuted">
+                            <AppIcon name="mail" size={16} />
+                          </span>
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder={t('auth.emailPlaceholder', 'name@example.com')}
+                            className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
+                            required
+                          />
+                        </div>
+                        <span className="block mt-1.5 text-[11px] text-textMuted">
+                          {t('auth.emailOtpHint', 'We will send a 6-digit verification code to your email')}
+                        </span>
+                      </div>
+
                       <button
-                        type="button"
-                        onClick={() => {
-                          setEmailAuthMode('otp');
-                          setErrorMessage(null);
-                          setSuccessMessage(null);
-                        }}
-                        className={`flex-1 py-1.5 rounded-lg transition-all ${
-                          emailAuthMode === 'otp'
-                            ? 'bg-white text-deepEmerald shadow-xs'
-                            : 'text-textMuted hover:text-textPrimary'
-                        }`}
+                        type="submit"
+                        disabled={loading || !fullName.trim() || !email || !email.includes('@')}
+                        className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        ✉️ {t('auth.emailOtpMode', 'Email 6-Digit OTP')}
+                        {loading ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                            <span>{t('auth.sendingOtp', 'Sending OTP...')}</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>{t('auth.sendVerificationCode', 'Send Verification Code')}</span>
+                            <AppIcon name="arrow-forward" size={16} />
+                          </>
+                        )}
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEmailAuthMode('password');
-                          setErrorMessage(null);
-                          setSuccessMessage(null);
-                        }}
-                        className={`flex-1 py-1.5 rounded-lg transition-all ${
-                          emailAuthMode === 'password'
-                            ? 'bg-white text-deepEmerald shadow-xs'
-                            : 'text-textMuted hover:text-textPrimary'
-                        }`}
-                      >
-                        🔒 {t('auth.passwordMode', 'Password')}
-                      </button>
-                    </div>
-
-                    {emailAuthMode === 'otp' ? (
-                      !emailOtpSent ? (
-                        <form onSubmit={handleEmailSendOtp} className="space-y-4">
-                          <div className="text-left">
-                            <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                              {t('auth.emailAddress', 'Email Address')}
-                            </label>
-                            <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
-                              <span className="pl-3.5 text-textMuted">
-                                <AppIcon name="mail" size={16} />
-                              </span>
-                              <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder={t('auth.emailPlaceholder', 'name@example.com')}
-                                className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
-                                required
-                                autoFocus
-                              />
-                            </div>
-                            <span className="block mt-1.5 text-[11px] text-textMuted">
-                              {t('auth.emailOtpHint', 'We will send a 6-digit verification code to your email')}
-                            </span>
-                          </div>
-
-                          <button
-                            type="submit"
-                            disabled={loading || !email || !email.includes('@')}
-                            className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {loading ? (
-                              <>
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                <span>{t('auth.sendingOtp', 'Sending OTP...')}</span>
-                              </>
-                            ) : (
-                              <>
-                                <span>{t('auth.sendOtp', 'Send Verification OTP')}</span>
-                                <AppIcon name="arrow-forward" size={16} />
-                              </>
-                            )}
-                          </button>
-                        </form>
-                      ) : (
-                        <form onSubmit={handleEmailVerifyOtp} className="space-y-4">
-                          <div className="text-left">
-                            <div className="flex items-center justify-between mb-1.5">
-                              <label className="text-xs font-bold text-deepEmerald">
-                                {t('auth.enterOtp', 'Enter 6-digit OTP')}
-                              </label>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setEmailOtpSent(false);
-                                  setEmailOtpCode('');
-                                  setErrorMessage(null);
-                                }}
-                                className="text-[11px] font-bold text-[#B34A26] hover:underline"
-                              >
-                                {t('common.edit', 'Change Email')} ({email})
-                              </button>
-                            </div>
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              maxLength={6}
-                              value={emailOtpCode}
-                              onChange={(e) => {
-                                const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                setEmailOtpCode(val);
-                              }}
-                              placeholder="••••••"
-                              className="w-full text-center tracking-[0.5em] text-xl font-extrabold py-3 rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus:border-deepEmerald focus:ring-2 focus:ring-deepEmerald/20 transition-all text-deepEmerald placeholder:text-textMuted/40"
-                              required
-                              autoFocus
-                            />
-                          </div>
-
-                          <div className="flex items-center justify-between text-xs pt-1">
-                            <span className="text-textMuted">
-                              {emailResendTimer > 0
-                                ? t('auth.resendIn', `Resend in ${emailResendTimer}s`, { seconds: emailResendTimer })
-                                : "Didn't receive the email?"}
-                            </span>
-                            <button
-                              type="button"
-                              disabled={emailResendTimer > 0 || loading}
-                              onClick={handleEmailSendOtp}
-                              className="font-extrabold text-[#B34A26] hover:underline disabled:opacity-40 disabled:no-underline"
-                            >
-                              {t('auth.resendOtp', 'Resend OTP')}
-                            </button>
-                          </div>
-
-                          <button
-                            type="submit"
-                            disabled={loading || emailOtpCode.length < 6}
-                            className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {loading ? (
-                              <>
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                <span>{t('auth.verifying', 'Verifying...')}</span>
-                              </>
-                            ) : (
-                              <>
-                                <AppIcon name="shield-check" size={16} />
-                                <span>{t('auth.verifyAndContinue', 'Verify & Continue')}</span>
-                              </>
-                            )}
-                          </button>
-                        </form>
-                      )
-                    ) : (
-                      /* EMAIL + PASSWORD */
-                      <form onSubmit={handleEmailSignUp} className="space-y-4">
-                        <div className="text-left">
-                          <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                            {t('auth.emailAddress', 'Email Address')}
+                    </form>
+                  ) : (
+                    /* VERIFY EMAIL OTP STEP */
+                    <form onSubmit={handleEmailVerifyOtp} className="space-y-4">
+                      <div className="text-left">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-xs font-bold text-deepEmerald">
+                            {t('auth.emailVerificationCode', '6-Digit Verification Code')}
                           </label>
-                          <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
-                            <span className="pl-3.5 text-textMuted">
-                              <AppIcon name="mail" size={16} />
-                            </span>
-                            <input
-                              type="email"
-                              value={email}
-                              onChange={(e) => setEmail(e.target.value)}
-                              placeholder={t('auth.emailPlaceholder', 'name@example.com')}
-                              className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
-                              required
-                              autoFocus
-                            />
-                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              playTap();
+                              setEmailOtpSent(false);
+                              setEmailOtpCode('');
+                              setErrorMessage(null);
+                            }}
+                            className="text-[11px] font-bold text-[#B34A26] hover:underline"
+                          >
+                            {t('auth.changeEmail', 'Change Email')}
+                          </button>
                         </div>
 
-                        <div className="text-left">
-                          <label className="block text-xs font-bold text-deepEmerald mb-1.5">
-                            {t('auth.password', 'Password')}
-                          </label>
-                          <div className="relative flex items-center rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus-within:border-deepEmerald focus-within:ring-2 focus-within:ring-deepEmerald/20 transition-all">
-                            <span className="pl-3.5 text-textMuted">
-                              <AppIcon name="shield" size={16} />
-                            </span>
-                            <input
-                              type={showPassword ? 'text' : 'password'}
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                              placeholder={t('auth.passwordPlaceholder', 'Minimum 6 characters')}
-                              className="w-full bg-transparent px-3 py-3 text-sm font-semibold text-deepEmerald placeholder:text-textMuted/60 focus:outline-none"
-                              required
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword(!showPassword)}
-                              className="pr-3 text-textMuted hover:text-deepEmerald"
-                              aria-label="Toggle password visibility"
-                            >
-                              <AppIcon name={showPassword ? 'eye-off' : 'eye'} size={16} />
-                            </button>
-                          </div>
-                        </div>
+                        <p className="text-[11px] text-textMuted mb-2">
+                          {t('auth.emailOtpSentTo', 'Verification code sent to')}{' '}
+                          <strong className="text-deepEmerald">{email}</strong>
+                        </p>
 
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={emailOtpCode}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                            setEmailOtpCode(val);
+                          }}
+                          placeholder="••••••"
+                          className="w-full text-center tracking-[0.5em] text-xl font-extrabold py-3 rounded-2xl border border-[#D8CCB5] bg-white shadow-inner focus:border-deepEmerald focus:ring-2 focus:ring-deepEmerald/20 transition-all text-deepEmerald placeholder:text-textMuted/40"
+                          required
+                          autoFocus
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs pt-1">
+                        <span className="text-textMuted">
+                          {emailResendTimer > 0
+                            ? t('auth.resendIn', `Resend in ${emailResendTimer}s`, { seconds: emailResendTimer })
+                            : "Didn't receive the email?"}
+                        </span>
                         <button
-                          type="submit"
-                          disabled={loading || !email || password.length < 6}
-                          className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          type="button"
+                          disabled={emailResendTimer > 0 || loading}
+                          onClick={handleEmailSendOtp}
+                          className="font-extrabold text-[#B34A26] hover:underline disabled:opacity-40 disabled:no-underline"
                         >
-                          {loading ? (
-                            <>
-                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                              <span>{t('auth.creating', 'Creating Account...')}</span>
-                            </>
-                          ) : (
-                            <>
-                              <span>{t('auth.verifyAndContinue', 'Create & Continue')}</span>
-                              <AppIcon name="arrow-forward" size={16} />
-                            </>
-                          )}
+                          {t('auth.resendOtp', 'Resend Code')}
                         </button>
-                      </form>
-                    )}
-                  </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading || emailOtpCode.length < 6}
+                        className="emerald-gradient-btn w-full h-12 rounded-full text-sm font-extrabold text-white shadow-dockActive active:scale-98 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                            <span>{t('auth.verifying', 'Verifying...')}</span>
+                          </>
+                        ) : (
+                          <>
+                            <AppIcon name="shield-check" size={16} />
+                            <span>{t('auth.verifyAndContinue', 'Verify & Continue')}</span>
+                          </>
+                        )}
+                      </button>
+
+                      <div className="mt-3 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70 text-[11px] text-amber-900 flex items-start gap-2 text-left">
+                        <span className="text-amber-700 shrink-0 mt-0.5">💡</span>
+                        <span>
+                          {t('auth.checkSpamFolder', "Can't find the email? Please check your Spam or Junk folder. Codes expire in 1 hour.")}
+                        </span>
+                      </div>
+                    </form>
+                  )
                 )}
               </div>
 

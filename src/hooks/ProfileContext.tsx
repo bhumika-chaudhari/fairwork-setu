@@ -535,8 +535,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Send 6-Digit Email OTP
-  const sendEmailOtp = useCallback(async (email: string) => {
+  // Send 6-Digit Email OTP for Login (strictly prevents new account creation)
+  const sendEmailLoginOtp = useCallback(async (email: string) => {
     if (!supabase || !isSupabaseConfigured) {
       return {
         error: new Error(
@@ -544,20 +544,74 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         ),
       };
     }
-    const cleanEmail = email.trim();
+    const cleanEmail = email.trim().toLowerCase();
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email: cleanEmail,
         options: {
-          shouldCreateUser: true,
+          shouldCreateUser: false, // Ensures existing user accounts only!
         },
       });
-      if (error) return { error };
+      if (error) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes('signups not allowed') || msg.includes('user not found') || (error as any).status === 400) {
+          return {
+            error: new Error('No account found with this email. Please sign up to create a new profile.'),
+          };
+        }
+        if (msg.includes('rate limit') || (error as any).status === 429) {
+          return {
+            error: new Error('Too many requests. Please wait a few moments before requesting another code.'),
+          };
+        }
+        return { error };
+      }
       return { error: null, message: `6-digit verification code sent to ${cleanEmail}` };
     } catch (err: any) {
       return { error: err };
     }
   }, []);
+
+  // Send 6-Digit Email OTP for Signup (creates new account with metadata)
+  const sendEmailSignupOtp = useCallback(async (email: string, name?: string) => {
+    if (!supabase || !isSupabaseConfigured) {
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
+        ),
+      };
+    }
+    const cleanEmail = email.trim().toLowerCase();
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: cleanEmail,
+        options: {
+          shouldCreateUser: true,
+          data: {
+            full_name: name?.trim() || '',
+            name: name?.trim() || '',
+          },
+        },
+      });
+      if (error) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes('rate limit') || (error as any).status === 429) {
+          return {
+            error: new Error('Too many requests. Please wait a few moments before requesting another code.'),
+          };
+        }
+        return { error };
+      }
+      return { error: null, message: `6-digit verification code sent to ${cleanEmail}` };
+    } catch (err: any) {
+      return { error: err };
+    }
+  }, []);
+
+  // Backward-compatible wrapper
+  const sendEmailOtp = useCallback(async (email: string) => {
+    return sendEmailLoginOtp(email);
+  }, [sendEmailLoginOtp]);
 
   // Verify 6-Digit Email OTP
   const verifyEmailOtp = useCallback(async (email: string, token: string) => {
@@ -568,20 +622,21 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         ),
       };
     }
-    const cleanEmail = email.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanToken = token.trim();
     try {
       // First try standard email OTP verification
       let result = await supabase.auth.verifyOtp({
         email: cleanEmail,
-        token: token.trim(),
+        token: cleanToken,
         type: 'email',
       });
 
       // If email type fails and user might have just signed up, try signup type
-      if (result.error && (result.error.message?.includes('type') || (result.error as any).status === 400)) {
+      if (result.error && (result.error.message?.toLowerCase().includes('type') || (result.error as any).status === 400)) {
         const signupRetry = await supabase.auth.verifyOtp({
           email: cleanEmail,
-          token: token.trim(),
+          token: cleanToken,
           type: 'signup',
         });
         if (!signupRetry.error) {
@@ -589,7 +644,15 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      if (result.error) return { error: result.error };
+      if (result.error) {
+        const msg = result.error.message.toLowerCase();
+        if (msg.includes('expired') || msg.includes('invalid') || msg.includes('token')) {
+          return {
+            error: new Error('Verification code is incorrect or has expired. Please check the code or request a new one.'),
+          };
+        }
+        return { error: result.error };
+      }
 
       if (result.data?.user) {
         setUser(result.data.user);
@@ -598,7 +661,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         setIsAuthModalOpen(false);
         await syncRemoteProfile(result.data.user);
       }
-      return { error: null, user: result.data?.user };
+      return { error: null, user: result.data?.user, session: result.data?.session };
     } catch (err: any) {
       return { error: err };
     }
@@ -648,6 +711,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       closeAuthModal,
       loginWithPhone,
       verifyPhoneOtp,
+      sendEmailLoginOtp,
+      sendEmailSignupOtp,
       sendEmailOtp,
       verifyEmailOtp,
       loginWithEmail,
@@ -667,6 +732,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       openAuthModal,
       profile,
       ready,
+      sendEmailLoginOtp,
+      sendEmailSignupOtp,
       sendEmailOtp,
       sendMagicLink,
       session,
