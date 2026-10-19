@@ -176,8 +176,6 @@ interface ProfileContextValue {
   sendEmailSignupOtp: (email: string, name?: string) => Promise<{ error: Error | null; message?: string }>;
   sendEmailOtp: (email: string) => Promise<{ error: Error | null; message?: string }>;
   verifyEmailOtp: (email: string, token: string) => Promise<{ error: Error | null; user?: User | null }>;
-  loginWithEmail: (email: string, password?: string) => Promise<{ error: Error | null; user?: User | null }>;
-  signupWithEmail: (email: string, password: string, name?: string) => Promise<{ error: Error | null; user?: User | null }>;
   sendMagicLink: (email: string) => Promise<{ error: Error | null; message?: string }>;
 }
 
@@ -466,77 +464,6 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, [syncRemoteProfile]);
 
-  // Email Login
-  const loginWithEmail = useCallback(async (email: string, password?: string) => {
-    if (!supabase || !isSupabaseConfigured) {
-      return {
-        error: new Error(
-          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
-        ),
-      };
-    }
-    try {
-      if (password && password.trim().length > 0) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-        if (error) return { error };
-        if (data.user) {
-          setUser(data.user);
-          setSession(data.session);
-          setCurrentAuthUserId(data.user.id);
-          setIsAuthModalOpen(false);
-          await syncRemoteProfile(data.user);
-        }
-        return { error: null, user: data.user };
-      } else {
-        const { error } = await supabase.auth.signInWithOtp({
-          email: email.trim(),
-        });
-        if (error) return { error };
-        return { error: null, message: 'Magic sign-in link sent to your email.' };
-      }
-    } catch (err: any) {
-      return { error: err };
-    }
-  }, [syncRemoteProfile]);
-
-  // Email Sign Up
-  const signupWithEmail = useCallback(async (email: string, password: string, name?: string) => {
-    if (!supabase || !isSupabaseConfigured) {
-      return {
-        error: new Error(
-          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment configuration.'
-        ),
-      };
-    }
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          data: {
-            full_name: name || '',
-          },
-        },
-      });
-      if (error) return { error };
-      if (data.user) {
-        setUser(data.user);
-        setSession(data.session);
-        setCurrentAuthUserId(data.user.id);
-        setIsAuthModalOpen(false);
-        if (name) {
-          setProfile((prev) => ({ ...prev, name }));
-        }
-      }
-      return { error: null, user: data.user };
-    } catch (err: any) {
-      return { error: err };
-    }
-  }, []);
-
   // Send 6-Digit Email OTP for Login (strictly prevents new account creation)
   const sendEmailLoginOtp = useCallback(async (email: string) => {
     if (!supabase || !isSupabaseConfigured) {
@@ -722,8 +649,6 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       sendEmailSignupOtp,
       sendEmailOtp,
       verifyEmailOtp,
-      loginWithEmail,
-      signupWithEmail,
       sendMagicLink,
     }),
     [
@@ -732,7 +657,6 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       completeOnboarding,
       isAuthenticated,
       isAuthModalOpen,
-      loginWithEmail,
       loginWithPhone,
       logout,
       onboardingComplete,
@@ -744,7 +668,6 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       sendEmailOtp,
       sendMagicLink,
       session,
-      signupWithEmail,
       strength,
       updateProfile,
       user,
