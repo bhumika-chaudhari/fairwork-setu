@@ -369,29 +369,6 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     </>
                   )}
                 </button>
-
-                {/* Quick-fill demo account */}
-                <div className="pt-2 border-t border-[#EFE6D8] text-left">
-                  <span className="text-[10px] font-bold text-[#7C6956] uppercase tracking-wider block mb-1">
-                    अधिकृत डेमो प्रोफाइल (Authorized Demo Profile)
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playTap();
-                      setIsSignUp(false);
-                      setEmail('sadia.sakharkar@cumminscollege.in');
-                      setErrorMsg(null);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF5EE] border border-[#D5C5B2] text-xs font-medium text-[#2C2117] hover:bg-white transition-all"
-                  >
-                    <span>👤</span>
-                    <span>Sadia Sakharkar</span>
-                    <span className="text-[10px] text-textMuted font-mono">
-                      (sadia.sakharkar@cumminscollege.in)
-                    </span>
-                  </button>
-                </div>
               </form>
             ) : (
               /* VERIFY EMAIL OTP STEP */

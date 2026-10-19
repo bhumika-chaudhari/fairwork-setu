@@ -309,29 +309,6 @@ export default function LoginPage() {
                     </>
                   )}
                 </button>
-
-                {/* Quick-fill authorized demo account */}
-                <div className="mt-4 pt-3 border-t border-[#EFE6D8] text-left">
-                  <span className="text-[11px] font-bold text-textMuted uppercase tracking-wider block mb-1.5">
-                    {t('auth.demoAccounts', 'Authorized Demo Profile')}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playTap();
-                      setEmail('sadia.sakharkar@cumminscollege.in');
-                      setErrorMessage(null);
-                      setIsUserNotFound(false);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAF5EC] border border-[#D8CCB5] text-xs font-semibold text-deepEmerald hover:bg-white hover:border-deepEmerald transition-all"
-                  >
-                    <span>👤</span>
-                    <span>Sadia Sakharkar</span>
-                    <span className="text-[10px] text-textMuted font-mono hidden sm:inline">
-                      (sadia.sakharkar@cumminscollege.in)
-                    </span>
-                  </button>
-                </div>
               </form>
             ) : (
               /* VERIFY EMAIL OTP STEP */
