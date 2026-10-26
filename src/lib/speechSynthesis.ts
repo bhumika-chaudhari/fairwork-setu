@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { isSpeechSupported, initAndroidTtsPolyfill } from './androidTtsPolyfill';
 
 /**
  * Text-to-Speech helper for Indian languages (Hindi, Marathi, English)
@@ -9,12 +10,20 @@ export function readTextAloud(
   lang: string = 'hi-IN',
   onEnd?: () => void
 ): boolean {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+  initAndroidTtsPolyfill();
+  if (!isSpeechSupported()) {
     return false;
   }
 
   // Cancel any previous speech
-  window.speechSynthesis.cancel();
+  if (typeof window !== 'undefined') {
+    if (window.AndroidTTS) {
+      try { window.AndroidTTS.stop(); } catch {}
+    }
+    if ('speechSynthesis' in window && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  }
 
   const cleanText = text.replace(/[#*`_~]/g, '').trim();
   if (!cleanText) return false;
@@ -77,8 +86,13 @@ export function setSpeechRate(rate: number): void {
 }
 
 export function stopSpeaking() {
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
+  if (typeof window !== 'undefined') {
+    if (window.AndroidTTS) {
+      try { window.AndroidTTS.stop(); } catch {}
+    }
+    if ('speechSynthesis' in window && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
   }
 }
 

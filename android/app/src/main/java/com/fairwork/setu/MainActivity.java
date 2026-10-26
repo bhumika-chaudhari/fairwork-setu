@@ -17,6 +17,7 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity implements SensorEventListener {
 
     private String pendingRoute = null;
+    private AndroidTtsBridge ttsBridge = null;
 
     // Robust Multi-Peak Shake Detector Variables
     private SensorManager sensorManager;
@@ -39,6 +40,14 @@ public class MainActivity extends BridgeActivity implements SensorEventListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Native Android TextToSpeech Bridge for WebView
+        try {
+            if (getBridge() != null && getBridge().getWebView() != null) {
+                ttsBridge = new AndroidTtsBridge(this, getBridge().getWebView());
+                getBridge().getWebView().addJavascriptInterface(ttsBridge, "AndroidTTS");
+            }
+        } catch (Exception ignored) {}
 
         // Initialize Shake Sensor
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -236,5 +245,14 @@ public class MainActivity extends BridgeActivity implements SensorEventListener 
                 }
             }
         } catch (Exception ignored) {}
+    }
+
+    @Override
+    public void onDestroy() {
+        if (ttsBridge != null) {
+            ttsBridge.shutdown();
+            ttsBridge = null;
+        }
+        super.onDestroy();
     }
 }

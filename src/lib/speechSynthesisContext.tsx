@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { isSpeechSupported, initAndroidTtsPolyfill } from './androidTtsPolyfill';
 
 export interface SpeechTrack {
   id: string;
@@ -54,8 +55,18 @@ export function SpeechProvider({ children }: { children: React.ReactNode }) {
     }, 10000);
   };
 
+  useEffect(() => {
+    initAndroidTtsPolyfill();
+    const handleReady = () => initAndroidTtsPolyfill();
+    window.addEventListener('android-tts-ready', handleReady);
+    return () => {
+      window.removeEventListener('android-tts-ready', handleReady);
+    };
+  }, []);
+
   const speakCurrentSentence = useCallback(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    initAndroidTtsPolyfill();
+    if (!isSpeechSupported()) {
       setState('error');
       setErrorMessage('Speech Synthesis is not supported in this browser.');
       return;
@@ -113,8 +124,13 @@ export function SpeechProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const stop = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    if (typeof window !== 'undefined') {
+      if (window.AndroidTTS) {
+        try { window.AndroidTTS.stop(); } catch {}
+      }
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
     }
     stopKeepAlive();
     setState('idle');
@@ -123,28 +139,43 @@ export function SpeechProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const pause = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.pause();
+    if (typeof window !== 'undefined') {
+      if (window.AndroidTTS) {
+        try { window.AndroidTTS.stop(); } catch {}
+      }
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        window.speechSynthesis.pause();
+      }
     }
     setState('paused');
   }, []);
 
   const resume = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.resume();
+    if (typeof window !== 'undefined') {
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        window.speechSynthesis.resume();
+      }
     }
     setState('playing');
   }, []);
 
   const play = useCallback((track: SpeechTrack) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    initAndroidTtsPolyfill();
+    if (!isSpeechSupported()) {
       setState('error');
       setErrorMessage('Speech synthesis is not supported on this device/browser.');
       return;
     }
 
     // Cancel current playback
-    window.speechSynthesis.cancel();
+    if (typeof window !== 'undefined') {
+      if (window.AndroidTTS) {
+        try { window.AndroidTTS.stop(); } catch {}
+      }
+      if ('speechSynthesis' in window && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
     stopKeepAlive();
 
     const normalizedLang =
