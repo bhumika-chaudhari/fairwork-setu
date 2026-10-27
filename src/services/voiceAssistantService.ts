@@ -18,7 +18,12 @@ import {
   parseAssistantIntent,
 } from './aiModelsClient';
 import { fetchHealthFacilities, getSavedHealthItems } from './healthService';
-import { VERIFIED_LEGAL_SOURCES, getSavedCases } from './haqService';
+import {
+  VERIFIED_LEGAL_SOURCES,
+  getSavedCases,
+  classifyHaqIntent,
+  getOfflineStatutoryResponse
+} from './haqService';
 import { getActiveUser } from '../lib/supabaseClient';
 import { formatInr } from '../localization';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
@@ -1454,7 +1459,21 @@ export async function processUserUtterance(
     lower.includes('appeal') ||
     lower.includes('grievance') ||
     lower.includes('shikayat') ||
-    lower.includes('takrar');
+    lower.includes('takrar') ||
+    lower.includes('wage theft') ||
+    lower.includes('penalty') ||
+    lower.includes('cut from my') ||
+    lower.includes('rok liya') ||
+    lower.includes('paise kaat') ||
+    lower.includes('thekedar') ||
+    lower.includes('contractor') ||
+    lower.includes('e-shram') ||
+    lower.includes('eshram') ||
+    lower.includes('bocw') ||
+    lower.includes('pmsby') ||
+    lower.includes('elevator') ||
+    lower.includes('lift') ||
+    lower.includes('assault');
 
   if (isRightsContext) {
     // 11a. Check for filed grievance appeals
@@ -1497,28 +1516,37 @@ export async function processUserUtterance(
       };
     }
 
-    // 11b. General Gig Worker Statutory Rights
-    let resp =
-      'Under the Code on Social Security (2020) Section 114 and State Platform Gig Workers Welfare Acts (such as Rajasthan Gig Act 2023 Sec 16), aggregators cannot arbitrarily block your ID without written notice, human review, and a statutory right to appeal before the Labour Appellate Authority.';
-    if (lang === 'hi') {
-      resp =
-        'सामाजिक सुरक्षा संहिता (2020) की धारा 114 और राजस्थान गिग वर्कर्स अधिनियम (2023) की धारा 16 के तहत, बिना पूर्व लिखित नोटिस और सुनवाई के कोई भी एग्रीगेटर आपकी आईडी बंद नहीं कर सकता। आपके पास अपीलीय प्राधिकारी के समक्ष शिकायत दर्ज करने का वैधानिक अधिकार है।';
-    } else if (lang === 'mr') {
-      resp =
-        'सामाजिक सुरक्षा संहिता (2020) कलम 114 आणि गिग कामगार कल्याण कायदा (2023) कलम 16 नुसार, नोटीस आणि मानवी सुनावणीशिवाय खाते बंद न होण्याचा तुमचा कायदेशीर हक्क आहे. कामगार प्राधिकरणाकडे दाद मागण्याची कायदेशीर सुविधा उपलब्ध आहे.';
-    }
+    // 11b. Statutory Labor Rights & Dispute Guidance (Model 8 Haq Setu)
+    // Grounded in Rajasthan Platform Based Gig Workers Act 2023 & Code on Social Security (2020)
+    const categoryKey = classifyHaqIntent(userText);
+    const statutoryRes = getOfflineStatutoryResponse(categoryKey, userText, lang);
 
     return {
       id: msgId,
       role: 'assistant',
-      text: resp,
+      text: statutoryRes.answer,
       timestamp,
       lang,
       intent: 'gig_rights_info',
-      navigationAction: {
-        route: '/haq',
-        label: 'Open Haq Setu Appeal Generator',
-      },
+      navigationAction: statutoryRes.action
+        ? {
+            route: statutoryRes.action.route || '/haq',
+            label: statutoryRes.action.label,
+          }
+        : {
+            route: '/haq',
+            label: 'Open Haq Setu',
+          },
+      emergencyAlert: statutoryRes.isEmergency
+        ? {
+            isEmergency: true,
+            severity: 'critical',
+            primaryNumber: '112',
+            secondaryNumber: '100',
+            reason: 'Workplace Assault / Harassment',
+            advice: 'Call 112 immediately. You have the right to register a Zero FIR at any police station.',
+          }
+        : undefined,
     };
   }
 

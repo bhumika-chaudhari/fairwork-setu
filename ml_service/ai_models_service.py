@@ -1051,19 +1051,41 @@ class AIModelsService:
             }
 
         # 6. Rights & Legal Protection Inquiries (Haq Setu)
-        if any(w in lowered for w in ["rights", "haq", "kanoon", "law", "deactivat", "suspend", "appeal", "grievance", "shikayat", "takrar", "board"]):
-            reply = "Under Section 16 of the Rajasthan Platform Based Gig Workers Act (2023) and Section 114 of the Code on Social Security (2020), platform aggregators cannot arbitrarily deactivate your ID without written notice, human review, and a statutory right to appeal before the Appellate Authority."
-            if lang == "hi":
-                reply = "सामाजिक सुरक्षा संहिता (2020) की धारा 114 और राजस्थान गिग वर्कर्स अधिनियम (2023) की धारा 16 के तहत, बिना पूर्व लिखित नोटिस और सुनवाई के कोई भी एग्रीगेटर आपकी आईडी बंद नहीं कर सकता। आपके पास श्रम अपीलीय प्राधिकरण के समक्ष शिकायत दर्ज करने का कानूनी अधिकार है।"
-            elif lang == "mr":
-                reply = "सामाजिक सुरक्षा संहिता (2020) कलम 114 आणि गिग कामगार कल्याण कायदा (2023) कलम 16 नुसार, कोणतीही कंपनी लेखी नोटीस आणि सुनावणीशिवाय तुमचे खाते बंद करू शकत नाही. तुम्हाला कामगार प्राधिकरणाकडे दाद मागण्याचा कायदेशीर हक्क आहे."
-            return {
-                "intent": "gig_rights_info",
-                "language": lang,
-                "reply": reply,
-                "legal_citations": ["Code on Social Security 2020 Sec 114", "Rajasthan Gig Act 2023 Sec 16"],
-                "confidence": 0.94
-            }
+        rights_keywords = [
+            "rights", "haq", "kanoon", "law", "deactivat", "suspend", "appeal", "grievance",
+            "shikayat", "takrar", "board", "wage theft", "penalty", "cut from my", "rok liya",
+            "paise kaat", "thekedar", "contractor", "e-shram", "eshram", "bocw", "pmsby",
+            "banned the elevator", "lift me", "lift ban", "society guard", "accident", "bima",
+            "insurance claim", "fake penalty", "arbitrary deduction", "account banned"
+        ]
+        if any(w in lowered for w in rights_keywords):
+            try:
+                from haq_service import classify_haq_intent, get_statutory_rights_response
+                intent_cat = classify_haq_intent(text_str)
+                statutory_res = get_statutory_rights_response(intent_cat, text_str, lang=lang)
+                return {
+                    "intent": "gig_rights_info",
+                    "language": lang,
+                    "reply": statutory_res["answer"],
+                    "legal_citations": statutory_res.get("citations", []),
+                    "action": statutory_res.get("action"),
+                    "detectedCategory": statutory_res.get("detectedCategory"),
+                    "categoryKey": statutory_res.get("categoryKey"),
+                    "is_emergency": statutory_res.get("isEmergency", False),
+                    "confidence": 0.96
+                }
+            except Exception as e:
+                logger.error(f"Haq service delegation error: {e}")
+                reply = "Under Section 14 of the Rajasthan Platform Based Gig Workers Act (2023) and Section 114 of the Code on Social Security (2020), platform aggregators cannot arbitrarily deactivate your ID without a 14-day written notice and statutory right to appeal."
+                if lang == "hi":
+                    reply = "राजस्थान गिग वर्कर्स अधिनियम (2023) की धारा 14 और सामाजिक सुरक्षा संहिता (2020) के तहत बिना 14 दिन के लिखित नोटिस के कोई भी कंपनी आपकी आईडी बंद नहीं कर सकती।"
+                return {
+                    "intent": "gig_rights_info",
+                    "language": lang,
+                    "reply": reply,
+                    "legal_citations": ["Rajasthan Gig Act 2023 Sec 14", "Code on Social Security 2020 Sec 114"],
+                    "confidence": 0.92
+                }
 
         # 7. Financial Balance, Earnings, & Expense Inquiries
         is_balance_or_earnings = any(w in lowered for w in [

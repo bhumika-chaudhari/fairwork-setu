@@ -49,162 +49,282 @@
   },
   {
     "chunk_id": 8,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 0,
+    "text": "# Gig & Informal Workers Statutory Rights, Labor Protections & Legal Dispute Resolution Guide\n\n- **Issuing Body:** FairWork Setu Legal Literacy & Worker Rights Council (Haq Setu)\n- **Primary Statutory References:**\n - *The Rajasthan Platform Based Gig Workers (Registration and Welfare) Act, 2023 (Act No. 17 of 2023)*\n - *The Code on Social Security, 2020 (Act No. 36 of 2020)*\n - *The Payment of Wages Act, 1936*\n - *The Employee's Compensation Act, 1923*\n - *The Motor Vehicles (Amendment) Act, 2019*\n - *The Contract Labour (Regulation and Abolition) Act, 1970*\n - *The Employees' Provident Funds and Miscellaneous Provisions Act, 1952*\n - *Bharatiya Nyaya Sanhita (BNS) 2023 / Indian Penal Code (IPC)*\n - *Building and Other Construction Workers (BOCW) Welfare Act, 1996*\n- **Official Portals & Helplines:**\n - Ministry of Labour SAMADHAN Portal: `https://samadhan.labour.gov.in`\n - National"
+  },
+  {
+    "chunk_id": 9,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 1,
+    "text": "kers (BOCW) Welfare Act, 1996*\n- **Official Portals & Helplines:**\n - Ministry of Labour SAMADHAN Portal: `https://samadhan.labour.gov.in`\n - National Consumer Helpline: 1915 (`https://consumerhelpline.gov.in`)\n - EPFO Grievance Management System (EPFiGMS): `https://epfigms.gov.in`\n - e-Shram National Worker Portal: `https://eshram.gov.in`\n - National Emergency Police Helpline: 112\n - National Ambulance Service: 108\n\n---\n\n## 1. Category 1: ID Deactivation, Account Suspension & Arbitrary Termination\n- **Keywords & Dialect Phrases:**\n `deactivation`, `deactivated`, `account suspended`, `id blocked`, `account banned`, `unfair termination`, `low rating block`, `fake customer complaint`, `arbitrary dismissal`, `shadow ban`, `blacklisted`, `reinstate id`, `reactivate account`, `id block`, `id band ho gayi`, `account suspend kar diya`, `login nahi ho raha`, `bina notice nikal diya`, `rating"
+  },
+  {
+    "chunk_id": 10,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 2,
+    "text": "einstate id`, `reactivate account`, `id block`, `id band ho gayi`, `account suspend kar diya`, `login nahi ho raha`, `bina notice nikal diya`, `rating kam hone se block`, `customer ki jhooti complaint par block`, `fraud bolkar id block kar di`, `warning nahi di`.\n- **Governing Statutory Law:**\n - Section 13 & 14, *Rajasthan Platform Based Gig Workers Act, 2023*.\n - Section 114, *Code on Social Security, 2020*.\n - Principles of Natural Justice (*Audi Alteram Partem* — Right to be heard).\n- **Worker Statutory Rights:**\n 1. **Mandatory 14-Day Notice:** Under Section 14 of the Rajasthan Gig Workers Act, no platform aggregator (e.g., Zomato, Swiggy, Uber, Ola, Zepto, Blinkit, Urban Company) may terminate, suspend, or block a gig worker's ID without providing at least **14 days mandatory written notice** stating the verifiable reasons.\n 2. **Right to a Fair Hearing & Counter-Evidence:** The"
+  },
+  {
+    "chunk_id": 11,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 3,
+    "text": "ithout providing at least **14 days mandatory written notice** stating the verifiable reasons.\n 2. **Right to a Fair Hearing & Counter-Evidence:** The worker has the statutory right to present trip logs, GPS tracking records, customer chat screenshots, or counter-evidence before an Internal Dispute Redressal Committee prior to permanent deactivation.\n 3. **Protection Against Rating-Only Terminations:** Algorithmic termination based purely on automated customer rating dips below an arbitrary threshold without human review violates principles of natural justice and fair labor contracts.\n 4. **Appellate Tribunal Redressal:** If the aggregator fails to resolve the deactivation within 14 days, the worker has the statutory right to petition the **State Gig Workers Welfare Board Tribunal** and Appellate Authority. Aggregators violating these provisions face statutory fines of up to ₹5 Lakhs.\n-"
+  },
+  {
+    "chunk_id": 12,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 4,
+    "text": "**State Gig Workers Welfare Board Tribunal** and Appellate Authority. Aggregators violating these provisions face statutory fines of up to ₹5 Lakhs.\n- **Escalation & Action:**\n - Launch the **Haq Setu Automated Reinstatement Wizard (`/haq#appeal-wizard`)** to draft an official legal notice to the aggregator's Grievance Officer.\n\n---\n\n## 2. Category 2: Wage Theft, Withheld Payouts & Arbitrary Deductions\n- **Keywords & Dialect Phrases:**\n `wage theft`, `payout withheld`, `delayed salary`, `penalty deduction`, `arbitrary fine`, `incentive withheld`, `payment pending`, `unpaid wages`, `fuel deduction`, `trip fare reduction`, `tips not credited`, `wallet balance on hold`, `paisa nahi diya`, `paise kaat liye`, `payout atak gaya`, `hafta nahi mila`, `thekedar paise nahi de raha`, `incentive kaat liya`, `galat penalty laga di`, `fare deduction`, `tip kaat li`, `wallet hold pe hai`.\n-"
+  },
+  {
+    "chunk_id": 13,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 5,
+    "text": "ta nahi mila`, `thekedar paise nahi de raha`, `incentive kaat liya`, `galat penalty laga di`, `fare deduction`, `tip kaat li`, `wallet hold pe hai`.\n- **Governing Statutory Law:**\n - *The Payment of Wages Act, 1936*.\n - Section 114, *Code on Social Security, 2020*.\n - Ministry of Labour & Employment Fair Remuneration Directives.\n- **Worker Statutory Rights:**\n 1. **Illegal Wage Penalties:** Automatic deductions from weekly gig payouts labeled as \"customer cancellation penalties\", \"transit delay charges\", or \"missing item fines\" without verifiable documentary evidence of worker willful misconduct are unlawful under the Payment of Wages Act.\n 2. **Mandatory Payout Cycles:** Contractual earnings, surged trip incentives, and customer tips must be disbursed according to designated weekly or fortnightly payment cycles. Withholding earned wallet balances without cause constitutes an actionable"
+  },
+  {
+    "chunk_id": 14,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 6,
+    "text": "be disbursed according to designated weekly or fortnightly payment cycles. Withholding earned wallet balances without cause constitutes an actionable labor dispute.\n 3. **Tip Protection:** 100% of voluntary tips provided by customers through digital payment gateways belong legally to the delivery partner and cannot be confiscated or used to offset platform fare minimums.\n- **Escalation & Action:**\n - Issue a formal **Wage Recovery Demand Letter** via Haq Setu.\n - Lodge an online labor grievance on the Ministry of Labour’s **SAMADHAN Portal (`https://samadhan.labour.gov.in`)**.\n - Call the National Consumer Helpline at **1915** for unfair trade practices.\n\n---\n\n## 3. Category 3: Road Accidents & On-Duty Injury Compensation\n- **Keywords & Dialect Phrases:**\n `road accident`, `shift injury`, `accidental death`, `hospitalization expenses`, `insurance claim rejected`, `permanent"
+  },
+  {
+    "chunk_id": 15,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 7,
+    "text": "Keywords & Dialect Phrases:**\n `road accident`, `shift injury`, `accidental death`, `hospitalization expenses`, `insurance claim rejected`, `permanent disability`, `on-duty crash`, `delivery accident claim`, `medical reimbursement`, `compensation amount`, `accident ho gaya`, `gadi lad gayi`, `chot lag gayi`, `shift ke time accident hua`, `hospital ka kharcha`, `bima ka paisa`, `insurance claim reject ho gaya`, `haddi toot gayi`, `death compensation`.\n- **Governing Statutory Law:**\n - *The Employee's Compensation Act, 1923*.\n - Section 166, *The Motor Vehicles (Amendment) Act, 2019*.\n - State Platform Based Gig Workers Welfare Fund Rules.\n- **Worker Statutory Rights:**\n 1. **Mandatory Group Accidental Insurance:** Aggregators are legally required to provide comprehensive accidental insurance cover for all active delivery partners:\n - **₹5 Lakh to ₹10 Lakh** in case of accidental death or"
+  },
+  {
+    "chunk_id": 16,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 8,
+    "text": "quired to provide comprehensive accidental insurance cover for all active delivery partners:\n - **₹5 Lakh to ₹10 Lakh** in case of accidental death or permanent total disability.\n - **Up to ₹1 Lakh** for inpatient hospitalization and emergency medical treatment.\n 2. **Transit & Wait Interval Coverage:** Protection is not restricted solely to the minutes between pick-up and drop-off; insurance coverage applies across active shift duty—including waiting at restaurant clusters, refueling, and returning from deliveries.\n 3. **Unlawful Claim Rejection:** Insurance partners cannot arbitrarily reject claims on technicalities (e.g., claiming the worker was \"on break\" during an active login shift).\n- **Escalation & Action:**\n - File a Police First Information Report (FIR) or Station Diary entry within 24 hours.\n - Secure Hospital Admission and Discharge Summaries with original pharmacy"
+  },
+  {
+    "chunk_id": 17,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 9,
+    "text": "ice First Information Report (FIR) or Station Diary entry within 24 hours.\n - Secure Hospital Admission and Discharge Summaries with original pharmacy receipts.\n - Submit a formal compensation claim within 30 days via Haq Setu's *Accident Claim Support* and petition the Commissioner for Employee's Compensation.\n\n---\n\n## 4. Category 4: Workplace Violence, Customer Abuse & Shift Safety\n- **Keywords & Dialect Phrases:**\n `customer assaulted`, `verbal abuse`, `physical violence`, `gated society lift ban`, `elevator restriction`, `harassment of female worker`, `police seized bike`, `unlawful detention`, `threatened on delivery`, `safety sos`, `customer ne maara`, `gali galoj ki`, `maar-peet ho gayi`, `society guard ne roka`, `lift me nahi aane diya`, `mahila worker ke sath badtameezi`, `police ne gadi pakad li`, `chori ka ilzam lagaya`.\n- **Governing Statutory Law:**\n - *Bharatiya Nyaya"
+  },
+  {
+    "chunk_id": 18,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 10,
+    "text": "aane diya`, `mahila worker ke sath badtameezi`, `police ne gadi pakad li`, `chori ka ilzam lagaya`.\n- **Governing Statutory Law:**\n - *Bharatiya Nyaya Sanhita (BNS) 2023* / *IPC* Sections 115 (Voluntarily causing hurt), 351 (Criminal intimidation), 352 (Intentional insult with intent to provoke breach of peace).\n - *The Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013 (PoSH Act)*.\n - Constitutional Right to Dignity (Article 21) & Public Utility Access.\n- **Worker Statutory Rights:**\n 1. **Protection Against Physical Assault & Abuse:** Physical assault, verbal intimidation, or wrongful confinement by customers or security staff is a cognizable criminal offense. In immediate danger, workers must immediately dial **112 (Emergency Police)**.\n 2. **Illegality of Gated Society Passenger Lift Bans:** Residential Welfare Associations (RWAs) and apartment"
+  },
+  {
+    "chunk_id": 19,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 11,
+    "text": "iately dial **112 (Emergency Police)**.\n 2. **Illegality of Gated Society Passenger Lift Bans:** Residential Welfare Associations (RWAs) and apartment societies cannot legally bar delivery riders or domestic workers from using passenger elevators. Arbitrary elevator bans based on class or trade violate constitutional dignity under Article 21 and municipal public utility regulations.\n 3. **Right to a Zero FIR:** Any police station in India is legally obligated under Supreme Court mandates to register a **Zero FIR** for cognizable offenses (violence, severe assault), regardless of whether the incident occurred in their jurisdiction.\n 4. **PoSH Protection for Female Gig Workers:** Women delivery partners and home service professionals are protected under the PoSH Act 2013, with access to Local Complaint Committees (LCC) in every district.\n- **Escalation & Action:**\n - Call **112**"
+  },
+  {
+    "chunk_id": 20,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 12,
+    "text": "s are protected under the PoSH Act 2013, with access to Local Complaint Committees (LCC) in every district.\n- **Escalation & Action:**\n - Call **112** immediately for on-scene police protection.\n - Record dated video/audio evidence and vehicle numbers.\n - Lodge a formal complaint with the local Station House Officer (SHO) and State Human Rights Commission.\n\n---\n\n## 5. Category 5: Contractor / Subcontractor Fraud & EPF/ESIC Embezzlement\n- **Keywords & Dialect Phrases:**\n `contractor fraud`, `subcontractor withheld wages`, `pf not deposited in epfo`, `esic card not issued`, `agency took security deposit`, `unregistered agency`, `illegal commission cut`, `abrupt dismissal by agency`, `thekedar ne dhoka diya`, `agency wale paise nahi de rahe`, `commission zyada kaat rahe hain`, `PF ka paisa jama nahi kiya`, `esic nahi banwaya`, `security deposit wapas nahi diya`.\n- **Governing Statutory"
+  },
+  {
+    "chunk_id": 21,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 13,
+    "text": "he`, `commission zyada kaat rahe hain`, `PF ka paisa jama nahi kiya`, `esic nahi banwaya`, `security deposit wapas nahi diya`.\n- **Governing Statutory Law:**\n - Section 21, *The Contract Labour (Regulation and Abolition) Act, 1970*.\n - *The Employees' Provident Funds and Miscellaneous Provisions Act, 1952*.\n - Section 406 & 409, *Indian Penal Code (Criminal Breach of Trust)*.\n- **Worker Statutory Rights:**\n 1. **Principal Employer Strict Liability:** Under Section 21(4) of the Contract Labour Act, if an intermediate labor contractor, staffing agency, or vendor fails to disburse wages, the **Principal Employer** (the main operating company) is legally obligated to pay the entire unpaid wages directly to the worker.\n 2. **Criminal Liability for EPF Embezzlement:** If a contractor deducts EPF (Provident Fund) or ESIC from a worker's monthly earnings but fails to deposit it into the"
+  },
+  {
+    "chunk_id": 22,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 14,
+    "text": "ability for EPF Embezzlement:** If a contractor deducts EPF (Provident Fund) or ESIC from a worker's monthly earnings but fails to deposit it into the government EPFO treasury within 15 days, it constitutes criminal breach of trust under IPC 406/409, punishable by imprisonment.\n 3. **Illegal Security Deposits:** Deducting non-refundable security deposits as a prerequisite for onboarding informal workers is an unlawful practice under state labor welfare regulations.\n- **Escalation & Action:**\n - File an online complaint on **EPFiGMS (`https://epfigms.gov.in`)** citing contractor details and UAN.\n - Submit a joint petition to the Regional Labour Commissioner citing Section 21 of the Contract Labour Act.\n\n---\n\n## 6. Category 6: Government Welfare Registration & Worker Cards (e-Shram & BOCW)\n- **Keywords & Dialect Phrases:**\n `e-shram benefits`, `bocw card registration`, `shramik card"
+  },
+  {
+    "chunk_id": 23,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 15,
+    "text": "nt Welfare Registration & Worker Cards (e-Shram & BOCW)\n- **Keywords & Dialect Phrases:**\n `e-shram benefits`, `bocw card registration`, `shramik card benefits`, `gig worker unique id`, `welfare board registration`, `children scholarship for laborers`, `maternity grant for informal workers`, `pmsby accidental cover`, `e-shram card ke fayde`, `bocw card kaise banaye`, `shramik card`, `gig worker id kaise milegi`, `welfare board me panjikaran`, `bacchon ki scholarship`, `shramik aawas yojana`.\n- **Governing Statutory Law:**\n - Section 113, *The Code on Social Security, 2020*.\n - *The Building and Other Construction Workers (BOCW) Welfare Cess Act, 1996*.\n- **Worker Statutory Rights:**\n 1. **e-Shram Card & Accidental Protection:** Every registered unorganised and gig worker receives a 12-digit Universal Account Number (UAN) with automatic ₹2 Lakh accidental death and permanent disability"
+  },
+  {
+    "chunk_id": 24,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 16,
+    "text": "istered unorganised and gig worker receives a 12-digit Universal Account Number (UAN) with automatic ₹2 Lakh accidental death and permanent disability insurance under Pradhan Mantri Suraksha Bima Yojana (PMSBY), plus nationwide social security portability.\n 2. **BOCW Welfare Board Grants:** Registered construction and informal trade workers receive:\n - **Children's Education Scholarships:** ₹8,000 to ₹25,000 per year from class 1 through higher university education.\n - **Maternity Assistance:** ₹21,000 financial grant for registered female workers.\n - **Daughter's Marriage Grant:** ₹51,000 to ₹1,00,000 financial assistance.\n - **Housing Repair & Tool Assistance:** Subsidized loans and ₹5,000 tool purchase grants.\n- **Escalation & Action:**\n - Self-enroll at `https://eshram.gov.in` using Aadhaar and mobile OTP.\n - Visit the nearest Common Service Centre (CSC) or district labor office for"
+  },
+  {
+    "chunk_id": 25,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 17,
+    "text": "- Self-enroll at `https://eshram.gov.in` using Aadhaar and mobile OTP.\n - Visit the nearest Common Service Centre (CSC) or district labor office for BOCW worker booklet endorsement.\n\n---\n\n## 7. Category 7: Formal Appeal Drafting & Legal Notice Escalation Protocol\n- **Keywords & Dialect Phrases:**\n `draft appeal letter`, `legal notice to company`, `complaint to labour commissioner`, `appeal format`, `arbitration notice`, `grievance redressal application`, `formal appeal template`, `appeal kaise kare`, `legal notice bhejna hai`, `labour commissioner ko complaint kaise likhe`, `grievance form`, `shikayat patra draft kar do`.\n- **4-Stage Legal Escalation Protocol:**\n 1. **Stage 1 (Internal In-App Dispute):** Log an official dispute ticket within the delivery partner application. Capture timestamped screenshots of customer chats, trip routes, wallet balances, and note the Ticket ID.\n 2."
+  },
+  {
+    "chunk_id": 26,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 18,
+    "text": "within the delivery partner application. Capture timestamped screenshots of customer chats, trip routes, wallet balances, and note the Ticket ID.\n 2. **Stage 2 (Statutory Legal Notice):** If unaddressed or denied after 48 hours, issue a formal statutory notice to the platform aggregator's designated Grievance Officer citing Section 14 of the Rajasthan Gig Workers Act and Section 114 of the Code on Social Security.\n 3. **Stage 3 (Welfare Board Tribunal Petition):** If unresolved after 14 days, file an electronic petition before the State Gig Workers Welfare Board Tribunal seeking binding reinstatement and lost-wage compensation.\n 4. **Stage 4 (Appellate Conciliation & Labour Court):** Appeal to the State Labour Commissionerate for formal statutory conciliation and prosecution of aggregator non-compliance.\n- **Escalation & Action:**\n - Access the **Haq Setu Automated Reinstatement Wizard"
+  },
+  {
+    "chunk_id": 27,
+    "source": "gig_workers_statutory_rights.md",
+    "chunk_number": 19,
+    "text": "tatutory conciliation and prosecution of aggregator non-compliance.\n- **Escalation & Action:**\n - Access the **Haq Setu Automated Reinstatement Wizard (`/haq#appeal-wizard`)** to automatically generate an editable, legally sound legal notice in English and Hindi."
+  },
+  {
+    "chunk_id": 28,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 0,
     "text": "# Occupational Health, Symptom Triage & Generic Medicines Guide for Gig Workers\n\n- **Issuing Body:** FairWork Setu Occupational Health & Clinical Safety Council\n- **References:** National Health Mission (NHM), National Centre for Disease Control (NCDC), Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP)\n- **Emergency Helplines:** 108 (Ambulance), 112 (National Emergency), 102 (Maternal/Child Emergency), 14555 (Ayushman PM-JAY), 1800-180-8080 (Jan Aushadhi Helpline)\n- **Target Population:** Platform and gig delivery riders, auto/cab drivers, domestic workers, street vendors, and logistics workers across India.\n\n---\n\n## 1. Respiratory Infections: Cold, Cough, Sore Throat & Nasal Congestion (जुकाम / सर्दी / खांसी / कफ)\n- **Synonyms & Dialect Terms:** Jukam, zukaam, zukham, sardi, thandi lag gayi, nazla, khansi, khasi, sukhi khansi, balgam wali khansi, kaf, cough, gala kharab, gale me"
   },
   {
-    "chunk_id": 9,
+    "chunk_id": 29,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 1,
     "text": "alect Terms:** Jukam, zukaam, zukham, sardi, thandi lag gayi, nazla, khansi, khasi, sukhi khansi, balgam wali khansi, kaf, cough, gala kharab, gale me dard, gale me kharash, chheenk, naak behna, naak band, saans lene me sarsarhat, sinus, thand lag gayi, bike chalane se sardi.\n- **Immediate Shift First-Aid & Self-Care:**\n 1. **Warm Hydration:** Sip lukewarm water or herbal/ginger-tulsi tea during work shifts. Keep a thermos of warm water on your bike. Avoid cold sodas, chilled water, or abrupt shifts between AC restaurants and scorching outdoor roads.\n 2. **Steam Inhalation:** Inhale steam from plain boiling water for 10 minutes at night and after finishing shifts to loosen nasal and bronchial mucus.\n 3. **Warm Salt-Water Gargle:** Gargle with 1 glass warm water mixed with half teaspoon salt twice daily to relieve throat soreness and reduce viral inflammation.\n- **Subsidized Jan Aushadhi"
   },
   {
-    "chunk_id": 10,
+    "chunk_id": 30,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 2,
     "text": "ith 1 glass warm water mixed with half teaspoon salt twice daily to relieve throat soreness and reduce viral inflammation.\n- **Subsidized Jan Aushadhi (PMBJP) Generic Medicines:**\n - *Paracetamol 500mg / 650mg:* ₹5 to ₹10 per strip of 10 tablets (relieves fever, headache, and body aches).\n - *Cetirizine 10mg:* ₹5 to ₹8 per strip of 10 tablets (relieves allergic sneezing, runny nose; take 1 tablet at night before sleep).\n - *Dextromethorphan / Ambroxol cough syrup (100ml):* ₹25 to ₹35 at PMBJP stores (versus ₹110 to ₹140 for commercial branded syrups).\n- **⚠️ Danger Signs (Refer to UPHC / Civil Hospital):**\n - Persistent fever exceeding 101°F for more than 3 consecutive days.\n - Coughing up yellow-green purulent sputum or traces of blood.\n - Shortness of breath, rapid wheezing, or chest tightness.\n\n---\n\n## 2. Dehydration, Heat Stress & Sunstroke (निर्जलीकरण / लू / डिहाइड्रेशन / अत्यधिक"
   },
   {
-    "chunk_id": 11,
+    "chunk_id": 31,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 3,
     "text": "- Shortness of breath, rapid wheezing, or chest tightness.\n\n---\n\n## 2. Dehydration, Heat Stress & Sunstroke (निर्जलीकरण / लू / डिहाइड्रेशन / अत्यधिक प्यास)\n- **Synonyms & Dialect Terms:** Dehydration, dihydration, lu lagna, loo lag gayi, dhup lag gayi, dhoop me chakkar, garmi chadh gayi, pyaas, gala sookh raha hai, hoth sookh rahe hain, paseena nahi aa raha, bahut paseena beh gaya, sar ghoom raha hai, kamzori lag rahi hai, behoshi jaisa lag raha hai, chakkar aana, exhaustion, heat stress, heat cramps.\n- **Immediate Shift Protocol:**\n 1. **Stop & Park in Shade:** Pull over your bike or vehicle immediately into shade. Turn off ignition.\n 2. **Cool Down:** Remove helmet, jacket, and tight delivery backpacks/vests. Sponge forehead, nape of the neck, and wrists with a cool damp cloth.\n 3. **Hydrate Slowly:** Sip Oral Rehydration Salts (ORS) solution slowly. Drink 1 glass over 10-15"
   },
   {
-    "chunk_id": 12,
+    "chunk_id": 32,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 4,
     "text": "ape of the neck, and wrists with a cool damp cloth.\n 3. **Hydrate Slowly:** Sip Oral Rehydration Salts (ORS) solution slowly. Drink 1 glass over 10-15 minutes.\n - **Warning:** Do NOT gulp down ice-chilled water or refrigerator drinks rapidly; sudden temperature shock triggers severe stomach cramps, vomiting, and vascular constriction.\n- **Subsidized Jan Aushadhi (PMBJP) Electrolytes:**\n - *Jan Aushadhi WHO-formula ORS Sachet (21.8g):* ₹4 to ₹5 per sachet (versus ₹22 to ₹30 for commercial branded Electral).\n - Fresh coconut water, thin buttermilk (chaas) with rock salt, or lemon-water with sugar and a pinch of salt serve as natural alternatives.\n- **🚨 Critical Red-Flag Emergency (Heat Stroke - Call 108):**\n - High core body temperature (>103°F) accompanied by the *complete absence of sweating* (hot dry skin).\n - Mental confusion, slurred speech, delirium, disorientation, loss of"
   },
   {
-    "chunk_id": 13,
+    "chunk_id": 33,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 5,
     "text": "ture (>103°F) accompanied by the *complete absence of sweating* (hot dry skin).\n - Mental confusion, slurred speech, delirium, disorientation, loss of consciousness, or repeated severe vomiting.\n - Call 108 immediately and pour room-temperature water continuously over the worker's head and chest until the ambulance arrives.\n\n---\n\n## 3. Fever, Viral Infection & Body Ache (बुखार / बदन दर्द / वायरल / हरारत)\n- **Synonyms & Dialect Terms:** Bukhar, bukhaar, buhar, fever, hararat, tap, taap, shareer garam hai, badan dard, badan toot raha hai, ang ang toot raha hai, sir dard, sar phat raha hai, thakan, susti, kapkapi, thand lagkar bukhar, viral, dengue jaisa lag raha, malaria, chills.\n- **Immediate First-Aid & Rest Protocol:**\n 1. **Strict Rest:** Stop strenuous outdoor riding; physical exertion during fever increases myocardial strain and accelerates dehydration.\n 2. **Tepid Sponging:**"
   },
   {
-    "chunk_id": 14,
+    "chunk_id": 34,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 6,
     "text": "Rest:** Stop strenuous outdoor riding; physical exertion during fever increases myocardial strain and accelerates dehydration.\n 2. **Tepid Sponging:** Sponge forehead, arms, and legs with normal room-temperature water. Do NOT use ice water.\n 3. **Fluids:** Drink at least 2.5 to 3 liters of fluids daily (lukewarm water, thin dal, ORS, vegetable soup).\n- **Subsidized Jan Aushadhi (PMBJP) Guidance:**\n - *Generic Paracetamol 500mg:* 1 tablet every 6 to 8 hours after food (maximum 2,000mg/day for gig workers without liver disease). Strip of 10 costs ₹5 to ₹10.\n - **CRITICAL CLINICAL SAFETY WARNING:** Do NOT consume Aspirin, Ibuprofen, Combiflam, or unprescribed NSAIDs without medical examination. If the fever is Dengue, these drugs cause platelet inhibition and life-threatening internal gastrointestinal hemorrhage!\n- **⚠️ UPHC Referral Indicators:**\n - Fever accompanied by severe"
   },
   {
-    "chunk_id": 15,
+    "chunk_id": 35,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 7,
     "text": "cause platelet inhibition and life-threatening internal gastrointestinal hemorrhage!\n- **⚠️ UPHC Referral Indicators:**\n - Fever accompanied by severe retro-orbital eye pain, joint/bone pain, red petechial skin rashes (Dengue warning).\n - Chills with teeth-chattering rigors recurring every alternate day (Malaria warning).\n - Dark Coca-Cola colored urine, extreme fatigue, or yellowing of the eyes (Jaundice / Hepatitis warning).\n - Get a free CBC, Dengue NS1 antigen, and Malaria smear at your local government Urban Primary Health Centre (UPHC).\n\n---\n\n## 4. Digestive Upset, Acidity, Gastritis & Food Poisoning (पेट दर्द / गैस / एसिडिटी / उल्टी-दस्त)\n- **Synonyms & Dialect Terms:** Pet dard, pet me marod, stomach pain, acidity, gas ban rahi hai, seene me jalan, khatti dakar, ulti, vomiting, ji machal raha hai, matli, dast, loose motion, dast lag gaye, pet kharab hai, hazma kharab, food"
   },
   {
-    "chunk_id": 16,
+    "chunk_id": 36,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 8,
     "text": "hi hai, seene me jalan, khatti dakar, ulti, vomiting, ji machal raha hai, matli, dast, loose motion, dast lag gaye, pet kharab hai, hazma kharab, food poisoning, bahar ka khana khane se pet kharab.\n- **Immediate First-Aid & Dietary Steps:**\n 1. **Prevent Dehydration:** Consume 1 cup of fresh ORS solution after every loose motion or vomit episode.\n 2. **Bland BRAT Diet:** Eat freshly prepared curd rice, plain moong dal khichdi, bananas, and toast. Avoid roadside cutting chai, fried samosas, spicy curries, and unwashed raw street salads.\n 3. **Rest the Gut:** Avoid carbonated beverages and sugary energy drinks which worsen osmotic diarrhea.\n- **Subsidized Jan Aushadhi (PMBJP) Generic Medicines:**\n - *Jan Aushadhi ORS Sachet:* ₹4 to ₹5 per sachet.\n - *Generic Pantoprazole 40mg or Omeprazole 20mg:* ₹10 to ₹18 per strip of 10 tablets (take 1 tablet on an empty stomach 30 minutes before"
   },
   {
-    "chunk_id": 17,
+    "chunk_id": 37,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 9,
     "text": "per sachet.\n - *Generic Pantoprazole 40mg or Omeprazole 20mg:* ₹10 to ₹18 per strip of 10 tablets (take 1 tablet on an empty stomach 30 minutes before breakfast for acid reflux and burning chest sensation).\n - *Antacid Oral Suspension (200ml):* ₹25 to ₹35 at Jan Aushadhi stores (relieves acute heartburn).\n - *Dicyclomine 10mg / Mefenamic:* ₹8 to ₹12 per strip under pharmacist guidance for acute abdominal spasms.\n- **⚠️ Danger Signs (Seek Immediate Medical Care):**\n - Bloody or black tarry stools.\n - Inability to keep any liquid down for more than 6 hours with severe dry tongue and sunken eyes.\n - High fever (>102°F) with intense localized lower-right abdominal pain (acute appendicitis red-flag).\n\n---\n\n## 5. Musculoskeletal Strain, Backache & Rider Ergonomics (कमर दर्द / गर्दन का खिंचाव / जोड़ दर्द)\n- **Synonyms & Dialect Terms:** Kamar dard, back pain, peeth dard, gardan akdna, neck"
   },
   {
-    "chunk_id": 18,
+    "chunk_id": 38,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 10,
     "text": "ache & Rider Ergonomics (कमर दर्द / गर्दन का खिंचाव / जोड़ दर्द)\n- **Synonyms & Dialect Terms:** Kamar dard, back pain, peeth dard, gardan akdna, neck stiffness, kandha dard, shoulder pain, ghutna dard, haath pair dard, nerves khinch gayi, bike chalane se kamar dard, delivery bag uthane se dard, moch aa gayi, muscle cramp, nas chad gayi.\n- **Rider Ergonomics & Shift Protocols:**\n 1. **Mount Bag on Cargo Rack:** Never carry heavy 10-15 kg delivery backpacks exclusively on your shoulders for 10-hour shifts. Fasten the backpack to the bike rear carrier using sturdy bungee cords.\n 2. **Active Decompression Breaks:** Take a 3-5 minute posture break every 2 hours: roll shoulders backwards, do gentle neck stretches, and arch the lower back while standing.\n 3. **Adjust Handlebars & Seat:** Ensure bike handles allow elbows to stay slightly bent; locked rigid elbows transfer road shock directly"
   },
   {
-    "chunk_id": 19,
+    "chunk_id": 39,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 11,
     "text": "e standing.\n 3. **Adjust Handlebars & Seat:** Ensure bike handles allow elbows to stay slightly bent; locked rigid elbows transfer road shock directly into cervical vertebrae.\n- **At-Home Relief & Jan Aushadhi Remedies:**\n - Apply warm compress (hot water bottle) for 15-20 minutes on the lower back or neck after returning home.\n - *Jan Aushadhi Diclofenac Gel / Pain Spray (30g):* ₹20 to ₹25 (versus ₹120 to ₹160 for commercial branded spray like Volini).\n - *Generic Paracetamol 500mg:* ₹5 to ₹10 for acute muscular aching. Avoid long-term self-medication with strong painkiller pills to protect renal health.\n\n---\n\n## 6. Minor Wounds, Burns & Silencer Injuries (मामूली चोट / खरोंच / साइलेंसर बर्न)\n- **Synonyms & Dialect Terms:** Chot lag gayi, khronch, cut lag gaya, silencer se jal gaya, bike silencer burn, chhil gaya, ungli kat gayi, halka khoon aaya, minor injury, burn dressing, road"
   },
   {
-    "chunk_id": 20,
+    "chunk_id": 40,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 12,
     "text": "gayi, khronch, cut lag gaya, silencer se jal gaya, bike silencer burn, chhil gaya, ungli kat gayi, halka khoon aaya, minor injury, burn dressing, road scrape.\n- **Bike Exhaust Silencer Burn Protocol:**\n 1. **Immediate Cooling:** Hold the affected burned skin under gentle, clean, room-temperature running tap water for 10 to 15 minutes continuously.\n 2. **Do NOT:** Never apply toothpaste, ice cubes, engine oil, butter, or raw turmeric onto fresh burns—these trap heat inside tissues and cause severe microbial infections.\n 3. **Do NOT Pop Blisters:** Intact skin blisters (fafola) serve as sterile biological band-aids protecting underlying dermis.\n 4. **Antiseptic Burn Ointment:** Gently apply *Silver Sulfadiazine 1% cream* (Jan Aushadhi: ₹15 to ₹20 per 20g tube; commercial brands: ₹80 to ₹120) and cover loosely with sterile paraffin gauze.\n- **Road Scrapes & Abrasions:**\n - Wash road dust"
   },
   {
-    "chunk_id": 21,
+    "chunk_id": 41,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 13,
     "text": "to ₹20 per 20g tube; commercial brands: ₹80 to ₹120) and cover loosely with sterile paraffin gauze.\n- **Road Scrapes & Abrasions:**\n - Wash road dust and grit gently with soap and clean tap water.\n - Apply *Povidone Iodine 5% ointment* (Jan Aushadhi: ₹12 to ₹18 per 15g tube) and protect with a sterile gauze bandage.\n- **⚠️ Tetanus Toxoid (TT) Injection Requirement:**\n - If your skin was cut or punctured on a road surface, rusty metal, or dirty pavement, and you have not received a Tetanus Toxoid (TT) booster within the last 6 months, visit the nearest government dispensary or UPHC within 24 hours. A government TT shot costs only ₹10.\n\n---\n\n## 7. Subsidized Generic Medicines: Pradhan Mantri Jan Aushadhi Kendra (PMBJP) Price Index\n- **What is PMBJP?**\n The Pradhan Mantri Bhartiya Janaushadhi Pariyojana is a national government initiative providing WHO-GMP certified, high-potency generic"
   },
   {
-    "chunk_id": 22,
+    "chunk_id": 42,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 14,
     "text": "is PMBJP?**\n The Pradhan Mantri Bhartiya Janaushadhi Pariyojana is a national government initiative providing WHO-GMP certified, high-potency generic medicines at 50% to 90% discount compared to commercial pharma brands. Over 10,000 stores are operational across India.\n- **Price Comparison Benchmark Table:**\n | Generic Medicine & Formulation | PMBJP Jan Aushadhi Price | Commercial Branded Market Price | Worker Cost Savings |\n | :--- | :---: | :---: | :---: |\n | **Paracetamol 500mg / 650mg** (10 Tablets) | ₹5.00 – ₹10.00 | ₹30.00 – ₹45.00 | **78% – 88% cheaper** |\n | **Cetirizine 10mg Anti-Allergy** (10 Tablets) | ₹5.00 – ₹8.00 | ₹40.00 – ₹60.00 | **85% – 88% cheaper** |\n | **WHO-Formula ORS Sachet** (21.8g) | ₹4.00 – ₹5.00 | ₹22.00 – ₹30.00 | **80% – 83% cheaper** |\n | **Pantoprazole 40mg Antacid** (10 Tablets) | ₹15.00 – ₹22.00 | ₹120.00 – ₹160.00 | **85% – 88% cheaper** |\n |"
   },
   {
-    "chunk_id": 23,
+    "chunk_id": 43,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 15,
     "text": "00 – ₹30.00 | **80% – 83% cheaper** |\n | **Pantoprazole 40mg Antacid** (10 Tablets) | ₹15.00 – ₹22.00 | ₹120.00 – ₹160.00 | **85% – 88% cheaper** |\n | **Omeprazole 20mg Capsules** (10 Capsules) | ₹10.00 – ₹15.00 | ₹60.00 – ₹90.00 | **83% cheaper** |\n | **Diclofenac Pain Relief Gel / Spray** (30g) | ₹20.00 – ₹25.00 | ₹110.00 – ₹150.00 | **82% – 83% cheaper** |\n | **Silver Sulfadiazine 1% Burn Cream** (20g) | ₹15.00 – ₹20.00 | ₹75.00 – ₹110.00 | **80% – 82% cheaper** |\n | **Povidone Iodine 5% Antiseptic Cream** (15g) | ₹12.00 – ₹18.00 | ₹65.00 – ₹90.00 | **80% cheaper** |\n | **Ambroxol / Dextromethorphan Syrup** (100ml) | ₹25.00 – ₹35.00 | ₹110.00 – ₹140.00 | **75% – 77% cheaper** |\n- **Store Locator & Toll-Free Assistance:**\n - Search nearest store: `https://janaushadhi.gov.in` or via official \"Jan Aushadhi Sugam\" mobile app.\n - National Toll-Free Helpline: 1800-180-8080.\n - Prescription"
   },
   {
-    "chunk_id": 24,
+    "chunk_id": 44,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 16,
     "text": "st store: `https://janaushadhi.gov.in` or via official \"Jan Aushadhi Sugam\" mobile app.\n - National Toll-Free Helpline: 1800-180-8080.\n - Prescription policy: OTC items (ORS, bandages, paracetamol, pain gels) do not require a prescription; prescription medicines require an MBBS/BAMS doctor's prescription slip.\n\n---\n\n## 8. Critical Emergency Red-Flag Protocol (Direct Bypass - Immediate 108 / 112)\n- **Life-Threatening Emergency Warning Signs:**\n 1. Crushing chest pain, severe tightness radiating to the left arm, neck, or jaw, accompanied by profuse cold sweat (acute myocardial infarction / heart attack).\n 2. Severe shortness of breath, gasping for air, blue-tinted lips, or choking.\n 3. Sudden loss of consciousness, fainting, or unresponsive collapse.\n 4. Sudden facial droop, arm weakness, inability to speak or slurred speech (acute stroke warning).\n 5. Uncontrolled arterial spurting or"
   },
   {
-    "chunk_id": 25,
+    "chunk_id": 45,
     "source": "occupational_health_symptoms.md",
     "chunk_number": 17,
     "text": "ve collapse.\n 4. Sudden facial droop, arm weakness, inability to speak or slurred speech (acute stroke warning).\n 5. Uncontrolled arterial spurting or severe continuous bleeding following a road accident.\n 6. Suspected poison ingestion, chemical splash, or snakebite.\n- **Immediate Response Actions:**\n - **Dial 108:** Free 24x7 Government Emergency Ambulance with basic or advanced life support.\n - **Dial 112:** All-India Unified Emergency helpline for police, fire, and trauma coordination.\n - **Dial 102:** Free dedicated transport for pregnant women and neonates.\n - Proceed immediately to the nearest 24x7 Government Medical College, District Civil Hospital, or trauma casualty."
   },
   {
-    "chunk_id": 26,
+    "chunk_id": 46,
     "source": "pmsym_pension_scheme.md",
     "chunk_number": 0,
     "text": "# Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM) Pension Scheme\n\n- **Issuing Organization:** Ministry of Labour and Employment, Government of India\n- **Implementing Agency:** Life Insurance Corporation of India (LIC) & Common Service Centres (CSC e-Governance Services India Ltd.)\n- **Official Portal:** https://maandhan.in\n- **National Helpdesk:** 1800-267-6888\n- **Category:** Old-Age Pension & Social Security for Unorganised Workers\n- **Launched:** February 2019\n\n## Scheme Overview\nPM-SYM is a central government-sponsored voluntary and contributory pension scheme meant for ensuring old-age income security to unorganised and informal workers, including gig delivery workers, domestic workers, street vendors, rickshaw drivers, construction workers, and agricultural labourers.\n\n## Key Financial Benefits\n- **Assured Monthly Pension:** ₹3,000 per month guaranteed lifelong pension once the"
   },
   {
-    "chunk_id": 27,
+    "chunk_id": 47,
     "source": "pmsym_pension_scheme.md",
     "chunk_number": 1,
     "text": "n workers, and agricultural labourers.\n\n## Key Financial Benefits\n- **Assured Monthly Pension:** ₹3,000 per month guaranteed lifelong pension once the beneficiary completes 60 years of age.\n- **Family Pension on Death:** If the subscriber dies during the receipt of the pension, their spouse is entitled to receive 50% of the pension (₹1,500/month) as family pension.\n- **Government Matching Contribution:** The scheme operates on a 50:50 basis. For every rupee deposited by the worker into their pension account (₹55 to ₹200 per month depending on age of entry), the Central Government deposits an equal matching amount.\n\n## Eligibility Criteria\n- Must be an unorganised or informal worker (such as auto driver, courier/delivery rider, tailor, street hawker, domestic helper).\n- Entry age: Between 18 and 40 years strictly. Workers aged 41 or above (e.g., 44 years) are not eligible to enroll in"
   },
   {
-    "chunk_id": 28,
+    "chunk_id": 48,
     "source": "pmsym_pension_scheme.md",
     "chunk_number": 2,
     "text": "treet hawker, domestic helper).\n- Entry age: Between 18 and 40 years strictly. Workers aged 41 or above (e.g., 44 years) are not eligible to enroll in PM-SYM. For individuals aged above 40, alternative government schemes such as Atal Pension Yojana (APY, enrollable up to age 40) or National Pension System (NPS-All Citizen model, enrollable up to age 70) and voluntary savings through post office schemes are recommended.\n- Monthly income: ₹15,000 per month or below.\n- Must not be covered under other formal statutory schemes:\n - Not an existing member of EPFO, NPS, or ESIC.\n - Not an income tax assessee.\n- Required documents: Aadhaar card and Savings Bank / Jan Dhan account with auto-debit facility.\n\n## Contribution Table by Age\n- Age 18: ₹55/month worker share + ₹55/month government share = ₹110 total\n- Age 25: ₹80/month worker share + ₹80/month government share = ₹160 total\n- Age 30:"
   },
   {
-    "chunk_id": 29,
+    "chunk_id": 49,
     "source": "pmsym_pension_scheme.md",
     "chunk_number": 3,
     "text": "₹55/month worker share + ₹55/month government share = ₹110 total\n- Age 25: ₹80/month worker share + ₹80/month government share = ₹160 total\n- Age 30: ₹105/month worker share + ₹105/month government share = ₹210 total\n- Age 35: ₹150/month worker share + ₹150/month government share = ₹300 total\n- Age 40: ₹200/month worker share + ₹200/month government share = ₹400 total\n\n## How to Enroll\n1. Visit the nearest Common Service Centre (CSC) or visit https://maandhan.in for self-enrollment.\n2. Provide Aadhaar Card and Savings/Jan Dhan Bank details (IFSC code and account number).\n3. The initial contribution amount is paid in cash at the CSC center, and subsequent monthly installments are auto-debited from the bank account.\n4. An instant Shram Yogi Pension Card with a unique Shram Yogi Pension Account Number is generated."
   },
   {
-    "chunk_id": 30,
+    "chunk_id": 50,
     "source": "rajasthan_gig_workers_act_2023.md",
     "chunk_number": 0,
     "text": "# Rajasthan Platform Based Gig Workers (Registration and Welfare) Act, 2023\n\n- **Issuing Organization:** Department of Labour, Government of Rajasthan\n- **Official Status:** State Legislative Act (Act No. 17 of 2023)\n- **Official Portal:** https://labour.rajasthan.gov.in\n- **Category:** Gig Worker Social Security & Emergency Assistance\n- **Enacted:** July 2023\n\n## Act Overview\nThe Rajasthan Platform Based Gig Workers (Registration and Welfare) Act, 2023 is India's first landmark legislation designed specifically to protect the legal rights, social security, occupational health, and welfare of app-based gig workers (delivery partners, rideshare drivers, home service workers, and quick-commerce agents).\n\n## The Gig Workers Welfare Board & Fund\n- **Rajasthan Platform Based Gig Workers Welfare Board:**\n - Tripartite board comprising government officials, representatives of gig worker"
   },
   {
-    "chunk_id": 31,
+    "chunk_id": 51,
     "source": "rajasthan_gig_workers_act_2023.md",
     "chunk_number": 1,
     "text": "rd & Fund\n- **Rajasthan Platform Based Gig Workers Welfare Board:**\n - Tripartite board comprising government officials, representatives of gig worker unions/associations, and platform aggregator representatives (e.g., Zomato, Swiggy, Uber, Ola, Urban Company, Zepto, Blinkit).\n- **The Social Security and Welfare Fund:**\n - Financed primarily by a dedicated **Welfare Cess** (ranging between 1% and 2% per customer transaction) levied on platform aggregators operating within the state.\n - Contributions are deposited directly into a designated government-managed fund and cannot be deducted from worker payouts or fares.\n\n## Welfare & Health Benefits for Gig Workers\n- **Accident & Emergency Medical Relief:** Immediate cashless hospitalization and compensation for road accidents, physical assaults, or severe health emergencies occurring during active shifts or delivery routes.\n- **Health"
   },
   {
-    "chunk_id": 32,
+    "chunk_id": 52,
     "source": "rajasthan_gig_workers_act_2023.md",
     "chunk_number": 2,
     "text": "ion and compensation for road accidents, physical assaults, or severe health emergencies occurring during active shifts or delivery routes.\n- **Health Insurance & Preventive Health Camps:** Subsidized or fully funded health insurance packages tailored for the occupational hazards of gig workers (ergonomic strain, pollution exposure, traffic injuries).\n- **Unique Worker ID (UID):**\n - Every registered gig worker is assigned a permanent, unique registration ID that remains valid across multiple platforms and apps.\n - Portability ensures that switching aggregators or working for two platforms simultaneously does not disrupt accumulated social security benefits.\n- **Grievance Redressal Mechanism & Account Deactivation Protection:**\n - **Section 13 & 14 (Mandatory Notice Before Deactivation):** No platform aggregator can deactivate, blacklist, or terminate a gig worker's account arbitrarily"
   },
   {
-    "chunk_id": 33,
+    "chunk_id": 53,
     "source": "rajasthan_gig_workers_act_2023.md",
     "chunk_number": 3,
     "text": "on 13 & 14 (Mandatory Notice Before Deactivation):** No platform aggregator can deactivate, blacklist, or terminate a gig worker's account arbitrarily or without due notice.\n - Aggregators are legally required to provide at least **14 days mandatory written notice** stating clear, verifiable reasons before deactivating or suspending a worker's account or app access.\n - The gig worker has the statutory right to be heard and submit an explanation within the 14-day window.\n - Workers can file an appeal against unlawful deactivation or arbitrary deductions with the **Appellate Grievance Redressal Officer and Welfare Board Tribunal**, which must decide cases within a time-bound statutory deadline.\n - Aggregators violating these deactivation provisions are subject to statutory financial penalties ranging up to ₹5 Lakhs for repeated contraventions under the Act.\n\n## Worker Registration"
   },
   {
-    "chunk_id": 34,
+    "chunk_id": 54,
     "source": "rajasthan_gig_workers_act_2023.md",
     "chunk_number": 4,
     "text": "tion provisions are subject to statutory financial penalties ranging up to ₹5 Lakhs for repeated contraventions under the Act.\n\n## Worker Registration Process\n1. Aggregators must automatically onboard all onboarded gig workers operating within Rajasthan into the state portal within 60 days.\n2. Gig workers can independently verify or update their profile using their Aadhaar and mobile number on the Rajasthan Labour portal.\n3. Access to welfare fund grants and emergency medical reimbursement is initiated via the worker's unique ID."

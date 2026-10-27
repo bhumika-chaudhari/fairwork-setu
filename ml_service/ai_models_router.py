@@ -87,6 +87,11 @@ class AssistantIntentRequest(BaseModel):
     context: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Dialogue context")
 
 
+class HaqAssistantRequest(BaseModel):
+    question: str = Field(..., description="Worker dispute or statutory rights query in English, Hindi, or Hinglish")
+    language: Optional[str] = Field("en", description="Preferred response language ('en', 'hi', or 'auto')")
+
+
 
 # -------------------------------------------------------------------------
 # ROUTES
@@ -194,4 +199,17 @@ def parse_assistant_intent(payload: AssistantIntentRequest):
     if not payload.text.strip():
         raise HTTPException(status_code=400, detail="Utterance text cannot be empty.")
     return ai_models_service.parse_assistant_intent(payload.text, context=payload.context)
+
+
+@ai_models_router.post("/haq-assistant")
+def ask_haq_assistant(payload: HaqAssistantRequest):
+    """
+    Statutory Labor Rights & Dispute Resolution Assistant (Haq Setu).
+    Bilingual (English / Hindi / Hinglish) triage grounded in gig worker statutes.
+    """
+    if not payload.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty.")
+    from haq_service import classify_haq_intent, get_statutory_rights_response
+    intent_cat = classify_haq_intent(payload.question)
+    return get_statutory_rights_response(intent_cat, payload.question, lang=payload.language)
 

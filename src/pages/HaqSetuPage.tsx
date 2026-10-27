@@ -6,12 +6,13 @@ import ListenButton from '../components/ListenButton';
 import AccountDeactivationWizard from '../components/haq/AccountDeactivationWizard';
 import GrievanceTracker from '../components/haq/GrievanceTracker';
 import LegalSourcesLibrary from '../components/haq/LegalSourcesLibrary';
+import HaqAssistantCard from '../components/haq/HaqAssistantCard';
 import { useVoiceAssistant } from '../hooks/VoiceAssistantContext';
 import ModalPortal from '../components/ModalPortal';
 import { readTextAloud } from '../lib/speechSynthesis';
 import type { SpeechTrack } from '../lib/speechSynthesisContext';
 
-type HaqView = 'overview' | 'deactivation_wizard' | 'cases' | 'rights';
+type HaqView = 'overview' | 'deactivation_wizard' | 'cases' | 'rights' | 'assistant';
 
 export default function HaqSetuPage() {
   const { t, i18n } = useTranslation();
@@ -22,7 +23,7 @@ export default function HaqSetuPage() {
   const [searchParams] = useSearchParams();
   useEffect(() => {
     const view = searchParams.get('view');
-    if (view === 'deactivation_wizard' || view === 'cases' || view === 'rights' || view === 'overview') {
+    if (view === 'deactivation_wizard' || view === 'cases' || view === 'rights' || view === 'overview' || view === 'assistant') {
       setCurrentView(view as HaqView);
     }
   }, [searchParams]);
@@ -91,7 +92,7 @@ export default function HaqSetuPage() {
               </div>
             </div>
 
-            {/* Quick Navigation Pills: Actions / My Cases / Legal Rights */}
+            {/* Quick Navigation Pills: Actions / Assistant / My Cases / Legal Rights */}
             <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-[#F4EBDD]">
               <button
                 type="button"
@@ -104,6 +105,19 @@ export default function HaqSetuPage() {
               >
                 <AppIcon name="grid" size={14} />
                 <span>Get Help & Actions</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentView('assistant')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  currentView === 'assistant'
+                    ? 'bg-[#B34A26] text-white shadow-sm'
+                    : 'bg-white/80 border border-[#F4EBDD] text-[#1E2B3E] hover:bg-white'
+                }`}
+              >
+                <AppIcon name="scale" size={14} />
+                <span>Ask Haq Setu (हक सहायक)</span>
               </button>
 
               <button
@@ -128,7 +142,7 @@ export default function HaqSetuPage() {
                     : 'bg-white/80 border border-[#F4EBDD] text-[#1E2B3E] hover:bg-white'
                 }`}
               >
-                <AppIcon name="scale" size={14} />
+                <AppIcon name="shield-checkmark" size={14} />
                 <span>Understand My Rights</span>
               </button>
             </div>
@@ -167,6 +181,9 @@ export default function HaqSetuPage() {
                   <span>Talk to Setu</span>
                 </button>
               </section>
+
+              {/* Interactive Bilingual Labor Rights Assistant Card */}
+              <HaqAssistantCard onLaunchAppealWizard={() => setCurrentView('deactivation_wizard')} />
 
               {/* 4 Accessible Action Cards */}
               <section className="space-y-3">
@@ -384,6 +401,48 @@ export default function HaqSetuPage() {
           {currentView === 'rights' && (
             <div className="space-y-4">
               <LegalSourcesLibrary />
+            </div>
+          )}
+
+          {/* VIEW: STATUTORY AI ASSISTANT */}
+          {currentView === 'assistant' && (
+            <div className="space-y-6">
+              <HaqAssistantCard onLaunchAppealWizard={() => setCurrentView('deactivation_wizard')} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  onClick={() => setCurrentView('deactivation_wizard')}
+                  role="button"
+                  tabIndex={0}
+                  className="p-5 rounded-2xl bg-white border border-[#F4EBDD] hover:border-[#B34A26] transition-all cursor-pointer shadow-xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#FDF8F0] text-[#B34A26] flex items-center justify-center">
+                      <AppIcon name="shield-alert" size={22} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-[#1E2B3E]">Account Recovery Wizard</h4>
+                      <p className="text-xs text-[#231F20]/70">Step-by-step 14-day notice & legal appeal generator</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => setCurrentView('rights')}
+                  role="button"
+                  tabIndex={0}
+                  className="p-5 rounded-2xl bg-white border border-[#F4EBDD] hover:border-[#B34A26] transition-all cursor-pointer shadow-xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#FDF8F0] text-[#7C2D16] flex items-center justify-center">
+                      <AppIcon name="document-text" size={22} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-[#1E2B3E]">Legal Sources Library</h4>
+                      <p className="text-xs text-[#231F20]/70">Explore official Acts, gazettes, and court precedents</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </>

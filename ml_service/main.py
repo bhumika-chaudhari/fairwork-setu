@@ -19,6 +19,7 @@ from models.lstm_model import lstm_model
 from models.kmeans_clustering import kmeans_model
 from marketplace import marketplace_router
 from health_service import health_router
+from haq_service import haq_router
 from ai_models_router import ai_models_router
 from notifications_router import notifications_router
 from database import init_db
@@ -51,6 +52,7 @@ def on_startup():
 
 app.include_router(marketplace_router)
 app.include_router(health_router)
+app.include_router(haq_router)
 app.include_router(ai_models_router)
 app.include_router(notifications_router)
 app.include_router(user_router)
