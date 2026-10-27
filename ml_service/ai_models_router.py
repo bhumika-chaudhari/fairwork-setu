@@ -146,10 +146,32 @@ def voice_transcribe(payload: VoiceTranscribeRequest):
 def extract_transaction(payload: TransactionExtractRequest):
     """
     Model 5: Extracts amount, category, type (income/expense), and date from Hinglish input.
+    Supports single transactions and compound multi-transactions.
     """
     if not payload.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty.")
-    return ai_models_service.extract_transaction(payload.text)
+    compound = ai_models_service.extract_compound_transactions(payload.text)
+    if len(compound.get("transactions", [])) > 1:
+        return {
+            **ai_models_service.extract_transaction(payload.text),
+            "is_compound": True,
+            **compound
+        }
+    return {
+        **ai_models_service.extract_transaction(payload.text),
+        "is_compound": False,
+        **compound
+    }
+
+
+@ai_models_router.post("/extract-compound-transaction")
+def extract_compound_transaction(payload: TransactionExtractRequest):
+    """
+    Model 5: Extracts multiple compound transactions, amounts, roles, and categories.
+    """
+    if not payload.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty.")
+    return ai_models_service.extract_compound_transactions(payload.text)
 
 
 @ai_models_router.post("/job-match")

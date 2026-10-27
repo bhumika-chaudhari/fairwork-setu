@@ -507,6 +507,38 @@ export default function UnifiedVoiceAssistantModal({
                 {pendingConfirmation.summaryText}. Would you like to confirm and save this into your financial ledger?
               </p>
 
+              {/* Multi-item breakdown with income/expense badges */}
+              {pendingConfirmation.items && pendingConfirmation.items.length > 1 && (
+                <div className="space-y-1.5 pt-1">
+                  {pendingConfirmation.items.map((it, idx) => (
+                    <div
+                      key={it.id || idx}
+                      className="flex items-center justify-between bg-white/80 px-2.5 py-1.5 rounded-lg text-xs border border-amber-100"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                            it.type === 'income'
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              : 'bg-rose-100 text-rose-800 border border-rose-200'
+                          }`}
+                        >
+                          {it.type === 'income' ? 'Income' : 'Expense'}
+                        </span>
+                        <span className="font-medium text-stone-800">{it.description}</span>
+                      </div>
+                      <span
+                        className={`font-mono font-bold ${
+                          it.type === 'income' ? 'text-emerald-700' : 'text-stone-900'
+                        }`}
+                      >
+                        {it.type === 'income' ? '+' : '-'}{formatInr(it.amount)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex items-center gap-2 pt-1">
                 <button
                   type="button"

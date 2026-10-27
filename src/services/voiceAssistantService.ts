@@ -27,6 +27,12 @@ import {
 import { getActiveUser } from '../lib/supabaseClient';
 import { formatInr } from '../localization';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
+import {
+  parseCompoundTransactions,
+  deduplicateSpeechTranscript,
+} from '../utils/entityParser';
+
+export { deduplicateSpeechTranscript };
 
 export type SupportedLanguage = 'en' | 'hi' | 'mr';
 
@@ -182,6 +188,7 @@ export function normalizeCategory(cat: string): TransactionCategory {
     lower.includes('travel') ||
     lower.includes('petrol') ||
     lower.includes('diesel') ||
+    lower.includes('tel') ||
     lower.includes('cng')
   ) {
     return 'travel_fuel';
@@ -239,64 +246,21 @@ export interface ExtractedMultiExpense {
 }
 
 export function extractMultipleExpenses(text: string): ExtractedMultiExpense | null {
-  const cleaned = normalizeIndicDigits(text);
-  const lower = cleaned.toLowerCase();
-
-  const hasExpenseContext =
-    lower.includes('expense') ||
-    lower.includes('spent') ||
-    lower.includes('kharch') ||
-    lower.includes('kharcha') ||
-    lower.includes('likho') ||
-    lower.includes('jodo') ||
-    lower.includes('diya') ||
-    lower.includes('bhara');
-
-  const segments = cleaned
-    .split(/[,;\n]|\band\b|\baur\b|\bani\b|\bplus\b|&/gi)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const parsedItems: Array<{
-    amount: number;
-    category: TransactionCategory;
-    description: string;
-  }> = [];
-
-  for (const seg of segments) {
-    const numMatch = seg.match(
-      /(?:₹|rs\.?|inr)?\s*([0-9]{1,6}(?:\.[0-9]{1,2})?)\s*(?:rupees?|rs\.?|inr|₹|ka|ke|rupaye|paise)?/i
-    );
-    if (!numMatch) continue;
-
-    const amt = parseFloat(numMatch[1]);
-    if (isNaN(amt) || amt <= 0) continue;
-
-    const itemDesc = seg
-      .replace(/(?:₹|rs\.?|inr)/gi, '')
-      .replace(numMatch[1], '')
-      .replace(
-        /\b(for|pe|par|ka|ke|rupees|rupaye|paise|spent|add|expenses?|kharcha|kharch|hue|aur|ani)\b/gi,
-        ''
-      )
-      .trim();
-
-    const desc = itemDesc || 'Expense';
-    const cat = normalizeCategory(itemDesc);
-
-    parsedItems.push({
-      amount: amt,
-      category: cat,
-      description: desc.charAt(0).toUpperCase() + desc.slice(1),
-    });
-  }
+  const parsed = parseCompoundTransactions(text);
+  const expenseItems = parsed.transactions.filter((t) => t.type === 'expense');
 
   if (
-    parsedItems.length >= 2 ||
-    (parsedItems.length === 1 && hasExpenseContext && lower.includes('expenses'))
+    expenseItems.length >= 2 ||
+    (expenseItems.length === 1 && text.toLowerCase().includes('expenses'))
   ) {
-    const total = parsedItems.reduce((acc, curr) => acc + curr.amount, 0);
-    return { items: parsedItems, total };
+    return {
+      items: expenseItems.map((t) => ({
+        amount: t.amount,
+        category: t.category,
+        description: t.description.charAt(0).toUpperCase() + t.description.slice(1),
+      })),
+      total: parsed.total_expense,
+    };
   }
 
   return null;
@@ -310,7 +274,7 @@ export async function processUserUtterance(
   input: string,
   state: AssistantContextState
 ): Promise<AssistantMessage> {
-  const text = input.trim();
+  const text = deduplicateSpeechTranscript(input.trim());
   const lang = detectSpokenLanguage(text);
   const cleaned = normalizeIndicDigits(text);
   const lower = cleaned.toLowerCase();
@@ -485,14 +449,39 @@ export async function processUserUtterance(
       let resp = `Confirmed and recorded ${
         pending.items.length === 1 ? 'transaction' : `${pending.items.length} transactions`
       } (${formatInr(pending.totalAmount)}) successfully.`;
-      if (lang === 'hi')
-        resp = `सफलतापूर्वक दर्ज किया गया: ${formatInr(
-          pending.totalAmount
-        )}। आपके खाते में विवरण जुड़ चुका है।`;
-      if (lang === 'mr')
-        resp = `यशस्वीरित्या नोंदवले: ${formatInr(
-          pending.totalAmount
-        )}. तुमच्या खात्यात नोंद झाली आहे.`;
+
+      const incItems = pending.items.filter((i) => i.type === 'income');
+      const expItems = pending.items.filter((i) => i.type === 'expense');
+      const incSum = incItems.reduce((acc, i) => acc + i.amount, 0);
+      const expSum = expItems.reduce((acc, i) => acc + i.amount, 0);
+
+      if (lang === 'hi') {
+        if (incSum > 0 && expSum > 0) {
+          resp = `सफलतापूर्वक दर्ज किया गया: ${formatInr(incSum)} की आय और ${formatInr(
+            expSum
+          )} का खर्च (कुल ${pending.items.length} लेन-देन)। आपके खाते में विवरण जुड़ चुका है।`;
+        } else if (incSum > 0) {
+          resp = `सफलतापूर्वक दर्ज किया गया: ${formatInr(
+            incSum
+          )} की आय। आपके खाते में विवरण जुड़ चुका है।`;
+        } else {
+          resp = `सफलतापूर्वक दर्ज किया गया: ${formatInr(
+            expSum || pending.totalAmount
+          )}। आपके खाते में विवरण जुड़ चुका है।`;
+        }
+      } else if (lang === 'mr') {
+        if (incSum > 0 && expSum > 0) {
+          resp = `यशस्वीरित्या नोंदवले: ${formatInr(incSum)} उत्पन्न आणि ${formatInr(
+            expSum
+          )} खर्च (एकूण ${pending.items.length} व्यवहार). तुमच्या खात्यात नोंद झाली आहे.`;
+        } else if (incSum > 0) {
+          resp = `यशस्वीरित्या नोंदवले: ${formatInr(incSum)} उत्पन्न. तुमच्या खात्यात नोंद झाली आहे.`;
+        } else {
+          resp = `यशस्वीरित्या नोंदवले: ${formatInr(
+            expSum || pending.totalAmount
+          )}. तुमच्या खात्यात नोंद झाली आहे.`;
+        }
+      }
 
       return {
         id: msgId,
@@ -501,9 +490,14 @@ export async function processUserUtterance(
         timestamp,
         lang,
         intent: 'confirm_execution',
-        executedSummary: `Recorded ${pending.items.length} transaction(s) totaling ${formatInr(
-          pending.totalAmount
-        )}`,
+        executedSummary:
+          incSum > 0 && expSum > 0
+            ? `Recorded ${pending.items.length} transactions (${formatInr(incSum)} income, ${formatInr(
+                expSum
+              )} expenses)`
+            : `Recorded ${pending.items.length} transaction(s) totaling ${formatInr(
+                pending.totalAmount
+              )}`,
         pendingConfirmation: pending,
       };
     }
@@ -967,37 +961,103 @@ export async function processUserUtterance(
     }
   }
 
-  // 8c. Multiple Expenses in One Utterance
-  const multiExp = extractMultipleExpenses(text);
-  if (multiExp && multiExp.items.length >= 2) {
-    const pendingItems: PendingTransactionItem[] = multiExp.items.map((it, idx) => ({
+  // 8c. Model 5: Compound Entity Extraction & Transaction Parser
+  const compoundParsed = parseCompoundTransactions(text);
+  if (compoundParsed && compoundParsed.transactions.length >= 2) {
+    const pendingItems: PendingTransactionItem[] = compoundParsed.transactions.map((it, idx) => ({
       id: `multi-${Date.now()}-${idx}`,
-      type: 'expense',
+      type: it.type,
       amount: it.amount,
       category: it.category,
       description: it.description,
-      dateStr: new Date().toISOString(),
+      dateStr: it.date ? new Date(it.date).toISOString() : new Date().toISOString(),
     }));
 
-    let resp = `I found ${pendingItems.length} expenses totaling ${formatInr(multiExp.total)}:\n`;
-    pendingItems.forEach((it, i) => {
-      resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
-    });
-    resp += 'Would you like me to record these?';
+    const hasBoth = compoundParsed.total_income > 0 && compoundParsed.total_expense > 0;
+    const isAllExpense = compoundParsed.total_income === 0 && compoundParsed.total_expense > 0;
+    const isAllIncome = compoundParsed.total_income > 0 && compoundParsed.total_expense === 0;
+    const totalVolume = compoundParsed.total_income + compoundParsed.total_expense;
 
-    if (lang === 'hi') {
-      resp = `मुझे कुल ${formatInr(multiExp.total)} के ${pendingItems.length} खर्चे मिले:\n`;
+    let resp = '';
+    if (hasBoth) {
+      const expCount = pendingItems.filter((i) => i.type === 'expense').length;
+      resp = `I found ${formatInr(compoundParsed.total_income)} income and ${formatInr(
+        compoundParsed.total_expense
+      )} in expenses (${pendingItems.length} transactions):\n`;
+      pendingItems.forEach((it, i) => {
+        const typeTag = it.type === 'income' ? 'Income' : 'Expense';
+        resp += `${i + 1}. [${typeTag}] ${it.description}: ${formatInr(it.amount)}\n`;
+      });
+      resp += 'Would you like me to record these?';
+
+      if (lang === 'hi') {
+        resp = `मुझे ${formatInr(compoundParsed.total_income)} की आय और ${formatInr(
+          compoundParsed.total_expense
+        )} के ${expCount} खर्चे मिले:\n`;
+        pendingItems.forEach((it, i) => {
+          const typeTag = it.type === 'income' ? 'आय' : 'खर्च';
+          resp += `${i + 1}. ${typeTag}: ${it.description}: ${formatInr(it.amount)}\n`;
+        });
+        resp += 'क्या मैं इन्हें आपके खाते में जोड़ दूं?';
+      } else if (lang === 'mr') {
+        resp = `मला ${formatInr(compoundParsed.total_income)} चे उत्पन्न आणि ${formatInr(
+          compoundParsed.total_expense
+        )} चे ${expCount} खर्च आढळले:\n`;
+        pendingItems.forEach((it, i) => {
+          const typeTag = it.type === 'income' ? 'उत्पन्न' : 'खर्च';
+          resp += `${i + 1}. ${typeTag}: ${it.description}: ${formatInr(it.amount)}\n`;
+        });
+        resp += 'मी हे तुमच्या खात्यात नोंदवू का?';
+      }
+    } else if (isAllExpense) {
+      resp = `I found ${pendingItems.length} expenses totaling ${formatInr(compoundParsed.total_expense)}:\n`;
       pendingItems.forEach((it, i) => {
         resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
       });
-      resp += 'क्या मैं इन्हें आपके खाते में जोड़ दूं?';
-    } else if (lang === 'mr') {
-      resp = `मला एकूण ${formatInr(multiExp.total)} चे ${pendingItems.length} खर्च आढळले:\n`;
+      resp += 'Would you like me to record these?';
+
+      if (lang === 'hi') {
+        resp = `मुझे कुल ${formatInr(compoundParsed.total_expense)} के ${pendingItems.length} खर्चे मिले:\n`;
+        pendingItems.forEach((it, i) => {
+          resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
+        });
+        resp += 'क्या मैं इन्हें आपके खाते में जोड़ दूं?';
+      } else if (lang === 'mr') {
+        resp = `मला एकूण ${formatInr(compoundParsed.total_expense)} चे ${pendingItems.length} खर्च आढळले:\n`;
+        pendingItems.forEach((it, i) => {
+          resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
+        });
+        resp += 'मी हे तुमच्या खात्यात नोंदवू का?';
+      }
+    } else {
+      resp = `I found ${pendingItems.length} income entries totaling ${formatInr(compoundParsed.total_income)}:\n`;
       pendingItems.forEach((it, i) => {
         resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
       });
-      resp += 'मी हे तुमच्या खात्यात नोंदवू का?';
+      resp += 'Would you like me to record these?';
+
+      if (lang === 'hi') {
+        resp = `मुझे कुल ${formatInr(compoundParsed.total_income)} की ${pendingItems.length} आय मिली:\n`;
+        pendingItems.forEach((it, i) => {
+          resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
+        });
+        resp += 'क्या मैं इन्हें आपके खाते में जोड़ दूं?';
+      } else if (lang === 'mr') {
+        resp = `मला एकूण ${formatInr(compoundParsed.total_income)} चे ${pendingItems.length} उत्पन्न आढळले:\n`;
+        pendingItems.forEach((it, i) => {
+          resp += `${i + 1}. ${it.description}: ${formatInr(it.amount)}\n`;
+        });
+        resp += 'मी हे तुमच्या खात्यात नोंदवू का?';
+      }
     }
+
+    const summaryText = hasBoth
+      ? `Income: ${formatInr(compoundParsed.total_income)}, Expense: ${formatInr(
+          compoundParsed.total_expense
+        )} (${pendingItems.length} transactions)`
+      : `${pendingItems.length} ${
+          isAllIncome ? 'income entries' : 'expenses'
+        } totaling ${formatInr(isAllExpense ? compoundParsed.total_expense : totalVolume)}`;
 
     return {
       id: msgId,
@@ -1005,12 +1065,16 @@ export async function processUserUtterance(
       text: resp,
       timestamp,
       lang,
-      intent: 'add_multiple_expenses',
+      intent: isAllExpense
+        ? 'add_multiple_expenses'
+        : isAllIncome
+        ? 'add_multiple_incomes'
+        : 'add_compound_transactions',
       pendingConfirmation: {
         kind: 'multiple_transactions',
         items: pendingItems,
-        totalAmount: multiExp.total,
-        summaryText: `${pendingItems.length} expenses totaling ${formatInr(multiExp.total)}`,
+        totalAmount: isAllExpense ? compoundParsed.total_expense : totalVolume,
+        summaryText,
       },
     };
   }
@@ -1035,7 +1099,13 @@ export async function processUserUtterance(
     const numMatch = cleaned.match(
       /(?:₹|rs\.?|inr)?\s*([0-9]{2,6}(?:\.[0-9]{1,2})?)\s*(?:rupees?|rs\.?|inr|₹|ka|ke|rupaye|paise)?/i
     );
-    const amount = numMatch ? parseFloat(numMatch[1]) : 0;
+    const singleTx = compoundParsed?.transactions?.[0];
+    const amount =
+      singleTx && singleTx.type === 'income'
+        ? singleTx.amount
+        : numMatch
+        ? parseFloat(numMatch[1])
+        : 0;
 
     if (amount > 0) {
       const item: PendingTransactionItem = {
@@ -1091,10 +1161,16 @@ export async function processUserUtterance(
     const numMatch = cleaned.match(
       /(?:₹|rs\.?|inr)?\s*([0-9]{2,6}(?:\.[0-9]{1,2})?)\s*(?:rupees?|rs\.?|inr|₹|ka|ke|rupaye|paise)?/i
     );
-    const amount = numMatch ? parseFloat(numMatch[1]) : 0;
+    const singleTx = compoundParsed?.transactions?.[0];
+    const amount =
+      singleTx && singleTx.type === 'expense'
+        ? singleTx.amount
+        : numMatch
+        ? parseFloat(numMatch[1])
+        : 0;
 
     if (amount > 0) {
-      const cat = normalizeCategory(text);
+      const cat = singleTx?.category || normalizeCategory(text);
       const item: PendingTransactionItem = {
         id: `tx-${Date.now()}`,
         type: 'expense',
@@ -1698,7 +1774,8 @@ export class SetuContinuousSpeechRecognizer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private recognizer: any = null;
   private isListeningActive = false;
-  private accumulatedFinal = '';
+  private previousSessionsFinal = '';
+  private currentSessionFinalText = '';
   private currentFullTranscript = '';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private silenceTimer: any = null;
@@ -1770,22 +1847,32 @@ export class SetuContinuousSpeechRecognizer {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.recognizer.onresult = (event: any) => {
-        let interim = '';
-        let newFinalChunk = '';
+        let sessionFinal = '';
+        let sessionInterim = '';
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            newFinalChunk += event.results[i][0].transcript + ' ';
+        // Read absolute session results to prevent duplication loops
+        for (let i = 0; i < event.results.length; ++i) {
+          const item = event.results[i];
+          if (item.isFinal) {
+            sessionFinal += item[0].transcript + ' ';
           } else {
-            interim += event.results[i][0].transcript;
+            sessionInterim += item[0].transcript;
           }
         }
 
-        if (newFinalChunk) {
-          this.accumulatedFinal += newFinalChunk;
-        }
+        this.currentSessionFinalText = sessionFinal.trim();
 
-        this.currentFullTranscript = (this.accumulatedFinal + ' ' + interim).trim();
+        const combinedRaw = [
+          this.previousSessionsFinal,
+          this.currentSessionFinalText,
+          sessionInterim.trim(),
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .trim();
+
+        // Deduplicate stutter loops and ASR repetitions
+        this.currentFullTranscript = deduplicateSpeechTranscript(combinedRaw);
         this.callbacks.onInterim(this.currentFullTranscript);
 
         // Reset 5-Second Silence Detection Timer
@@ -1812,6 +1899,12 @@ export class SetuContinuousSpeechRecognizer {
 
       this.recognizer.onend = () => {
         if (this.isListeningActive && this.remainingSilenceMs > 100) {
+          if (this.currentSessionFinalText) {
+            this.previousSessionsFinal = deduplicateSpeechTranscript(
+              [this.previousSessionsFinal, this.currentSessionFinalText].filter(Boolean).join(' ')
+            );
+            this.currentSessionFinalText = '';
+          }
           try {
             this.recognizer.start();
           } catch {
@@ -1843,7 +1936,8 @@ export class SetuContinuousSpeechRecognizer {
       }
     }
 
-    this.accumulatedFinal = '';
+    this.previousSessionsFinal = '';
+    this.currentSessionFinalText = '';
     this.currentFullTranscript = '';
     this.isListeningActive = true;
     this.clearTimers();
@@ -1855,7 +1949,13 @@ export class SetuContinuousSpeechRecognizer {
       this.recognizer.lang = this.language;
       this.recognizer.start();
     } catch {
-      // If already started, ignore
+      // If already started or interrupted, abort and restart cleanly
+      try {
+        this.recognizer.abort();
+        this.recognizer.start();
+      } catch {
+        // ignore
+      }
     }
   }
 
@@ -1886,7 +1986,7 @@ export class SetuContinuousSpeechRecognizer {
       }
     }
 
-    const finalText = this.currentFullTranscript.trim();
+    const finalText = deduplicateSpeechTranscript(this.currentFullTranscript.trim());
     this.callbacks.onStateChange('processing');
     this.callbacks.onSilenceFinalized(finalText);
   }
@@ -1894,12 +1994,13 @@ export class SetuContinuousSpeechRecognizer {
   public cancel() {
     this.clearTimers();
     this.isListeningActive = false;
-    this.accumulatedFinal = '';
+    this.previousSessionsFinal = '';
+    this.currentSessionFinalText = '';
     this.currentFullTranscript = '';
 
     if (this.recognizer) {
       try {
-        this.recognizer.stop();
+        this.recognizer.abort();
       } catch {
         // ignore
       }

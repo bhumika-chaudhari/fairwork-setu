@@ -11,10 +11,12 @@ Integrates all 8 audited and validated models from model_codes/:
 8. Health & Welfare RAG (SentenceTransformer + FAISS Dense Retrieval)
 """
 
+import importlib.util
 import json
 import logging
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -91,6 +93,7 @@ class AIModelsService:
         self.model_3_features = []
 
         self.model_4_whisper = None
+        self.model_5_extractor = None
 
         self.model_6_jobs_df = None
         self.model_7_courses_df = None
@@ -136,6 +139,19 @@ class AIModelsService:
                 self.model_3_features = json.loads(m3_feat.read_text(encoding="utf-8"))
         except Exception as e:
             logger.warning(f"Model 3 load failure: {e}")
+
+        # 5. Model 5: Transaction Extraction (Preprocessing Engine)
+        try:
+            m5_path = MODEL_CODES_DIR / "05_transaction_extraction" / "preprocessing.py"
+            if m5_path.exists():
+                spec = importlib.util.spec_from_file_location("model_5_preprocessing", m5_path)
+                if spec and spec.loader:
+                    m5_mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(m5_mod)
+                    self.model_5_extractor = getattr(m5_mod, "extract_compound_transactions", None)
+                    logger.info("Model 5 compound transaction extractor loaded successfully.")
+        except Exception as e:
+            logger.warning(f"Model 5 load notice: {e}")
 
         # 6. Model 6: Jobs Dataset
         try:
@@ -415,6 +431,24 @@ class AIModelsService:
     # -------------------------------------------------------------------------
     # MODEL 5: TRANSACTION EXTRACTION (REGEX + RULE-BASED HINGLISH)
     # -------------------------------------------------------------------------
+    def extract_compound_transactions(self, text: str) -> Dict[str, Any]:
+        """
+        Model 5 Compound Parser: Splits compound transcripts into individual transactions.
+        """
+        if self.model_5_extractor is not None:
+            try:
+                return self.model_5_extractor(text)
+            except Exception as e:
+                logger.warning(f"Failed executing model_5_extractor: {e}")
+
+        tx = self.extract_transaction(text)
+        return {
+            "transactions": [tx] if tx.get("amount") is not None else [],
+            "extraction_status": "success" if tx.get("amount") is not None else "no_transactions",
+            "total_income": tx.get("amount", 0.0) if tx.get("transaction_type") == "income" else 0.0,
+            "total_expense": tx.get("amount", 0.0) if tx.get("transaction_type") == "expense" else 0.0
+        }
+
     def extract_transaction(self, text: str) -> Dict[str, Any]:
         text_str = str(text or "").strip()
         if not text_str:
@@ -426,6 +460,23 @@ class AIModelsService:
                 "confidence": 0.0,
                 "text": ""
             }
+
+        if self.model_5_extractor is not None:
+            try:
+                res = self.model_5_extractor(text_str)
+                if res.get("transactions"):
+                    first_tx = res["transactions"][0]
+                    return {
+                        "text": text_str,
+                        "amount": first_tx["amount"],
+                        "transaction_type": first_tx["type"],
+                        "category": first_tx["category"],
+                        "date": first_tx.get("date"),
+                        "model": "Hinglish Rule-Based Entity Parser (Model 5)",
+                        "confidence": first_tx.get("confidence", 0.98)
+                    }
+            except Exception as e:
+                logger.warning(f"Model 5 single extract fallback: {e}")
 
         amount_pat = re.compile(
             r"(?i)(?:₹|rs\.?|inr)\s*([0-9,]+(?:\.[0-9]{1,2})?)"
@@ -1132,7 +1183,44 @@ class AIModelsService:
                 "confidence": 0.95
             }
 
-        # 8. Financial Transaction Extraction (Logging Income/Expense)
+        # 8. Financial Transaction Extraction (Logging Income/Expense & Compound Multi-Transactions)
+        compound = self.extract_compound_transactions(text_str)
+        if compound.get("transactions") and len(compound["transactions"]) > 1:
+            txs = compound["transactions"]
+            tot_inc = compound["total_income"]
+            tot_exp = compound["total_expense"]
+            exp_count = sum(1 for t in txs if t["type"] == "expense")
+
+            if tot_inc > 0 and tot_exp > 0:
+                reply = f"I found ₹{tot_inc:,.0f} income and ₹{tot_exp:,.0f} in expenses ({len(txs)} transactions)."
+                if lang == "hi":
+                    reply = f"मुझे ₹{tot_inc:,.0f} की आय और ₹{tot_exp:,.0f} के {exp_count} खर्चे मिले। क्या मैं इन्हें जोड़ दूं?"
+                elif lang == "mr":
+                    reply = f"मला ₹{tot_inc:,.0f} उत्पन्न आणि ₹{tot_exp:,.0f} चे {exp_count} खर्च आढळले."
+                intent = "add_compound_transactions"
+            elif tot_exp > 0:
+                reply = f"I found {len(txs)} expenses totaling ₹{tot_exp:,.0f}."
+                if lang == "hi":
+                    reply = f"मुझे कुल ₹{tot_exp:,.0f} के {len(txs)} खर्चे मिले। क्या मैं इन्हें जोड़ दूं?"
+                elif lang == "mr":
+                    reply = f"मला एकूण ₹{tot_exp:,.0f} चे {len(txs)} खर्च आढळले."
+                intent = "add_multiple_expenses"
+            else:
+                reply = f"I found {len(txs)} income entries totaling ₹{tot_inc:,.0f}."
+                if lang == "hi":
+                    reply = f"मुझे कुल ₹{tot_inc:,.0f} की {len(txs)} आय मिली। क्या मैं इसे जोड़ दूं?"
+                elif lang == "mr":
+                    reply = f"मला एकूण ₹{tot_inc:,.0f} चे {len(txs)} उत्पन्न आढळले."
+                intent = "add_multiple_incomes"
+
+            return {
+                "intent": intent,
+                "language": lang,
+                "compound_transactions": compound,
+                "reply": reply,
+                "confidence": 0.98
+            }
+
         tx = self.extract_transaction(text_str)
         if tx["amount"] is not None:
             is_inc = tx["transaction_type"] == "income"
