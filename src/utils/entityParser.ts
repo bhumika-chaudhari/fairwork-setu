@@ -22,7 +22,8 @@ export interface ParsedTransaction {
   amount: number;
   description: string;
   category: TransactionCategory;
-  date: string; // YYYY-MM-DD
+  date: string; // YYYY-MM-DD in local timezone
+  hasExplicitDate?: boolean;
   raw_text: string;
   confidence: number;
 }
@@ -647,24 +648,31 @@ export function assignCategory(description: string, type: TransactionType): Tran
 // 7. STEP 5: DATE ASSIGNMENT
 // ---------------------------------------------------------------------------
 
-export function extractDateFromText(text: string): string {
+export function getLocalDateString(d: Date = new Date()): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function extractDateFromText(text: string): { dateStr: string; hasExplicitDate: boolean } {
   const lower = text.toLowerCase();
   const now = new Date();
 
   if (lower.includes('yesterday') || lower.includes('kal') || lower.includes('काल')) {
-    const yesterday = new Date(now.getTime() - 86400000);
-    return yesterday.toISOString().split('T')[0];
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    return { dateStr: getLocalDateString(yesterday), hasExplicitDate: true };
   }
   if (lower.includes('parso') || lower.includes('परसों')) {
-    const parso = new Date(now.getTime() - 2 * 86400000);
-    return parso.toISOString().split('T')[0];
+    const parso = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
+    return { dateStr: getLocalDateString(parso), hasExplicitDate: true };
   }
   if (lower.includes('pichle hafte') || lower.includes('last week')) {
-    const lastWeek = new Date(now.getTime() - 7 * 86400000);
-    return lastWeek.toISOString().split('T')[0];
+    const lastWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+    return { dateStr: getLocalDateString(lastWeek), hasExplicitDate: true };
   }
 
-  return now.toISOString().split('T')[0];
+  return { dateStr: getLocalDateString(now), hasExplicitDate: false };
 }
 
 // ---------------------------------------------------------------------------
@@ -712,7 +720,7 @@ export function parseCompoundTransactions(
     const category = assignCategory(desc || chunk, txType);
 
     // Step 5: Date assignment
-    const date = extractDateFromText(chunk);
+    const { dateStr, hasExplicitDate } = extractDateFromText(chunk);
 
     // Confidence heuristic
     const confidence = parsedAmt.amount > 0 ? 0.98 : 0.85;
@@ -722,7 +730,8 @@ export function parseCompoundTransactions(
       amount: parsedAmt.amount,
       description: desc,
       category,
-      date,
+      date: dateStr,
+      hasExplicitDate,
       raw_text: chunk,
       confidence,
     });

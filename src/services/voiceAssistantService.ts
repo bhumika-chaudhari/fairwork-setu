@@ -26,6 +26,7 @@ import {
 } from './haqService';
 import { getActiveUser } from '../lib/supabaseClient';
 import { formatInr } from '../localization';
+import { formatLocalDatetimetoIso } from './transactionService';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
 import {
   parseCompoundTransactions,
@@ -499,6 +500,15 @@ export async function processUserUtterance(
                 pending.totalAmount
               )}`,
         pendingConfirmation: pending,
+        navigationAction: {
+          route: '/dhan',
+          label:
+            lang === 'hi'
+              ? 'धन सेतू में देखें'
+              : lang === 'mr'
+              ? 'धन सेतू मध्ये पहा'
+              : 'View in Dhan Setu',
+        },
       };
     }
   }
@@ -970,7 +980,9 @@ export async function processUserUtterance(
       amount: it.amount,
       category: it.category,
       description: it.description,
-      dateStr: it.date ? new Date(it.date).toISOString() : new Date().toISOString(),
+      dateStr: it.hasExplicitDate && it.date
+        ? formatLocalDatetimetoIso(it.date)
+        : new Date().toISOString(),
     }));
 
     const hasBoth = compoundParsed.total_income > 0 && compoundParsed.total_expense > 0;

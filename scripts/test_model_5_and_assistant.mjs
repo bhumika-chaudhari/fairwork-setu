@@ -89,20 +89,22 @@ assert.strictEqual(res3.transactions[0].category, 'travel_fuel');
 console.log('✅ Test 3 Passed: Smart splitting kept compound nouns in single transaction.\n');
 
 // ---------------------------------------------------------------------------
-// TEST 4: Date Extraction (aaj vs kal vs parso)
+// TEST 4: Date Extraction (aaj vs kal vs parso) in Local Timezone
 // ---------------------------------------------------------------------------
 console.log('Testing Test 4: Relative Date Extraction...');
 
 const kalText = "Kal 600 rupaye kamaye";
 const res4 = parseCompoundTransactions(kalText);
-const today = new Date();
-const yesterday = new Date(today.getTime() - 86400000).toISOString().split('T')[0];
+const now = new Date();
+const localYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+const expectedYesterdayStr = `${localYesterday.getFullYear()}-${String(localYesterday.getMonth() + 1).padStart(2, '0')}-${String(localYesterday.getDate()).padStart(2, '0')}`;
 
 assert.strictEqual(res4.transactions[0].amount, 600);
 assert.strictEqual(res4.transactions[0].type, 'income');
-assert.strictEqual(res4.transactions[0].date, yesterday);
+assert.strictEqual(res4.transactions[0].date, expectedYesterdayStr);
+assert.strictEqual(res4.transactions[0].hasExplicitDate, true);
 
-console.log('✅ Test 4 Passed: Yesterday ("kal") extracted as ' + yesterday + '.\n');
+console.log('✅ Test 4 Passed: Yesterday ("kal") extracted as ' + expectedYesterdayStr + '.\n');
 
 // ---------------------------------------------------------------------------
 // TEST 5: Model 5 Query Mode: Intent & Entity Extraction (Kaam, Sehat, Haq)
@@ -181,6 +183,35 @@ assert.strictEqual(dedupRes.total_income, 8000, 'Must extract single income amou
 assert.strictEqual(dedupRes.transactions[0].type, 'income');
 
 console.log('✅ Test 7 Passed: "maine maine maine maine 8000 kamaye 8000 kamyee" successfully deduplicated to 1 income entry of ₹8,000.\n');
+
+// ---------------------------------------------------------------------------
+// TEST 8: Dual Transaction Ledger Reflection Verification
+// "150 ka tel bharwaya aur 40 ki chai pee"
+// ---------------------------------------------------------------------------
+console.log('Testing Test 8: Dual transaction date & website ledger reflection...');
+const dualText = "150 ka tel bharwaya aur 40 ki chai pee";
+const dualRes = parseCompoundTransactions(dualText);
+
+const localToday = new Date();
+const expectedTodayStr = `${localToday.getFullYear()}-${String(localToday.getMonth() + 1).padStart(2, '0')}-${String(localToday.getDate()).padStart(2, '0')}`;
+
+assert.strictEqual(dualRes.transactions.length, 2, 'Must extract exactly 2 transactions');
+assert.strictEqual(dualRes.total_expense, 190, 'Total expenses must be 190');
+assert.strictEqual(dualRes.total_income, 0, 'Total income must be 0');
+
+assert.strictEqual(dualRes.transactions[0].amount, 150);
+assert.strictEqual(dualRes.transactions[0].type, 'expense');
+assert.strictEqual(dualRes.transactions[0].category, 'travel_fuel');
+assert.strictEqual(dualRes.transactions[0].date, expectedTodayStr, 'Must match local today string');
+assert.strictEqual(dualRes.transactions[0].hasExplicitDate, false, 'No past date tag was specified');
+
+assert.strictEqual(dualRes.transactions[1].amount, 40);
+assert.strictEqual(dualRes.transactions[1].type, 'expense');
+assert.strictEqual(dualRes.transactions[1].category, 'food');
+assert.strictEqual(dualRes.transactions[1].date, expectedTodayStr, 'Must match local today string');
+assert.strictEqual(dualRes.transactions[1].hasExplicitDate, false, 'No past date tag was specified');
+
+console.log('✅ Test 8 Passed: "150 ka tel bharwaya aur 40 ki chai pee" correctly dated to Today (' + expectedTodayStr + ') for immediate website reflection.\n');
 
 console.log('🎉 ALL MODEL 5 TESTS COMPLETED WITH 100% SUCCESS!');
 

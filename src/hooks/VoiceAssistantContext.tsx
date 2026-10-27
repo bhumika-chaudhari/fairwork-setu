@@ -188,6 +188,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
             source: 'voice',
           });
         }
+        window.dispatchEvent(new Event('setu_transactions_changed'));
       } catch (err) {
         console.error('Failed to commit assistant transaction:', err);
       }
@@ -274,8 +275,9 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         const reply = await processUserUtterance(text, contextState);
 
         // Check if user confirmed transaction via natural language
-        if (reply.intent === 'confirm_execution' && pendingConfirmation) {
-          await executeConfirmedTransactions(pendingConfirmation);
+        const targetConf = reply.pendingConfirmation || pendingConfirmation;
+        if (reply.intent === 'confirm_execution' && targetConf) {
+          await executeConfirmedTransactions(targetConf);
           setPendingConfirmation(null);
         } else if (reply.pendingConfirmation) {
           setPendingConfirmation(reply.pendingConfirmation);
