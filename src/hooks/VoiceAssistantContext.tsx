@@ -10,6 +10,8 @@ import {
   type SupportedLanguage,
 } from '../services/voiceAssistantService';
 import { useTranslation } from 'react-i18next';
+import { readTextAloud, stopSpeaking } from '../lib/speechSynthesis';
+import { getActiveUser } from '../lib/supabaseClient';
 
 export interface VoiceAssistantContextValue {
   isOpen: boolean;
@@ -25,6 +27,11 @@ export interface VoiceAssistantContextValue {
   confirmPending: () => Promise<void>;
   cancelPending: () => void;
   initialQuery?: string;
+  isSpeaking: boolean;
+  autoSpeak: boolean;
+  setAutoSpeak: (enabled: boolean) => void;
+  speakMessage: (text: string, lang?: string) => void;
+  stopAudio: () => void;
 }
 
 const VoiceAssistantContext = createContext<VoiceAssistantContextValue | null>(null);
@@ -51,6 +58,40 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [pendingConfirmation, setPendingConfirmation] = useState<AssistantPendingConfirmation | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [autoSpeak, setAutoSpeakState] = useState<boolean>(() => {
+    try {
+      const v = localStorage.getItem('@setu/voice_assistant_autospeak');
+      return v !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const setAutoSpeak = useCallback((enabled: boolean) => {
+    setAutoSpeakState(enabled);
+    try {
+      localStorage.setItem('@setu/voice_assistant_autospeak', String(enabled));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const stopAudio = useCallback(() => {
+    stopSpeaking();
+    setIsSpeaking(false);
+  }, []);
+
+  const speakMessage = useCallback((text: string, lang?: string) => {
+    const speechLang = lang === 'mr' ? 'mr-IN' : lang === 'hi' ? 'hi-IN' : 'en-IN';
+    setIsSpeaking(true);
+    const started = readTextAloud(text, speechLang, () => {
+      setIsSpeaking(false);
+    });
+    if (!started) {
+      setIsSpeaking(false);
+    }
+  }, []);
 
   const currentScreen = useMemo(() => screenFromPathname(location.pathname), [location.pathname]);
   const currentLang = (i18n.language || 'en').toLowerCase().slice(0, 2);
@@ -208,6 +249,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
           lastIntent: messages[messages.length - 1]?.intent || null,
           currentScreen,
           userProfile: {
+            id: profile.id,
             name: profile.name,
             workType: profile.workType,
             cityKey: profile.cityKey,
@@ -258,6 +300,15 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         }
 
         setMessages((prev) => [...prev, reply]);
+
+        // Text-to-Speech Playback if autoSpeak is enabled
+        if (autoSpeak && reply.text) {
+          const speechLang = reply.lang === 'mr' ? 'mr-IN' : reply.lang === 'hi' ? 'hi-IN' : 'en-IN';
+          setIsSpeaking(true);
+          readTextAloud(reply.text, speechLang, () => {
+            setIsSpeaking(false);
+          });
+        }
       } catch (err) {
         console.error('Error in Voice Assistant sendMessage:', err);
         setMessages((prev) => [
@@ -285,6 +336,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       executeConfirmedTransactions,
       i18n,
       updateProfile,
+      autoSpeak,
     ]
   );
 
@@ -303,6 +355,11 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       confirmPending,
       cancelPending,
       initialQuery,
+      isSpeaking,
+      autoSpeak,
+      setAutoSpeak,
+      speakMessage,
+      stopAudio,
     }),
     [
       isOpen,
@@ -318,6 +375,11 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       confirmPending,
       cancelPending,
       initialQuery,
+      isSpeaking,
+      autoSpeak,
+      setAutoSpeak,
+      speakMessage,
+      stopAudio,
     ]
   );
 

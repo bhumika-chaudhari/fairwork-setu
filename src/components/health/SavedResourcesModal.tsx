@@ -3,6 +3,7 @@ import { AppIcon } from '../../lib/icons';
 import type { SavedHealthItem } from '../../types/health';
 import {
   getSavedHealthItems,
+  syncHealthItemsWithCloud,
   removeSavedHealthItem,
 } from '../../services/healthService';
 import ModalPortal from '../ModalPortal';
@@ -22,6 +23,11 @@ export default function SavedResourcesModal({
 
   useEffect(() => {
     setItems(getSavedHealthItems());
+    syncHealthItemsWithCloud().then((synced) => {
+      if (synced && synced.length > 0) {
+        setItems(synced);
+      }
+    }).catch(() => {});
   }, []);
 
   const handleRemove = (id: string) => {

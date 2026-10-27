@@ -12,6 +12,12 @@ import type {
   LegalSource,
   PlatformSupportChannel,
 } from '../types/haq';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getActiveUser,
+  ensureUserProfile,
+} from '../lib/supabaseClient';
 
 const BASE_URL = (
   import.meta.env.VITE_ML_API_URL ||
@@ -505,12 +511,54 @@ export function getSavedCases(): HaqCase[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw);
+    return raw ? JSON.parse(raw) : [];
   } catch (err) {
     console.error('Failed to parse saved Haq cases:', err);
     return [];
   }
+}
+
+export async function syncHaqCasesWithCloud(): Promise<HaqCase[]> {
+  const local = getSavedCases();
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        const { data: rows, error } = await supabase
+          .from('haq_cases')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (!error && rows && rows.length > 0) {
+          const mapped: HaqCase[] = rows.map((r: any) => ({
+            id: r.case_number || r.id,
+            platform: r.platform_name,
+            category: (r.deactivation_reason as any) || 'deactivation',
+            title: `Account Deactivation Appeal (${r.platform_name})`,
+            dateOccurred: r.incident_date || 'Recently',
+            status: (r.status as any) || 'draft',
+            ticketNumber: '',
+            appealSubject: `[Formal Appeal] Account Access Review - ${r.platform_name}`,
+            appealBody: r.appeal_text || '',
+            outcomeRequested: 'reactivation',
+            evidenceSummary: 'Factual Statement',
+            hasEvidence: false,
+            createdAt: r.created_at || new Date().toISOString(),
+            updatedAt: r.updated_at || new Date().toISOString(),
+          }));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('haq_cases_changed'));
+          }
+          return mapped;
+        }
+      }
+    } catch (err) {
+      console.warn('[HaqService] Supabase sync cases notice:', err);
+    }
+  }
+  return local;
 }
 
 export function saveHaqCase(
@@ -537,6 +585,32 @@ export function saveHaqCase(
     }
   } catch (err) {
     console.error('Failed to save Haq case:', err);
+  }
+
+  // Direct Supabase PostgreSQL upsert when authenticated
+  if (supabase && isSupabaseConfigured) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          await ensureUserProfile(user);
+          await supabase.from('haq_cases').upsert(
+            {
+              user_id: user.id,
+              case_number: newCase.id,
+              platform_name: newCase.platform || 'General Platform',
+              deactivation_reason: newCase.category || null,
+              status: newCase.status || 'draft',
+              incident_date: newCase.dateOccurred || null,
+              appeal_text: newCase.appealBody || null,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'case_number' }
+          );
+        } catch (err) {
+          console.warn('[HaqService] Supabase case upsert notice:', err);
+        }
+      }
+    });
   }
 
   // Attempt background sync to backend
@@ -570,6 +644,27 @@ export function updateHaqCase(
     console.error('Failed to update Haq case:', err);
   }
 
+  // Direct Supabase PostgreSQL update when authenticated
+  if (supabase && isSupabaseConfigured) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          await supabase
+            .from('haq_cases')
+            .update({
+              status: updatedCase.status || 'draft',
+              appeal_text: updatedCase.appealBody || null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('user_id', user.id)
+            .eq('case_number', id);
+        } catch (err) {
+          console.warn('[HaqService] Supabase update case notice:', err);
+        }
+      }
+    });
+  }
+
   syncCaseToBackend(updatedCase).catch(() => {});
 
   return updatedCase;
@@ -585,11 +680,29 @@ export function deleteHaqCase(id: string): boolean {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('haq_cases_changed'));
     }
-    return true;
   } catch (err) {
     console.error('Failed to delete Haq case:', err);
     return false;
   }
+
+  // Direct Supabase PostgreSQL delete when authenticated
+  if (supabase && isSupabaseConfigured) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          await supabase
+            .from('haq_cases')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('case_number', id);
+        } catch (err) {
+          console.warn('[HaqService] Supabase delete case notice:', err);
+        }
+      }
+    });
+  }
+
+  return true;
 }
 
 async function syncCaseToBackend(caseItem: HaqCase): Promise<void> {

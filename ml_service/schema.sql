@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     category VARCHAR(60) NOT NULL,
     description TEXT DEFAULT '',
     work_ref VARCHAR(120),
-    source VARCHAR(30) DEFAULT 'manual' CHECK (source IN ('manual', 'voice', 'quick')),
+    source VARCHAR(30) DEFAULT 'manual' CHECK (source IN ('manual', 'quick', 'voice')),
     timestamp TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -149,6 +149,55 @@ CREATE TABLE IF NOT EXISTS public.notification_preferences (
 );
 
 -- ============================================================================
+-- AUTOMATIC PROFILE CREATION TRIGGER (auth.users -> public.profiles)
+-- ============================================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+BEGIN
+    INSERT INTO public.profiles (
+        id,
+        email,
+        phone_number,
+        full_name,
+        city_key,
+        work_type,
+        created_at,
+        updated_at
+    )
+    VALUES (
+        new.id,
+        new.email,
+        new.phone,
+        COALESCE(
+            NULLIF(TRIM(new.raw_user_meta_data->>'full_name'), ''),
+            NULLIF(TRIM(new.raw_user_meta_data->>'name'), ''),
+            NULLIF(TRIM(split_part(new.email, '@', 1)), ''),
+            'Setu Worker'
+        ),
+        'cities.pune',
+        'driver',
+        NOW(),
+        NOW()
+    )
+    ON CONFLICT (id) DO UPDATE
+    SET email = EXCLUDED.email,
+        phone_number = COALESCE(EXCLUDED.phone_number, public.profiles.phone_number),
+        updated_at = NOW();
+
+    RETURN new;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ============================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES (Protects direct Supabase client access)
 -- ============================================================================
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -245,4 +294,3 @@ $$;
 
 -- Grant EXECUTE permission to anon, authenticated, and service_role
 GRANT EXECUTE ON FUNCTION public.check_email_registered(text) TO anon, authenticated, service_role;
-

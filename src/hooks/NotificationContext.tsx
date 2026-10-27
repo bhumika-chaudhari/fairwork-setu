@@ -23,6 +23,7 @@ import {
   saveNotifications,
   getStoredPreferences,
   savePreferences,
+  syncNotificationPreferencesWithCloud,
   getBrowserPermissionStatus,
   requestBrowserPermission as reqBrowserPerm,
   registerServiceWorker,
@@ -77,7 +78,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     // 2. Start Smart Notification Scheduler
     notificationScheduler.start();
 
-    // 3. Update permission state
+    // 3. Sync preferences with cloud if authenticated
+    syncNotificationPreferencesWithCloud().then((synced) => {
+      setPreferences(synced);
+    }).catch(() => {});
+
+    // 4. Update permission state
     setBrowserPermission(getBrowserPermissionStatus());
 
     // 4. Listen for real-time notification dispatch events

@@ -4,6 +4,7 @@ import { AppIcon } from '../../lib/icons';
 import type { HaqCase, HaqCaseStatus } from '../../types/haq';
 import {
   getSavedCases,
+  syncHaqCasesWithCloud,
   updateHaqCase,
   deleteHaqCase,
 } from '../../services/haqService';
@@ -90,6 +91,12 @@ export default function GrievanceTracker({
 
   useEffect(() => {
     loadCases();
+    syncHaqCasesWithCloud().then((synced) => {
+      if (synced && synced.length > 0) {
+        setCases(synced);
+      }
+    }).catch(() => {});
+
     const handleStorageChange = () => loadCases();
     window.addEventListener('haq_cases_changed', handleStorageChange);
     window.addEventListener('storage', handleStorageChange);

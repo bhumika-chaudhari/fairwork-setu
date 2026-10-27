@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { Availability, WorkerType } from '../data/mockData';
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured, ensureUserProfile } from '../lib/supabaseClient';
 import { apiClient } from '../services/apiClient';
 import { setCurrentAuthUserId } from '../services/transactionService';
 import { changeAppLanguage, type LanguageCode } from '../localization';
@@ -220,6 +220,17 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
           .maybeSingle();
         if (!error && data) {
           resolvedProfile = mapBackendToProfileState(data, emptyProfile);
+        } else if (!data && !error) {
+          // Guarantee that a profile row exists in public.profiles for activeUser
+          await ensureUserProfile(activeUser);
+          const { data: createdData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', activeUser.id)
+            .maybeSingle();
+          if (createdData) {
+            resolvedProfile = mapBackendToProfileState(createdData, emptyProfile);
+          }
         }
       } catch (sbErr) {
         console.warn('[ProfileSync] Direct Supabase fetch notice:', sbErr);
@@ -250,7 +261,16 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         changeAppLanguage(resolvedProfile.preferredLanguage as LanguageCode);
       }
     } else {
-      setProfile(emptyProfile);
+      // Create clean fallback with user's registered details if available
+      const fallbackName =
+        activeUser.user_metadata?.full_name ||
+        activeUser.user_metadata?.name ||
+        (activeUser.email ? activeUser.email.split('@')[0] : '');
+      const initialProfile = {
+        ...emptyProfile,
+        name: fallbackName,
+      };
+      setProfile(initialProfile);
       setOnboardingComplete(false);
     }
   }, []);
@@ -352,6 +372,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
               speech_rate: next.speechRate,
               voice_silence_timeout: next.voiceSilenceTimeout,
               privacy_mask_earnings: next.privacyMaskEarnings,
+              email: user.email || null,
+              phone_number: user.phone || null,
               updated_at: new Date().toISOString(),
             },
             { onConflict: 'id' }

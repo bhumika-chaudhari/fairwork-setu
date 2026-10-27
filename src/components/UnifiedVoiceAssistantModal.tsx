@@ -108,11 +108,20 @@ export default function UnifiedVoiceAssistantModal({
     cancelPending,
     clearMessages,
     initialQuery: contextInitialQuery,
+    isSpeaking,
+    autoSpeak,
+    setAutoSpeak,
+    speakMessage,
+    stopAudio,
   } = useVoiceAssistant();
 
   // Combine prop and context states
   const isOpen = propVisible !== undefined ? propVisible : contextIsOpen;
-  const handleClose = propOnClose || contextClose;
+  const rawClose = propOnClose || contextClose;
+  const handleClose = () => {
+    stopAudio();
+    rawClose();
+  };
   const activeInitialQuery = propInitialQuery || contextInitialQuery;
 
   // Local UI & Recognition States
@@ -169,6 +178,9 @@ export default function UnifiedVoiceAssistantModal({
           setInterimTranscript('');
           if (finalText.trim()) {
             sendMessage(finalText.trim());
+          } else {
+            // Unclear audio or empty speech handling
+            sendMessage('');
           }
         },
         onError: (err) => {
@@ -270,6 +282,25 @@ export default function UnifiedVoiceAssistantModal({
           </div>
 
           <div className="flex items-center gap-1.5">
+            {/* Audio Auto-Narration Toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                if (isSpeaking) stopAudio();
+                setAutoSpeak(!autoSpeak);
+              }}
+              className={`p-1.5 rounded-xl transition-colors text-xs font-semibold flex items-center gap-1 ${
+                autoSpeak
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                  : 'bg-stone-100 text-stone-400 hover:text-stone-600'
+              }`}
+              title={autoSpeak ? 'Mute Speech Narration' : 'Enable Speech Narration'}
+              aria-label="Toggle Narration"
+            >
+              <AppIcon name="volume-high" size={16} className={isSpeaking ? 'text-[#B34A26] animate-pulse' : ''} />
+              <span className="text-[10px] hidden sm:inline">{autoSpeak ? 'Audio On' : 'Muted'}</span>
+            </button>
+
             {/* Clear Chat Button */}
             <button
               type="button"
@@ -430,6 +461,21 @@ export default function UnifiedVoiceAssistantModal({
                     >
                       <span>{msg.navigationAction.label}</span>
                       <AppIcon name="arrow-forward" size={13} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Audio Read-Aloud / Replay Button for Assistant Messages */}
+                {msg.role === 'assistant' && (
+                  <div className="mt-2 pt-1 border-t border-stone-100 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => (isSpeaking ? stopAudio() : speakMessage(msg.text, msg.lang))}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-900 text-[10px] font-bold transition-all"
+                      title="Read aloud"
+                    >
+                      <AppIcon name="volume-high" size={11} className={isSpeaking ? 'text-[#B34A26] animate-pulse' : ''} />
+                      <span>{isSpeaking ? 'Stop Audio' : 'Suno (Listen)'}</span>
                     </button>
                   </div>
                 )}

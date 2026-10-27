@@ -406,6 +406,60 @@ export async function searchHealthWelfareRAG(query: string, topK = 3): Promise<M
 }
 
 // ---------------------------------------------------------------------------
+// UNIFIED ASSISTANT INTENT & CONVERSATIONAL API ROUTER
+// ---------------------------------------------------------------------------
+
+export interface AssistantIntentResult {
+  intent: string;
+  language: 'en' | 'hi' | 'mr';
+  reply?: string;
+  confidence: number;
+  is_emergency?: boolean;
+  emergency_numbers?: string[];
+  route?: string;
+  transaction?: any;
+  data?: any;
+  jobs?: any[];
+  courses?: any[];
+  forecast?: any;
+  legal_citations?: string[];
+  [key: string]: any;
+}
+
+export async function parseAssistantIntent(
+  text: string,
+  context?: Record<string, any>
+): Promise<AssistantIntentResult> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/models/assistant-intent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, context }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch {
+    const lowered = text.toLowerCase();
+    let lang: 'en' | 'hi' | 'mr' = 'en';
+    if (/[\u0900-\u097F]/.test(text)) {
+      lang = /आहे|नाही|झाले|झाला|केले|पाहिजे|रुपये|मिळाले|खर्च|काम|मला|माझे|सांगा|कशी|कसा|शिल्लक|नोंदवा/.test(text) ? 'mr' : 'hi';
+    } else if (/\b(mala|mazha|mazhe|ahe|ahet|nahi|jhale|zale|kela|kele|pahije|paise|ani|shillak)\b/i.test(lowered)) {
+      lang = 'mr';
+    } else if (/\b(aaj|kal|kamaya|kharcha|kharch|rupaye|batao|chahiye|kaam|bukhar|dard|paise|kitna|hisaab)\b/i.test(lowered)) {
+      lang = 'hi';
+    }
+
+    return {
+      intent: 'general_help',
+      language: lang,
+      confidence: 0.75,
+      is_fallback: true,
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // FALLBACK HELPERS
 // ---------------------------------------------------------------------------
 

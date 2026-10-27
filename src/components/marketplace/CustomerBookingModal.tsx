@@ -19,7 +19,7 @@ export default function CustomerBookingModal({
   onBookingConfirmed,
 }: CustomerBookingModalProps) {
   const { t } = useTranslation();
-  const { profile } = useProfile();
+  const { user, profile } = useProfile();
 
   const [step, setStep] = useState<'form' | 'review' | 'confirmed'>('form');
   const [taskDescription, setTaskDescription] = useState('');
@@ -76,7 +76,7 @@ export default function CustomerBookingModal({
 
     try {
       const customerId =
-        'cust-' + (profile.name || 'user').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        user?.id || 'cust-' + (profile.name || 'user').toLowerCase().replace(/[^a-z0-9]/g, '-');
       const booking = await submitBookingRequest({
         workerId: worker.id,
         workerName: worker.displayName,

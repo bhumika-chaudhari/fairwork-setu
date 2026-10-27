@@ -8,6 +8,12 @@ import type {
   MarketplaceMessage,
   ActivitySummary,
 } from '../types/marketplace';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getActiveUser,
+  ensureUserProfile,
+} from '../lib/supabaseClient';
 
 const BASE_URL = (
   import.meta.env.VITE_ML_API_URL ||
@@ -74,6 +80,40 @@ export async function submitJobApplication(payload: {
   applicantLanguages: string[];
   coverNote?: string;
 }): Promise<JobApplication> {
+  // Direct Supabase PostgreSQL insert when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        await ensureUserProfile(user);
+        const { error: sbErr } = await supabase
+          .from('job_applications')
+          .insert({
+            job_id: payload.jobId,
+            applicant_id: user.id,
+            status: 'submitted',
+            cover_note: payload.coverNote || null,
+          });
+
+        if (sbErr) {
+          if (
+            sbErr.code === '23505' ||
+            sbErr.message?.toLowerCase().includes('duplicate') ||
+            sbErr.message?.toLowerCase().includes('unique')
+          ) {
+            throw new Error('You already have an active application for this job.');
+          }
+          console.warn('[MarketplaceService] Supabase job application notice:', sbErr);
+        }
+      }
+    } catch (err: any) {
+      if (err.message && err.message.includes('already have an active application')) {
+        throw err;
+      }
+      console.warn('[MarketplaceService] Supabase application error:', err);
+    }
+  }
+
   try {
     const res = await fetch(`${BASE_URL}/marketplace/applications`, {
       method: 'POST',
@@ -131,11 +171,55 @@ export async function submitJobApplication(payload: {
 }
 
 export async function fetchMyApplications(applicantId: string): Promise<JobApplication[]> {
+  // Direct Supabase PostgreSQL query when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      const targetId = user?.id || applicantId;
+      const { data: rows, error } = await supabase
+        .from('job_applications')
+        .select('*')
+        .eq('applicant_id', targetId)
+        .order('created_at', { ascending: false });
+
+      if (!error && rows && rows.length > 0) {
+        const mapped: JobApplication[] = rows.map((r: any) => ({
+          id: r.id,
+          jobId: r.job_id,
+          jobTitle: 'Applied Opportunity',
+          employer: 'Partner Network Fleet',
+          applicantId: r.applicant_id,
+          applicantName: 'Setu Worker',
+          applicantPhone: '',
+          applicantSkills: [],
+          applicantExperience: 'Field Experienced',
+          applicantLanguages: ['Hindi', 'English'],
+          coverNote: r.cover_note || '',
+          status: r.status as any,
+          statusHistory: [
+            {
+              status: r.status as any,
+              timestamp: r.created_at || new Date().toISOString(),
+              note: 'Application recorded via Supabase cloud.',
+            },
+          ],
+          appliedAt: r.created_at || new Date().toISOString(),
+          updatedAt: r.updated_at || new Date().toISOString(),
+          employerUpdated: r.status !== 'submitted',
+          nextAction: 'Under review by hiring fleet coordinator.',
+        }));
+        localStorage.setItem(LOCAL_STORAGE_APPS_KEY, JSON.stringify(mapped));
+        return mapped;
+      }
+    } catch (sbErr) {
+      console.warn('[MarketplaceService] Supabase fetch applications notice:', sbErr);
+    }
+  }
+
   try {
     const res = await fetch(`${BASE_URL}/marketplace/applications?applicant_id=${encodeURIComponent(applicantId)}`);
     if (res.ok) {
       const serverApps = await res.json();
-      // sync to local
       localStorage.setItem(LOCAL_STORAGE_APPS_KEY, JSON.stringify(serverApps));
       return serverApps;
     }
@@ -147,6 +231,25 @@ export async function fetchMyApplications(applicantId: string): Promise<JobAppli
 }
 
 export async function withdrawJobApplication(appId: string): Promise<JobApplication> {
+  // Direct Supabase PostgreSQL update when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        await supabase
+          .from('job_applications')
+          .update({
+            status: 'withdrawn',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('applicant_id', user.id)
+          .or(`id.eq.${appId},job_id.eq.${appId}`);
+      }
+    } catch (sbErr) {
+      console.warn('[MarketplaceService] Supabase withdraw notice:', sbErr);
+    }
+  }
+
   try {
     const res = await fetch(`${BASE_URL}/marketplace/applications/${appId}/withdraw`, {
       method: 'POST',
@@ -250,6 +353,35 @@ export async function fetchServiceProfile(profileOrUserId: string): Promise<Serv
 }
 
 export async function saveServiceProfile(profile: ServiceProfile): Promise<ServiceProfile> {
+  // Direct Supabase PostgreSQL upsert when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        await ensureUserProfile(user);
+        const { error: sbErr } = await supabase.from('service_profiles').upsert(
+          {
+            user_id: user.id,
+            display_name: profile.displayName || (profile as any).name || 'Setu Worker',
+            trade: profile.trade || 'General Worker',
+            short_description: profile.shortDescription || '',
+            phone: (profile as any).phone || '',
+            indicative_price: profile.pricing?.visitingCharge || profile.pricing?.baseRate || 250,
+            pricing_type: profile.pricing?.pricingModel || 'visit_fee',
+            is_available: !profile.isPaused && profile.isPublished,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        );
+        if (sbErr) {
+          console.warn('[MarketplaceService] Supabase service profile upsert notice:', sbErr);
+        }
+      }
+    } catch (err) {
+      console.warn('[MarketplaceService] Supabase service profile error:', err);
+    }
+  }
+
   try {
     const res = await fetch(`${BASE_URL}/marketplace/service-profiles`, {
       method: 'POST',
@@ -301,6 +433,37 @@ export async function submitBookingRequest(payload: {
   additionalNotes?: string;
   indicativePrice?: number;
 }): Promise<BookingRequest> {
+  // Direct Supabase PostgreSQL insert when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        await ensureUserProfile(user);
+        const { error: sbErr } = await supabase
+          .from('service_bookings')
+          .insert({
+            customer_id: user.id,
+            worker_id: payload.workerId,
+            customer_name: payload.customerName,
+            customer_phone: payload.customerPhone || '',
+            customer_address: payload.exactAddress || payload.locality || 'Pune',
+            service_trade: payload.workerTrade || payload.serviceCategory || 'General Service',
+            service_description: payload.taskDescription,
+            booking_date: payload.preferredDate,
+            time_slot: payload.preferredTimeSlot,
+            status: 'pending',
+            estimated_price: payload.indicativePrice || null,
+          });
+
+        if (sbErr) {
+          console.warn('[MarketplaceService] Supabase booking insert notice:', sbErr);
+        }
+      }
+    } catch (err) {
+      console.warn('[MarketplaceService] Supabase booking error:', err);
+    }
+  }
+
   try {
     const res = await fetch(`${BASE_URL}/marketplace/bookings`, {
       method: 'POST',
@@ -341,6 +504,61 @@ export async function fetchBookings(params: {
   workerId?: string;
   customerId?: string;
 }): Promise<BookingRequest[]> {
+  // Direct Supabase PostgreSQL query when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        const { data: rows, error: sbErr } = await supabase
+          .from('service_bookings')
+          .select('*')
+          .or(`worker_id.eq.${user.id},customer_id.eq.${user.id}`)
+          .order('booking_date', { ascending: false });
+
+        if (!sbErr && rows && rows.length > 0) {
+          const mapped: BookingRequest[] = rows.map((r: any) => ({
+            id: r.id,
+            workerId: r.worker_id,
+            workerName: 'Verified Service Provider',
+            workerTrade: r.service_trade,
+            customerId: r.customer_id || '',
+            customerName: r.customer_name,
+            customerPhone: r.customer_phone,
+            serviceCategory: r.service_trade,
+            taskDescription: r.service_description,
+            preferredDate: r.booking_date,
+            preferredTimeSlot: r.time_slot,
+            locality: r.customer_address,
+            exactAddress: r.customer_address,
+            indicativePrice: r.estimated_price ? Number(r.estimated_price) : 250,
+            status:
+              r.status === 'confirmed'
+                ? 'confirmed'
+                : r.status === 'completed'
+                ? 'completed'
+                : r.status === 'cancelled'
+                ? 'cancelled'
+                : 'requested',
+            statusHistory: [
+              {
+                status: r.status as any,
+                timestamp: r.created_at || new Date().toISOString(),
+                byRole: 'customer',
+                note: 'Recorded in Supabase cloud.',
+              },
+            ],
+            createdAt: r.created_at || new Date().toISOString(),
+            updatedAt: r.updated_at || new Date().toISOString(),
+          }));
+          localStorage.setItem(LOCAL_STORAGE_BOOKINGS_KEY, JSON.stringify(mapped));
+          return mapped;
+        }
+      }
+    } catch (err) {
+      console.warn('[MarketplaceService] Supabase fetch bookings notice:', err);
+    }
+  }
+
   try {
     const q = new URLSearchParams();
     if (params.workerId) q.append('worker_id', params.workerId);
@@ -369,6 +587,30 @@ export async function actOnBooking(
     role?: 'worker' | 'customer';
   }
 ): Promise<BookingRequest> {
+  // Direct Supabase PostgreSQL update when authenticated
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        let dbStatus = 'pending';
+        if (action === 'accept') dbStatus = 'confirmed';
+        else if (action === 'decline' || action === 'reject' || action === 'cancel') dbStatus = 'cancelled';
+        else if (action === 'complete') dbStatus = 'completed';
+        else if (action === 'propose_time') dbStatus = 'proposed';
+
+        await supabase
+          .from('service_bookings')
+          .update({
+            status: dbStatus,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', bookingId);
+      }
+    } catch (err) {
+      console.warn('[MarketplaceService] Supabase actOnBooking notice:', err);
+    }
+  }
+
   try {
     const res = await fetch(`${BASE_URL}/marketplace/bookings/${bookingId}/action`, {
       method: 'POST',

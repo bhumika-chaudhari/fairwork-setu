@@ -18,7 +18,7 @@ export default function ApplyJobModal({
   onApplicationSubmitted,
 }: ApplyJobModalProps) {
   const { t } = useTranslation();
-  const { profile } = useProfile();
+  const { user, profile } = useProfile();
 
   const [phone, setPhone] = useState(profile.emergencyContact || '9876543210');
   const [experience, setExperience] = useState(
@@ -45,7 +45,7 @@ export default function ApplyJobModal({
     setIsSubmitting(true);
     try {
       const applicantId =
-        'usr-' + (profile.name || 'worker').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        user?.id || 'usr-' + (profile.name || 'worker').toLowerCase().replace(/[^a-z0-9]/g, '-');
       const userSkills = [
         ...profile.skillKeys.map((k) => k.replace('skills.', '')),
         ...profile.customSkills,

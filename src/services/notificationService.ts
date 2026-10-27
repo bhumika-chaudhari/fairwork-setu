@@ -11,6 +11,12 @@ import type {
   NotificationPriority,
 } from '../types/notification';
 import { DEFAULT_NOTIFICATION_PREFERENCES } from '../types/notification';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getActiveUser,
+  ensureUserProfile,
+} from '../lib/supabaseClient';
 
 const STORAGE_NOTIFICATIONS_KEY = '@setu/notifications_v1';
 const STORAGE_PREFERENCES_KEY = '@setu/notification_prefs_v1';
@@ -77,6 +83,90 @@ export function savePreferences(prefs: NotificationPreferences): void {
   } catch (err) {
     console.error('Failed to save notification preferences', err);
   }
+
+  // Direct Supabase PostgreSQL upsert when authenticated
+  if (supabase && isSupabaseConfigured) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          await ensureUserProfile(user);
+          await supabase.from('notification_preferences').upsert(
+            {
+              user_id: user.id,
+              in_app_enabled: prefs.channels?.inApp ?? true,
+              browser_push_enabled: prefs.channels?.browserPush ?? false,
+              android_native_enabled: prefs.channels?.androidNative ?? true,
+              sound_enabled: prefs.channels?.sound ?? true,
+              vibration_enabled: prefs.channels?.vibration ?? true,
+              quiet_hours_enabled: prefs.quietHours?.enabled ?? true,
+              quiet_hours_start: prefs.quietHours?.start || '22:00',
+              quiet_hours_end: prefs.quietHours?.end || '07:00',
+              category_money: prefs.categories?.money ?? true,
+              category_work: prefs.categories?.work ?? true,
+              category_health: prefs.categories?.health ?? true,
+              category_skills: prefs.categories?.skills ?? true,
+              category_rights: prefs.categories?.rights ?? true,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'user_id' }
+          );
+        } catch (err) {
+          console.warn('[NotificationService] Supabase preferences upsert notice:', err);
+        }
+      }
+    });
+  }
+}
+
+export async function syncNotificationPreferencesWithCloud(): Promise<NotificationPreferences> {
+  const local = getStoredPreferences();
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('notification_preferences')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (!error && data) {
+          const merged: NotificationPreferences = {
+            ...local,
+            channels: {
+              ...local.channels,
+              inApp: data.in_app_enabled ?? true,
+              browserPush: data.browser_push_enabled ?? false,
+              androidNative: data.android_native_enabled ?? true,
+              sound: data.sound_enabled ?? true,
+              vibration: data.vibration_enabled ?? true,
+            },
+            quietHours: {
+              ...local.quietHours,
+              enabled: data.quiet_hours_enabled ?? true,
+              start: data.quiet_hours_start || '22:00',
+              end: data.quiet_hours_end || '07:00',
+            },
+            categories: {
+              ...local.categories,
+              money: data.category_money ?? true,
+              work: data.category_work ?? true,
+              health: data.category_health ?? true,
+              skills: data.category_skills ?? true,
+              rights: data.category_rights ?? true,
+            },
+          };
+          try {
+            localStorage.setItem(STORAGE_PREFERENCES_KEY, JSON.stringify(merged));
+          } catch {}
+          return merged;
+        }
+      }
+    } catch (err) {
+      console.warn('[NotificationService] Supabase preferences sync notice:', err);
+    }
+  }
+  return local;
 }
 
 // ---------------------------------------------------------------------------

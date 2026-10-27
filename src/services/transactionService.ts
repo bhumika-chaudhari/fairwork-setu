@@ -8,7 +8,13 @@ import type {
   DaySummary,
 } from '../types/transaction';
 import { apiClient } from './apiClient';
-import { getAuthToken } from '../lib/supabaseClient';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getAuthToken,
+  getActiveUser,
+  ensureUserProfile,
+} from '../lib/supabaseClient';
 
 const STORAGE_KEY = 'setu_transactions';
 
@@ -436,44 +442,127 @@ export function saveStoredTransactions(transactions: Transaction[]): void {
 
 
 /**
- * Syncs offline/local transactions to remote backend (if logged in) and updates local store with remote data.
+ * Syncs offline/local transactions to Supabase PostgreSQL (and backend API) when logged in,
+ * updating the local store with authoritative remote data.
  */
 export async function syncTransactionsWithCloud(): Promise<Transaction[]> {
-  const token = await getAuthToken();
-  if (!token) {
-    return getStoredTransactions();
+  const local = getStoredTransactions();
+
+  // 1. Direct Supabase PostgreSQL synchronization
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        // Guarantee profile exists first so foreign key constraints are met
+        await ensureUserProfile(user);
+
+        // Fetch user's transactions from Supabase
+        const { data: remoteRows, error: fetchErr } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('timestamp', { ascending: false });
+
+        if (!fetchErr && remoteRows) {
+          // Identify genuine local records not yet pushed to cloud
+          const genuineLocal = local.filter(
+            (tx) =>
+              !tx.id.startsWith('tx_demo_') &&
+              !tx.id.startsWith('sample_') &&
+              !tx.description?.includes('[Dev Sample]')
+          );
+
+          const remoteClientTxIds = new Set(remoteRows.map((r: any) => r.client_tx_id || r.id));
+          const unpushed = genuineLocal.filter((tx) => !remoteClientTxIds.has(tx.id));
+
+          if (unpushed.length > 0) {
+            for (const tx of unpushed) {
+              await supabase.from('transactions').insert({
+                user_id: user.id,
+                client_tx_id: tx.id,
+                type: tx.type,
+                amount: tx.amount,
+                category: tx.category,
+                description: tx.description || '',
+                work_ref: tx.workRef || null,
+                source: tx.source || 'manual',
+                timestamp: tx.timestamp,
+              });
+            }
+
+            // Refresh authoritative list
+            const { data: refreshed } = await supabase
+              .from('transactions')
+              .select('*')
+              .eq('user_id', user.id)
+              .order('timestamp', { ascending: false });
+            if (refreshed) {
+              const mapped: Transaction[] = refreshed.map((item: any) => ({
+                id: item.client_tx_id || item.id,
+                type: item.type as TransactionType,
+                amount: Number(item.amount),
+                category: item.category as TransactionCategory,
+                description: item.description || '',
+                workRef: item.work_ref || undefined,
+                source: (item.source as any) || 'manual',
+                timestamp: item.timestamp,
+                createdAt: item.created_at ? new Date(item.created_at).getTime() : Date.now(),
+                updatedAt: item.updated_at ? new Date(item.updated_at).getTime() : Date.now(),
+              }));
+              saveStoredTransactions(mapped);
+              return mapped;
+            }
+          }
+
+          if (remoteRows.length > 0 || genuineLocal.length === 0) {
+            const mapped: Transaction[] = remoteRows.map((item: any) => ({
+              id: item.client_tx_id || item.id,
+              type: item.type as TransactionType,
+              amount: Number(item.amount),
+              category: item.category as TransactionCategory,
+              description: item.description || '',
+              workRef: item.work_ref || undefined,
+              source: (item.source as any) || 'manual',
+              timestamp: item.timestamp,
+              createdAt: item.created_at ? new Date(item.created_at).getTime() : Date.now(),
+              updatedAt: item.updated_at ? new Date(item.updated_at).getTime() : Date.now(),
+            }));
+            saveStoredTransactions(mapped);
+            return mapped;
+          }
+        }
+      }
+    } catch (sbErr) {
+      console.warn('[TransactionSync] Supabase direct sync notice:', sbErr);
+    }
   }
 
-  try {
-    const local = getStoredTransactions();
-    // Exclude synthetic demo records from committing to PostgreSQL
-    const genuineLocal = local.filter(
-      (tx) =>
-        !tx.id.startsWith('tx_demo_') &&
-        !tx.id.startsWith('sample_') &&
-        !tx.description?.includes('[Dev Sample]')
-    );
-
-    if (genuineLocal.length > 0) {
-      // Batch sync local transactions to cloud
-      await apiClient.post('/transactions/batch-sync', {
-        transactions: genuineLocal.map((tx) => ({
-          clientTxId: tx.id,
-          type: tx.type,
-          amount: tx.amount,
-          category: tx.category,
-          description: tx.description || '',
-          workRef: tx.workRef || null,
-          source: 'manual',
-          timestamp: tx.timestamp,
-        })),
-      });
-    }
-
-    // Pull down authoritative transaction list from cloud
-    const res = await apiClient.get('/transactions?limit=250');
-    if (res.data?.transactions && Array.isArray(res.data.transactions)) {
-      if (res.data.transactions.length > 0) {
+  // 2. Fallback to FastAPI backend sync if available
+  const token = await getAuthToken();
+  if (token) {
+    try {
+      const genuineLocal = local.filter(
+        (tx) =>
+          !tx.id.startsWith('tx_demo_') &&
+          !tx.id.startsWith('sample_') &&
+          !tx.description?.includes('[Dev Sample]')
+      );
+      if (genuineLocal.length > 0) {
+        await apiClient.post('/transactions/batch-sync', {
+          transactions: genuineLocal.map((tx) => ({
+            clientTxId: tx.id,
+            type: tx.type,
+            amount: tx.amount,
+            category: tx.category,
+            description: tx.description || '',
+            workRef: tx.workRef || null,
+            source: 'manual',
+            timestamp: tx.timestamp,
+          })),
+        });
+      }
+      const res = await apiClient.get('/transactions?limit=250');
+      if (res.data?.transactions && Array.isArray(res.data.transactions) && res.data.transactions.length > 0) {
         const remoteTxs: Transaction[] = res.data.transactions.map((item: any) => ({
           id: item.clientTxId || item.id,
           type: item.type as TransactionType,
@@ -485,20 +574,19 @@ export async function syncTransactionsWithCloud(): Promise<Transaction[]> {
           createdAt: item.createdAt || Date.now(),
           updatedAt: item.updatedAt || Date.now(),
         }));
-
         saveStoredTransactions(remoteTxs);
         return remoteTxs;
       }
+    } catch (err) {
+      console.warn('[TransactionSync] FastAPI sync notice:', err);
     }
-  } catch (err) {
-    console.warn('[TransactionSync] Cloud sync failed or offline, continuing with local store:', err);
   }
 
-  return getStoredTransactions();
+  return local;
 }
 
 /**
- * Add a new transaction with validation.
+ * Add a new transaction with validation and immediate persistence.
  */
 export function addTransaction(
   input: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>
@@ -536,7 +624,34 @@ export function addTransaction(
   const updated = [newTx, ...existing];
   saveStoredTransactions(updated);
 
-  // Background cloud push (non-blocking)
+  // Direct Supabase PostgreSQL insert (uses active user auth session)
+  if (supabase && isSupabaseConfigured) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          await ensureUserProfile(user);
+          const { error } = await supabase.from('transactions').insert({
+            user_id: user.id,
+            client_tx_id: newTx.id,
+            type: newTx.type,
+            amount: newTx.amount,
+            category: newTx.category,
+            description: newTx.description || '',
+            work_ref: newTx.workRef || null,
+            source: newTx.source || 'manual',
+            timestamp: newTx.timestamp,
+          });
+          if (error) {
+            console.warn('[TransactionService] Direct Supabase insert notice:', error);
+          }
+        } catch (err) {
+          console.warn('[TransactionService] Supabase insert error:', err);
+        }
+      }
+    });
+  }
+
+  // Background FastAPI sync (for ML pipeline cache)
   getAuthToken().then((token) => {
     if (token) {
       apiClient
@@ -551,7 +666,7 @@ export function addTransaction(
           timestamp: newTx.timestamp,
         })
         .catch((err) => {
-          console.warn('[TransactionService] Background push failed, transaction remains safe locally:', err);
+          console.warn('[TransactionService] Background FastAPI push notice:', err);
         });
     }
   });
@@ -583,7 +698,34 @@ export function updateTransaction(
   existing[idx] = updatedTx;
   saveStoredTransactions(existing);
 
-  // Background cloud push (non-blocking)
+  // Direct Supabase PostgreSQL update
+  if (supabase && isSupabaseConfigured && !id.startsWith('tx_demo_') && !id.startsWith('sample_')) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          const payload: any = {
+            updated_at: new Date().toISOString(),
+          };
+          if (updates.type) payload.type = updates.type;
+          if (updates.amount) payload.amount = updates.amount;
+          if (updates.category) payload.category = updates.category;
+          if (updates.description !== undefined) payload.description = updates.description;
+          if (updates.workRef !== undefined) payload.work_ref = updates.workRef;
+          if (updates.timestamp) payload.timestamp = updates.timestamp;
+
+          await supabase
+            .from('transactions')
+            .update(payload)
+            .eq('user_id', user.id)
+            .or(`client_tx_id.eq.${id},id.eq.${id}`);
+        } catch (err) {
+          console.warn('[TransactionService] Direct Supabase update notice:', err);
+        }
+      }
+    });
+  }
+
+  // Background FastAPI update
   getAuthToken().then((token) => {
     if (token && !id.startsWith('tx_demo_') && !id.startsWith('sample_')) {
       apiClient
@@ -596,7 +738,7 @@ export function updateTransaction(
           timestamp: updatedTx.timestamp,
         })
         .catch((err) => {
-          console.warn('[TransactionService] Background update failed:', err);
+          console.warn('[TransactionService] Background update notice:', err);
         });
     }
   });
@@ -613,11 +755,28 @@ export function deleteTransaction(id: string): boolean {
   if (filtered.length === existing.length) return false;
   saveStoredTransactions(filtered);
 
-  // Background cloud delete (non-blocking)
+  // Direct Supabase PostgreSQL delete
+  if (supabase && isSupabaseConfigured && !id.startsWith('tx_demo_') && !id.startsWith('sample_')) {
+    getActiveUser().then(async (user) => {
+      if (user) {
+        try {
+          await supabase
+            .from('transactions')
+            .delete()
+            .eq('user_id', user.id)
+            .or(`client_tx_id.eq.${id},id.eq.${id}`);
+        } catch (err) {
+          console.warn('[TransactionService] Direct Supabase delete notice:', err);
+        }
+      }
+    });
+  }
+
+  // Background FastAPI delete
   getAuthToken().then((token) => {
     if (token && !id.startsWith('tx_demo_') && !id.startsWith('sample_')) {
       apiClient.delete(`/transactions/${id}`).catch((err) => {
-        console.warn('[TransactionService] Background delete failed:', err);
+        console.warn('[TransactionService] Background delete notice:', err);
       });
     }
   });

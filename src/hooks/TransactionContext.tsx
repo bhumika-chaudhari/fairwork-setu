@@ -74,9 +74,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   const syncWithCloud = useCallback(async () => {
     try {
       const synced = await syncTransactionsWithCloud();
-      if (synced && synced.length > 0) {
-        setTransactions(synced);
-      }
+      setTransactions(synced);
     } catch (err) {
       console.warn('[TransactionContext] Cloud sync error:', err);
     }
@@ -89,6 +87,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
 
     const handleStorageChange = () => {
       refresh();
+      syncWithCloud();
     };
 
     window.addEventListener('setu_transactions_changed', handleStorageChange);

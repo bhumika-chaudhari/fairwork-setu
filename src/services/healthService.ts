@@ -6,6 +6,12 @@ import type {
   SymptomGuidance,
   SavedHealthItem,
 } from '../types/health';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getActiveUser,
+  ensureUserProfile,
+} from '../lib/supabaseClient';
 
 const BASE_URL = (
   import.meta.env.VITE_ML_API_URL ||
@@ -681,18 +687,74 @@ export function getSavedHealthItems(): SavedHealthItem[] {
   }
 }
 
+export async function syncHealthItemsWithCloud(): Promise<SavedHealthItem[]> {
+  const local = getSavedHealthItems();
+  if (supabase && isSupabaseConfigured) {
+    try {
+      const user = await getActiveUser();
+      if (user) {
+        const { data: rows, error } = await supabase
+          .from('saved_health_items')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('saved_at', { ascending: false });
+
+        if (!error && rows && rows.length > 0) {
+          const mapped: SavedHealthItem[] = rows.map((r: any) => ({
+            id: r.item_id,
+            type: r.item_type,
+            title: r.title,
+            notes: r.notes || undefined,
+            savedAt: r.saved_at || new Date().toISOString(),
+          }));
+          localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(mapped));
+          return mapped;
+        }
+      }
+    } catch (err) {
+      console.warn('[HealthService] Supabase sync health items notice:', err);
+    }
+  }
+  return local;
+}
+
 export function saveHealthItem(item: Omit<SavedHealthItem, 'savedAt'>): SavedHealthItem[] {
   try {
     const current = getSavedHealthItems();
+    let updated = current;
     if (!current.some((i) => i.id === item.id)) {
-      const updated: SavedHealthItem[] = [
+      updated = [
         { ...item, savedAt: new Date().toISOString() },
         ...current,
       ];
       localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(updated));
-      return updated;
     }
-    return current;
+
+    // Direct Supabase PostgreSQL upsert when authenticated
+    if (supabase && isSupabaseConfigured) {
+      getActiveUser().then(async (user) => {
+        if (user) {
+          try {
+            await ensureUserProfile(user);
+            await supabase.from('saved_health_items').upsert(
+              {
+                user_id: user.id,
+                item_id: item.id,
+                item_type: item.type,
+                title: item.title,
+                notes: item.notes || null,
+                saved_at: new Date().toISOString(),
+              },
+              { onConflict: 'user_id,item_id' }
+            );
+          } catch (err) {
+            console.warn('[HealthService] Supabase save health item notice:', err);
+          }
+        }
+      });
+    }
+
+    return updated;
   } catch {
     return [];
   }
@@ -703,6 +765,24 @@ export function removeSavedHealthItem(id: string): SavedHealthItem[] {
     const current = getSavedHealthItems();
     const updated = current.filter((i) => i.id !== id);
     localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(updated));
+
+    // Direct Supabase PostgreSQL delete when authenticated
+    if (supabase && isSupabaseConfigured) {
+      getActiveUser().then(async (user) => {
+        if (user) {
+          try {
+            await supabase
+              .from('saved_health_items')
+              .delete()
+              .eq('user_id', user.id)
+              .eq('item_id', id);
+          } catch (err) {
+            console.warn('[HealthService] Supabase remove health item notice:', err);
+          }
+        }
+      });
+    }
+
     return updated;
   } catch {
     return [];

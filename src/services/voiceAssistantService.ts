@@ -15,9 +15,11 @@ import {
   forecastIncomeHorizon,
   matchJobsWithWorker,
   detectTransactionAnomalies,
+  parseAssistantIntent,
 } from './aiModelsClient';
-import { fetchHealthFacilities } from './healthService';
-import { VERIFIED_LEGAL_SOURCES } from './haqService';
+import { fetchHealthFacilities, getSavedHealthItems } from './healthService';
+import { VERIFIED_LEGAL_SOURCES, getSavedCases } from './haqService';
+import { getActiveUser } from '../lib/supabaseClient';
 import { formatInr } from '../localization';
 import { normalizeIndicDigits } from '../lib/multilingualNumberParser';
 
@@ -97,6 +99,7 @@ export interface AssistantContextState {
   lastIntent: string | null;
   currentScreen?: string; // 'home' | 'kaam' | 'dhan' | 'sehat' | 'kaushal' | 'haq' | 'profile'
   userProfile?: {
+    id?: string;
     name?: string;
     workType?: string | null;
     cityKey?: string;
@@ -116,6 +119,9 @@ export interface AssistantContextState {
     totalExpense: number;
     netForPeriod: number;
   };
+  bookings?: any[];
+  applications?: any[];
+  haqCases?: any[];
 }
 
 // ---------------------------------------------------------------------------
@@ -130,7 +136,7 @@ export function detectSpokenLanguage(text: string): SupportedLanguage {
   if (/[\u0900-\u097F]/.test(text)) {
     // Specific Marathi vocabulary markers in Devanagari
     if (
-      /आहे|नाही|झाले|झाला|केले|केला|पाहिजे|रुपये|मिळाले|मिळवले|खर्च|काम|करायचे|मला|माझे|सांगा|कशी|कसा|द्या|आरोग्य|हक्क/.test(
+      /आहे|नाही|झाले|झाला|केले|केला|पाहिजे|रुपये|मिळाले|मिळवले|खर्च|काम|करायचे|मला|माझे|सांगा|कशी|कसा|द्या|आरोग्य|हक्क|शिल्लक|नोंदवा|दवाखाना|अर्ज|सुचवा/.test(
         text
       )
     ) {
@@ -142,7 +148,7 @@ export function detectSpokenLanguage(text: string): SupportedLanguage {
   // 2. Transliterated / Romanized vocabulary markers
   // Marathi markers:
   if (
-    /\b(mala|mazha|mazhe|ahe|ahet|nahi|jhale|zale|kela|kele|pahije|kamavle|kharch zala|paise|ani|kay karu|kasa|kashi|madat|nokari|shikayche)\b/i.test(
+    /\b(mala|mazha|mazhe|ahe|ahet|nahi|jhale|zale|kela|kele|pahije|kamavle|kharch zala|paise|ani|kay karu|kasa|kashi|madat|nokari|shikayche|shillak|dakhav|saanga|kuthe|davakhana|arj|haq)\b/i.test(
       lower
     )
   ) {
@@ -151,7 +157,7 @@ export function detectSpokenLanguage(text: string): SupportedLanguage {
 
   // Hindi / Hinglish markers:
   if (
-    /\b(aaj|kal|kamaya|kharcha|kharch|rupaye|batao|chahiye|kaam|bukhar|dard|paise|kitna|hua|likho|jodo|dikhao|kholo|meri|mera|seekhna|kripya)\b/i.test(
+    /\b(aaj|kal|kamaya|kharcha|kharch|rupaye|batao|chahiye|kaam|bukhar|dard|paise|kitna|hua|likho|jodo|dikhao|kholo|meri|mera|seekhna|kripya|hisaab|hisab|shikayat|aspataal|dawa|bachat)\b/i.test(
       lower
     )
   ) {
@@ -309,8 +315,42 @@ export async function processUserUtterance(
   const userName = state.userProfile?.name || 'Worker Friend';
   const userTrade = state.userProfile?.workType || 'delivery';
   const userCity = (state.userProfile?.cityKey || 'pune').replace('cities.', '');
-  const userId =
-    'usr-' + (state.userProfile?.name || 'worker').toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+  // 0. UNCLEAR AUDIO OR EMPTY INPUT HANDLING
+  if (!text) {
+    let emptyMsg =
+      "I couldn't hear that clearly. Please tap the microphone to speak again or type your question below.";
+    if (lang === 'hi') {
+      emptyMsg =
+        'मैं आपकी आवाज़ स्पष्ट रूप से नहीं सुन पाया। कृपया माइक दबाकर फिर से बोलें या नीचे अपना प्रश्न लिखें।';
+    } else if (lang === 'mr') {
+      emptyMsg =
+        'मला तुमचा आवाज स्पष्टपणे ऐकू आला नाही. कृपया माइक दाबून पुन्हा बोला किंवा खाली तुमचा प्रश्न टाइप करा.';
+    }
+    return {
+      id: msgId,
+      role: 'assistant',
+      text: emptyMsg,
+      timestamp,
+      lang,
+      intent: 'unclear_audio',
+    };
+  }
+
+  // Resolve authentic user ID for authorized queries
+  let userId = state.userProfile?.id;
+  if (!userId) {
+    try {
+      const activeU = await getActiveUser();
+      if (activeU?.id) userId = activeU.id;
+    } catch {
+      // ignore
+    }
+  }
+  if (!userId) {
+    userId =
+      'usr-' + (state.userProfile?.name || 'worker').toLowerCase().replace(/[^a-z0-9]/g, '-');
+  }
 
   // 1. FOLLOW-UP CONFIRMATION OR CANCELLATION OF PENDING ACTION
   if (state.pendingConfirmation) {
@@ -605,29 +645,78 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 5. WORK (KAAM) MODULE INTENTS
+  // 5. SERVICE BOOKINGS & CUSTOMER APPOINTMENTS INQUIRIES
   // -------------------------------------------------------------------------
-  const isWorkContext =
-    currentScreen === 'kaam' ||
-    lower.includes('job') ||
-    lower.includes('jobs') ||
-    lower.includes('kaam') ||
-    lower.includes('opening') ||
-    lower.includes('vacancy') ||
-    lower.includes('application') ||
+  const isBookingQuery =
     lower.includes('booking') ||
-    lower.includes('gig');
+    lower.includes('appointment') ||
+    lower.includes('service request') ||
+    lower.includes('meri booking') ||
+    lower.includes('majhe booking') ||
+    lower.includes('majhi booking') ||
+    lower.includes('grahak');
 
-  // 5a. Application Status Inquiry ("My applications", "Did I apply?", "Application status")
-  if (
-    isWorkContext &&
-    (lower.includes('my application') ||
-      lower.includes('status') ||
-      lower.includes('applied') ||
-      lower.includes('meri application') ||
-      lower.includes('arz') ||
-      lower.includes('nokari cha status'))
-  ) {
+  if (isBookingQuery) {
+    try {
+      const bookings = await fetchBookings({});
+      if (bookings.length === 0) {
+        let resp =
+          'You currently have 0 active customer service bookings on file. You can offer your trade or browse incoming customer requests in the Kaam Marketplace.';
+        if (lang === 'hi') {
+          resp =
+            'आपके खाते में वर्तमान में 0 सक्रिय ग्राहक सेवा बुकिंग दर्ज हैं। आप काम (Kaam) पृष्ठ पर जाकर अपनी सेवाएँ सूचीबद्ध कर सकते हैं।';
+        } else if (lang === 'mr') {
+          resp =
+            'तुमच्या खात्यात सध्या 0 ग्राहक सेवा बुकिंग नोंदवलेली आहेत. तुम्ही काम मार्केटमध्ये नवीन सेवा देऊ शकता.';
+        }
+
+        return {
+          id: msgId,
+          role: 'assistant',
+          text: resp,
+          timestamp,
+          lang,
+          intent: 'check_bookings',
+          navigationAction: { route: '/kaam', label: 'Open Kaam Marketplace' },
+        };
+      }
+
+      const topB = bookings[0];
+      let resp = `You have ${bookings.length} active service booking(s). Most recent: ${topB.serviceName || topB.workerTrade || 'Service'} scheduled for ${topB.scheduledDate || 'upcoming shift'} (Status: ${topB.status}).`;
+      if (lang === 'hi') {
+        resp = `आपकी ${bookings.length} सेवा बुकिंग दर्ज हैं। नवीनतम: ${topB.serviceName || topB.workerTrade || 'सेवा'} (तारीख: ${topB.scheduledDate || 'आगामी'}, स्थिति: ${topB.status})।`;
+      } else if (lang === 'mr') {
+        resp = `तुमच्याकडे ${bookings.length} ग्राहक बुकिंग आहेत. अलीकडील: ${topB.serviceName || topB.workerTrade || 'सेवा'} (तारीख: ${topB.scheduledDate || 'पुढील'}, स्थिती: ${topB.status}).`;
+      }
+
+      return {
+        id: msgId,
+        role: 'assistant',
+        text: resp,
+        timestamp,
+        lang,
+        intent: 'check_bookings',
+        navigationAction: { route: '/kaam', label: 'View Bookings in Kaam' },
+      };
+    } catch {
+      // continue
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 6. WORK & JOB APPLICATION STATUS INQUIRIES
+  // -------------------------------------------------------------------------
+  const isAppStatusQuery =
+    lower.includes('my application') ||
+    lower.includes('application status') ||
+    lower.includes('job status') ||
+    lower.includes('applied') ||
+    lower.includes('meri application') ||
+    lower.includes('arz') ||
+    lower.includes('arjachi sthiti') ||
+    lower.includes('nokari cha status');
+
+  if (isAppStatusQuery) {
     try {
       const myApps = await fetchMyApplications(userId);
       if (myApps.length === 0) {
@@ -672,26 +761,27 @@ export async function processUserUtterance(
     }
   }
 
-  // 5b. Matching Jobs Inquiry via Model 6 ("Show matching jobs", "Find jobs for me", "Matching openings")
-  if (
-    isWorkContext &&
-    (lower.includes('match') ||
-      lower.includes('find') ||
-      lower.includes('show') ||
-      lower.includes('dikhao') ||
-      lower.includes('dakhav') ||
-      lower.includes('kholo') ||
-      lower.includes('search') ||
-      lower.includes('electrician') ||
-      lower.includes('delivery') ||
-      lower.includes('driver') ||
-      lower.includes('warehouse') ||
-      lower.includes('plumber') ||
-      lower.includes('cleaner') ||
-      lower.includes('tailor') ||
-      lower.includes('cook') ||
-      currentScreen === 'kaam')
-  ) {
+  // -------------------------------------------------------------------------
+  // 7. MATCHING JOBS SEARCH INQUIRY (Model 6)
+  // -------------------------------------------------------------------------
+  const isJobSearchQuery =
+    lower.includes('match') ||
+    lower.includes('find job') ||
+    lower.includes('matching job') ||
+    lower.includes('search job') ||
+    lower.includes('show job') ||
+    lower.includes('delivery job') ||
+    lower.includes('electrician job') ||
+    lower.includes('driver job') ||
+    lower.includes('warehouse job') ||
+    lower.includes('kaam dikhao') ||
+    lower.includes('kaam chahiye') ||
+    lower.includes('nokari dhoondho') ||
+    lower.includes('nokari shodha') ||
+    lower.includes('openings') ||
+    lower.includes('vacancy');
+
+  if (isJobSearchQuery) {
     try {
       const userSkills = [
         ...(state.userProfile?.skillKeys || []).map((k) =>
@@ -752,10 +842,9 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 6. MONEY (DHAN) MODULE INTENTS
+  // 8. MONEY (DHAN) MODULE INTENTS
   // -------------------------------------------------------------------------
   const isMoneyContext =
-    currentScreen === 'dhan' ||
     lower.includes('money') ||
     lower.includes('dhan') ||
     lower.includes('balance') ||
@@ -766,9 +855,12 @@ export async function processUserUtterance(
     lower.includes('kharch') ||
     lower.includes('kamai') ||
     lower.includes('hisaab') ||
-    lower.includes('savings');
+    lower.includes('hisab') ||
+    lower.includes('savings') ||
+    lower.includes('shillak') ||
+    lower.includes('bachat');
 
-  // 6a. Anomaly / Suspicious Spending Detection (Model 3)
+  // 8a. Anomaly / Suspicious Spending Detection (Model 3)
   if (
     isMoneyContext &&
     (lower.includes('anomaly') ||
@@ -811,7 +903,7 @@ export async function processUserUtterance(
     }
   }
 
-  // 6b. Future Income Forecast (Model 2)
+  // 8b. Future Income Forecast (Model 2)
   const isFutureForecast =
     lower.includes('tomorrow') ||
     ((lower.includes('kal') || lower.includes('udya')) &&
@@ -870,7 +962,7 @@ export async function processUserUtterance(
     }
   }
 
-  // 6c. Multiple Expenses in One Utterance
+  // 8c. Multiple Expenses in One Utterance
   const multiExp = extractMultipleExpenses(text);
   if (multiExp && multiExp.items.length >= 2) {
     const pendingItems: PendingTransactionItem[] = multiExp.items.map((it, idx) => ({
@@ -918,7 +1010,7 @@ export async function processUserUtterance(
     };
   }
 
-  // 6d. Single Income Logging ("I earned ₹800 today", "Zomato se 850 kamaya")
+  // 8d. Single Income Logging ("I earned ₹800 today", "Zomato se 850 kamaya")
   const isIncomePhrase =
     lower.includes('earned') ||
     lower.includes('received') ||
@@ -975,7 +1067,7 @@ export async function processUserUtterance(
     }
   }
 
-  // 6e. Single Expense Logging ("I spent ₹150 on food today", "200 ka petrol")
+  // 8e. Single Expense Logging ("I spent ₹150 on food today", "200 ka petrol")
   const isExpensePhrase =
     lower.includes('spent') ||
     lower.includes('paid') ||
@@ -990,7 +1082,7 @@ export async function processUserUtterance(
     lower.includes('chai') ||
     lower.includes('dawai');
 
-  if (isExpensePhrase || (isMoneyContext && cleaned.match(/[0-9]{2,6}/))) {
+  if (isExpensePhrase && !isIncomePhrase) {
     const numMatch = cleaned.match(
       /(?:₹|rs\.?|inr)?\s*([0-9]{2,6}(?:\.[0-9]{1,2})?)\s*(?:rupees?|rs\.?|inr|₹|ka|ke|rupaye|paise)?/i
     );
@@ -1030,7 +1122,41 @@ export async function processUserUtterance(
     }
   }
 
-  // 6f. Financial Balance & Spending Inquiries ("How much did I spend?", "Kitna hisab hua?")
+  // 8f. Category Breakdown or Highest Expense Inquiries
+  if (
+    isMoneyContext &&
+    (lower.includes('highest') ||
+      lower.includes('biggest') ||
+      lower.includes('sabse bada') ||
+      lower.includes('sarvat motha') ||
+      lower.includes('max expense'))
+  ) {
+    const expenses = state.transactions.filter((tx) => tx.type === 'expense');
+    if (expenses.length === 0) {
+      let resp = 'You have not recorded any expenses yet.';
+      if (lang === 'hi') resp = 'आपने अभी तक कोई खर्च दर्ज नहीं किया है।';
+      if (lang === 'mr') resp = 'तुम्ही अद्याप कोणताही खर्च नोंदवलेला नाही.';
+      return { id: msgId, role: 'assistant', text: resp, timestamp, lang, intent: 'financial_summary' };
+    }
+    const maxExp = expenses.reduce((prev, curr) => (curr.amount > prev.amount ? curr : prev), expenses[0]);
+    let resp = `Your largest recorded expense is ${formatInr(maxExp.amount)} for ${maxExp.category.replace('_', ' ')} (${maxExp.description || 'Expense'}).`;
+    if (lang === 'hi')
+      resp = `आपका सबसे बड़ा दर्ज खर्च ${formatInr(maxExp.amount)} है (${maxExp.category.replace('_', ' ')}: ${maxExp.description || 'खर्च'})।`;
+    if (lang === 'mr')
+      resp = `तुमचा सर्वात मोठा नोंदवलेला खर्च ${formatInr(maxExp.amount)} आहे (${maxExp.category.replace('_', ' ')}: ${maxExp.description || 'खर्च'}).`;
+
+    return {
+      id: msgId,
+      role: 'assistant',
+      text: resp,
+      timestamp,
+      lang,
+      intent: 'financial_summary',
+      navigationAction: { route: '/dhan', label: 'View Money Ledger' },
+    };
+  }
+
+  // 8g. Financial Balance & Spending Inquiries ("How much did I spend?", "Kitna hisab hua?")
   const isBalanceQuery =
     lower.includes('how much') ||
     lower.includes('balance') ||
@@ -1039,9 +1165,11 @@ export async function processUserUtterance(
     lower.includes('summary') ||
     lower.includes('hisab') ||
     lower.includes('hisaab') ||
-    (isMoneyContext && (lower.includes('spend') || lower.includes('earn')));
+    lower.includes('shillak') ||
+    lower.includes('spend') ||
+    lower.includes('earn');
 
-  if (isBalanceQuery) {
+  if (isMoneyContext && isBalanceQuery) {
     const s = state.summary;
     const nowMs = Date.now();
     const sevenDaysAgoMs = nowMs - 7 * 86400000;
@@ -1057,7 +1185,16 @@ export async function processUserUtterance(
     const isToday = lower.includes('today') || lower.includes('aaj');
 
     let resp = '';
-    if (isWeekly) {
+    if (state.transactions.length === 0 && s.totalIncome === 0 && s.totalExpense === 0) {
+      resp =
+        'You have not recorded any income or expenses yet. You can speak or type to log transactions, for example: "Earned ₹800 today" or "Spent ₹150 on petrol".';
+      if (lang === 'hi')
+        resp =
+          'आपने अभी तक कोई कमाई या खर्च दर्ज नहीं किया है। आप बोलकर या लिखकर लेन-देन जोड़ सकते हैं, जैसे: "आज 800 रुपये कमाए" या "150 रुपये का पेट्रोल भरवाया"।';
+      if (lang === 'mr')
+        resp =
+          'तुम्ही अद्याप कोणतेही उत्पन्न किंवा खर्च नोंदवलेले नाही. तुम्ही बोलून किंवा लिहून व्यवहार जोडू शकता, उदा. "आज 800 रुपये कमावले" किंवा "150 रुपये पेट्रोल खर्च".';
+    } else if (isWeekly) {
       if (lower.includes('spend') || lower.includes('kharch')) {
         resp = `This week, your total recorded expenses are ${formatInr(
           weeklyExpenseAmt
@@ -1104,21 +1241,15 @@ export async function processUserUtterance(
     } else {
       resp = `Your recorded total balance is ${formatInr(
         totalBalanceAmt
-      )}. This week's earnings: ${formatInr(s.weeklyIncome)}, expenses: ${formatInr(
-        weeklyExpenseAmt
-      )}.`;
+      )}. Total Income: ${formatInr(s.totalIncome)}, Total Expenses: ${formatInr(s.totalExpense)}.`;
       if (lang === 'hi')
         resp = `आपका कुल दर्ज शेष ${formatInr(
           totalBalanceAmt
-        )} है। इस सप्ताह की कमाई ${formatInr(s.weeklyIncome)} और खर्च ${formatInr(
-          weeklyExpenseAmt
-        )} है।`;
+        )} है (कुल आय: ${formatInr(s.totalIncome)}, कुल खर्च: ${formatInr(s.totalExpense)})।`;
       if (lang === 'mr')
         resp = `तुमची एकूण नोंदवलेली शिल्लक ${formatInr(
           totalBalanceAmt
-        )} आहे. या आठवड्याची कमाई ${formatInr(s.weeklyIncome)} आणि खर्च ${formatInr(
-          weeklyExpenseAmt
-        )} आहे.`;
+        )} आहे (एकूण उत्पन्न: ${formatInr(s.totalIncome)}, एकूण खर्च: ${formatInr(s.totalExpense)}).`;
     }
 
     return {
@@ -1136,10 +1267,9 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 7. HEALTH (SEHAT) MODULE INTENTS
+  // 9. HEALTH (SEHAT) MODULE INTENTS
   // -------------------------------------------------------------------------
   const isHealthContext =
-    currentScreen === 'sehat' ||
     lower.includes('health') ||
     lower.includes('sehat') ||
     lower.includes('fever') ||
@@ -1156,7 +1286,7 @@ export async function processUserUtterance(
     lower.includes('dawa') ||
     lower.includes('medicine');
 
-  // 7a. Clinic / Hospital Search Near Me ("Nearest hospital / clinic / PHC")
+  // 9a. Clinic / Hospital Search Near Me ("Nearest hospital / clinic / PHC")
   if (
     isHealthContext &&
     (lower.includes('nearest') ||
@@ -1192,7 +1322,33 @@ export async function processUserUtterance(
     }
   }
 
-  // 7b. General Health Symptom Guidance & Scheme Info (Model 8 RAG)
+  // 9b. Saved Health Resources
+  if (isHealthContext && (lower.includes('saved') || lower.includes('bookmark'))) {
+    const saved = getSavedHealthItems();
+    if (saved.length === 0) {
+      let resp =
+        'You have not bookmarked any clinics or health schemes yet. You can save nearby facilities in the Sehat Health Hub for offline access.';
+      if (lang === 'hi')
+        resp = 'आपने अभी तक कोई स्वास्थ्य केंद्र या योजना सहेजी नहीं है। आप सेहत पृष्ठ पर जाकर नजदीकी औषधालयों को सहेज सकते हैं।';
+      if (lang === 'mr')
+        resp = 'तुम्ही अद्याप कोणतेही दवाखाने जतन केलेले नाहीत. तुम्ही आरोग्य पानावर जाऊन ते जतन करू शकता.';
+      return { id: msgId, role: 'assistant', text: resp, timestamp, lang, intent: 'health_guidance' };
+    }
+    let resp = `You have ${saved.length} saved health bookmark(s). Most recent: ${saved[0].title} (${saved[0].locality || userCity}).`;
+    if (lang === 'hi') resp = `आपके ${saved.length} सहेजे गए स्वास्थ्य संसाधन हैं। नवीनतम: ${saved[0].title}।`;
+    if (lang === 'mr') resp = `तुमचे ${saved.length} जतन केलेले आरोग्य केंद्र आहेत. अलीकडील: ${saved[0].title}.`;
+    return {
+      id: msgId,
+      role: 'assistant',
+      text: resp,
+      timestamp,
+      lang,
+      intent: 'health_guidance',
+      navigationAction: { route: '/sehat', label: 'View Saved Health Items' },
+    };
+  }
+
+  // 9c. General Health Symptom Guidance & Scheme Info (Model 8 RAG)
   if (isHealthContext) {
     try {
       const rag = await searchHealthWelfareRAG(text, 2);
@@ -1230,10 +1386,9 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 8. SKILLS (KAUSHAL) MODULE INTENTS (Model 7)
+  // 10. SKILLS (KAUSHAL) MODULE INTENTS (Model 7)
   // -------------------------------------------------------------------------
   const isSkillsContext =
-    currentScreen === 'kaushal' ||
     lower.includes('skill') ||
     lower.includes('course') ||
     lower.includes('kaushal') ||
@@ -1285,10 +1440,9 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 9. RIGHTS (HAQ SETU) MODULE INTENTS
+  // 11. RIGHTS (HAQ SETU) MODULE INTENTS
   // -------------------------------------------------------------------------
   const isRightsContext =
-    currentScreen === 'haq' ||
     lower.includes('rights') ||
     lower.includes('haq') ||
     lower.includes('law') ||
@@ -1298,17 +1452,60 @@ export async function processUserUtterance(
     lower.includes('blocked') ||
     lower.includes('compensation') ||
     lower.includes('appeal') ||
-    lower.includes('grievance');
+    lower.includes('grievance') ||
+    lower.includes('shikayat') ||
+    lower.includes('takrar');
 
   if (isRightsContext) {
+    // 11a. Check for filed grievance appeals
+    if (lower.includes('my appeal') || lower.includes('case status') || lower.includes('meri shikayat') || lower.includes('majhi takrar')) {
+      const savedCases = getSavedCases();
+      if (savedCases.length === 0) {
+        let resp =
+          'You have not filed any grievance appeals yet. If your platform ID was deactivated without notice, you can generate and track a formal appeal in Haq Setu.';
+        if (lang === 'hi')
+          resp =
+            'आपने अभी तक कोई शिकायत अपील दर्ज नहीं की है। यदि आपकी आईडी बिना नोटिस बंद कर दी गई है, तो आप हक सेतू में अपील तैयार कर सकते हैं।';
+        if (lang === 'mr')
+          resp =
+            'तुम्ही अद्याप कोणतीही तक्रार दाखल केलेली नाही. तुमचे खाते बंद झाले असल्यास, तुम्ही हक्क सेतूमध्ये दाद मागू शकता.';
+        return {
+          id: msgId,
+          role: 'assistant',
+          text: resp,
+          timestamp,
+          lang,
+          intent: 'gig_rights_info',
+          navigationAction: { route: '/haq', label: 'Open Haq Setu Appeal Generator' },
+        };
+      }
+      const topCase = savedCases[0];
+      let resp = `You have ${savedCases.length} filed grievance appeal(s). Most recent: Case ${topCase.caseNumber} against ${topCase.platform} (Status: ${topCase.status}).`;
+      if (lang === 'hi')
+        resp = `आपकी ${savedCases.length} शिकायत दर्ज हैं। नवीनतम: केस ${topCase.caseNumber} (${topCase.platform}, स्थिति: ${topCase.status})।`;
+      if (lang === 'mr')
+        resp = `तुमच्या ${savedCases.length} तक्रारी दाखल आहेत. अलीकडील: केस ${topCase.caseNumber} (${topCase.platform}, स्थिती: ${topCase.status}).`;
+
+      return {
+        id: msgId,
+        role: 'assistant',
+        text: resp,
+        timestamp,
+        lang,
+        intent: 'gig_rights_info',
+        navigationAction: { route: '/haq', label: 'View Grievance Tracker' },
+      };
+    }
+
+    // 11b. General Gig Worker Statutory Rights
     let resp =
-      'Under the Code on Social Security (2020) and State Platform Gig Workers Welfare Acts, you have legal rights: 1) Mandatory registration with the Welfare Board; 2) Social security and accident compensation funded by platform transaction cess; 3) Right to a written notice and fair hearing before account deactivation; 4) Statutory right to appeal to the Labour Appellate Authority.';
+      'Under the Code on Social Security (2020) Section 114 and State Platform Gig Workers Welfare Acts (such as Rajasthan Gig Act 2023 Sec 16), aggregators cannot arbitrarily block your ID without written notice, human review, and a statutory right to appeal before the Labour Appellate Authority.';
     if (lang === 'hi') {
       resp =
-        'सामाजिक सुरक्षा संहिता (2020) और गिग वर्कर्स कल्याण अधिनियम के तहत आपके वैधानिक अधिकार हैं: 1) कल्याण बोर्ड में अनिवार्य पंजीकरण; 2) एग्रीगेटर सेस द्वारा वित्तपोषित सामाजिक सुरक्षा और दुर्घटना बीमा; 3) बिना लिखित कारण और सुनवाई के खाता बंद न किए जाने का अधिकार; 4) अपीलीय प्राधिकारी के समक्ष शिकायत दर्ज करने का अधिकार।';
+        'सामाजिक सुरक्षा संहिता (2020) की धारा 114 और राजस्थान गिग वर्कर्स अधिनियम (2023) की धारा 16 के तहत, बिना पूर्व लिखित नोटिस और सुनवाई के कोई भी एग्रीगेटर आपकी आईडी बंद नहीं कर सकता। आपके पास अपीलीय प्राधिकारी के समक्ष शिकायत दर्ज करने का वैधानिक अधिकार है।';
     } else if (lang === 'mr') {
       resp =
-        'सामाजिक सुरक्षा संहिता (2020) आणि गिग वर्कर्स कल्याण कायद्यानुसार तुमचे वैधानिक अधिकार आहेत: 1) कल्याण मंडळात नोंदणी; 2) अपघात भरपाई आणि सामाजिक सुरक्षा निधी; 3) नोटीस आणि सुनावणीशिवाय खाते बंद न होण्याचा अधिकार; 4) कामगार प्राधिकरणाकडे दाद मागण्याचा अधिकार.';
+        'सामाजिक सुरक्षा संहिता (2020) कलम 114 आणि गिग कामगार कल्याण कायदा (2023) कलम 16 नुसार, नोटीस आणि मानवी सुनावणीशिवाय खाते बंद न होण्याचा तुमचा कायदेशीर हक्क आहे. कामगार प्राधिकरणाकडे दाद मागण्याची कायदेशीर सुविधा उपलब्ध आहे.';
     }
 
     return {
@@ -1326,10 +1523,9 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 10. PROFILE & SETTINGS MODULE INTENTS
+  // 12. PROFILE & SETTINGS MODULE INTENTS
   // -------------------------------------------------------------------------
   const isProfileContext =
-    currentScreen === 'profile' ||
     lower.includes('who am i') ||
     lower.includes('mera naam') ||
     lower.includes('profile') ||
@@ -1371,80 +1567,87 @@ export async function processUserUtterance(
   }
 
   // -------------------------------------------------------------------------
-  // 11. CONTEXTUAL SCREEN-BASED FALLBACK
+  // 13. PLATFORM EXPLANATION & PURPOSE ("What is Setu?")
   // -------------------------------------------------------------------------
-  let defaultMsg = `I am your Setu Voice Assistant on the ${currentScreen.toUpperCase()} page. How can I help you?`;
+  const isPlatformHelp =
+    lower.includes('what is setu') ||
+    lower.includes('what is fairwork') ||
+    lower.includes('how does this app help') ||
+    lower.includes('what can you do') ||
+    lower.includes('setu kya hai') ||
+    lower.includes('he app kay ahe') ||
+    lower.includes('help me') ||
+    lower.includes('madat');
 
-  if (currentScreen === 'kaam') {
-    defaultMsg =
-      'You are on the Work (Kaam) page. You can say: "Show matching jobs", "Check my application status", or "Find electrician openings near me".';
-    if (lang === 'hi')
-      defaultMsg =
-        'आप काम (Kaam) पृष्ठ पर हैं। आप कह सकते हैं: "मेरे लिए उपयुक्त काम दिखाओ", "मेरे आवेदन की स्थिति क्या है?", या "पास की डिलीवरी नौकरियां खोजो"।';
-    if (lang === 'mr')
-      defaultMsg =
-        'तुम्ही काम (Kaam) पानावर आहात. तुम्ही विचारू शकता: "माझ्यासाठी जुळणाऱ्या नोकऱ्या दाखवा", किंवा "माझ्या अर्जाची स्थिती काय आहे?".';
-  } else if (currentScreen === 'dhan') {
-    defaultMsg =
-      'You are on the Money (Dhan) page. You can say: "How much did I spend this week?", "Forecast tomorrow\'s income", or "Add expense ₹150 for food".';
-    if (lang === 'hi')
-      defaultMsg =
-        'आप धन (Dhan) पृष्ठ पर हैं। आप कह सकते हैं: "इस हफ्ते कितना खर्च हुआ?", "कल की कमाई का अनुमान बताओ", या "150 रुपये खाने का खर्च जोड़ो"।';
-    if (lang === 'mr')
-      defaultMsg =
-        'तुम्ही धन (Dhan) पानावर आहात. तुम्ही विचारू शकता: "या आठवड्यात किती खर्च झाला?", किंवा "उद्याच्या कमाईचा अंदाज सांगा".';
-  } else if (currentScreen === 'sehat') {
-    defaultMsg =
-      'You are on the Health (Sehat) page. You can ask: "What should I do for fever?", "Where is the nearest government clinic?", or "How does Ayushman Bharat cover gig workers?".';
-    if (lang === 'hi')
-      defaultMsg =
-        'आप सेहत (Sehat) पृष्ठ पर हैं। आप पूछ सकते हैं: "बुखार के लिए क्या करें?", "नजदीकी सरकारी अस्पताल कहाँ है?", या "आयुष्मान कार्ड की जानकारी दो"।';
-    if (lang === 'mr')
-      defaultMsg =
-        'तुम्ही आरोग्य (Sehat) पानावर आहात. तुम्ही विचारू शकता: "तापावर काय उपाय करावेत?", किंवा "जवळचा सरकारी दवाखाना कुठे आहे?".';
-  } else if (currentScreen === 'kaushal') {
-    defaultMsg =
-      'You are on the Skills (Kaushal) page. You can say: "Recommend an electrician course", "Show PMKVY courses", or "What skills should I learn?".';
-    if (lang === 'hi')
-      defaultMsg =
-        'आप कौशल (Kaushal) पृष्ठ पर हैं। आप कह सकते हैं: "मेरे लिए कोर्स सुझाओ", "PMKVY प्रशिक्षण दिखाओ", या "इलेक्ट्रीशियन कोर्स बताओ"।';
-    if (lang === 'mr')
-      defaultMsg =
-        'तुम्ही कौशल्य (Kaushal) पानावर आहात. तुम्ही विचारू शकता: "माझ्यासाठी योग्य कोर्स सुचवा", किंवा "PMKVY प्रशिक्षण दाखवा".';
-  } else if (currentScreen === 'haq') {
-    defaultMsg =
-      'You are on the Rights (Haq) page. You can ask: "What are my rights under gig worker law?", "How do I claim accident compensation?", or "Help me draft a deactivation appeal".';
-    if (lang === 'hi')
-      defaultMsg =
-        'आप हक (Haq) पृष्ठ पर हैं। आप पूछ सकते हैं: "गिग वर्कर के क्या अधिकार हैं?", "दुर्घटना बीमा कैसे मिलेगा?", या "खाता बंद होने पर अपील कैसे करें?"।';
-    if (lang === 'mr')
-      defaultMsg =
-        'तुम्ही हक्क (Haq) पानावर आहात. तुम्ही विचारू शकता: "गिग कामगारांचे काय अधिकार आहेत?", किंवा "अपघात भरपाई कशी मिळवायची?".';
-  } else if (currentScreen === 'profile') {
-    defaultMsg =
-      'You are on the Profile & Settings page. You can say: "Who am I?", "Change language to Hindi", or "What is my savings target?".';
-    if (lang === 'hi')
-      defaultMsg =
-        'आप प्रोफ़ाइल और सेटिंग्स पृष्ठ पर हैं। आप कह सकते हैं: "मेरी प्रोफ़ाइल दिखाओ", "भाषा बदलकर मराठी करो", या "मेरा बचत लक्ष्य क्या है?"।';
-    if (lang === 'mr')
-      defaultMsg =
-        'तुम्ही प्रोफाइल आणि सेटिंग्ज पानावर आहात. तुम्ही विचारू शकता: "माझी प्रोफाइल दाखवा", किंवा "भाषा बदलून हिंदी करा".';
-  } else {
-    defaultMsg =
-      'I am your Setu Voice & Chat Assistant. You can speak or type to track income, log expenses, find matching jobs, get health advice, explore skill courses, or navigate anywhere.';
+  if (isPlatformHelp) {
+    let resp =
+      'FairWork Setu is your AI livelihood companion designed for gig and informal workers in India. I help you track income and expenses in your own language, forecast upcoming earnings with ML, find verified jobs matching your skills, access Ayushman Bharat health benefits, upgrade your skills with PMKVY certifications, and protect your legal rights against unfair platform deactivations.';
     if (lang === 'hi') {
-      defaultMsg =
-        'मैं आपका सेतू सहायक हूँ। आप बोलकर या लिखकर कमाई, खर्चे, उपयुक्त काम, सेहत, कौशल और अधिकारों के बारे में पूछ सकते हैं।';
+      resp =
+        'फेयरवर्क सेतू भारत के गिग और असंगठित कामगारों के लिए बनाया गया AI साथी है। यह आपकी भाषा में दैनिक कमाई और खर्चों का हिसाब रखने, कमाई का AI अनुमान लगाने, आपकी कुशलता के अनुसार सत्यापित काम खोजने, आयुष्मान भारत स्वास्थ्य लाभ लेने, PMKVY कौशल कोर्स सीखने और कानूनी अधिकारों की रक्षा करने में मदद करता है।';
     } else if (lang === 'mr') {
-      defaultMsg =
-        'मी तुमचा सेतू सहाय्यक आहे. तुम्ही बोलून किंवा लिहून कमाई, खर्च, नोकरी, आरोग्य, कौशल्य आणि हक्कांबद्दल माहिती मिळवू शकता.';
+      resp =
+        'फेअरवर्क सेतू हे भारतातील गिग आणि असंघटित कामगारांसाठी AI साथीदार आहे. हे तुमच्या भाषेत दैनंदिन कमाई आणि खर्चाचा हिशोब ठेवणे, AI द्वारे पुढील कमाईचा अंदाज घेणे, काम शोधणे, आयुष्यमान भारत आरोग्य योजनांचा लाभ घेणे, कौशल्य प्रशिक्षण घेणे आणि कायदेशीर अधिकारांचे रक्षण करण्यास मदत करते.';
     }
+
+    return {
+      id: msgId,
+      role: 'assistant',
+      text: resp,
+      timestamp,
+      lang,
+      intent: 'general_help',
+    };
+  }
+
+  // -------------------------------------------------------------------------
+  // 14. INTELLIGENT DYNAMIC GENERATIVE FALLBACK
+  // -------------------------------------------------------------------------
+  // Attempt to consult the backend AI model router
+  try {
+    const backendRes = await parseAssistantIntent(text, {
+      summary: state.summary,
+      user_profile: state.userProfile,
+      transactions: state.transactions,
+      current_screen: currentScreen,
+    });
+
+    if (backendRes?.reply && backendRes.intent !== 'general_help') {
+      return {
+        id: msgId,
+        role: 'assistant',
+        text: backendRes.reply,
+        timestamp,
+        lang: backendRes.language || lang,
+        intent: backendRes.intent,
+        navigationAction: backendRes.route
+          ? { route: backendRes.route, label: `Open ${backendRes.route.slice(1).toUpperCase()}` }
+          : undefined,
+      };
+    }
+  } catch {
+    // Continue to personalized dynamic synthesis
+  }
+
+  // Synthesize an intelligent, data-grounded response answering the user directly
+  let fallbackAnswer = `I am your Setu Voice Assistant. I can check your today's earnings (currently ${formatInr(
+    state.summary.todayIncome
+  )}), log expenses, find matching ${userTrade} jobs in ${userCity}, look up the nearest government dispensary, or help draft an appeal against unfair platform deactivations. What would you like to do?`;
+
+  if (lang === 'hi') {
+    fallbackAnswer = `मैं आपका सेतू सहायक हूँ। मैं आपकी आज की कमाई (वर्तमान: ${formatInr(
+      state.summary.todayIncome
+    )}), खर्चे दर्ज करने, ${userCity} में ${userTrade} के उपयुक्त काम खोजने, नजदीकी प्राथमिक स्वास्थ्य केंद्र का पता लगाने या खाता बंद होने पर अपील तैयार करने में मदद कर सकता हूँ। आप क्या जानना चाहते हैं?`;
+  } else if (lang === 'mr') {
+    fallbackAnswer = `मी तुमचा सेतू सहाय्यक आहे. मी तुमची आजची कमाई (सध्या: ${formatInr(
+      state.summary.todayIncome
+    )}), खर्च नोंदवणे, ${userCity} मध्ये ${userTrade} ची कामे शोधणे, जवळचा सरकारी दवाखाना शोधणे किंवा अपील मसुदा तयार करण्यात मदत करू शकतो. मी तुम्हाला कशी मदत करू?`;
   }
 
   return {
     id: msgId,
     role: 'assistant',
-    text: defaultMsg,
+    text: fallbackAnswer,
     timestamp,
     lang,
     intent: 'general_help',
@@ -1492,6 +1695,26 @@ export class SetuContinuousSpeechRecognizer {
     if (typeof window === 'undefined') return false;
     const win = window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any };
     return Boolean(win.SpeechRecognition || win.webkitSpeechRecognition);
+  }
+
+  /**
+   * Request microphone permission explicitly via MediaDevices API
+   */
+  public static async requestMicrophonePermission(): Promise<{ granted: boolean; error?: string }> {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      return { granted: false, error: 'speech_not_supported' };
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      return { granted: true };
+    } catch (err: any) {
+      const errName = err?.name || '';
+      if (errName === 'NotAllowedError' || errName === 'PermissionDeniedError') {
+        return { granted: false, error: 'not-allowed' };
+      }
+      return { granted: false, error: err?.message || 'permission_denied' };
+    }
   }
 
   public setLanguage(lang: string) {
@@ -1550,7 +1773,13 @@ export class SetuContinuousSpeechRecognizer {
           return;
         }
         console.warn('Speech recognition error:', event.error);
-        this.callbacks.onError(event.error || 'Microphone error');
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          this.callbacks.onError('not-allowed');
+        } else if (event.error === 'audio-capture') {
+          this.callbacks.onError('audio-capture');
+        } else {
+          this.callbacks.onError(event.error || 'Microphone error');
+        }
       };
 
       this.recognizer.onend = () => {
@@ -1567,10 +1796,23 @@ export class SetuContinuousSpeechRecognizer {
     }
   }
 
-  public start() {
+  public async start() {
     if (!this.isSupported()) {
       this.callbacks.onError('speech_not_supported');
       return;
+    }
+
+    // Permission preflight
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices?.getUserMedia) {
+      try {
+        const perm = await SetuContinuousSpeechRecognizer.requestMicrophonePermission();
+        if (!perm.granted && perm.error === 'not-allowed') {
+          this.callbacks.onError('not-allowed');
+          return;
+        }
+      } catch {
+        // continue
+      }
     }
 
     this.accumulatedFinal = '';
