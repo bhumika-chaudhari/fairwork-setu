@@ -915,13 +915,80 @@ export default function DhanPage() {
                     <span className="text-[10px] font-mono text-textMuted">Model 3 (IsoForest)</span>
                   </div>
                   {model3Anomalies && model3Anomalies.flagged_count > 0 ? (
-                    <div className="mt-1 space-y-1">
-                      <p className="text-xs font-bold text-rose-800">
-                        ⚠️ {model3Anomalies.flagged_count} Unusual Transaction(s) Detected
-                      </p>
-                      <p className="text-[11px] text-rose-700">
-                        {model3Anomalies.anomalies[0].reason}
-                      </p>
+                    <div className="mt-2 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-bold text-rose-800">
+                          ⚠️ {model3Anomalies.flagged_count} Unusual Transaction(s) Detected
+                        </p>
+                        <span className="text-[10px] font-semibold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full border border-rose-200">
+                          Needs Verification
+                        </span>
+                      </div>
+
+                      {/* Itemized Anomalous Transactions List */}
+                      <div className="space-y-2 pt-1 max-h-72 overflow-y-auto pr-0.5">
+                        {model3Anomalies.anomalies.map((anom, idx) => {
+                          const tx = transactions.find((t) => t.id && t.id === anom.transaction?.id) || transactions[anom.index] || anom.transaction;
+                          const amt = tx?.amount ?? anom.transaction?.amount ?? 0;
+                          const isIncome = (tx?.type || anom.transaction?.type) === 'income';
+                          const desc = tx?.description || anom.transaction?.description || tx?.category || anom.transaction?.category || 'Transaction';
+                          const txDate = tx?.timestamp || anom.transaction?.timestamp || anom.transaction?.date;
+                          const dateDisplay = txDate ? getTransactionLocalDateString(txDate) : '';
+
+                          return (
+                            <div
+                              key={idx}
+                              className="rounded-xl border border-rose-200/90 bg-white/95 p-2.5 shadow-2xs transition-all hover:border-rose-300"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-xs font-black text-warmCocoa truncate">
+                                      {desc}
+                                    </span>
+                                    <span
+                                      className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
+                                        anom.severity === 'high'
+                                          ? 'bg-rose-100 text-rose-800 border-rose-300'
+                                          : 'bg-amber-100 text-amber-800 border-amber-300'
+                                      }`}
+                                    >
+                                      {anom.severity} anomaly
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-rose-700/90 mt-1 leading-snug">
+                                    {anom.reason}
+                                  </p>
+                                  {dateDisplay && (
+                                    <p className="text-[10px] text-textMuted mt-1">
+                                      📅 {dateDisplay}
+                                    </p>
+                                  )}
+                                </div>
+
+                                <div className="text-right shrink-0">
+                                  <span
+                                    className={`text-sm font-black block ${
+                                      isIncome ? 'text-success' : 'text-rose-700'
+                                    }`}
+                                  >
+                                    {isIncome ? '+' : '-'}₹{formatInr(Number(amt))}
+                                  </span>
+                                  {tx && tx.id && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openEditModal(tx)}
+                                      className="mt-1.5 text-[10px] font-bold text-deepEmerald hover:underline bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200"
+                                    >
+                                      Review / Edit
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   ) : (
                     <p className="mt-1 text-xs text-emerald-800">

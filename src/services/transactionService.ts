@@ -894,8 +894,14 @@ export function computeFinancialSummary(
       (tx) => tx.id.startsWith('sample_') || (tx.description && tx.description.includes('[Dev Sample]'))
     );
 
-  // Honest AI forecasting: requires at least 5 active recording days
-  const activeDaysCount = activeDates.size;
+  // Calculate active recording days across the worker's full transaction history
+  const allActiveDates = new Set<string>();
+  transactions.forEach((tx) => {
+    allActiveDates.add(getTransactionLocalDateString(tx.timestamp));
+  });
+
+  // Honest AI forecasting: requires at least 5 active recording days across worker history
+  const activeDaysCount = allActiveDates.size;
   const hasSufficientHistory = activeDaysCount >= 5;
   let forecastMin = 0;
   let forecastMax = 0;
@@ -914,12 +920,17 @@ export function computeFinancialSummary(
     anomalyDescriptionKey = 'dhan.anomalyAlert';
   }
 
-  // Honest Stability Score: requires at least 7 days of recorded data
+  // Honest Stability Score: requires at least 7 days of recorded data across worker history
   const hasSufficientStabilityHistory = activeDaysCount >= 7;
   let stabilityScore = 0;
   let stabilityScoreLabelKey = 'dhan.stabilityScoreInsufficient';
   if (hasSufficientStabilityHistory) {
-    const netRatio = totalIncome > 0 ? Math.max(0, (totalIncome - totalExpense) / totalIncome) : 0;
+    // Evaluate net cashflow ratio across worker records (fallback to historical total if viewing a fresh period)
+    const histTotalInc = transactions.filter((t) => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+    const histTotalExp = transactions.filter((t) => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+    const evalIncome = totalIncome > 0 ? totalIncome : histTotalInc;
+    const evalExpense = totalExpense > 0 ? totalExpense : histTotalExp;
+    const netRatio = evalIncome > 0 ? Math.max(0, (evalIncome - evalExpense) / evalIncome) : 0;
     stabilityScore = Math.min(480, Math.round(300 + netRatio * 150 + Math.min(activeDaysCount, 10) * 3));
     stabilityScoreLabelKey = 'dhan.stabilityScoreLabel';
   }
