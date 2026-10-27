@@ -713,11 +713,17 @@ export function updateTransaction(
           if (updates.workRef !== undefined) payload.work_ref = updates.workRef;
           if (updates.timestamp) payload.timestamp = updates.timestamp;
 
-          await supabase
-            .from('transactions')
-            .update(payload)
-            .eq('user_id', user.id)
-            .or(`client_tx_id.eq.${id},id.eq.${id}`);
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+          let query = supabase.from('transactions').update(payload).eq('user_id', user.id);
+          if (isUuid) {
+            query = query.or(`id.eq.${id},client_tx_id.eq.${id}`);
+          } else {
+            query = query.eq('client_tx_id', id);
+          }
+          const { error } = await query;
+          if (error) {
+            console.warn('[TransactionService] Direct Supabase update notice:', error);
+          }
         } catch (err) {
           console.warn('[TransactionService] Direct Supabase update notice:', err);
         }
@@ -760,11 +766,17 @@ export function deleteTransaction(id: string): boolean {
     getActiveUser().then(async (user) => {
       if (user) {
         try {
-          await supabase
-            .from('transactions')
-            .delete()
-            .eq('user_id', user.id)
-            .or(`client_tx_id.eq.${id},id.eq.${id}`);
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+          let query = supabase.from('transactions').delete().eq('user_id', user.id);
+          if (isUuid) {
+            query = query.or(`id.eq.${id},client_tx_id.eq.${id}`);
+          } else {
+            query = query.eq('client_tx_id', id);
+          }
+          const { error } = await query;
+          if (error) {
+            console.warn('[TransactionService] Direct Supabase delete notice:', error);
+          }
         } catch (err) {
           console.warn('[TransactionService] Direct Supabase delete notice:', err);
         }

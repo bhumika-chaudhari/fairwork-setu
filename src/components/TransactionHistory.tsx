@@ -355,40 +355,52 @@ export default function TransactionHistory({
                   <div className="mt-1 flex items-center justify-end gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
                     <button
                       type="button"
-                      onClick={() => onEdit(tx)}
-                      className="p-1 rounded-md text-textMuted hover:text-deepEmerald hover:bg-surfaceAlt transition-colors"
-                      title={t('common.edit')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(tx);
+                      }}
+                      className="p-1.5 rounded-lg text-textMuted hover:text-deepEmerald hover:bg-surfaceAlt active:scale-95 transition-all min-h-[30px] min-w-[30px] flex items-center justify-center"
+                      title={t('common.edit', 'Edit')}
+                      aria-label="Edit transaction"
                     >
-                      <AppIcon name="create-outline" size={13} />
+                      <AppIcon name="create-outline" size={14} />
                     </button>
                     {deleteConfirmId === tx.id ? (
                       <div className="flex items-center gap-1 animate-fade-in">
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             onDelete(tx.id);
                             setDeleteConfirmId(null);
                           }}
-                          className="rounded-md bg-danger px-1.5 py-0.5 text-[10px] font-bold text-white shadow-xs"
+                          className="rounded-md bg-danger px-2 py-0.5 text-[10px] font-bold text-white shadow-xs active:scale-95 transition-all"
                         >
-                          {t('common.confirm')}
+                          {t('common.confirm', 'Confirm')}
                         </button>
                         <button
                           type="button"
-                          onClick={() => setDeleteConfirmId(null)}
-                          className="rounded-md bg-surfaceAlt px-1.5 py-0.5 text-[10px] font-bold text-textSecondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteConfirmId(null);
+                          }}
+                          className="rounded-md bg-surfaceAlt px-2 py-0.5 text-[10px] font-bold text-textSecondary active:scale-95 transition-all"
                         >
-                          {t('common.cancel')}
+                          {t('common.cancel', 'Cancel')}
                         </button>
                       </div>
                     ) : (
                       <button
                         type="button"
-                        onClick={() => setDeleteConfirmId(tx.id)}
-                        className="p-1 rounded-md text-textMuted hover:text-danger hover:bg-red-50 transition-colors"
-                        title={t('common.delete')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteConfirmId(tx.id);
+                        }}
+                        className="p-1.5 rounded-lg text-textMuted hover:text-danger hover:bg-red-50 active:scale-95 transition-all min-h-[30px] min-w-[30px] flex items-center justify-center"
+                        title={t('common.delete', 'Delete')}
+                        aria-label="Delete transaction"
                       >
-                        <AppIcon name="trash-outline" size={13} />
+                        <AppIcon name="trash-outline" size={14} />
                       </button>
                     )}
                   </div>

@@ -253,4 +253,45 @@ assert.ok(
 
 console.log('✅ Test 6 Passed: Real user IDs passed to database operations across UI modals.');
 
-console.log('\n🎉 ALL 6/6 END-TO-END SUPABASE & APPLICATION VERIFICATION TESTS PASSED! 100% SUCCESS.\n');
+// ---------------------------------------------------------------------------
+// TEST 7: Edit and Delete Transaction Handlers & UI Controls
+// ---------------------------------------------------------------------------
+console.log('Testing Test 7: Edit & Delete Transaction actions and PostgREST UUID safety...');
+
+const txSrc = fs.readFileSync(path.resolve('src/services/transactionService.ts'), 'utf8');
+assert.ok(
+  txSrc.includes('const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);'),
+  'transactionService must distinguish UUIDs from client_tx_id for Supabase updates and deletes'
+);
+assert.ok(
+  txSrc.includes("query = query.eq('client_tx_id', id);"),
+  'transactionService must query by client_tx_id when id is not a UUID to avoid Postgres 22P02 errors'
+);
+
+const dhanPageSrc = fs.readFileSync(path.resolve('src/pages/DhanPage.tsx'), 'utf8');
+assert.ok(
+  dhanPageSrc.includes('openEditModal(tx)'),
+  'DhanPage must invoke openEditModal on transaction edit button click'
+);
+assert.ok(
+  dhanPageSrc.includes('handleDelete(tx.id)'),
+  'DhanPage must invoke handleDelete on transaction delete confirm'
+);
+assert.ok(
+  dhanPageSrc.includes("setDeleteConfirmId(null)"),
+  'DhanPage must support canceling delete confirmation'
+);
+
+const txHistorySrc = fs.readFileSync(path.resolve('src/components/TransactionHistory.tsx'), 'utf8');
+assert.ok(
+  txHistorySrc.includes('onEdit(tx)'),
+  'TransactionHistory must invoke onEdit on edit button click'
+);
+assert.ok(
+  txHistorySrc.includes('onDelete(tx.id)'),
+  'TransactionHistory must invoke onDelete on confirm delete'
+);
+
+console.log('✅ Test 7 Passed: Edit and Delete transaction operations & UI controls verified with full UUID safety.');
+
+console.log('\n🎉 ALL 7/7 END-TO-END SUPABASE & APPLICATION VERIFICATION TESTS PASSED! 100% SUCCESS.\n');

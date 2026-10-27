@@ -559,29 +559,53 @@ export default function DhanPage() {
                         <div className="flex items-center gap-1">
                           <button
                             type="button"
-                            onClick={() => openEditModal(tx)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditModal(tx);
+                            }}
                             aria-label="Edit transaction"
-                            className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/80 hover:bg-white text-textSecondary hover:text-deepEmerald border border-border/60 shadow-xs active:scale-95 transition-all"
+                            title={t('common.edit', 'Edit')}
+                            className="flex h-8 w-8 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-white/90 hover:bg-white text-textSecondary hover:text-deepEmerald border border-border/70 shadow-xs active:scale-95 transition-all min-h-[30px] min-w-[30px]"
                           >
-                            <AppIcon name="pencil" size={13} />
+                            <AppIcon name="pencil" size={14} />
                           </button>
                           {deleteConfirmId === tx.id ? (
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(tx.id)}
-                              aria-label="Confirm delete"
-                              className="rounded-lg bg-danger text-white px-2 py-1 text-[10px] font-bold shadow-xs active:scale-95 transition-all"
-                            >
-                              Confirm
-                            </button>
+                            <div className="flex items-center gap-1 animate-fade-in">
+                              <button
+                                type="button"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  await handleDelete(tx.id);
+                                }}
+                                aria-label="Confirm delete"
+                                className="rounded-lg bg-danger text-white px-2.5 py-1 text-[11px] font-bold shadow-xs active:scale-95 transition-all"
+                              >
+                                {t('common.confirm', 'Confirm')}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeleteConfirmId(null);
+                                }}
+                                aria-label="Cancel delete"
+                                className="rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 px-2 py-1 text-[11px] font-bold shadow-xs active:scale-95 transition-all"
+                              >
+                                {t('common.cancel', 'Cancel')}
+                              </button>
+                            </div>
                           ) : (
                             <button
                               type="button"
-                              onClick={() => setDeleteConfirmId(tx.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteConfirmId(tx.id);
+                              }}
                               aria-label="Delete transaction"
-                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/80 hover:bg-rose-50 text-textSecondary hover:text-danger border border-border/60 shadow-xs active:scale-95 transition-all"
+                              title={t('common.delete', 'Delete')}
+                              className="flex h-8 w-8 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-white/90 hover:bg-rose-50 text-textSecondary hover:text-danger border border-border/70 shadow-xs active:scale-95 transition-all min-h-[30px] min-w-[30px]"
                             >
-                              <AppIcon name="trash" size={13} />
+                              <AppIcon name="trash" size={14} />
                             </button>
                           )}
                         </div>

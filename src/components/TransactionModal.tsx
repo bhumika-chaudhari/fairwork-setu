@@ -465,7 +465,7 @@ export default function TransactionModal({
                 type="button"
                 onClick={() => {
                   setType('income');
-                  if (!editingTx) setCategory('work_earnings');
+                  if (!INCOME_CATEGORIES.includes(category)) setCategory('work_earnings');
                 }}
                 className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
                   type === 'income'
@@ -480,7 +480,7 @@ export default function TransactionModal({
                 type="button"
                 onClick={() => {
                   setType('expense');
-                  if (!editingTx) setCategory('food');
+                  if (!EXPENSE_CATEGORIES.includes(category)) setCategory('food');
                 }}
                 className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
                   type === 'expense'
