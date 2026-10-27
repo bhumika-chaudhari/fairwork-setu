@@ -127,10 +127,8 @@ console.log('✅ Test 5 Passed: All 10 statutory citations and government portal
 // ---------------------------------------------------------------------------
 console.log('Testing Test 6: Running Python ML Service unit test suite (11 benchmark queries)...');
 try {
-  const pyBin = fs.existsSync('/Library/Frameworks/Python.framework/Versions/3.12/bin/python3')
-    ? '/Library/Frameworks/Python.framework/Versions/3.12/bin/python3'
-    : 'python3';
-  const pyOutput = execSync(`${pyBin} ml_service/test_haq_triage.py`, { encoding: 'utf8' });
+  const pyBin = process.platform === 'win32' ? 'python' : 'python3';
+  const pyOutput = execSync(`${pyBin} ml_service/test_haq_triage.py`, { encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
   console.log(pyOutput.trim());
   console.log('✅ Test 6 Passed: Python backend verified on all 11 statutory queries with 100% precision.\n');
 } catch (err) {
