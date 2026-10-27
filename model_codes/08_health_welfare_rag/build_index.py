@@ -1,7 +1,13 @@
 import json
+from pathlib import Path
 import numpy as np
-import faiss
-from sentence_transformers import SentenceTransformer
+
+try:
+    import faiss
+    from sentence_transformers import SentenceTransformer
+except ImportError:
+    faiss = None
+    SentenceTransformer = None
 
 from config import (
     DOCUMENTS_PATH, INDEX_PATH, CHUNKS_PATH,
@@ -22,30 +28,36 @@ def main():
     if not chunks:
         raise ValueError("Documents did not produce any searchable chunks.")
 
-    model = SentenceTransformer(EMBEDDING_MODEL)
-    texts = [chunk["text"] for chunk in chunks]
-
-    embeddings = model.encode(
-        texts,
-        convert_to_numpy=True,
-        normalize_embeddings=True,
-        show_progress_bar=True
-    ).astype("float32")
-
-    index = faiss.IndexFlatIP(embeddings.shape[1])
-    index.add(np.ascontiguousarray(embeddings))
-
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
-    faiss.write_index(index, str(INDEX_PATH))
 
     CHUNKS_PATH.write_text(
         json.dumps(chunks, indent=2, ensure_ascii=False),
         encoding="utf-8"
     )
-
-    print("FAISS index saved:", INDEX_PATH)
     print("Chunk metadata saved:", CHUNKS_PATH)
     print("Indexed chunks:", len(chunks))
+
+    if SentenceTransformer is not None and faiss is not None:
+        try:
+            model = SentenceTransformer(EMBEDDING_MODEL)
+            texts = [chunk["text"] for chunk in chunks]
+
+            embeddings = model.encode(
+                texts,
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=True
+            ).astype("float32")
+
+            index = faiss.IndexFlatIP(embeddings.shape[1])
+            index.add(np.ascontiguousarray(embeddings))
+
+            faiss.write_index(index, str(INDEX_PATH))
+            print("FAISS index saved:", INDEX_PATH)
+        except Exception as e:
+            print(f"Notice: FAISS indexing skipped due to: {e}. Chunks are saved for TF-IDF RAG fallback.")
+    else:
+        print("SentenceTransformer or FAISS not installed. Chunks metadata saved; runtime will use dense TF-IDF fallback.")
 
 if __name__ == "__main__":
     main()

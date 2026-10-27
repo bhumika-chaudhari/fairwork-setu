@@ -11,12 +11,15 @@
  * 8. Health & Welfare RAG (SentenceTransformer + FAISS Dense Index)
  */
 
+const rawMlUrl = import.meta.env.VITE_ML_API_URL;
+const isPlaceholder = !rawMlUrl || rawMlUrl.includes('<') || rawMlUrl.includes('your-render') || rawMlUrl.includes('placeholder');
 const BASE_URL = (
-  import.meta.env.VITE_ML_API_URL ||
-  (typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  !isPlaceholder
+    ? rawMlUrl
+    : typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://127.0.0.1:8000'
-    : '')
+    : ''
 ).replace(/\/$/, '');
 
 export interface Model1Classification {

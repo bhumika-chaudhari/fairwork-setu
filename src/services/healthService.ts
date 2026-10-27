@@ -13,12 +13,15 @@ import {
   ensureUserProfile,
 } from '../lib/supabaseClient';
 
+const rawMlUrl = import.meta.env.VITE_ML_API_URL;
+const isPlaceholder = !rawMlUrl || rawMlUrl.includes('<') || rawMlUrl.includes('your-render') || rawMlUrl.includes('placeholder');
 const BASE_URL = (
-  import.meta.env.VITE_ML_API_URL ||
-  (typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  !isPlaceholder
+    ? rawMlUrl
+    : typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://127.0.0.1:8000'
-    : '')
+    : ''
 ).replace(/\/$/, '');
 
 const API_BASE = `${BASE_URL}/health-service`;
@@ -535,6 +538,403 @@ export async function fetchSafetyTips(category?: string): Promise<HealthSafetyTi
   return FALLBACK_TIPS;
 }
 
+// -------------------------------------------------------------------------
+// INTENT-BASED MULTI-DIALECT TRIAGE FALLBACK MATRIX (Model 8 Offline Parity)
+// -------------------------------------------------------------------------
+
+function classifyHealthIntentClient(queryText: string): string {
+  const ql = queryText.toLowerCase().trim();
+
+  // 1. Critical Emergency (Bypass RAG)
+  if (
+    /\b(chest|seene? me(in)? (tez )?dard|chaati me|heart attack|dil ka daura|saans nahi|cannot breathe|can't breathe|breathless|choking|heavy bleeding|bohot khoon|unconscious|behosh|stroke|lakwa|paralysis|poison|zeher)\b/i.test(
+      ql
+    )
+  ) {
+    return 'emergency';
+  }
+
+  // 2. Account deactivation / Rajasthan Gig Act
+  if (
+    /\b(deactivat|without notice|bina notice|account band|account suspend|rajasthan gig|welfare board|tribunal)\b/i.test(
+      ql
+    )
+  ) {
+    return 'deactivation_rights';
+  }
+
+  // 3. Pension / PM-SYM eligibility
+  if (
+    /\b(pm-?sym|maan-?dhan|shram yogi|pension|umar|age \d+|\d+ saal)\b/i.test(ql)
+  ) {
+    return 'pmsym_pension';
+  }
+
+  // 4. Generic medicines / Jan Aushadhi savings
+  if (
+    /\b(generic|jan aushadhi|pmbjp|sasti dawai|dawa discount|discount|paracetamol ka price|branded dawai|cheap medicine|50%)\b/i.test(
+      ql
+    )
+  ) {
+    return 'generic_medicines';
+  }
+
+  // 5. Burns / wounds / silencer injuries
+  if (
+    /\b(silencer|jal gaya|burn|fafola|blister|chot|khronch|cut lag|chhil gaya|ungli kat|khoon|wound|dressing)\b/i.test(
+      ql
+    )
+  ) {
+    return 'wounds_burns';
+  }
+
+  // 6. Cold, Cough, Sore Throat & Nasal Congestion
+  if (
+    /\b(jukam|zukaam|zukham|sardi|thandi|nazla|khansi|khasi|balgam|balgum|kaf|cough|gala kharab|gale me|gale mein|chheenk|chink|naak beh|naak band|saans lene me sarsarhat|sinus|khokla)\b/i.test(
+      ql
+    )
+  ) {
+    return 'cold_cough';
+  }
+
+  // 7. Dehydration, Heat Stress & Sunstroke
+  if (
+    /\b(dehydration|dihydration|lu lag|loo lag|dhup|dhoop|garmi chadh|pyaas|gala sookh|hoth sookh|paseena|sar ghoom|kamzori|behoshi|chakkar|heat)\b/i.test(
+      ql
+    )
+  ) {
+    return 'dehydration_heat';
+  }
+
+  // 8. Digestive Upset, Acidity & Food Poisoning
+  if (
+    /\b(pet dard|pet me|stomach|acidity|gas ban|jalan|khatti dakar|ulti|vomit|matli|dast|loose motion|hazma|food poisoning|potaat dukhne)\b/i.test(
+      ql
+    )
+  ) {
+    return 'digestive_acidity';
+  }
+
+  // 9. Musculoskeletal Strain & Rider Ergonomics
+  if (
+    /\b(kamar|back pain|peeth|gardan|neck|kandha|shoulder|ghutna|haath pair|moch|cramp|nas chad|ergonomic|path dukhne)\b/i.test(
+      ql
+    )
+  ) {
+    return 'musculoskeletal';
+  }
+
+  // 10. Fever, Viral Infection & Body Ache
+  if (
+    /\b(bukhar|bukhaar|buhar|fever|hararat|tap|taap|shareer garam|badan dard|badan toot|sir dard|viral|dengue|malaria|chills)\b/i.test(
+      ql
+    )
+  ) {
+    return 'fever_viral';
+  }
+
+  return 'general';
+}
+
+function getClientTriageResponse(
+  intent: string,
+  userQuery: string
+): {
+  answer: string;
+  isEmergency?: boolean;
+  sources?: { title: string; url: string }[];
+  disclaimer: string;
+} {
+  if (intent === 'emergency') {
+    return {
+      answer:
+        '🚨 CRITICAL MEDICAL EMERGENCY ALERT 🚨\n\n' +
+        'Your reported symptoms indicate an acute medical emergency. Do NOT wait, drive, or attempt self-care:\n\n' +
+        '1. 📞 Call 112 (All-India Emergency) or 108 (Free Medical Ambulance) IMMEDIATELY.\n' +
+        '2. Sit upright in a safe shaded area, loosen tight clothing around neck and waist.\n' +
+        '3. Have a colleague, bystander, or family member stay with you until emergency personnel arrive.\n' +
+        '4. Proceed directly to the nearest 24x7 Government Hospital Casualty or trauma center.',
+      isEmergency: true,
+      sources: [
+        { title: 'National Emergency Service (112)', url: 'tel:112' },
+        { title: 'Ambulance Helpline (108)', url: 'tel:108' },
+        { title: 'Pregnancy & Neonatal Transport (102)', url: 'tel:102' },
+      ],
+      disclaimer:
+        'Emergency bypass protocol triggered. Setu provides health navigation only and cannot replace hospital casualty care.',
+    };
+  }
+
+  if (intent === 'cold_cough') {
+    return {
+      answer:
+        'Regarding your cold, cough, and nasal congestion (जुकाम / खांसी):\n\n' +
+        '1. 🛵 Shift First-Aid & Care:\n' +
+        '- Drink lukewarm water or ginger-tulsi tea during delivery shifts; avoid chilled sodas or rapid AC-to-sun transitions.\n' +
+        '- Take 10 minutes of steam inhalation after your shift to loosen mucus.\n' +
+        '- Warm salt-water gargle (1/2 tsp salt in 1 glass warm water) twice daily for throat irritation.\n\n' +
+        '2. 💊 Subsidized Generic Medicines (Jan Aushadhi PMBJP):\n' +
+        '- Paracetamol 500mg/650mg: ₹5–₹10 per strip of 10 tablets (for fever/headache).\n' +
+        '- Cetirizine 10mg: ₹5–₹8 per strip of 10 tablets (anti-allergy for runny nose/sneezing; take 1 at night).\n' +
+        '- Dextromethorphan / Ambroxol cough syrup (100ml): ₹25–₹35 at PMBJP stores (vs ₹110 branded).\n\n' +
+        '3. ⚠️ Danger Signs (Refer to UPHC / PHC):\n' +
+        'Visit your neighborhood Urban Primary Health Centre (UPHC) if fever stays above 101°F for >3 days, if coughing yellow-green mucus or blood, or if experiencing shortness of breath.',
+      isEmergency: false,
+      sources: [
+        { title: 'National Health Mission (NHM)', url: 'https://nhm.gov.in' },
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+      ],
+      disclaimer:
+        'Prescription medicines require doctor consultation. Informational occupational guidance only.',
+    };
+  }
+
+  if (intent === 'dehydration_heat') {
+    return {
+      answer:
+        'Regarding dehydration, heat stress, and sun exposure (लू / डिहाइड्रेशन):\n\n' +
+        '1. 🛑 Immediate Shift Protocol:\n' +
+        '- Park your bike/vehicle safely in the shade immediately. Turn off engine.\n' +
+        '- Remove helmet, heavy jacket, and tight delivery backpack.\n' +
+        '- Sponge forehead, nape of the neck, and wrists with a cool damp cloth.\n\n' +
+        '2. 💧 Electrolyte Rehydration:\n' +
+        '- Sip Oral Rehydration Salts (ORS) mixed in 1 liter of clean water slowly (1 glass over 10–15 mins).\n' +
+        '- Jan Aushadhi WHO-formula ORS Sachet (21.8g): ₹4–₹5 per sachet (vs ₹22–₹30 branded Electral).\n' +
+        '- Fresh coconut water or lemon-water with sugar and a pinch of salt serve as natural alternatives.\n' +
+        '- ⚠️ Warning: Do NOT chug ice-cold water rapidly, as it induces stomach cramps and vascular shock.\n\n' +
+        '3. 🚨 Critical Red-Flag (Heat Stroke - Call 108):\n' +
+        'High body temperature (>103°F) with ABSENCE of sweating, slurred speech, delirium, or vomiting is life-threatening heat stroke. Call 108 immediately and pour water continuously over the head.',
+      isEmergency: false,
+      sources: [
+        {
+          title: 'National Health Mission - Heat & Hydration Guidelines',
+          url: 'https://nhm.gov.in',
+        },
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+      ],
+      disclaimer:
+        'Always carry water and ORS during shifts. Informational guidance only.',
+    };
+  }
+
+  if (intent === 'fever_viral') {
+    return {
+      answer:
+        'Regarding fever, viral infection, and body aches (बुखार / बदन दर्द):\n\n' +
+        '1. 🛌 Shift Rest & Self-Care:\n' +
+        '- Complete physical rest. Cease heavy outdoor deliveries; exertion during acute fever worsens dehydration and cardiac strain.\n' +
+        '- Sponge forehead and limbs with room-temperature tap water (never use cold ice water).\n' +
+        '- Drink at least 2.5 to 3 liters of fluids (clean water, thin dal, ORS) throughout the day.\n\n' +
+        '2. 💊 Medication Guidance (Jan Aushadhi):\n' +
+        '- Generic Paracetamol 500mg: ₹5–₹10 per strip of 10 tablets (1 tablet every 6–8 hours after food).\n' +
+        '- ⚠️ CRITICAL SAFETY WARNING: Do NOT consume Aspirin, Ibuprofen, or Combiflam without a doctor checkup! If the fever is Dengue, these drugs cause life-threatening internal bleeding!\n\n' +
+        '3. ⚠️ Hospital Escalation (UPHC):\n' +
+        'Severe eye pain, red skin rashes, dark urine, or high fever with chills require an immediate free CBC/Malaria/Dengue blood test at your local Urban Primary Health Centre (UPHC).',
+      isEmergency: false,
+      sources: [
+        {
+          title: 'National Centre for Disease Control (NCDC)',
+          url: 'https://ncdc.gov.in',
+        },
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+      ],
+      disclaimer:
+        'Never take unprescribed antibiotics or NSAIDs for undiagnosed fevers. Consult a PHC medical officer.',
+    };
+  }
+
+  if (intent === 'digestive_acidity') {
+    return {
+      answer:
+        'Regarding digestive distress, loose motions, and acidity (पेट दर्द / उल्टी-दस्त):\n\n' +
+        '1. 🍵 Immediate Shift Care:\n' +
+        '- Prevent dehydration: drink 1 cup of fresh ORS solution after every loose motion or vomit episode.\n' +
+        '- Consume bland foods: khichdi, curd, banana, and plain toast. Avoid roadside tea, fried snacks, and oily food.\n\n' +
+        '2. 💊 Generic Medicines (Jan Aushadhi PMBJP):\n' +
+        '- Jan Aushadhi ORS Sachet: ₹4–₹5 per sachet.\n' +
+        '- Pantoprazole 40mg or Omeprazole 20mg: ₹10–₹18 per strip of 10 tablets (take 1 tablet 30 minutes before breakfast for acidity/reflux).\n' +
+        '- Dicyclomine / Meftal-spas: For spasmodic cramps under pharmacist advice.\n\n' +
+        '3. ⚠️ Danger Signs (Seek Immediate Medical Care):\n' +
+        'Bloody or black stool, inability to retain fluids for >6 hours with dry tongue, or intense localized lower-right abdominal pain (appendicitis warning) require immediate hospital evaluation.',
+      isEmergency: false,
+      sources: [
+        { title: 'National Health Mission (NHM)', url: 'https://nhm.gov.in' },
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+      ],
+      disclaimer:
+        'Informational occupational guidance. Severe dehydration requires IV fluid therapy at a clinic.',
+    };
+  }
+
+  if (intent === 'musculoskeletal') {
+    return {
+      answer:
+        'Regarding musculoskeletal strain, backache, and ergonomics (कमर दर्द / गर्दन का खिंचाव):\n\n' +
+        '1. 🏍️ Rider Ergonomics & Shift Protocols:\n' +
+        '- Mount heavy delivery bags on bike cargo racks with bungee cords instead of carrying 10-15kg on your shoulders for 10 hours.\n' +
+        '- Take a 3–5 minute posture break every 2 hours: roll shoulders backwards, gently stretch neck, and arch lower back.\n' +
+        '- Adjust handlebar posture: avoid locking elbows rigid, as locked elbows transfer road shocks directly into your spine.\n\n' +
+        '2. 💊 Relief Measures (Jan Aushadhi PMBJP):\n' +
+        '- Apply warm compress (hot water bag) for 15–20 minutes on the lower back or neck after returning home.\n' +
+        '- Jan Aushadhi Pain Relief Gel / Diclofenac Spray (30g): ₹20–₹25 (vs ₹110–₹150 for branded Volini).\n' +
+        '- Generic Paracetamol 500mg: ₹5–₹10 per strip of 10 for acute muscular aching. Avoid overuse of heavy painkillers to protect kidneys.',
+      isEmergency: false,
+      sources: [
+        {
+          title: 'Ministry of Labour & Employment Occupational Health',
+          url: 'https://labour.gov.in',
+        },
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+      ],
+      disclaimer:
+        'Persistent pain radiating down the legs or following a vehicle crash requires orthopedic evaluation.',
+    };
+  }
+
+  if (intent === 'wounds_burns') {
+    return {
+      answer:
+        'Regarding silencer burns, abrasions, and minor injuries (साइलेंसर बर्न / चोट / खरोंच):\n\n' +
+        '1. 🚿 Bike Exhaust Silencer Burn Protocol:\n' +
+        '- Hold the burned area under gentle, cool running tap water for 10–15 minutes continuously.\n' +
+        '- ⚠️ Do NOT apply toothpaste, ice, butter, or engine oil—these trap heat and cause deep tissue infection.\n' +
+        '- Do NOT pop blisters (fafola); intact skin blisters act as sterile bandages protecting new skin.\n\n' +
+        '2. 💊 Generic Ointments (Jan Aushadhi PMBJP):\n' +
+        '- Silver Sulfadiazine 1% Burn Cream (20g): ₹15–₹20 per tube (vs ₹75–₹110 branded Soframycin/Silverex).\n' +
+        '- Povidone Iodine 5% Antiseptic Cream (15g): ₹12–₹18 per tube for road scrapes.\n\n' +
+        '3. 💉 Tetanus Toxoid (TT) Injection Requirement:\n' +
+        'If cut on road surfaces, rusty metals, or dirty ground and you haven’t received a Tetanus Toxoid (TT) booster in the last 6 months, visit the nearest UPHC/dispensary within 24 hours for a ₹10 TT injection.',
+      isEmergency: false,
+      sources: [
+        {
+          title: 'National Health Mission Burn & Trauma Care',
+          url: 'https://nhm.gov.in',
+        },
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+      ],
+      disclaimer:
+        'Deep third-degree burns or gaping wounds require immediate suturing and casualty dressing.',
+    };
+  }
+
+  if (intent === 'generic_medicines') {
+    return {
+      answer:
+        'Regarding generic medicines and Jan Aushadhi discounts (सस्ती जेनरिक दवाइयां):\n\n' +
+        'Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP) Kendras provide 1,800+ WHO-GMP certified generic medicines at 50% to 90% discount compared to commercial pharma brands.\n\n' +
+        '📊 Price Comparison Index:\n' +
+        '- Paracetamol 500mg (10 tabs): ₹5–₹10 (Branded: ₹30–₹45)\n' +
+        '- Cetirizine 10mg (10 tabs): ₹5–₹8 (Branded: ₹40–₹60)\n' +
+        '- WHO-Formula ORS Sachet (21.8g): ₹4–₹5 (Branded: ₹22–₹30)\n' +
+        '- Pantoprazole 40mg (10 tabs): ₹15–₹22 (Branded: ₹120–₹160)\n' +
+        '- Diclofenac Pain Gel/Spray (30g): ₹20–₹25 (Branded: ₹110–₹150)\n' +
+        '- Silver Sulfadiazine Burn Cream (20g): ₹15–₹20 (Branded: ₹75–₹110)\n\n' +
+        '📍 Store Locator & Assistance:\n' +
+        '- Locate nearest store: https://janaushadhi.gov.in or download the "Jan Aushadhi Sugam" mobile app.\n' +
+        '- National Toll-Free Helpline: 1800-180-8080.',
+      isEmergency: false,
+      sources: [
+        {
+          title: 'Pradhan Mantri Bhartiya Janaushadhi Pariyojana',
+          url: 'https://janaushadhi.gov.in',
+        },
+        {
+          title: 'Jan Aushadhi Helpline (1800-180-8080)',
+          url: 'tel:18001808080',
+        },
+      ],
+      disclaimer:
+        'Over-the-counter essentials (ORS, paracetamol, bandages) do not require a prescription. Prescription drugs require an MBBS/BAMS slip.',
+    };
+  }
+
+  if (intent === 'pmsym_pension') {
+    return {
+      answer:
+        'Regarding PM Shram Yogi Maan-dhan (PM-SYM) Pension Eligibility:\n\n' +
+        'Under the official guidelines of the Ministry of Labour and Employment, the entry age for PM-SYM is strictly 18 to 40 years.\n\n' +
+        '❌ Age Ineligibility:\n' +
+        'A worker aged 44 years is NOT eligible to enroll in PM-SYM because the entry age ceiling is 40 years.\n\n' +
+        '✅ Recommended Government Alternatives for Age 40+:\n' +
+        '1. National Pension System (NPS - All Citizen Model): Open to all citizens aged 18 to 70 years, offering market-linked retirement wealth accumulation.\n' +
+        '2. Public Provident Fund (PPF) / Post Office Savings Schemes: Government-guaranteed long-term savings available at any age.\n' +
+        '3. State Gig Welfare Boards (e.g. Rajasthan Gig Act Welfare Board): Accident, disability, and emergency health cover provided to all registered gig workers regardless of age.',
+      isEmergency: false,
+      sources: [
+        {
+          title: 'Ministry of Labour & Employment PM-SYM Portal',
+          url: 'https://maandhan.in',
+        },
+        {
+          title: 'National Pension System (NPS Trust)',
+          url: 'https://npstrust.org.in',
+        },
+      ],
+      disclaimer:
+        'Grounded via FairWork Setu Model 8 Welfare Knowledge Base (pmsym_pension_scheme.md).',
+    };
+  }
+
+  if (intent === 'deactivation_rights') {
+    return {
+      answer:
+        'Regarding platform account deactivations without notice:\n\n' +
+        'NO, a platform aggregator cannot arbitrarily deactivate or blacklist your gig account without notice.\n\n' +
+        '⚖️ Rajasthan Platform Based Gig Workers Act 2023 (Sections 13 & 14):\n' +
+        '1. Mandatory 14-Day Written Notice: Platform aggregators (Zomato, Swiggy, Uber, Ola, Zepto, Blinkit, Urban Company) must provide at least 14 days mandatory written notice stating verifiable reasons before deactivating or suspending an account.\n' +
+        '2. Right to be Heard: The worker has the statutory right to submit an explanation and challenge the decision during the 14-day notice period.\n' +
+        '3. Welfare Board Tribunal: Workers can file an appeal with the Appellate Grievance Redressal Officer and Welfare Board Tribunal for arbitrary deactivations or payment deductions.\n' +
+        '4. Financial Penalties: Aggregators violating these provisions face statutory penalties up to ₹5 Lakhs.',
+      isEmergency: false,
+      sources: [
+        {
+          title:
+            'Rajasthan Platform Based Gig Workers Act 2023 (Act No. 17 of 2023)',
+          url: 'https://labour.rajasthan.gov.in',
+        },
+        {
+          title: 'Code on Social Security 2020 (Section 114)',
+          url: 'https://labour.gov.in',
+        },
+      ],
+      disclaimer:
+        'Grounded via FairWork Setu Model 8 Legal Knowledge Base (rajasthan_gig_workers_act_2023.md).',
+    };
+  }
+
+  return {
+    answer:
+      `Regarding "${userQuery}":\n\n` +
+      'For non-emergency health concerns, visit your local Primary Health Centre (PHC) or Ayushman Arogya Mandir for free medical consultation and basic medicines.\n\n' +
+      'If this relates to workplace fatigue or dehydration, please take shade breaks and sip water with ORS. If you experience severe chest pain, breathing difficulty, or sudden weakness, call 112 or 108 immediately.',
+    isEmergency: false,
+    sources: [
+      { title: 'National Health Mission (NHM)', url: 'https://nhm.gov.in' },
+      { title: 'Ayushman Bharat PM-JAY', url: 'https://pmjay.gov.in' },
+    ],
+    disclaimer:
+      'Setu provides health navigation only. Always consult a qualified medical professional for diagnosis.',
+  };
+}
+
 export async function getSymptomGuidance(
   assessment: SymptomAssessment
 ): Promise<SymptomGuidance> {
@@ -551,7 +951,10 @@ export async function getSymptomGuidance(
     // fallback
   }
 
-  // Deterministic local triage fallback
+  // Deterministic local triage fallback using Intent Classification Matrix
+  const combinedText = `${assessment.category} ${assessment.notes || ''} ${assessment.redFlags.join(' ')}`;
+  const detectedIntent = classifyHealthIntentClient(combinedText);
+
   const isSevere = assessment.severity === 'severe';
   const hasChestOrBreath = assessment.redFlags.some(
     (f) =>
@@ -561,13 +964,13 @@ export async function getSymptomGuidance(
       f.toLowerCase().includes('unconscious')
   );
 
-  if (isSevere && hasChestOrBreath) {
+  if (detectedIntent === 'emergency' || (isSevere && hasChestOrBreath)) {
     return {
       category: assessment.category,
       isEmergency: true,
       emergencyReason:
         'Your reported symptoms include potential danger signs requiring immediate emergency medical attention. Please do not wait or attempt self-treatment.',
-      summary: 'Urgent Medical Attention Required',
+      summary: 'Urgent Medical Attention Required (Emergency 108 / 112)',
       recommendations: [
         'Call 112 or 108 immediately for emergency ambulance dispatch.',
         'Sit down in a safe, shaded location and have someone stay with you.',
@@ -575,16 +978,183 @@ export async function getSymptomGuidance(
         'Head to the nearest 24x7 government hospital casualty department immediately.',
       ],
       selfCareSteps: [
-        'Loosen any tight clothing around your collar or waist.',
-        'Sit upright with back support if having breathing difficulty.',
-        'Keep phone active and emergency contact informed.',
+        'Loosen any tight clothing around your collar, chest, or waist.',
+        'Sit upright with back support if having breathing difficulty; lie flat with feet elevated if feeling faint.',
+        'Keep phone active and emergency contacts informed.',
       ],
       redFlagWarning:
         'EMERGENCY: Do not delay seeking care. Setu cannot diagnose or treat life-threatening conditions.',
       suggestedFacilityType: 'hospital',
       suggestedQuestions: [
         'Where is the nearest 24x7 emergency hospital?',
-        'What is the ambulance helpline number?',
+        'What is the ambulance helpline in Pune / Mumbai?',
+        'How to tell someone I need emergency help?',
+      ],
+    };
+  }
+
+  if (detectedIntent === 'cold_cough') {
+    return {
+      category: assessment.category,
+      isEmergency: false,
+      summary:
+        'Cold, cough, and nasal congestion are common respiratory conditions triggered by viral infections, weather shifts, and vehicular pollution.',
+      recommendations: [
+        'Drink lukewarm water or ginger-tulsi tea during shifts; avoid cold sodas or abrupt AC-to-sun transitions.',
+        'Jan Aushadhi Paracetamol 500mg (₹5–₹10/strip) for fever/headache and Cetirizine 10mg (₹5–₹8/strip) at night for runny nose.',
+        'Jan Aushadhi Dextromethorphan / Ambroxol cough syrup (₹25–₹35 vs ₹110 branded) for cough.',
+        'Visit UPHC if fever stays >101°F for >3 days or if coughing yellow-green sputum or blood.',
+      ],
+      selfCareSteps: [
+        'Inhale steam for 10 minutes at night after shifts to loosen bronchial mucus.',
+        'Warm salt-water gargle twice daily to relieve throat soreness.',
+        'Wear a face mask in heavy traffic corridors to filter soot and dust.',
+      ],
+      redFlagWarning:
+        'Seek hospital care if coughing blood, running high fever >102°F, or gasping for breath.',
+      suggestedFacilityType: 'phc',
+      suggestedQuestions: [
+        'Where is the nearest primary health centre?',
+        'How to get affordable generic medicines nearby?',
+        'What to do for throat soreness from cold winds?',
+      ],
+    };
+  }
+
+  if (detectedIntent === 'dehydration_heat') {
+    return {
+      category: assessment.category,
+      isEmergency: false,
+      summary:
+        'Dehydration and heat exhaustion occur from prolonged sun exposure, heavy sweating, and electrolyte depletion on outdoor shifts.',
+      recommendations: [
+        'Park in shade immediately, stop vehicle, and remove helmet and tight delivery vest.',
+        'Sip Oral Rehydration Salts (ORS) solution slowly (1 glass over 10–15 mins). Jan Aushadhi ORS costs ₹4–₹5 per sachet.',
+        'Sponge forehead, neck, and wrists with a cool damp cloth.',
+        'Warning: High body temperature (>103°F) with absence of sweating is Heat Stroke—call 108 immediately.',
+      ],
+      selfCareSteps: [
+        'Do NOT chug ice-cold water rapidly, as it induces stomach cramps and vascular shock.',
+        'Carry an insulated bottle with ORS, coconut water, or lemon water.',
+        'Rest in the shade during peak sun hours (12 PM to 3 PM).',
+      ],
+      redFlagWarning:
+        'Go to hospital immediately if heat exhaustion is accompanied by confusion, absence of sweat, or vomiting.',
+      suggestedFacilityType: 'phc',
+      suggestedQuestions: [
+        'Where can I get an ORS packet nearby?',
+        'How to prevent heat cramps during delivery shifts?',
+        'Where is the nearest public clinic with shade?',
+      ],
+    };
+  }
+
+  if (detectedIntent === 'fever_viral') {
+    return {
+      category: assessment.category,
+      isEmergency: false,
+      summary:
+        'Fever is an immune response commonly caused by seasonal viral flu, dengue, malaria, or systemic exhaustion.',
+      recommendations: [
+        'Complete physical rest. Cease strenuous riding to avoid myocardial strain and dehydration.',
+        'Jan Aushadhi Generic Paracetamol 500mg: ₹5–₹10 per strip of 10 tablets (1 tablet every 6–8 hours after food).',
+        'CRITICAL: Do NOT take Aspirin, Ibuprofen, or Combiflam without doctor checkup (severe bleeding risk in Dengue).',
+        'Visit local UPHC for a free CBC/Malaria/Dengue blood test if fever persists >48 hours or has chills/rash.',
+      ],
+      selfCareSteps: [
+        'Tepid sponging with room-temperature water on forehead and limbs (never cold ice water).',
+        'Drink 2.5 to 3 liters of fluids (clean water, thin dal, ORS) daily.',
+        'Wear loose, breathable cotton clothes.',
+      ],
+      redFlagWarning:
+        'Seek urgent medical care if accompanied by stiff neck, red rash, persistent vomiting, or extreme shivering.',
+      suggestedFacilityType: 'phc',
+      suggestedQuestions: [
+        'Where can I get a free blood test for malaria/dengue?',
+        'How much does fever medicine cost at Jan Aushadhi?',
+        'Can I take paracetamol during my delivery shift?',
+      ],
+    };
+  }
+
+  if (detectedIntent === 'digestive_acidity') {
+    return {
+      category: assessment.category,
+      isEmergency: false,
+      summary:
+        'Gastrointestinal distress, acidity, and diarrhea are triggered by dehydration, irregular meals, or contaminated street food.',
+      recommendations: [
+        'Drink 1 cup of fresh ORS solution after every loose motion or vomiting episode (Jan Aushadhi ORS: ₹4–₹5).',
+        'Jan Aushadhi Pantoprazole 40mg or Omeprazole 20mg: ₹10–₹18/strip for acidity and heartburn (take 30 mins before breakfast).',
+        'Eat bland, easily digestible food (khichdi, curd, banana); avoid street tea and fried items.',
+        'Visit hospital if experiencing blood in stool, severe inability to retain fluids >6 hours, or localized lower-right abdominal pain.',
+      ],
+      selfCareSteps: [
+        'Avoid carbonated cold drinks and sugary energy beverages which worsen diarrhea.',
+        'Eat freshly prepared food and carry clean home-cooked lunch when possible.',
+      ],
+      redFlagWarning:
+        'Urgent hospital care needed if stool contains blood or if vomiting prevents retaining water for >6 hours.',
+      suggestedFacilityType: 'phc',
+      suggestedQuestions: [
+        'What foods are safe during stomach upset on shifts?',
+        'Where to get generic antacids from Jan Aushadhi?',
+        'How to prevent food poisoning from roadside eateries?',
+      ],
+    };
+  }
+
+  if (detectedIntent === 'musculoskeletal') {
+    return {
+      category: assessment.category,
+      isEmergency: false,
+      summary:
+        'Musculoskeletal backache and cervical stiffness are occupational hazards caused by heavy delivery bags and prolonged riding.',
+      recommendations: [
+        'Mount heavy delivery backpacks on bike cargo carriers using bungee cords instead of shoulders.',
+        'Jan Aushadhi Pain Relief Gel / Diclofenac Spray (30g): ₹20–₹25 (vs ₹110–₹150 for branded Volini).',
+        'Jan Aushadhi Paracetamol 500mg: ₹5–₹10 per strip for acute aching (avoid heavy painkiller overuse to protect kidneys).',
+        'Apply warm compress (hot water bag) for 15–20 minutes on lower back or neck after returning home.',
+      ],
+      selfCareSteps: [
+        'Take a 3–5 minute posture break every 2 hours: roll shoulders backwards and arch lower back.',
+        'Adjust handlebars to maintain slightly bent elbows to absorb road vibration.',
+      ],
+      redFlagWarning:
+        'Urgent care needed if pain follows a high-impact fall or is accompanied by numbness radiating down the legs.',
+      suggestedFacilityType: 'clinic',
+      suggestedQuestions: [
+        'What stretches help delivery riders with back pain?',
+        'Where is the nearest orthopedic clinic in a civil hospital?',
+        'How to fasten heavy bags to bike carrier safely?',
+      ],
+    };
+  }
+
+  if (detectedIntent === 'wounds_burns') {
+    return {
+      category: assessment.category,
+      isEmergency: false,
+      summary:
+        'Silencer burns, abrasions, and scrape injuries require immediate cooling, antiseptic dressing, and tetanus prophylaxis.',
+      recommendations: [
+        'Silencer Burn: Hold affected area under gentle, cool running tap water for 10–15 minutes immediately.',
+        'Do NOT apply toothpaste, ice, butter, or engine oil; do NOT pop blisters (fafola).',
+        'Jan Aushadhi Silver Sulfadiazine 1% Burn Cream: ₹15–₹20/tube (vs ₹75–₹110 branded Soframycin/Silverex).',
+        'Jan Aushadhi Povidone Iodine 5% Antiseptic Cream: ₹12–₹18/tube for road scrapes.',
+        'Visit UPHC within 24 hours for a ₹10 Tetanus Toxoid (TT) injection if not received in the last 6 months.',
+      ],
+      selfCareSteps: [
+        'Cover burns loosely with sterile paraffin gauze.',
+        'Clean road scrapes gently with mild soap and clean water before applying antiseptic.',
+      ],
+      redFlagWarning:
+        'Seek casualty care if wound is deep, bleeding uncontrollably, or from rusty metal without TT cover.',
+      suggestedFacilityType: 'phc',
+      suggestedQuestions: [
+        'Where can I get a Tetanus (TT) injection nearby?',
+        'What ointment is best for motorcycle silencer burns?',
+        'Does my platform provide insurance for road injuries?',
       ],
     };
   }
@@ -638,38 +1208,9 @@ export async function askHealthAssistant(
     // fallback
   }
 
-  // Offline deterministic fallback
-  const q = question.toLowerCase();
-  if (
-    q.includes('chest') ||
-    q.includes('breathe') ||
-    q.includes('heart') ||
-    q.includes('unconscious') ||
-    q.includes('bleed')
-  ) {
-    return {
-      answer:
-        '⚠️ WARNING: This sounds like a potential medical emergency. Please call 112 (National Emergency) or 108 (Ambulance) immediately and proceed to the nearest hospital casualty.',
-      isEmergency: true,
-      sources: [
-        { title: 'National Emergency Service (112)', url: 'tel:112' },
-        { title: 'Ambulance Helpline (108)', url: 'tel:108' },
-      ],
-      disclaimer:
-        'Setu provides livelihood health information and navigation only. It is not a diagnostic tool.',
-    };
-  }
-
-  return {
-    answer: `Regarding "${question}": For non-emergency symptoms, visit your local Primary Health Centre (PHC) or Ayushman Arogya Mandir for free consultation and medicines. Remember to stay hydrated with ORS during work shifts. If pain or dizziness worsens, consult a qualified physician promptly.`,
-    isEmergency: false,
-    sources: [
-      { title: 'National Health Mission (NHM)', url: 'https://nhm.gov.in' },
-      { title: 'Ayushman Bharat PM-JAY', url: 'https://pmjay.gov.in' },
-    ],
-    disclaimer:
-      'Setu provides health navigation only. Always consult a qualified medical professional for diagnosis.',
-  };
+  // Offline deterministic fallback with Intent-Based Matrix
+  const detectedIntent = classifyHealthIntentClient(question);
+  return getClientTriageResponse(detectedIntent, question);
 }
 
 // -------------------------------------------------------------------------

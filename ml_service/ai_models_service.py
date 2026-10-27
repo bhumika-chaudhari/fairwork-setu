@@ -1213,22 +1213,32 @@ class AIModelsService:
             except Exception:
                 pass
 
-        # 12. Health & Welfare Guidance (Model 8 RAG)
-        if any(w in lowered for w in ["fever", "bukhar", "taap", "cough", "khansi", "pain", "dard", "ayushman", "abha", "bimar", "tabiyat", "doctor", "clinic", "hospital"]):
+        # 12. Health & Welfare Guidance (Model 8 RAG & Multi-Dialect Symptom Triage)
+        health_keywords = [
+            "fever", "bukhar", "taap", "cough", "khansi", "pain", "dard", "ayushman", "abha",
+            "bimar", "tabiyat", "doctor", "clinic", "hospital", "jukam", "zukaam", "zukham",
+            "sardi", "thandi", "dehydration", "dhoop", "dast", "pet", "kamar", "silencer",
+            "jal gaya", "burn", "chot", "khronch", "dawai", "medicine", "generic", "jan aushadhi",
+            "pmbjp", "chest", "seene", "chaati", "saans", "breath", "pension", "pm-sym", "pmsym",
+            "deactivat"
+        ]
+        if any(w in lowered for w in health_keywords):
             try:
+                from health_service import classify_health_intent, get_clinical_triage_response
+                detected_intent = classify_health_intent(text_str)
+                triage = get_clinical_triage_response(detected_intent, text_str)
                 rag_res = self.search_health_welfare_rag(text_str, top_k=2)
-                reply = "Stay hydrated and take adequate rest. Under Ayushman Bharat (PM-JAY), informal and gig workers are entitled to up to ₹5 Lakhs annual cashless treatment at empanelled hospitals. If symptoms persist beyond 48 hours, please consult a medical officer at your nearest government dispensary."
-                if lang == "hi":
-                    reply = "पर्याप्त आराम करें और पानी पिएं। आयुष्मान भारत (PM-JAY) योजना के तहत गिग वर्कर्स सरकारी और सूचीबद्ध निजी अस्पतालों में ₹5 लाख तक का निःशुल्क कैशलेस उपचार प्राप्त कर सकते हैं। यदि लक्षण 48 घंटे से अधिक रहें, तो प्राथमिक स्वास्थ्य केंद्र (PHC) में डॉक्टर से संपर्क करें।"
-                elif lang == "mr":
-                    reply = "पुरेशी विश्रांती घ्या आणि भरपूर पाणी प्या. आयुष्यमान भारत (PM-JAY) योजनेअंतर्गत गिग कामगारांना दरवर्षी ₹5 लाखांपर्यंत मोफत कॅशलेस उपचार मिळतात. लक्षणे कायम राहिल्यास कृपया जवळच्या सरकारी दवाखान्यात वैद्यकीय सल्ला घ्या."
+                reply = triage["answer"]
                 return {
                     "intent": "health_guidance",
+                    "sub_intent": detected_intent,
                     "language": lang,
                     "query": text_str,
                     "reply": reply,
+                    "is_emergency": triage.get("isEmergency", False),
+                    "sources": triage.get("sources", []),
                     "rag_passages": rag_res.get("passages", []),
-                    "confidence": 0.91
+                    "confidence": 0.95
                 }
             except Exception:
                 pass

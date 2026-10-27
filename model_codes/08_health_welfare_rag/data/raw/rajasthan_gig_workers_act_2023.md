@@ -22,8 +22,12 @@ The Rajasthan Platform Based Gig Workers (Registration and Welfare) Act, 2023 is
 - **Unique Worker ID (UID):**
   - Every registered gig worker is assigned a permanent, unique registration ID that remains valid across multiple platforms and apps.
   - Portability ensures that switching aggregators or working for two platforms simultaneously does not disrupt accumulated social security benefits.
-- **Grievance Redressal Mechanism:**
-  - Dedicated tribunal and time-bound conciliation process for unfair account deactivations, arbitrary payment deductions, or denied insurance claims.
+- **Grievance Redressal Mechanism & Account Deactivation Protection:**
+  - **Section 13 & 14 (Mandatory Notice Before Deactivation):** No platform aggregator can deactivate, blacklist, or terminate a gig worker's account arbitrarily or without due notice.
+  - Aggregators are legally required to provide at least **14 days mandatory written notice** stating clear, verifiable reasons before deactivating or suspending a worker's account or app access.
+  - The gig worker has the statutory right to be heard and submit an explanation within the 14-day window.
+  - Workers can file an appeal against unlawful deactivation or arbitrary deductions with the **Appellate Grievance Redressal Officer and Welfare Board Tribunal**, which must decide cases within a time-bound statutory deadline.
+  - Aggregators violating these deactivation provisions are subject to statutory financial penalties ranging up to ₹5 Lakhs for repeated contraventions under the Act.
 
 ## Worker Registration Process
 1. Aggregators must automatically onboard all onboarded gig workers operating within Rajasthan into the state portal within 60 days.

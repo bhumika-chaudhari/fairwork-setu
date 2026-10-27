@@ -15,12 +15,15 @@ import {
   ensureUserProfile,
 } from '../lib/supabaseClient';
 
+const rawMlUrl = import.meta.env.VITE_ML_API_URL;
+const isPlaceholder = !rawMlUrl || rawMlUrl.includes('<') || rawMlUrl.includes('your-render') || rawMlUrl.includes('placeholder');
 const BASE_URL = (
-  import.meta.env.VITE_ML_API_URL ||
-  (typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  !isPlaceholder
+    ? rawMlUrl
+    : typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://127.0.0.1:8000'
-    : '')
+    : ''
 ).replace(/\/$/, '');
 const LOCAL_STORAGE_APPS_KEY = 'setu_marketplace_applications';
 const LOCAL_STORAGE_BOOKINGS_KEY = 'setu_marketplace_bookings';

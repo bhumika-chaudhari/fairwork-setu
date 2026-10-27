@@ -10,11 +10,12 @@
     "preview": "vite preview",
     "icons:generate": "python3 scripts/generate_app_icons.py",
     "icons:sync": "python3 scripts/sync_android_icons.py",
-    "test": "node scripts/test_recommendations.mjs && node scripts/test_auth_flows.mjs && node scripts/test_end_to_end_supabase.mjs && node scripts/test_voice_assistant_pipeline.mjs",
+    "test": "node scripts/test_recommendations.mjs && node scripts/test_auth_flows.mjs && node scripts/test_end_to_end_supabase.mjs && node scripts/test_voice_assistant_pipeline.mjs && node scripts/test_model8_symptom_triage.mjs",
     "test:auth": "node scripts/test_auth_flows.mjs",
     "test:recommendations": "node scripts/test_recommendations.mjs",
     "test:db": "node scripts/test_end_to_end_supabase.mjs",
-    "test:voice": "node scripts/test_voice_assistant_pipeline.mjs"
+    "test:voice": "node scripts/test_voice_assistant_pipeline.mjs",
+    "test:model8": "node scripts/test_model8_symptom_triage.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",

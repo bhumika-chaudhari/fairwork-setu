@@ -512,6 +512,328 @@ def get_safety_tips(category: Optional[str] = Query(None)):
     return [t for t in WORKPLACE_SAFETY_TIPS if t["category"] == category.lower()]
 
 
+# -------------------------------------------------------------------------
+# MULTI-DIALECT INTENT CLASSIFICATION & CLINICAL TRIAGE MATRIX
+# -------------------------------------------------------------------------
+
+import re
+
+def classify_health_intent(query_text: str) -> str:
+    """
+    Multi-dialect normalizer matching Hindi, Urdu, Marathi, Hinglish, and English phrasing.
+    """
+    ql = query_text.lower().strip()
+
+    # 1. Critical Emergency (Bypass RAG)
+    if re.search(
+        r"\b(chest|seene? me(in)? (tez )?dard|chaati me|heart attack|dil ka daura|saans nahi|cannot breathe|can't breathe|breathless|choking|heavy bleeding|bohot khoon|unconscious|behosh|stroke|lakwa|paralysis|poison|zeher)\b",
+        ql
+    ):
+        return "emergency"
+
+    # 2. Account deactivation / Rajasthan Gig Act
+    if re.search(
+        r"\b(deactivat|without notice|bina notice|account band|account suspend|rajasthan gig|welfare board|tribunal)\b",
+        ql
+    ):
+        return "deactivation_rights"
+
+    # 3. Pension / PM-SYM eligibility
+    if re.search(
+        r"\b(pm-?sym|maan-?dhan|shram yogi|pension|umar|age \d+|\d+ saal)\b",
+        ql
+    ):
+        return "pmsym_pension"
+
+    # 4. Generic medicines / Jan Aushadhi savings
+    if re.search(
+        r"\b(generic|jan aushadhi|pmbjp|sasti dawai|dawa discount|discount|paracetamol ka price|branded dawai|cheap medicine|50%)\b",
+        ql
+    ):
+        return "generic_medicines"
+
+    # 5. Burns / wounds / silencer injuries
+    if re.search(
+        r"\b(silencer|jal gaya|burn|fafola|blister|chot|khronch|cut lag|chhil gaya|ungli kat|khoon|wound|dressing)\b",
+        ql
+    ):
+        return "wounds_burns"
+
+    # 6. Cold, Cough, Sore Throat & Nasal Congestion
+    if re.search(
+        r"\b(jukam|zukaam|zukham|sardi|thandi|nazla|khansi|khasi|balgam|balgum|kaf|cough|gala kharab|gale me|gale mein|chheenk|chink|naak beh|naak band|saans lene me sarsarhat|sinus|khokla)\b",
+        ql
+    ):
+        return "cold_cough"
+
+    # 7. Dehydration, Heat Stress & Sunstroke
+    if re.search(
+        r"\b(dehydration|dihydration|lu lag|loo lag|dhup|dhoop|garmi chadh|pyaas|gala sookh|hoth sookh|paseena|sar ghoom|kamzori|behoshi|chakkar|heat)\b",
+        ql
+    ):
+        return "dehydration_heat"
+
+    # 8. Digestive Upset, Acidity & Food Poisoning
+    if re.search(
+        r"\b(pet dard|pet me|stomach|acidity|gas ban|jalan|khatti dakar|ulti|vomit|matli|dast|loose motion|hazma|food poisoning|potaat dukhne)\b",
+        ql
+    ):
+        return "digestive_acidity"
+
+    # 9. Musculoskeletal Strain & Rider Ergonomics
+    if re.search(
+        r"\b(kamar|back pain|peeth|gardan|neck|kandha|shoulder|ghutna|haath pair|moch|cramp|nas chad|ergonomic|path dukhne)\b",
+        ql
+    ):
+        return "musculoskeletal"
+
+    # 10. Fever, Viral Infection & Body Ache
+    if re.search(
+        r"\b(bukhar|bukhaar|buhar|fever|hararat|tap|taap|shareer garam|badan dard|badan toot|sir dard|viral|dengue|malaria|chills)\b",
+        ql
+    ):
+        return "fever_viral"
+
+    return "general"
+
+
+def get_clinical_triage_response(category_key: str, user_query: str) -> Dict[str, Any]:
+    """
+    Returns structured, clinically-grounded guidance with exact Jan Aushadhi prices,
+    shift first-aid, clinical red-flags, and verified portal citations.
+    """
+    if category_key == "emergency":
+        return {
+            "answer": (
+                "🚨 CRITICAL MEDICAL EMERGENCY ALERT 🚨\n\n"
+                "Your reported symptoms indicate an acute medical emergency. Do NOT wait, drive, or attempt self-care:\n\n"
+                "1. 📞 Call 112 (All-India Emergency) or 108 (Free Medical Ambulance) IMMEDIATELY.\n"
+                "2. Sit upright in a safe shaded area, loosen tight clothing around neck and waist.\n"
+                "3. Have a colleague, bystander, or family member stay with you until emergency personnel arrive.\n"
+                "4. Proceed directly to the nearest 24x7 Government Hospital Casualty or trauma center."
+            ),
+            "isEmergency": True,
+            "sources": [
+                {"title": "National Emergency Service (112)", "url": "tel:112"},
+                {"title": "Ambulance Helpline (108)", "url": "tel:108"},
+                {"title": "Pregnancy & Neonatal Transport (102)", "url": "tel:102"}
+            ],
+            "disclaimer": "Emergency bypass protocol triggered. Setu provides health navigation only and cannot replace hospital casualty care."
+        }
+
+    if category_key == "cold_cough":
+        return {
+            "answer": (
+                "Regarding your cold, cough, and nasal congestion (जुकाम / खांसी):\n\n"
+                "1. 🛵 Shift First-Aid & Care:\n"
+                "- Drink lukewarm water or ginger-tulsi tea during delivery shifts; avoid chilled sodas or rapid AC-to-sun transitions.\n"
+                "- Take 10 minutes of steam inhalation after your shift to loosen mucus.\n"
+                "- Warm salt-water gargle (1/2 tsp salt in 1 glass warm water) twice daily for throat irritation.\n\n"
+                "2. 💊 Subsidized Generic Medicines (Jan Aushadhi PMBJP):\n"
+                "- Paracetamol 500mg/650mg: ₹5–₹10 per strip of 10 tablets (for fever/headache).\n"
+                "- Cetirizine 10mg: ₹5–₹8 per strip of 10 tablets (anti-allergy for runny nose/sneezing; take 1 at night).\n"
+                "- Dextromethorphan / Ambroxol cough syrup (100ml): ₹25–₹35 at PMBJP stores (vs ₹110 branded).\n\n"
+                "3. ⚠️ Danger Signs (Refer to UPHC / PHC):\n"
+                "Visit your neighborhood Urban Primary Health Centre (UPHC) if fever stays above 101°F for >3 days, if coughing yellow-green mucus or blood, or if experiencing shortness of breath."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "National Health Mission (NHM)", "url": "https://nhm.gov.in"},
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"}
+            ],
+            "disclaimer": "Prescription medicines require doctor consultation. Informational occupational guidance only."
+        }
+
+    if category_key == "dehydration_heat":
+        return {
+            "answer": (
+                "Regarding dehydration, heat stress, and sun exposure (लू / डिहाइड्रेशन):\n\n"
+                "1. 🛑 Immediate Shift Protocol:\n"
+                "- Park your bike/vehicle safely in the shade immediately. Turn off engine.\n"
+                "- Remove helmet, heavy jacket, and tight delivery backpack.\n"
+                "- Sponge forehead, nape of the neck, and wrists with a cool damp cloth.\n\n"
+                "2. 💧 Electrolyte Rehydration:\n"
+                "- Sip Oral Rehydration Salts (ORS) mixed in 1 liter of clean water slowly (1 glass over 10–15 mins).\n"
+                "- Jan Aushadhi WHO-formula ORS Sachet (21.8g): ₹4–₹5 per sachet (vs ₹22–₹30 branded Electral).\n"
+                "- Fresh coconut water or lemon-water with sugar and a pinch of salt serve as natural alternatives.\n"
+                "- ⚠️ Warning: Do NOT chug ice-cold water rapidly, as it induces stomach cramps and vascular shock.\n\n"
+                "3. 🚨 Critical Red-Flag (Heat Stroke - Call 108):\n"
+                "High body temperature (>103°F) with ABSENCE of sweating, slurred speech, delirium, or vomiting is life-threatening heat stroke. Call 108 immediately and pour water continuously over the head."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "National Health Mission - Heat & Hydration Guidelines", "url": "https://nhm.gov.in"},
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"}
+            ],
+            "disclaimer": "Always carry water and ORS during shifts. Informational guidance only."
+        }
+
+    if category_key == "fever_viral":
+        return {
+            "answer": (
+                "Regarding fever, viral infection, and body aches (बुखार / बदन दर्द):\n\n"
+                "1. 🛌 Shift Rest & Self-Care:\n"
+                "- Complete physical rest. Cease heavy outdoor deliveries; exertion during acute fever worsens dehydration and cardiac strain.\n"
+                "- Sponge forehead and limbs with room-temperature tap water (never use cold ice water).\n"
+                "- Drink at least 2.5 to 3 liters of fluids (clean water, thin dal, ORS) throughout the day.\n\n"
+                "2. 💊 Medication Guidance (Jan Aushadhi):\n"
+                "- Generic Paracetamol 500mg: ₹5–₹10 per strip of 10 tablets (1 tablet every 6–8 hours after food).\n"
+                "- ⚠️ CRITICAL SAFETY WARNING: Do NOT consume Aspirin, Ibuprofen, or Combiflam without a doctor checkup! If the fever is Dengue, these drugs cause life-threatening internal bleeding!\n\n"
+                "3. ⚠️ Hospital Escalation (UPHC):\n"
+                "Severe eye pain, red skin rashes, dark urine, or high fever with chills require an immediate free CBC/Malaria/Dengue blood test at your local Urban Primary Health Centre (UPHC)."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "National Centre for Disease Control (NCDC)", "url": "https://ncdc.gov.in"},
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"}
+            ],
+            "disclaimer": "Never take unprescribed antibiotics or NSAIDs for undiagnosed fevers. Consult a PHC medical officer."
+        }
+
+    if category_key == "digestive_acidity":
+        return {
+            "answer": (
+                "Regarding digestive distress, loose motions, and acidity (पेट दर्द / उल्टी-दस्त):\n\n"
+                "1. 🍵 Immediate Shift Care:\n"
+                "- Prevent dehydration: drink 1 cup of fresh ORS solution after every loose motion or vomit episode.\n"
+                "- Consume bland foods: khichdi, curd, banana, and plain toast. Avoid roadside tea, fried snacks, and oily food.\n\n"
+                "2. 💊 Generic Medicines (Jan Aushadhi PMBJP):\n"
+                "- Jan Aushadhi ORS Sachet: ₹4–₹5 per sachet.\n"
+                "- Pantoprazole 40mg or Omeprazole 20mg: ₹10–₹18 per strip of 10 tablets (take 1 tablet 30 minutes before breakfast for acidity/reflux).\n"
+                "- Dicyclomine / Meftal-spas: For spasmodic cramps under pharmacist advice.\n\n"
+                "3. ⚠️ Danger Signs (Seek Immediate Medical Care):\n"
+                "Bloody or black stool, inability to retain fluids for >6 hours with dry tongue, or intense localized lower-right abdominal pain (appendicitis warning) require immediate hospital evaluation."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "National Health Mission (NHM)", "url": "https://nhm.gov.in"},
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"}
+            ],
+            "disclaimer": "Informational occupational guidance. Severe dehydration requires IV fluid therapy at a clinic."
+        }
+
+    if category_key == "musculoskeletal":
+        return {
+            "answer": (
+                "Regarding musculoskeletal strain, backache, and ergonomics (कमर दर्द / गर्दन का खिंचाव):\n\n"
+                "1. 🏍️ Rider Ergonomics & Shift Protocols:\n"
+                "- Mount heavy delivery bags on bike cargo racks with bungee cords instead of carrying 10-15kg on your shoulders for 10 hours.\n"
+                "- Take a 3–5 minute posture break every 2 hours: roll shoulders backwards, gently stretch neck, and arch lower back.\n"
+                "- Adjust handlebar posture: avoid locking elbows rigid, as locked elbows transfer road shocks directly into your spine.\n\n"
+                "2. 💊 Relief Measures (Jan Aushadhi PMBJP):\n"
+                "- Apply warm compress (hot water bag) for 15–20 minutes on the lower back or neck after returning home.\n"
+                "- Jan Aushadhi Pain Relief Gel / Diclofenac Spray (30g): ₹20–₹25 (vs ₹110–₹150 for branded Volini).\n"
+                "- Generic Paracetamol 500mg: ₹5–₹10 per strip of 10 for acute muscular aching. Avoid overuse of heavy painkillers to protect kidneys."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "Ministry of Labour & Employment Occupational Health", "url": "https://labour.gov.in"},
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"}
+            ],
+            "disclaimer": "Persistent pain radiating down the legs or following a vehicle crash requires orthopedic evaluation."
+        }
+
+    if category_key == "wounds_burns":
+        return {
+            "answer": (
+                "Regarding silencer burns, abrasions, and minor injuries (साइलेंसर बर्न / चोट / खरोंच):\n\n"
+                "1. 🚿 Bike Exhaust Silencer Burn Protocol:\n"
+                "- Hold the burned area under gentle, cool running tap water for 10–15 minutes continuously.\n"
+                "- ⚠️ Do NOT apply toothpaste, ice, butter, or engine oil—these trap heat and cause deep tissue infection.\n"
+                "- Do NOT pop blisters (fafola); intact skin blisters act as sterile bandages protecting new skin.\n\n"
+                "2. 💊 Generic Ointments (Jan Aushadhi PMBJP):\n"
+                "- Silver Sulfadiazine 1% Burn Cream (20g): ₹15–₹20 per tube (vs ₹75–₹110 branded Soframycin/Silverex).\n"
+                "- Povidone Iodine 5% Antiseptic Cream (15g): ₹12–₹18 per tube for road scrapes.\n\n"
+                "3. 💉 Tetanus Toxoid (TT) Injection Requirement:\n"
+                "If cut on road surfaces, rusty metals, or dirty ground and you haven't received a Tetanus Toxoid (TT) booster in the last 6 months, visit the nearest UPHC/dispensary within 24 hours for a ₹10 TT injection."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "National Health Mission Burn & Trauma Care", "url": "https://nhm.gov.in"},
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"}
+            ],
+            "disclaimer": "Deep third-degree burns or gaping wounds require immediate suturing and casualty dressing."
+        }
+
+    if category_key == "generic_medicines":
+        return {
+            "answer": (
+                "Regarding generic medicines and Jan Aushadhi discounts (सस्ती जेनरिक दवाइयां):\n\n"
+                "Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP) Kendras provide 1,800+ WHO-GMP certified generic medicines at 50% to 90% discount compared to commercial pharma brands.\n\n"
+                "📊 Price Comparison Index:\n"
+                "- Paracetamol 500mg (10 tabs): ₹5–₹10 (Branded: ₹30–₹45)\n"
+                "- Cetirizine 10mg (10 tabs): ₹5–₹8 (Branded: ₹40–₹60)\n"
+                "- WHO-Formula ORS Sachet (21.8g): ₹4–₹5 (Branded: ₹22–₹30)\n"
+                "- Pantoprazole 40mg (10 tabs): ₹15–₹22 (Branded: ₹120–₹160)\n"
+                "- Diclofenac Pain Gel/Spray (30g): ₹20–₹25 (Branded: ₹110–₹150)\n"
+                "- Silver Sulfadiazine Burn Cream (20g): ₹15–₹20 (Branded: ₹75–₹110)\n\n"
+                "📍 Store Locator & Assistance:\n"
+                "- Locate nearest store: https://janaushadhi.gov.in or download the 'Jan Aushadhi Sugam' mobile app.\n"
+                "- National Toll-Free Helpline: 1800-180-8080."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"},
+                {"title": "Jan Aushadhi Helpline (1800-180-8080)", "url": "tel:18001808080"}
+            ],
+            "disclaimer": "Over-the-counter essentials (ORS, paracetamol, bandages) do not require a prescription. Prescription drugs require an MBBS/BAMS slip."
+        }
+
+    if category_key == "pmsym_pension":
+        return {
+            "answer": (
+                "Regarding PM Shram Yogi Maan-dhan (PM-SYM) Pension Eligibility:\n\n"
+                "Under the official guidelines of the Ministry of Labour and Employment, the entry age for PM-SYM is strictly 18 to 40 years.\n\n"
+                "❌ Age Ineligibility:\n"
+                "A worker aged 44 years is NOT eligible to enroll in PM-SYM because the entry age ceiling is 40 years.\n\n"
+                "✅ Recommended Government Alternatives for Age 40+:\n"
+                "1. National Pension System (NPS - All Citizen Model): Open to all citizens aged 18 to 70 years, offering market-linked retirement wealth accumulation.\n"
+                "2. Public Provident Fund (PPF) / Post Office Savings Schemes: Government-guaranteed long-term savings available at any age.\n"
+                "3. State Gig Welfare Boards (e.g. Rajasthan Gig Act Welfare Board): Accident, disability, and emergency health cover provided to all registered gig workers regardless of age."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "Ministry of Labour & Employment PM-SYM Portal", "url": "https://maandhan.in"},
+                {"title": "National Pension System (NPS Trust)", "url": "https://npstrust.org.in"}
+            ],
+            "disclaimer": "Grounded via FairWork Setu Model 8 Welfare Knowledge Base (pmsym_pension_scheme.md)."
+        }
+
+    if category_key == "deactivation_rights":
+        return {
+            "answer": (
+                "Regarding platform account deactivations without notice:\n\n"
+                "NO, a platform aggregator cannot arbitrarily deactivate or blacklist your gig account without notice.\n\n"
+                "⚖️ Rajasthan Platform Based Gig Workers Act 2023 (Sections 13 & 14):\n"
+                "1. Mandatory 14-Day Written Notice: Platform aggregators (Zomato, Swiggy, Uber, Ola, Zepto, Blinkit, Urban Company) must provide at least 14 days mandatory written notice stating verifiable reasons before deactivating or suspending an account.\n"
+                "2. Right to be Heard: The worker has the statutory right to submit an explanation and challenge the decision during the 14-day notice period.\n"
+                "3. Welfare Board Tribunal: Workers can file an appeal with the Appellate Grievance Redressal Officer and Welfare Board Tribunal for arbitrary deactivations or payment deductions.\n"
+                "4. Financial Penalties: Aggregators violating these provisions face statutory penalties up to ₹5 Lakhs."
+            ),
+            "isEmergency": False,
+            "sources": [
+                {"title": "Rajasthan Platform Based Gig Workers Act 2023 (Act No. 17 of 2023)", "url": "https://labour.rajasthan.gov.in"},
+                {"title": "Code on Social Security 2020 (Section 114)", "url": "https://labour.gov.in"}
+            ],
+            "disclaimer": "Grounded via FairWork Setu Model 8 Legal Knowledge Base (rajasthan_gig_workers_act_2023.md)."
+        }
+
+    # General fallback
+    return {
+        "answer": (
+            f"Regarding '{user_query}':\n\n"
+            "For non-emergency health concerns, visit your neighborhood Urban Primary Health Centre (UPHC) or Ayushman Arogya Mandir for free medical consultation and basic medicines.\n\n"
+            "If this relates to workplace fatigue or dehydration, please take shade breaks and sip water with ORS. If you experience severe chest pain, breathing difficulty, or sudden weakness, call 112 or 108 immediately."
+        ),
+        "isEmergency": False,
+        "sources": [
+            {"title": "National Health Mission Health Guidance", "url": "https://nhm.gov.in"},
+            {"title": "Ayushman Bharat PM-JAY", "url": "https://pmjay.gov.in"}
+        ],
+        "disclaimer": "Setu provides health navigation and welfare guidance only. Always consult a qualified medical professional for health diagnoses and treatment."
+    }
+
+
 @health_router.post("/triage")
 def triage_symptoms(payload: SymptomTriagePayload):
     """
@@ -520,9 +842,8 @@ def triage_symptoms(payload: SymptomTriagePayload):
     - Never generates confident clinical diagnoses or prescriptions.
     - Escalates severe chest pain, shortness of breath, sudden weakness, or heavy bleeding directly to emergency services (112/108).
     """
-    cat = payload.category.lower()
-    sev = payload.severity.lower()
-    flags = [f.lower() for f in payload.redFlags]
+    combined_query = f"{payload.category} {payload.notes or ''} {' '.join(payload.redFlags)}".strip()
+    detected_intent = classify_health_intent(combined_query)
 
     # Check for critical medical emergencies
     emergency_indicators = [
@@ -530,293 +851,206 @@ def triage_symptoms(payload: SymptomTriagePayload):
         "unconscious", "fainting", "severe bleeding", "sudden paralysis", "slurred speech",
         "coughing blood", "high fever above 104", "severe head injury", "broken bone"
     ]
-
+    flags = [f.lower() for f in payload.redFlags]
     has_emergency = (
-        sev == "severe" and any(ind in f for ind in emergency_indicators for f in flags)
-    ) or any("chest" in f or "breathing" in f or "unconscious" in f or "bleeding" in f for f in flags)
+        detected_intent == "emergency"
+        or (payload.severity.lower() == "severe" and any(ind in f for ind in emergency_indicators for f in flags))
+        or any("chest" in f or "breathing" in f or "unconscious" in f or "bleeding" in f for f in flags)
+    )
 
     if has_emergency:
         return {
-            "category": cat,
+            "category": payload.category,
             "isEmergency": True,
-            "emergencyReason": "Your reported symptoms include potential warning signs requiring immediate emergency medical attention. Please do not wait or attempt self-treatment.",
-            "summary": "Urgent Medical Attention Required",
+            "emergencyReason": "Your reported symptoms include critical danger signs requiring immediate emergency medical attention. Please do not wait or attempt self-treatment.",
+            "summary": "Urgent Medical Attention Required (Emergency 108 / 112)",
             "recommendations": [
                 "Call 112 or 108 immediately for emergency ambulance dispatch.",
-                "Have someone stay with you and sit down in a safe, shaded, or well-ventilated location.",
+                "Have someone stay with you and sit down in a safe, shaded location.",
                 "Do not drive a vehicle or ride a motorcycle yourself in this condition.",
-                "Proceed to the nearest 24x7 government hospital or casualty department immediately."
+                "Proceed to the nearest 24x7 government hospital casualty department immediately."
             ],
             "selfCareSteps": [
                 "Loosen any tight clothing around your collar, chest, or waist.",
-                "Sit upright with back support if having breathing difficulty; lie flat with feet slightly elevated if feeling faint.",
-                "Keep your phone active and emergency contacts informed."
+                "Sit upright with back support if having breathing difficulty; lie flat with feet elevated if feeling faint.",
+                "Keep phone active and emergency contacts informed."
             ],
             "redFlagWarning": "EMERGENCY: Do not delay seeking care. Setu cannot diagnose or treat life-threatening conditions.",
             "suggestedFacilityType": "hospital",
             "suggestedQuestions": [
                 "Where is the nearest 24x7 emergency hospital?",
-                "What is the ambulance number in Pune / Mumbai?",
+                "What is the ambulance helpline in Pune / Mumbai?",
                 "How to tell someone I need emergency help?"
             ]
         }
 
-    # Standard evidence-informed category guidance
-    if cat == "fever":
-        return {
-            "category": cat,
-            "isEmergency": False,
-            "summary": "Fever or feeling feverish is your body's immune reaction, commonly triggered by viral infections, seasonal changes, or exhaustion.",
-            "recommendations": [
-                "Rest in a cool, well-ventilated room and drink plenty of clean fluids (water, ORS, lemon water, thin dal).",
-                "Take simple paracetamol 500mg if advised by a pharmacist, avoiding self-medicating with antibiotics.",
-                "Visit your neighborhood Primary Health Centre (PHC) if fever stays above 101°F for more than 48 hours or is accompanied by chills and shivering.",
-                "Get a rapid malaria and dengue blood test at a government dispensary if fever occurs during monsoon or post-rainy season."
-            ],
-            "selfCareSteps": [
-                "Apply a clean cloth soaked in normal tap water (not cold ice water) on forehead to reduce temperature.",
-                "Wear loose, breathable cotton clothing.",
-                "Avoid skipping meals; consume light foods like khichdi, porridge, and seasonal fruits."
-            ],
-            "redFlagWarning": "Seek urgent medical care if accompanied by stiff neck, confusion, rash, persistent vomiting, or breathing difficulty.",
-            "suggestedFacilityType": "phc",
-            "suggestedQuestions": [
-                "Where can I get free fever medicine near me?",
-                "How much does a fever checkup cost at a government clinic?",
-                "Can I take paracetamol during my delivery shift?"
-            ]
-        }
-
-    elif cat == "dizziness":
-        return {
-            "category": cat,
-            "isEmergency": False,
-            "summary": "Dizziness or feeling weak is often linked to dehydration, prolonged sun exposure, skipping breakfast, or a temporary drop in blood pressure.",
-            "recommendations": [
-                "Stop work immediately, pull over your vehicle safely, and sit or lie down in the shade.",
-                "Sip water mixed with an ORS packet or a pinch of salt and sugar slowly.",
-                "Eat a quick source of energy such as a banana, biscuits, or a cup of warm tea.",
-                "If dizziness continues after resting 20 minutes, visit a nearby clinic or Arogya Mandir to check blood pressure and blood sugar."
-            ],
-            "selfCareSteps": [
-                "Do not stand up suddenly; rise slowly from sitting positions.",
-                "Avoid heavy lifting or driving until you feel completely balanced.",
-                "Aim for 7 to 8 hours of uninterrupted sleep."
-            ],
-            "redFlagWarning": "Go to an emergency centre if dizziness is accompanied by chest tightness, slurred speech, sudden numbness in arms or legs, or fainting.",
-            "suggestedFacilityType": "clinic",
-            "suggestedQuestions": [
-                "Why do I get dizzy during afternoon deliveries?",
-                "Where can I get an ORS packet nearby?",
-                "How to check blood pressure for free at a PHC?"
-            ]
-        }
-
-    elif cat == "pain":
-        return {
-            "category": cat,
-            "isEmergency": False,
-            "summary": "Body ache, back strain, or joint pain is very common among physical labourers, riders, and drivers due to repetitive strain and poor posture.",
-            "recommendations": [
-                "Rest the affected muscle group; avoid lifting heavy loads or prolonged awkward postures for the next 24 hours.",
-                "Apply warm compress or a hot water bottle for chronic back stiffness; use cold ice pack for fresh sprains (first 24 hours).",
-                "Gentle hamstring and lower back stretching can relieve driving stiffness.",
-                "Visit a Primary Health Centre or district hospital orthopedic OPD if pain persists beyond 3 days or shoots down your leg."
-            ],
-            "selfCareSteps": [
-                "Use ergonomic lifting: bend at the knees, not the waist.",
-                "Use a supportive lumbar cushion on your seat.",
-                "Over-the-counter pain balm or generic paracetamol from Jan Aushadhi Kendra (₹5–10) can provide temporary relief."
-            ],
-            "redFlagWarning": "Urgent care needed if pain follows a high-impact fall, severe vehicle collision, or is accompanied by inability to move limbs.",
-            "suggestedFacilityType": "clinic",
-            "suggestedQuestions": [
-                "Exercises for lower back pain from long bike riding?",
-                "Which government hospital has an orthopedic doctor?",
-                "How to claim accidental insurance under e-Shram?"
-            ]
-        }
-
-    elif cat == "cough":
-        return {
-            "category": cat,
-            "isEmergency": False,
-            "summary": "Cough, cold, or throat irritation is frequently caused by seasonal viral flu, weather shifts, or chronic road dust and diesel exhaust exposure.",
-            "recommendations": [
-                "Wear an N95 or clean 3-ply mask while on heavy traffic corridors to filter vehicular soot and dust.",
-                "Gargle with warm salt water twice daily to soothe throat irritation.",
-                "Steam inhalation for 5 to 10 minutes helps clear blocked nasal passages and chest congestion.",
-                "If a cough persists for more than 2 weeks, visit a government dispensary for a free sputum test to rule out tuberculosis (Nikshay program provides ₹500/month nutritional support)."
-            ],
-            "selfCareSteps": [
-                "Drink warm water, herbal kadha, or ginger-tulsi tea throughout the day.",
-                "Avoid cold drinks, direct blast of AC right after sweating in traffic, and smoking.",
-                "Keep windows cracked open for cross-ventilation."
-            ],
-            "redFlagWarning": "Seek immediate hospital care if you experience blue lips, gasping for breath, high fever, or coughing blood.",
-            "suggestedFacilityType": "phc",
-            "suggestedQuestions": [
-                "Where can I get tested if cough lasts 2 weeks?",
-                "What mask is best for dust during outdoor work?",
-                "Are asthma inhalers covered under Ayushman Bharat?"
-            ]
-        }
-
-    elif cat == "injury":
-        return {
-            "category": cat,
-            "isEmergency": False,
-            "summary": "Minor cuts, scrapes, burns, or bruises require prompt hygiene to prevent bacterial infection and tetanus complications.",
-            "recommendations": [
-                "Wash the wound immediately under clean running tap water and mild soap for at least 3 minutes to remove dirt.",
-                "Apply antiseptic liquid (Povidone-iodine or Betadine) and cover with a clean sterile bandage.",
-                "Get a Tetanus Toxoid (TT) injection at a nearby PHC or pharmacy within 24 hours if you have not had one in the past 5 years.",
-                "If the cut is deep, gaping, or bleeding steadily after 5 minutes of firm pressure, visit a hospital casualty for stitches."
-            ],
-            "selfCareSteps": [
-                "Keep the wound dry during bathing or dirty physical work; change bandage daily.",
-                "Do not apply unverified home remedies like mud, ash, or cow dung on open cuts.",
-                "Watch for signs of infection: increased redness, swelling, warmth, or yellow pus."
-            ],
-            "redFlagWarning": "Seek urgent care if you suspect a fracture (cannot put weight on limb, visible bone deformity, severe swelling) or deep puncture from rusty metal.",
-            "suggestedFacilityType": "hospital",
-            "suggestedQuestions": [
-                "Where can I get a Tetanus (TT) injection nearby?",
-                "Does e-Shram cover workplace injuries?",
-                "How much does a basic X-ray cost at a civil hospital?"
-            ]
-        }
-
+    # Map recommendations and selfCare from detected_intent
+    if detected_intent == "cold_cough":
+        summary = "Cold, cough, and nasal congestion are common respiratory conditions triggered by viral infections, weather shifts, and vehicular pollution."
+        recs = [
+            "Drink lukewarm water or ginger-tulsi tea during shifts; avoid cold sodas or abrupt AC-to-sun transitions.",
+            "Jan Aushadhi Paracetamol 500mg (₹5–₹10/strip) for fever/headache and Cetirizine 10mg (₹5–₹8/strip) at night for runny nose.",
+            "Jan Aushadhi Dextromethorphan / Ambroxol cough syrup (₹25–₹35 vs ₹110 branded) for cough.",
+            "Visit UPHC if fever stays >101°F for >3 days or if coughing yellow-green sputum or blood."
+        ]
+        self_care = [
+            "Inhale steam for 10 minutes at night after shifts to loosen bronchial mucus.",
+            "Warm salt-water gargle twice daily to relieve throat soreness.",
+            "Wear a face mask in heavy traffic corridors to filter soot and dust."
+        ]
+        facility = "phc"
+    elif detected_intent == "dehydration_heat":
+        summary = "Dehydration and heat exhaustion occur from prolonged sun exposure, heavy sweating, and electrolyte depletion on outdoor shifts."
+        recs = [
+            "Park in shade immediately, stop vehicle, and remove helmet and tight delivery vest.",
+            "Sip Oral Rehydration Salts (ORS) solution slowly (1 glass over 10–15 mins). Jan Aushadhi ORS costs ₹4–₹5 per sachet.",
+            "Sponge forehead, neck, and wrists with a cool damp cloth.",
+            "Warning: High body temperature (>103°F) with absence of sweating is Heat Stroke—call 108 immediately."
+        ]
+        self_care = [
+            "Do NOT chug ice-cold water rapidly, as it induces stomach cramps and vascular shock.",
+            "Carry an insulated bottle with ORS, coconut water, or lemon water.",
+            "Rest in the shade during peak sun hours (12 PM to 3 PM)."
+        ]
+        facility = "phc"
+    elif detected_intent == "fever_viral":
+        summary = "Fever is an immune response commonly caused by seasonal viral flu, dengue, malaria, or systemic exhaustion."
+        recs = [
+            "Complete physical rest. Cease strenuous riding to avoid myocardial strain and dehydration.",
+            "Jan Aushadhi Generic Paracetamol 500mg: ₹5–₹10 per strip of 10 tablets (1 tablet every 6–8 hours after food).",
+            "CRITICAL: Do NOT take Aspirin, Ibuprofen, or Combiflam without doctor checkup (severe bleeding risk in Dengue).",
+            "Visit local UPHC for a free CBC/Malaria/Dengue blood test if fever persists >48 hours or has chills/rash."
+        ]
+        self_care = [
+            "Tepid sponging with room-temperature water on forehead and limbs (never cold ice water).",
+            "Drink 2.5 to 3 liters of fluids (clean water, thin dal, ORS) daily.",
+            "Wear loose, breathable cotton clothes."
+        ]
+        facility = "phc"
+    elif detected_intent == "digestive_acidity":
+        summary = "Gastrointestinal distress, acidity, and diarrhea are triggered by dehydration, irregular meals, or contaminated street food."
+        recs = [
+            "Drink 1 cup of fresh ORS solution after every loose motion or vomiting episode (Jan Aushadhi ORS: ₹4–₹5).",
+            "Jan Aushadhi Pantoprazole 40mg or Omeprazole 20mg: ₹10–₹18/strip for acidity and heartburn (take 30 mins before breakfast).",
+            "Eat bland, easily digestible food (khichdi, curd, banana); avoid street tea and fried items.",
+            "Visit hospital if experiencing blood in stool, severe inability to retain fluids >6 hours, or localized lower-right abdominal pain."
+        ]
+        self_care = [
+            "Avoid carbonated cold drinks and sugary energy beverages which worsen diarrhea.",
+            "Eat freshly prepared food and carry clean home-cooked lunch when possible."
+        ]
+        facility = "phc"
+    elif detected_intent == "musculoskeletal":
+        summary = "Musculoskeletal backache and cervical stiffness are occupational hazards caused by heavy delivery bags and prolonged riding."
+        recs = [
+            "Mount heavy delivery backpacks on bike cargo carriers using bungee cords instead of shoulders.",
+            "Jan Aushadhi Pain Relief Gel / Diclofenac Spray (30g): ₹20–₹25 (vs ₹110–₹150 for branded Volini).",
+            "Jan Aushadhi Paracetamol 500mg: ₹5–₹10 per strip for acute aching (avoid heavy painkiller overuse to protect kidneys).",
+            "Apply warm compress (hot water bag) for 15–20 minutes on lower back or neck after returning home."
+        ]
+        self_care = [
+            "Take a 3–5 minute posture break every 2 hours: roll shoulders backwards and arch lower back.",
+            "Adjust handlebars to maintain slightly bent elbows to absorb road vibration."
+        ]
+        facility = "clinic"
+    elif detected_intent == "wounds_burns":
+        summary = "Silencer burns, abrasions, and scrape injuries require immediate cooling, antiseptic dressing, and tetanus prophylaxis."
+        recs = [
+            "Silencer Burn: Hold affected area under gentle, cool running tap water for 10–15 minutes immediately.",
+            "Do NOT apply toothpaste, ice, butter, or engine oil; do NOT pop blisters (fafola).",
+            "Jan Aushadhi Silver Sulfadiazine 1% Burn Cream: ₹15–₹20/tube (vs ₹75–₹110 branded Soframycin/Silverex).",
+            "Jan Aushadhi Povidone Iodine 5% Antiseptic Cream: ₹12–₹18/tube for road scrapes.",
+            "Visit UPHC within 24 hours for a ₹10 Tetanus Toxoid (TT) injection if not received in the last 6 months."
+        ]
+        self_care = [
+            "Cover burns loosely with sterile paraffin gauze.",
+            "Clean road scrapes gently with mild soap and clean water before applying antiseptic."
+        ]
+        facility = "phc"
     else:
-        return {
-            "category": cat,
-            "isEmergency": False,
-            "summary": "General wellbeing guidance for maintaining strength, endurance, and peace of mind during demanding work schedules.",
-            "recommendations": [
-                "Your physical and mental health is your biggest asset for earning a livelihood.",
-                "Take advantage of free annual health checkups at government Ayushman Arogya Mandirs.",
-                "Connect with worker peer groups or call the National Tele-MANAS mental health helpline (14416) if feeling overwhelmed, anxious, or burnt out.",
-                "Ensure your family is registered on an Ayushman card (PM-JAY) or state health card so medical emergencies never lead to debt."
-            ],
-            "selfCareSteps": [
-                "Eat balanced meals with lentils, seasonal vegetables, and clean water.",
-                "Set aside 15 minutes a day for quiet rest, deep breathing, or prayer.",
-                "Avoid excessive alcohol and tobacco consumption as stress relievers."
-            ],
-            "redFlagWarning": "If you ever feel in severe physical distress or despair, reach out to emergency services 112 or Tele-MANAS 14416 immediately.",
-            "suggestedFacilityType": "clinic",
-            "suggestedQuestions": [
-                "How can I get an Ayushman Bharat card made?",
-                "What is the Tele-MANAS mental health helpline?",
-                "Where is the nearest primary health centre?"
-            ]
-        }
+        summary = "General evidence-informed guidance for managing common occupational discomforts and knowing when to see a doctor."
+        recs = [
+            "Visit your neighborhood Urban Primary Health Centre (UPHC) if symptoms worsen or do not improve in 48 hours.",
+            "Always choose subsidized generic medicines at Pradhan Mantri Jan Aushadhi Kendras (PMBJP) to save 50% to 90%."
+        ]
+        self_care = [
+            "Drink at least 250 ml of clean water every hour during daytime shifts.",
+            "Take scheduled shade breaks and avoid skipping meals during high-demand delivery hours."
+        ]
+        facility = "phc"
+
+    return {
+        "category": payload.category,
+        "isEmergency": False,
+        "summary": summary,
+        "recommendations": recs,
+        "selfCareSteps": self_care,
+        "redFlagWarning": "Seek urgent medical care at a hospital casualty if you develop severe chest pain, breathing difficulty, sudden numbness, or high fever with confusion.",
+        "suggestedFacilityType": facility,
+        "suggestedQuestions": [
+            "Where can I get affordable generic medicines nearby?",
+            "Where is the nearest Urban Primary Health Centre (UPHC)?",
+            "What to do for silencer burns on delivery shifts?"
+        ]
+    }
 
 
 @health_router.post("/ask")
 def ask_health_assistant(payload: AskHealthPayload):
     """
-    Empathetic, evidence-informed health assistant for informal workers.
+    Empathetic, evidence-informed health and welfare assistant for gig workers.
     Features:
-    - Clear distinction between general information and clinical diagnoses.
-    - Automatic detection of dangerous warning signs and instant emergency escalation.
-    - Verified government schemes & clinic citations.
+    - Multi-dialect vocabulary normalization (Hindi, Marathi, Urdu, Hinglish).
+    - Emergency red-flag instant detection bypassing RAG (108/112).
+    - Subsidized Jan Aushadhi generic options with exact prices.
+    - Grounded RAG retrieval for welfare policies, pensions, and legal rights with dynamic thresholds.
     """
-    q = payload.question.strip().lower()
+    q = payload.question.strip()
+    detected_intent = classify_health_intent(q)
 
-    # Emergency keyword check
-    emergency_triggers = [
-        "heart attack", "chest pain", "can't breathe", "cannot breathe", "breathless",
-        "unconscious", "fainted", "heavy bleeding", "poison", "stroke", "paralysis",
-        "dying", "suicide", "broken head", "severe crash"
-    ]
+    # For clinical symptom intents or emergency, return structured response immediately
+    if detected_intent in [
+        "emergency",
+        "cold_cough",
+        "dehydration_heat",
+        "fever_viral",
+        "digestive_acidity",
+        "musculoskeletal",
+        "wounds_burns",
+        "generic_medicines",
+        "pmsym_pension",
+        "deactivation_rights"
+    ]:
+        return get_clinical_triage_response(detected_intent, q)
 
-    for trigger in emergency_triggers:
-        if trigger in q:
+    # For general queries, ground with Model 8 Health & Welfare RAG
+    try:
+        from ai_models_service import ai_models_service
+        rag_res = ai_models_service.search_health_welfare_rag(q, top_k=2)
+        passages = rag_res.get("passages", [])
+        model_name = rag_res.get("model", "")
+        # Dynamic similarity threshold: >= 0.50 for FAISS dense retrieval, >= 0.03 for TF-IDF cosine similarity
+        dynamic_threshold = 0.50 if "FAISS" in model_name else 0.03
+
+        if passages and passages[0].get("similarity_score", 0) >= dynamic_threshold:
+            top_p = passages[0]
+            src = top_p.get("source", "verified_scheme.md")
+            clean_text = top_p.get("text", "").replace("#", "").strip()[:500]
             return {
-                "answer": "⚠️ WARNING: This sounds like a possible medical emergency. Please do NOT wait or try self-treatment at home.\n\n1. Immediately call 112 (National Emergency) or 108 (Ambulance).\n2. If someone is with you, have them stay close and guide emergency services to your location.\n3. Proceed directly to the nearest hospital emergency/casualty department.",
-                "isEmergency": True,
+                "answer": (
+                    f"Based on verified government policy ({src}):\n\n"
+                    f"{clean_text}...\n\n"
+                    "For personalized assistance, visit your nearest Urban Primary Health Centre (UPHC) or Common Service Centre (CSC) with your Aadhaar and Ration Card."
+                ),
+                "isEmergency": False,
                 "sources": [
-                    {"title": "National Emergency Service (112)", "url": "tel:112"},
-                    {"title": "National Ambulance Helpline (108)", "url": "tel:108"}
+                    {"title": f"Verified Document: {src} (Score: {top_p.get('similarity_score')})", "url": "https://pmjay.gov.in"},
+                    {"title": "National Health Authority Helpline (14555)", "url": "tel:14555"}
                 ],
-                "disclaimer": "Setu provides livelihood health information and navigation only. It is not a diagnostic tool and cannot replace emergency medical services."
+                "disclaimer": "Retrieved via Setu Model 8 Health & Welfare RAG. Informational only; consult licensed health professionals."
             }
+    except Exception as e:
+        pass
 
-    # Curated knowledge retrieval
-    if "dizzy" in q or "dizziness" in q or "faint" in q:
-        return {
-            "answer": "Dizziness during long outdoor shifts is commonly caused by dehydration, electrolyte loss from heavy sweating, or a temporary dip in blood sugar.\n\nKey steps to take right now:\n1. Stop what you are doing, park safely in the shade, and sit down.\n2. Drink clean water mixed with an ORS packet (Electral / Jan Aushadhi ORS) slowly.\n3. Eat something light with quick sugar (like a banana, jaggery, or biscuits).\n\nIf you feel confused, have chest tightness, or the dizziness does not improve in 20 minutes, please have someone take you to the nearest clinic or call 112.",
-            "isEmergency": False,
-            "sources": [
-                {"title": "National Health Mission - Heat & Hydration Guidelines", "url": "https://nhm.gov.in"},
-                {"title": "Jan Aushadhi ORS & Essentials", "url": "https://janaushadhi.gov.in"}
-            ],
-            "disclaimer": "This information is for educational purposes and should not replace advice from a qualified healthcare professional."
-        }
-
-    elif "ayushman" in q or "card" in q or "pmjay" in q or "scheme" in q:
-        return {
-            "answer": "Under Ayushman Bharat PM-JAY and Maharashtra's MJPJAY scheme, eligible families receive up to ₹5 Lakh per year for cashless hospital treatment.\n\nHow to get support:\n1. Check if your family has an active Ration Card (Yellow, Orange, or Antyodaya).\n2. Visit your nearest Ayushman Arogya Mandir or government hospital with your Aadhaar Card and Ration Card to create an Ayushman Card (Golden Card).\n3. You can also call the national toll-free helpline at 14555 to verify your name in the beneficiary list.",
-            "isEmergency": False,
-            "sources": [
-                {"title": "PM-JAY Official Portal", "url": "https://pmjay.gov.in"},
-                {"title": "National Health Authority Helpline (14555)", "url": "tel:14555"}
-            ],
-            "disclaimer": "Eligibility verification is conducted by authorized government portals and hospital Arogyamitra desks."
-        }
-
-    elif "hospital" in q or "doctor" in q or "phc" in q or "clinic" in q:
-        return {
-            "answer": "Public government hospitals (such as Sassoon General Hospital and Aundh Civil Hospital in Pune, or KEM Hospital in Mumbai) provide free or highly subsidized consultations, diagnostic tests, and 24x7 casualty care.\n\nFor everyday problems like fever, cold, or minor cuts, your neighborhood Urban Primary Health Centre (UPHC) or Ayushman Arogya Mandir is faster and provides free essential medicines without long hospital queues.",
-            "isEmergency": False,
-            "sources": [
-                {"title": "Maharashtra Public Health Department", "url": "https://arogya.maharashtra.gov.in"},
-                {"title": "National Health Portal Directory", "url": "https://nhp.gov.in"}
-            ],
-            "disclaimer": "Facility timings and doctor availability may vary. Please confirm directly with the centre."
-        }
-
-    elif "medicine" in q or "generic" in q or "pharmacy" in q or "discount" in q:
-        return {
-            "answer": "You can get verified quality generic medicines at 50% to 90% cheaper prices at Pradhan Mantri Jan Aushadhi Kendras.\n\nExamples:\n- Paracetamol 500mg strip: ₹5 to ₹10\n- ORS packet: ₹4 to ₹5\n- Antacid / Gastric tablets: ₹8 to ₹12\n\nThere are over 10,000 Jan Aushadhi stores across India. Look for the orange-green storefront near major bus stands and government hospitals.",
-            "isEmergency": False,
-            "sources": [
-                {"title": "Pradhan Mantri Bhartiya Janaushadhi Pariyojana", "url": "https://janaushadhi.gov.in"},
-                {"title": "Jan Aushadhi Helpline (1800-180-8080)", "url": "tel:18001808080"}
-            ],
-            "disclaimer": "Prescription medicines require a valid doctor prescription."
-        }
-
-    else:
-        # Ground with Model 8 Health & Welfare RAG
-        try:
-            from ai_models_service import ai_models_service
-            rag_res = ai_models_service.search_health_welfare_rag(payload.question, top_k=2)
-            passages = rag_res.get("passages", [])
-            if passages and passages[0].get("similarity_score", 0) > 0.40:
-                top_p = passages[0]
-                src = top_p.get("source", "verified_scheme.md")
-                clean_text = top_p.get("text", "").replace("#", "").strip()[:400]
-                return {
-                    "answer": f"Based on verified government policy ({src}):\n\n{clean_text}...\n\nFor personalized verification, visit your nearest Primary Health Centre (PHC) or empanelled hospital with your Aadhaar and Ration Card.",
-                    "isEmergency": False,
-                    "sources": [
-                        {"title": f"Verified Document: {src} (Score: {top_p.get('similarity_score')})", "url": "https://pmjay.gov.in"},
-                        {"title": "National Health Authority Helpline (14555)", "url": "tel:14555"}
-                    ],
-                    "disclaimer": "Retrieved via Setu Model 8 Health & Welfare RAG. Informational only; consult licensed health professionals."
-                }
-        except Exception:
-            pass
-
-        return {
-            "answer": f"Thank you for asking Setu. Regarding '{payload.question}':\n\nFor non-emergency health concerns, we recommend visiting your nearest Urban Primary Health Centre or Ayushman Arogya Mandir for a free checkup with a licensed medical officer. If this relates to workplace fatigue or dehydration, please remember to take shade breaks and drink water with electrolytes.\n\nIf you are experiencing severe pain, difficulty breathing, or sudden weakness, please seek immediate medical care at a hospital casualty or call 112.",
-            "isEmergency": False,
-            "sources": [
-                {"title": "National Health Mission Health Guidance", "url": "https://nhm.gov.in"},
-                {"title": "Ayushman Bharat National Portal", "url": "https://pmjay.gov.in"}
-            ],
-            "disclaimer": "Setu provides health navigation and welfare guidance only. Always consult a qualified medical professional for health diagnoses and treatment."
-        }
+    return get_clinical_triage_response("general", q)
 

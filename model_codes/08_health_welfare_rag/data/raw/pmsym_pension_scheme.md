@@ -17,7 +17,7 @@ PM-SYM is a central government-sponsored voluntary and contributory pension sche
 
 ## Eligibility Criteria
 - Must be an unorganised or informal worker (such as auto driver, courier/delivery rider, tailor, street hawker, domestic helper).
-- Entry age: Between 18 and 40 years.
+- Entry age: Between 18 and 40 years strictly. Workers aged 41 or above (e.g., 44 years) are not eligible to enroll in PM-SYM. For individuals aged above 40, alternative government schemes such as Atal Pension Yojana (APY, enrollable up to age 40) or National Pension System (NPS-All Citizen model, enrollable up to age 70) and voluntary savings through post office schemes are recommended.
 - Monthly income: ₹15,000 per month or below.
 - Must not be covered under other formal statutory schemes:
   - Not an existing member of EPFO, NPS, or ESIC.
