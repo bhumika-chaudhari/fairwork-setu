@@ -12,9 +12,11 @@ console.log('='.repeat(75));
 console.log('🧠 FAIRWORK SETU: MACHINE LEARNING ENSEMBLE & OPTIMIZATION VERIFICATION');
 console.log('='.repeat(75) + '\n');
 
-const pyBin = fs.existsSync('/Library/Frameworks/Python.framework/Versions/3.12/bin/python3')
-  ? '/Library/Frameworks/Python.framework/Versions/3.12/bin/python3'
-  : 'python3';
+const pyBin = process.platform === 'win32'
+  ? 'python'
+  : (fs.existsSync('/Library/Frameworks/Python.framework/Versions/3.12/bin/python3')
+      ? '/Library/Frameworks/Python.framework/Versions/3.12/bin/python3'
+      : 'python3');
 
 // ---------------------------------------------------------------------------
 // TEST 1: Model 1 (Expense Classifier) Artifacts & Progression
