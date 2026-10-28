@@ -1,0 +1,46 @@
+{
+  "naive_baseline_sma": {
+    "name": "7-Day Simple Moving Average",
+    "mae": 144.81,
+    "rmse": 195.93
+  },
+  "baseline_single_model": {
+    "name": "Single Random Forest Regressor (Baseline)",
+    "mae": 76.6,
+    "rmse": 123.25,
+    "r2": 0.5594,
+    "reduction_vs_sma": "47.1% error cut"
+  },
+  "tuned_single_model": {
+    "name": "Tuned Random Forest Regressor",
+    "best_params": {
+      "max_depth": 4,
+      "min_samples_leaf": 4,
+      "n_estimators": 150
+    },
+    "mae": 80.04,
+    "rmse": 123.94,
+    "r2": 0.5545
+  },
+  "stacking_ensemble": {
+    "name": "Multi-Model Stacking Regressor (RF + ET + GB + Ridge)",
+    "mae": 69.62,
+    "rmse": 121.77,
+    "r2": 0.5699,
+    "reduction_vs_baseline": "9.11% error cut",
+    "reduction_vs_sma": "51.9% error cut"
+  },
+  "blended_ensemble": {
+    "name": "Variance-Weighted Blended Regressor",
+    "weights": [
+      1.5,
+      1.5,
+      0.5,
+      0.5
+    ],
+    "mae": 68.74,
+    "rmse": 119.19,
+    "r2": 0.588,
+    "reduction_vs_baseline": "10.26% error cut"
+  }
+}

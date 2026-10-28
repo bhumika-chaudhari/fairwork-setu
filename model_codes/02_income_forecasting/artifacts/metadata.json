@@ -1,4 +1,6 @@
 {
+  "model_name": "Multi-Model Stacking Income Forecaster (Model 2)",
+  "architecture": "StackingRegressor(RandomForest + ExtraTrees + GradientBoosting + Ridge -> Non-Negative Ridge Meta-Learner)",
   "date_column": "date",
   "target_column": "income",
   "frequency": "D",
@@ -16,5 +18,12 @@
     "period_weekday"
   ],
   "train_rows": 84,
-  "test_rows": 22
+  "test_rows": 22,
+  "base_estimators": [
+    "RandomForest(n=300)",
+    "ExtraTrees(n=250)",
+    "GradientBoosting(n=120)",
+    "Ridge(alpha=15.0)"
+  ],
+  "meta_learner": "Ridge(alpha=25.0, positive=True)"
 }

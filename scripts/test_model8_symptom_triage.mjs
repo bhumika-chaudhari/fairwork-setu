@@ -102,7 +102,18 @@ console.log('✅ Test 6 Passed: Grounded policy citations verified.\n');
 // ---------------------------------------------------------------------------
 console.log('Testing Test 7: Running Python ML Service Model 8 verification suite...');
 try {
-  const pyBin = process.platform === 'win32' ? 'python' : 'python3';
+  let pyBin = process.platform === 'win32' ? 'python' : 'python3';
+  const pyCandidates = [
+    '/Library/Frameworks/Python.framework/Versions/3.12/bin/python3',
+    '/usr/local/bin/python3',
+    '/usr/bin/python3'
+  ];
+  for (const c of pyCandidates) {
+    if (fs.existsSync(c)) {
+      pyBin = c;
+      break;
+    }
+  }
   const pyOutput = execSync(`${pyBin} ml_service/test_model8_triage.py`, { encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
   console.log(pyOutput);
   console.log('✅ Test 7 Passed: All 10 live Python backend triage and grounding queries verified.\n');

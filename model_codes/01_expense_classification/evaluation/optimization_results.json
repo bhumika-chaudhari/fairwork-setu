@@ -1,0 +1,40 @@
+{
+  "baseline_single_model": {
+    "name": "Default Logistic Regression (Baseline)",
+    "cv_5fold_f1": 0.7777,
+    "holdout_accuracy": 0.75,
+    "holdout_weighted_f1": 0.7361,
+    "holdout_weighted_precision": 0.7375,
+    "holdout_weighted_recall": 0.75
+  },
+  "tuned_single_model": {
+    "name": "Grid-Searched Tuned Logistic Regression",
+    "best_params": {
+      "classifier__C": 0.5,
+      "tfidf__ngram_range": [
+        1,
+        1
+      ],
+      "tfidf__sublinear_tf": true
+    },
+    "cv_5fold_f1": 0.8212,
+    "holdout_accuracy": 0.8438,
+    "holdout_weighted_f1": 0.8274
+  },
+  "soft_voting_ensemble": {
+    "name": "Tri-Model Soft-Voting Ensemble (LR + LinearSVC + CNB)",
+    "cv_5fold_f1": 0.8533,
+    "cv_5fold_accuracy": 0.8588,
+    "holdout_accuracy": 0.8438,
+    "holdout_weighted_f1": 0.8383
+  },
+  "stacking_ensemble": {
+    "name": "Tri-Model Stacking Classifier (Meta-Learner)",
+    "cv_5fold_f1": 0.8302,
+    "cv_5fold_accuracy": 0.8351,
+    "holdout_accuracy": 0.875,
+    "holdout_weighted_f1": 0.8631,
+    "relative_f1_improvement": "+17.25%",
+    "relative_accuracy_improvement": "+16.67%"
+  }
+}

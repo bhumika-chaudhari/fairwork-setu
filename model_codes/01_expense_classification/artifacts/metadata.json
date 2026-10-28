@@ -1,8 +1,8 @@
 {
+  "model_name": "Tri-Model Stacking Expense Classifier (Model 1)",
+  "architecture": "StackingClassifier(LogisticRegression + CalibratedLinearSVC + ComplementNB -> LogisticRegression Meta-Learner)",
+  "feature_extraction": "TF-IDF Vectorizer (ngram_range=(1,1), sublinear_tf=True)",
   "target_column": "category",
-  "feature_columns": [
-    "text"
-  ],
   "classes": [
     "education",
     "emi",
@@ -14,5 +14,11 @@
     "personal"
   ],
   "train_rows": 128,
-  "test_rows": 32
+  "test_rows": 32,
+  "base_estimators": [
+    "LogisticRegression(C=1.2)",
+    "CalibratedClassifierCV(LinearSVC)",
+    "ComplementNB(alpha=0.3)"
+  ],
+  "meta_learner": "LogisticRegression(class_weight=balanced)"
 }

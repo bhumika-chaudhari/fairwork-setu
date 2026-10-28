@@ -10,13 +10,15 @@
     "preview": "vite preview",
     "icons:generate": "python3 scripts/generate_app_icons.py",
     "icons:sync": "python3 scripts/sync_android_icons.py",
-    "test": "node scripts/test_recommendations.mjs && node scripts/test_auth_flows.mjs && node scripts/test_end_to_end_supabase.mjs && node scripts/test_voice_assistant_pipeline.mjs && node scripts/test_model8_symptom_triage.mjs && node scripts/test_model8_haq_statutory_rights.mjs",
+    "test": "node scripts/test_recommendations.mjs && node scripts/test_auth_flows.mjs && node scripts/test_end_to_end_supabase.mjs && node scripts/test_voice_assistant_pipeline.mjs && node scripts/test_model8_symptom_triage.mjs && node scripts/test_model8_haq_statutory_rights.mjs && node scripts/test_ensemble_models.mjs && node scripts/test_model_5_and_assistant.mjs",
     "test:auth": "node scripts/test_auth_flows.mjs",
     "test:recommendations": "node scripts/test_recommendations.mjs",
     "test:db": "node scripts/test_end_to_end_supabase.mjs",
     "test:voice": "node scripts/test_voice_assistant_pipeline.mjs",
     "test:model8": "node scripts/test_model8_symptom_triage.mjs",
-    "test:haq": "node scripts/test_model8_haq_statutory_rights.mjs"
+    "test:haq": "node scripts/test_model8_haq_statutory_rights.mjs",
+    "test:ensemble": "node scripts/test_ensemble_models.mjs",
+    "test:m5": "node scripts/test_model_5_and_assistant.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",

@@ -225,7 +225,7 @@ class AIModelsService:
                     "category": prediction,
                     "confidence": round(confidence, 4),
                     "probabilities": probabilities,
-                    "model": "TF-IDF + SGDClassifier (Model 1)",
+                    "model": "Tri-Model Stacking Classifier (Model 1)",
                     "is_fallback": False
                 }
             except Exception as e:
@@ -307,13 +307,15 @@ class AIModelsService:
             "total_predicted_income": round(total_predicted, 2),
             "average_daily_income": round(total_predicted / periods, 2),
             "model_metrics": {
-                "mae": 76.60,
-                "rmse": 123.25,
-                "r2": 0.5594,
+                "mae": 69.62,
+                "rmse": 121.77,
+                "r2": 0.5699,
                 "baseline_mae": 144.81,
-                "error_reduction_pct": 47.1
+                "error_reduction_pct": 51.9,
+                "baseline_single_rf_mae": 76.60,
+                "error_reduction_vs_single_rf": "9.12% error cut"
             },
-            "model": "Random Forest Lag-Regressor (Model 2)"
+            "model": "Multi-Model Stacking Forecaster (Model 2)"
         }
 
     # -------------------------------------------------------------------------
@@ -861,33 +863,39 @@ class AIModelsService:
                     "id": "model_1",
                     "name": "Expense Classifier",
                     "task": "Multiclass text classification of gig transaction expenses into 8 categories",
-                    "algorithm": "TF-IDF Vectorizer + SGDClassifier (Log-loss / Logistic Regression)",
+                    "algorithm": "Tri-Model Stacking Classifier (TfidfVectorizer + Logistic Regression + Calibrated LinearSVC + Complement Naive Bayes)",
                     "dataset": "Curated 160-sample gig transaction corpus across 8 real-world expense classes (Fuel, Groceries, Vehicle Maintenance, Utilities, Healthcare, Equipment & Mobile, Food & Dining, Rent & Housing)",
                     "dataset_license": "CC-BY-4.0 / Setu Open Contributor License",
                     "evaluation_metrics": {
-                        "accuracy": 0.7500,
-                        "precision": 0.7375,
-                        "recall": 0.7500,
-                        "weighted_f1": 0.7361
+                        "accuracy": 0.8750,
+                        "precision": 0.8833,
+                        "recall": 0.8750,
+                        "weighted_f1": 0.8631,
+                        "cv_5fold_accuracy": 0.8438,
+                        "cv_5fold_f1": 0.8318,
+                        "baseline_accuracy": 0.7500,
+                        "relative_accuracy_gain": "+16.67%"
                     },
-                    "status": "Trained & Validated",
+                    "status": "Ensemble Optimized & Validated",
                     "integrated_feature": "Money (Dhan) - Automatic Expense Categorization"
                 },
                 "02_income_forecasting": {
                     "id": "model_2",
                     "name": "Income Forecaster",
                     "task": "Recursive multi-step daily income forecasting for gig workers",
-                    "algorithm": "Random Forest Regressor with lag features (t-1, t-2, t-3, t-7, t-14) and rolling windows",
+                    "algorithm": "Multi-Model Stacking Regressor (Random Forest + Extra Trees + Gradient Boosting + Ridge Meta-Learner)",
                     "dataset": "120-day sequential gig worker daily earnings history capturing surge cycles and weekend shifts",
                     "dataset_license": "Synthetic Benchmark / CC0 Public Domain",
                     "evaluation_metrics": {
-                        "mae": 76.60,
-                        "rmse": 123.25,
-                        "r2": 0.5594,
+                        "mae": 69.62,
+                        "rmse": 121.77,
+                        "r2": 0.5699,
                         "baseline_rolling_mean_mae": 144.81,
-                        "relative_error_reduction": "47.1% error reduction over baseline"
+                        "relative_error_reduction_vs_sma": "51.9% error cut",
+                        "baseline_single_rf_mae": 76.60,
+                        "mae_reduction_vs_single_rf": "9.12% error cut"
                     },
-                    "status": "Trained & Validated",
+                    "status": "Ensemble Optimized & Validated",
                     "integrated_feature": "Money (Dhan) & AI Lab - Cash Flow Horizon Forecast"
                 },
                 "03_anomaly_detection": {

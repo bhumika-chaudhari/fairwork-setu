@@ -1,7 +1,24 @@
 {
-  "mae": 76.59735347522842,
-  "rmse": 123.25338591051269,
-  "rolling_mean_baseline_mae": 144.80519480519482,
-  "r2": 0.5594176418079122,
-  "test_rows": 22
+  "model_architecture": "Multi-Model Stacking Regressor (Model 2)",
+  "base_models": [
+    "RandomForestRegressor(n=300)",
+    "ExtraTreesRegressor(n=250)",
+    "GradientBoostingRegressor(n=120)",
+    "Ridge(alpha=15.0)"
+  ],
+  "meta_learner": "Ridge(alpha=25.0, positive=True)",
+  "mae": 69.62,
+  "rmse": 121.77,
+  "r2": 0.5699,
+  "test_rows": 22,
+  "comparisons": {
+    "rolling_mean_7_sma_mae": 144.81,
+    "sma_error_reduction_pct": "51.9%",
+    "baseline_single_rf_mae": 76.6,
+    "baseline_single_rf_rmse": 123.25,
+    "baseline_single_rf_r2": 0.5594,
+    "mae_reduction_vs_single_rf_pct": "9.12%",
+    "rmse_reduction_vs_single_rf_pct": "1.20%",
+    "r2_improvement_vs_single_rf": "+0.0105"
+  }
 }
