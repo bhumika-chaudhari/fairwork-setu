@@ -136,8 +136,27 @@ export default function UnifiedVoiceAssistantModal({
   // References
   const recognizerRef = useRef<SetuContinuousSpeechRecognizer | null>(null);
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
-  const currentLang = (i18n.language || 'en').toLowerCase().slice(0, 2);
-  const speechLang = BCP47_LANGUAGE_MAP[currentLang] || 'hi-IN';
+  const sendMessageRef = useRef(sendMessage);
+
+  // Default to Hinglish / Hindi (hi-IN) for voice recognition as Indian gig workers speak Hinglish;
+  // If UI language is Marathi, default to Marathi (mr-IN)
+  const [voiceLanguage, setVoiceLanguage] = useState<string>(() => {
+    const lang = (i18n.language || 'hi').toLowerCase().slice(0, 2);
+    if (lang === 'mr') return 'mr-IN';
+    if (lang === 'en') return 'hi-IN'; // Default Hinglish / Hindi recognition for Indian gig context
+    return BCP47_LANGUAGE_MAP[lang] || 'hi-IN';
+  });
+
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
+
+  const handleVoiceLanguageChange = (newLang: string) => {
+    setVoiceLanguage(newLang);
+    if (recognizerRef.current) {
+      recognizerRef.current.setLanguage(newLang);
+    }
+  };
 
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -177,7 +196,7 @@ export default function UnifiedVoiceAssistantModal({
           setIsListening(false);
           setInterimTranscript('');
           if (finalText.trim()) {
-            sendMessage(finalText.trim());
+            sendMessageRef.current(finalText.trim());
           } else {
             // Unclear audio or empty speech handling
             sendMessage('');
@@ -206,7 +225,7 @@ export default function UnifiedVoiceAssistantModal({
       },
       {
         silenceDurationMs: configuredSilenceMs,
-        language: speechLang,
+        language: voiceLanguage,
       }
     );
 
@@ -216,27 +235,33 @@ export default function UnifiedVoiceAssistantModal({
 
     if (activeInitialQuery) {
       setMode('chat');
-      sendMessage(activeInitialQuery);
-    } else if (recognizer.isSupported()) {
-      setMode('voice');
-      recognizer.start();
+      sendMessageRef.current(activeInitialQuery);
     } else {
-      setMode('chat');
+      setMode(recognizer.isSupported() ? 'voice' : 'chat');
+      // DO NOT auto-start listening on modal open!
+      // Listening is triggered ONLY when user explicitly clicks the microphone button.
     }
 
     return () => {
       recognizer.destroy();
       recognizerRef.current = null;
     };
-  }, [isOpen, speechLang, activeInitialQuery, sendMessage]);
+  }, [isOpen, activeInitialQuery]);
 
-  const toggleListening = () => {
+  const toggleListening = async () => {
     if (!recognizerRef.current) return;
+    setErrorMessage('');
+
     if (isListening) {
+      // Button clicked AGAIN: stop and record / send
       recognizerRef.current.stopAndFinalize();
     } else {
-      setErrorMessage('');
-      recognizerRef.current.start();
+      // Button clicked: turn voice input ON
+      try {
+        await recognizerRef.current.start();
+      } catch (err) {
+        console.error('Failed to start speech recognition:', err);
+      }
     }
   };
 
@@ -614,39 +639,81 @@ export default function UnifiedVoiceAssistantModal({
 
         {/* Bottom Input & Voice Controls */}
         <footer className="shrink-0 p-4 bg-white border-t border-[#F4EBDD] space-y-3">
-          {/* Mode Switcher & Listening Wave */}
-          <div className="flex items-center justify-between gap-3">
+          {/* Mode Switcher, Listening Wave & Language Selector */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              {/* Mic Status Indicator / Toggle */}
+              {/* Push-to-Talk Mic Toggle: Click 1 to Start, Click 2 to Stop & Send */}
               {hasSpeechSupport && (
                 <button
                   type="button"
                   onClick={toggleListening}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-xs active:scale-95 ${
                     isListening
-                      ? 'bg-rose-100 text-rose-800 border border-rose-300 animate-pulse'
-                      : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      ? 'bg-rose-600 hover:bg-rose-700 text-white animate-pulse border border-rose-400 ring-2 ring-rose-200'
+                      : 'bg-gradient-to-r from-[#B34A26] to-[#7C2D16] hover:from-[#7C2D16] hover:to-[#B34A26] text-white'
                   }`}
+                  aria-label={isListening ? 'Stop recording and send message' : 'Start speaking'}
                 >
-                  <AppIcon name="mic" size={14} className={isListening ? 'text-rose-600' : ''} />
-                  <span>{isListening ? `Listening (${Math.ceil(silenceRemainingMs / 1000)}s)` : 'Tap to Speak'}</span>
+                  <AppIcon name="mic" size={16} className={isListening ? 'text-white animate-bounce' : 'text-white'} />
+                  <span>
+                    {isListening
+                      ? `⏹️ Stop & Send (${Math.ceil(silenceRemainingMs / 1000)}s)`
+                      : '🎤 Tap to Speak'}
+                  </span>
                 </button>
               )}
 
-              {/* Audio waveform visualizer when listening */}
+              {/* Audio waveform visualizer when actively listening */}
               {isListening && (
-                <div className="flex items-center gap-0.5 h-4">
-                  <span className="w-1 bg-[#B34A26] h-2 rounded-full animate-pulse" />
-                  <span className="w-1 bg-[#B34A26] h-4 rounded-full animate-bounce" />
-                  <span className="w-1 bg-[#B34A26] h-3 rounded-full animate-pulse" />
-                  <span className="w-1 bg-[#B34A26] h-4 rounded-full animate-bounce" />
+                <div className="flex items-center gap-1 h-5 px-2 bg-rose-50 rounded-xl border border-rose-200">
+                  <span className="w-1 bg-rose-600 h-2 rounded-full animate-pulse" />
+                  <span className="w-1 bg-rose-600 h-4 rounded-full animate-bounce" />
+                  <span className="w-1 bg-rose-600 h-3 rounded-full animate-pulse" />
+                  <span className="w-1 bg-rose-600 h-5 rounded-full animate-bounce" />
+                  <span className="w-1 bg-rose-600 h-2 rounded-full animate-pulse" />
                 </div>
               )}
             </div>
 
-            <span className="text-[10px] text-stone-400 font-medium">
-              Lang: {currentLang.toUpperCase()} (Voice + Text)
-            </span>
+            {/* Hinglish / Multi-dialect Voice Language Selector */}
+            <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
+              <button
+                type="button"
+                onClick={() => handleVoiceLanguageChange('hi-IN')}
+                className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                  voiceLanguage === 'hi-IN'
+                    ? 'bg-[#B34A26] text-white shadow-xs'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+                title="Hinglish / Hindi (हिंग्लिश / हिंदी)"
+              >
+                🇮🇳 हिंग्लिश / हिंदी
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVoiceLanguageChange('en-IN')}
+                className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                  voiceLanguage === 'en-IN'
+                    ? 'bg-[#B34A26] text-white shadow-xs'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+                title="English"
+              >
+                🇬🇧 English
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVoiceLanguageChange('mr-IN')}
+                className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                  voiceLanguage === 'mr-IN'
+                    ? 'bg-[#B34A26] text-white shadow-xs'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+                title="Marathi (मराठी)"
+              >
+                🇮🇳 मराठी
+              </button>
+            </div>
           </div>
 
           {/* Text input form for typed queries */}

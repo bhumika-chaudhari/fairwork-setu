@@ -169,7 +169,7 @@ export function detectSpokenLanguage(text: string): SupportedLanguage {
 
   // Hindi / Hinglish markers:
   if (
-    /\b(aaj|kal|kamaya|kharcha|kharch|rupaye|batao|chahiye|kaam|bukhar|dard|paise|kitna|hua|likho|jodo|dikhao|kholo|meri|mera|seekhna|kripya|hisaab|hisab|shikayat|aspataal|dawa|bachat)\b/i.test(
+    /\b(aaj|kal|kamaya|kharcha|kharch|kamaye|kamai|rupaye|batao|chahiye|kaam|bukhar|dard|paise|kitna|hua|likho|jodo|dikhao|kholo|meri|mera|seekhna|kripya|hisaab|hisab|shikayat|aspataal|dawa|dawai|bachat|bharwaya|bharwaye|tel|chai|pee|peeya|diya|diye|mila|mile|aur|par|lekin|magar|maine|humne)\b/i.test(
       lower
     )
   ) {
@@ -1900,6 +1900,9 @@ export class SetuContinuousSpeechRecognizer {
           return;
         }
         console.warn('Speech recognition error:', event.error);
+        this.clearTimers();
+        this.isListeningActive = false;
+        this.callbacks.onStateChange('idle');
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           this.callbacks.onError('not-allowed');
         } else if (event.error === 'audio-capture') {
@@ -1910,18 +1913,17 @@ export class SetuContinuousSpeechRecognizer {
       };
 
       this.recognizer.onend = () => {
-        if (this.isListeningActive && this.remainingSilenceMs > 100) {
-          if (this.currentSessionFinalText) {
-            this.previousSessionsFinal = deduplicateSpeechTranscript(
-              [this.previousSessionsFinal, this.currentSessionFinalText].filter(Boolean).join(' ')
-            );
-            this.currentSessionFinalText = '';
-          }
-          try {
-            this.recognizer.start();
-          } catch {
-            // ignore
-          }
+        if (!this.isListeningActive) {
+          return;
+        }
+        // If listening was active and speech transcript was detected, finalize and process.
+        // Never restart in a loop on Android!
+        if (this.currentFullTranscript.trim().length > 0) {
+          this.stopAndFinalize();
+        } else {
+          this.clearTimers();
+          this.isListeningActive = false;
+          this.callbacks.onStateChange('idle');
         }
       };
     } catch (err) {
@@ -1999,6 +2001,11 @@ export class SetuContinuousSpeechRecognizer {
     }
 
     const finalText = deduplicateSpeechTranscript(this.currentFullTranscript.trim());
+    if (!finalText) {
+      this.callbacks.onStateChange('idle');
+      this.callbacks.onSilenceFinalized('');
+      return;
+    }
     this.callbacks.onStateChange('processing');
     this.callbacks.onSilenceFinalized(finalText);
   }
