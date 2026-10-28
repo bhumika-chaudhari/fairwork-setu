@@ -872,7 +872,7 @@ export default function DhanPage() {
                       {t('dhan.expectedIncome')} (7-Day Horizon)
                     </span>
                     <span className="rounded-full bg-saffronGold/20 px-2 py-0.5 text-[10px] font-black text-warmCocoa border border-saffronGold/30">
-                      Model 2 (RF Lag)
+                      Model 2 (Stacking Ensemble)
                     </span>
                   </div>
                   {model2Forecast ? (
@@ -899,7 +899,7 @@ export default function DhanPage() {
                         ))}
                       </div>
                       <p className="text-[10px] text-emerald-700 font-semibold mt-1">
-                        ✓ 47.1% error reduction over baseline (MAE: ₹{model2Forecast.model_metrics.mae})
+                        ✓ {model2Forecast.model_metrics.error_reduction_pct}% error reduction over baseline (MAE: ₹{model2Forecast.model_metrics.mae} • 9.1% error cut vs single RF)
                       </p>
                     </div>
                   ) : (

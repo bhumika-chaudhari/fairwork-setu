@@ -201,10 +201,10 @@ export default function Models8SuiteBench() {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold text-terracotta">Model 1: Expense Classifier</span>
-                <h4 className="text-sm font-extrabold text-[#1E2B3E]">TF-IDF + SGD Multiclass</h4>
+                <h4 className="text-sm font-extrabold text-[#1E2B3E]">Tri-Model Stacking Classifier</h4>
               </div>
-              <span className="text-[10px] font-mono bg-stone-100 text-stone-700 px-2 py-0.5 rounded">
-                Accuracy: 75.0%
+              <span className="text-[10px] font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
+                Accuracy: 87.5% (+16.7% gain)
               </span>
             </div>
             <div className="flex gap-2">
@@ -248,10 +248,10 @@ export default function Models8SuiteBench() {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold text-terracotta">Model 2: Income Forecaster</span>
-                <h4 className="text-sm font-extrabold text-[#1E2B3E]">Random Forest Lag-Regressor</h4>
+                <h4 className="text-sm font-extrabold text-[#1E2B3E]">Multi-Model Stacking Forecaster</h4>
               </div>
               <span className="text-[10px] font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
-                -47.1% Error vs Base
+                MAE: ₹69.62 (-51.9% vs Base)
               </span>
             </div>
             <div className="flex items-center gap-2">
